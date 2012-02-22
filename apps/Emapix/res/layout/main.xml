@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <com.emapix.EmapixMapView android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:apiKey="0JMgpeXt9Y8fFTaDAiEINwDLPE57A5dmI0amxug"
+        android:clickable="true"/>
+</RelativeLayout>
+
+<!-- <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.maps.MapView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/mapview"
@@ -6,5 +17,5 @@
     android:layout_height="fill_parent"
     android:clickable="true"
     android:apiKey="0JMgpeXt9Y8fFTaDAiEINwDLPE57A5dmI0amxug"
-/>
+/> -->
 
