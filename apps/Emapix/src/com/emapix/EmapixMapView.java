@@ -1,5 +1,6 @@
 package com.emapix;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -7,8 +8,10 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import com.emapix.EmapixActivity.MarkerItemizedOverlay;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 public class EmapixMapView extends MapView {
 
@@ -54,6 +57,17 @@ public class EmapixMapView extends MapView {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		if (event.getAction() == MotionEvent.ACTION_DOWN) {
+			// Clear overlays
+			List<Overlay> overlays = this.getOverlays();
+			if (overlays.size() > 0)
+			{
+				MarkerItemizedOverlay overlay	= (MarkerItemizedOverlay)overlays.get(0);
+				overlay.removeOverlays();
+				this.invalidate();
+			}
+		}
+		
 	    handleLongpress(event);
 	
 	    return super.onTouchEvent(event);
@@ -77,6 +91,7 @@ public class EmapixMapView extends MapView {
 	private void handleLongpress(final MotionEvent event) {
 	
 	    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	    	
 	        // Finger has touched screen.
 	        longpressTimer = new Timer();
 	        longpressTimer.schedule(new TimerTask() {
