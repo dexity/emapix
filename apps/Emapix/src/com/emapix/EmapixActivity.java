@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,10 +13,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
+import android.view.ViewGroup.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -24,6 +28,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
+import com.google.android.maps.Projection;
 
 public class EmapixActivity extends MapActivity {
 	
@@ -86,10 +91,8 @@ public class EmapixActivity extends MapActivity {
         MarkerItemizedOverlay itemizedoverlay = new MarkerItemizedOverlay(drawable, this);        
         mOverlays.add(itemizedoverlay);
         
-        // Setting bubble
-        LayoutInflater inflater = this.getLayoutInflater();
-        LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, mView, false);
-
+        this.displayBubble(mView, point);
+        
         /*
         //Set up the bubble's close button
         ImageButton bubbleClose = (ImageButton) bubble.findViewById(R.id.sendreq);
@@ -127,22 +130,36 @@ public class EmapixActivity extends MapActivity {
         return false;
     }  
     
-/*    
-    private void displaySearchResultBubble(final SearchResult result) {
+    private void displayBubble(MapView map, GeoPoint point) {
+    	
+        // Setting bubble
+        LayoutInflater inflater = this.getLayoutInflater();
+        LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, map, false);
+    	
+        //Set up the bubble's close button
+        Button bubbleClose = (Button) bubble.findViewById(R.id.sendreq);
+        bubbleClose.setOnClickListener(new View.OnClickListener() {
+        	public void onClick(View v) {
+        		//Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        		//bubble.startAnimation(fadeOut);
+        		//bubble.setVisibility(View.GONE);
+        	}
+        });              
+        
     	//Hide the bubble if it's already showing for another result
     	map.removeView(bubble);
     	bubble.setVisibility(View.GONE);
 
     	//Set some view content
-    	TextView venueName = (TextView) bubble.findViewById(R.id.venuename);
-    	venueName.setText(result.getName());
+    	TextView venueName = (TextView) bubble.findViewById(R.id.locationname);
+    	//venueName.setText(result.getName());
 
     	//This is the important bit - set up a LayoutParams object for positioning of the bubble.
     	//This will keep the bubble floating over the GeoPoint result.getPoint() as you move the MapView around,
     	//but you can also keep the view in the same place on the map using a different LayoutParams constructor
-    	MapView.LayoutParams params = new MapView.LayoutParams(
+    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
     		LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
-     		result.getPoint(), MapView.LayoutParams.BOTTOM_CENTER);
+     		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
 
     	bubble.setLayoutParams(params);
 
@@ -152,10 +169,10 @@ public class EmapixActivity extends MapActivity {
 
     	//Runnable to fade the bubble in when we've finished animatingTo our OverlayItem (below)
     	Runnable r = new Runnable() {
-    		public void run() {
-    			Animation fadeIn = AnimationUtils.loadAnimation(activity, R.anim.fadein);
-    			bubble.setVisibility(View.VISIBLE);
-    			bubble.startAnimation(fadeIn);
+    		public void run() {    			
+//    			Animation fadeIn = AnimationUtils.loadAnimation(activity, R.anim.fadein);
+//    			bubble.setVisibility(View.VISIBLE);
+//    			bubble.startAnimation(fadeIn);
     		}
     	};
 
@@ -164,13 +181,14 @@ public class EmapixActivity extends MapActivity {
     	Projection projection = map.getProjection();
     	Point p = new Point();
 
-    	projection.toPixels(result.getPoint(), p);
+    	projection.toPixels(point, p);
     	p.offset(0, -(bubble.getMeasuredHeight() / 2));
     	GeoPoint target = projection.fromPixels(p.x, p.y);
 
     	//Move the MapView to our point, and then call the Runnable that fades in the bubble.
-    	mapController.animateTo(target, r);
+    	//MapController mController = map.getController();
+    	//mController.animateTo(target, r);
+    	bubble.setVisibility(View.VISIBLE);
      }    
-*/
 }
 
