@@ -137,9 +137,10 @@ public class EmapixActivity extends MapActivity {
         LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, map, false);
     	
         //Set up the bubble's close button
-        Button bubbleClose = (Button) bubble.findViewById(R.id.sendreq);
-        bubbleClose.setOnClickListener(new View.OnClickListener() {
+        Button btnSend = (Button) bubble.findViewById(R.id.sendreq);
+        btnSend.setOnClickListener(new View.OnClickListener() {
         	public void onClick(View v) {
+        		// Send request
         		//Animation fadeOut = AnimationUtils.loadAnimation(this, R.anim.fadeout);
         		//bubble.startAnimation(fadeOut);
         		//bubble.setVisibility(View.GONE);
@@ -151,8 +152,8 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.GONE);
 
     	//Set some view content
-    	TextView venueName = (TextView) bubble.findViewById(R.id.locationname);
-    	//venueName.setText(result.getName());
+    	//TextView venueName = (TextView) bubble.findViewById(R.id.locationname);
+    	//venueName.setText("Hello");
 
     	//This is the important bit - set up a LayoutParams object for positioning of the bubble.
     	//This will keep the bubble floating over the GeoPoint result.getPoint() as you move the MapView around,
