@@ -7,6 +7,8 @@ import java.util.TimerTask;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.emapix.EmapixActivity.MarkerItemizedOverlay;
 import com.google.android.maps.GeoPoint;
@@ -58,14 +60,17 @@ public class EmapixMapView extends MapView {
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
 		if (event.getAction() == MotionEvent.ACTION_DOWN) {
-			// Clear overlays
-			List<Overlay> overlays = this.getOverlays();
-			if (overlays.size() > 0)
-			{
-				MarkerItemizedOverlay overlay	= (MarkerItemizedOverlay)overlays.get(0);
-				overlay.removeOverlays();
-				this.invalidate();
-			}
+            if (this.findViewById(R.id.bubble) != null ) {
+            	//this.removeViewAt(0);	// XXX: Hardcoded.
+            }			
+//			// Clear overlays
+//			List<Overlay> overlays = this.getOverlays();
+//			if (overlays.size() > 0)
+//			{
+//				MarkerItemizedOverlay overlay	= (MarkerItemizedOverlay)overlays.get(0);
+//				overlay.removeOverlays();
+//				this.invalidate();
+//			}
 		}
 		
 	    handleLongpress(event);

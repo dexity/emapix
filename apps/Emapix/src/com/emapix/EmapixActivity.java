@@ -117,15 +117,17 @@ public class EmapixActivity extends MapActivity {
 		                
 		                // Remove bubble  
 		                if (view.findViewById(bubble.getId()) != null ) {
-		                	Log.i("BUBBLE_ID", view.findViewById(bubble.getId()).toString());
-		                	view.removeViewAt(0);
+		                	view.removeViewAt(0);	// XXX: Hardcoded.
 		                	bubble.setVisibility(View.GONE);
 		                }
 
 		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-		                		LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
+		                		370, LayoutParams.WRAP_CONTENT,
 		                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-
+		            	params.mode = MapView.LayoutParams.MODE_MAP;
+		            	
+		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
 		                bubble.setLayoutParams(params);
 		                
 		                if (view.findViewById(bubble.getId()) == null)
