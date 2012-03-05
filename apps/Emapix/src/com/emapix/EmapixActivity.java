@@ -122,10 +122,16 @@ public class EmapixActivity extends MapActivity {
 		                // Setting bubble
 		                LayoutInflater inflater = EmapixActivity.this.getLayoutInflater();
 		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
+		                // Remove bubble
+		                view.removeView(bubble);
 		                bubble.setVisibility(View.GONE);
 		                
 		            	Projection projection = view.getProjection();
 		            	Point p = new Point();
+
+//		            	projection.toPixels(lpPoint, p);
+//		            	p.offset(0, -(bubble.getMeasuredHeight() / 2));
+//		            	GeoPoint target = projection.fromPixels(p.x, p.y);
 		            	
 		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
 		                		LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT,
@@ -136,9 +142,6 @@ public class EmapixActivity extends MapActivity {
 		            	view.addView(bubble);
 		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 
-		            	projection.toPixels(lpPoint, p);
-		            	p.offset(0, -(bubble.getMeasuredHeight() / 2));
-		            	GeoPoint target = projection.fromPixels(p.x, p.y);
 		            	bubble.setVisibility(View.VISIBLE);
 		            }
 		        });
