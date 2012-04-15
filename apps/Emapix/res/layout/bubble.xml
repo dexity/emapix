@@ -3,22 +3,40 @@
     android:id="@+id/bubble"
     android:layout_width="match_parent" 
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:background="@drawable/bubble">
-    <TextView
-        android:id="@+id/locationname"
-        android:layout_width="match_parent"
+    
+    <LinearLayout
+        android:id="@+id/bubble_inner"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Location" />    
-	<Button android:id="@+id/sendreq"
-	        android:layout_width="wrap_content"
+        android:layout_weight="1" 
+        android:orientation="vertical">
+
+	    <TextView
+	        android:id="@+id/locationname"
+	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:paddingLeft="35sp"
-	        android:paddingRight="35sp"
-	        android:layout_alignParentBottom="true"
-	        android:layout_centerInParent="true"
-	        android:text="Send Request"
-	        android:textSize="13sp"
-	        android:background="@drawable/button"
-	        />
+	        android:text="Location" />    
+		<Button android:id="@+id/sendreq"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="35sp"
+		        android:paddingRight="35sp"
+		        android:layout_alignParentBottom="true"
+		        android:layout_centerInParent="true"
+		        android:text="Send Request"
+		        android:textSize="13sp"
+		        android:background="@drawable/button"
+		        />
+	</LinearLayout>
+	<ImageView android:layout_width="wrap_content" 
+	    android:id="@+id/bubble_close"
+	    android:layout_height="wrap_content"  
+	    android:src="@drawable/close_bubble" 
+	    android:paddingLeft="10dip" 
+	    android:paddingBottom="10dip"  
+	    android:paddingRight="5dip" 
+	    android:paddingTop="5dip"/>
+    	
 </LinearLayout>

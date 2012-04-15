@@ -34,45 +34,6 @@ public class EmapixActivity extends MapActivity {
 	
 	//private bubble
 	
-	// Move to a separate class?
-	public class MarkerItemizedOverlay extends ItemizedOverlay {
-		
-		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
-		Context mContext;
-
-		public MarkerItemizedOverlay(Drawable defaultMarker, Context context) {
-			super(boundCenterBottom(defaultMarker));
-			mContext = context;
-			populate();		// Important
-		}
-		
-		public void addOverlay(OverlayItem overlay) {
-			mOverlays.clear();	// Not very efficient
-			mOverlays.add(overlay);
-		    populate();
-		}	
-		
-		public void removeOverlays() {
-			mOverlays.clear();
-		}
-
-		@Override
-		protected boolean onTap(int index) {
-			return true;
-		}	
-		
-		@Override
-		protected OverlayItem createItem(int i) {
-			return mOverlays.get(i);
-		}
-
-		@Override
-		public int size() {
-			return mOverlays.size();
-		}
-	}		
-	
-	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,30 +72,38 @@ public class EmapixActivity extends MapActivity {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
 		            public void run() {
-		                // Setting bubble
-		                LayoutInflater inflater = EmapixActivity.this.getLayoutInflater();
-		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
-		                
-		                // Remove bubble  
-		                if (view.findViewById(bubble.getId()) != null ) {
-		                	view.removeViewAt(0);	// XXX: Hardcoded.
-		                	bubble.setVisibility(View.GONE);
-		                }
-
-		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-		                		370, LayoutParams.WRAP_CONTENT,
-		                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-		            	params.mode = MapView.LayoutParams.MODE_MAP;
+		            	BubbleView<OverlayItem> bview = new BubbleView<OverlayItem>(EmapixActivity.this, view, 0);
+		            	String t	= String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6);
+		            	OverlayItem oItem = new OverlayItem(lpPoint, t, "");
+		            	bview.setData(oItem);
 		            	
-		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
-		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
-		                bubble.setLayoutParams(params);
-		                
-		                if (view.findViewById(bubble.getId()) == null)
-		                	view.addView(bubble);
-		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-
-		            	bubble.setVisibility(View.VISIBLE);
+		            	// XXX: Fix
+		            	
+//		                // Setting bubble
+//		                LayoutInflater inflater = EmapixActivity.this.getLayoutInflater();
+//		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
+//		                
+//		                // Remove bubble  
+//		                if (view.findViewById(bubble.getId()) != null ) {
+//		                	view.removeViewAt(0);	// XXX: Hardcoded.
+//		                	bubble.setVisibility(View.GONE);
+//		                }
+//
+//		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+//		                		370, LayoutParams.WRAP_CONTENT,
+//		                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+//		            	params.mode = MapView.LayoutParams.MODE_MAP;
+//		            	
+//		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+//		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
+//		                bubble.setLayoutParams(params);
+//		                
+//		                if (view.findViewById(bubble.getId()) == null)
+//		                	view.addView(bubble);
+//		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+//
+//		            	bubble.setVisibility(View.VISIBLE);
+		            	
 		            }
 		        });
 	        }
@@ -146,6 +115,9 @@ public class EmapixActivity extends MapActivity {
     protected boolean isRouteDisplayed() {
         return false;
     }  
+       
+}
+    
     
 //    private void displayBubble(MapView map, GeoPoint point) {
 //    	
@@ -242,5 +214,5 @@ public class EmapixActivity extends MapActivity {
 //    	//bubble.setVisibility(View.VISIBLE);
 //     }    
     
-}
+//}
 
