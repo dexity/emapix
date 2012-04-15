@@ -72,20 +72,53 @@ public class EmapixActivity extends MapActivity {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
 		            public void run() {
-		            	BubbleView<OverlayItem> bview = new BubbleView<OverlayItem>(EmapixActivity.this, view, 0);
+		            	BubbleView<OverlayItem> bubble = new BubbleView<OverlayItem>(EmapixActivity.this, view, lpPoint, 0);
+		            	
+//		            	String t	= String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6);
+//		            	OverlayItem oItem = new OverlayItem(lpPoint, t, "");
+//		            	bview.setData(oItem);
+		           
+//		                // Setting bubble
+//		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
+//		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
+		                
+//		                // Remove bubble  
+//		                if (view.findViewById(bubble.getId()) != null ) {
+//		                	view.removeViewAt(0);		// XXX: Hardcoded.
+//		                	bubble.setVisibility(View.GONE);
+//		                }
+
+		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+									                		370, LayoutParams.WRAP_CONTENT,
+									                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+		            	
+		            	params.mode = MapView.LayoutParams.MODE_MAP;
+		            	
+		            	//TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+		            	//tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
+		            	
 		            	String t	= String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6);
 		            	OverlayItem oItem = new OverlayItem(lpPoint, t, "");
-		            	bview.setData(oItem);
+		            	bubble.setData(oItem);		                
+		            	bubble.setLayoutParams(params);
+		            	
+		                if (view.findViewById(bubble.getId()) == null)
+		                	view.addView(bubble);
+//		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+		
+		            	bubble.setVisibility(View.VISIBLE);		                
 		            	
 		            	// XXX: Fix
 		            	
 //		                // Setting bubble
-//		                LayoutInflater inflater = EmapixActivity.this.getLayoutInflater();
+//		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
+//		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 //		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
 //		                
 //		                // Remove bubble  
 //		                if (view.findViewById(bubble.getId()) != null ) {
-//		                	view.removeViewAt(0);	// XXX: Hardcoded.
+//		                	view.removeViewAt(0);		// XXX: Hardcoded.
 //		                	bubble.setVisibility(View.GONE);
 //		                }
 //
