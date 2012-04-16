@@ -16,6 +16,8 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
+// Not used for now
+
 public class BubbleView<Item extends OverlayItem> extends FrameLayout {
 
 	private LinearLayout layout;
@@ -31,36 +33,6 @@ public class BubbleView<Item extends OverlayItem> extends FrameLayout {
 	 * when rendering this view.
 	 */
 	public BubbleView(Context context, MapView v, GeoPoint point, int bubbleBottomOffset) {
-
-//		super(context);
-//
-//		mView	= v;
-//		
-//        // Setting bubble
-//        //LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        LinearLayout bubble = new LimitLinearLayout(context); //(LinearLayout) inflater.inflate(R.layout.bubble, mView, false);
-//        
-//        // Remove bubble  
-//        if (mView.findViewById(bubble.getId()) != null ) {
-//        	mView.removeViewAt(0);				// XXX: Hardcoded.
-//        	bubble.setVisibility(View.GONE);
-//        }
-//
-//    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-//        		370, LayoutParams.WRAP_CONTENT,
-//         		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-//    	params.mode = MapView.LayoutParams.MODE_MAP;
-//    	
-//    	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
-//    	tv.setText(String.format("Location: %f; %f", point.getLatitudeE6()*1E-6, point.getLongitudeE6()*1E-6));
-//        bubble.setLayoutParams(params);
-//        
-//        if (mView.findViewById(bubble.getId()) == null)
-//        	mView.addView(bubble);
-//    	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-//
-//    	bubble.setVisibility(View.VISIBLE);
-		
     	
 		// Keep!
 		super(context);

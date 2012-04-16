@@ -18,6 +18,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,7 +33,7 @@ import com.google.android.maps.Projection;
 
 public class EmapixActivity extends MapActivity {
 	
-	//private bubble
+	private LinearLayout bubble;
 	
     /** Called when the activity is first created. */
     @Override
@@ -72,76 +73,58 @@ public class EmapixActivity extends MapActivity {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
 		            public void run() {
-		            	BubbleView<OverlayItem> bubble = new BubbleView<OverlayItem>(EmapixActivity.this, view, lpPoint, 0);
-		            	
-//		            	String t	= String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6);
-//		            	OverlayItem oItem = new OverlayItem(lpPoint, t, "");
-//		            	bview.setData(oItem);
-		           
-//		                // Setting bubble
-//		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
-//		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
+
+		            	// XXX: Make more modular
+		                // Setting bubble
+		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
+		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		                bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
 		                
-//		                // Remove bubble  
-//		                if (view.findViewById(bubble.getId()) != null ) {
-//		                	view.removeViewAt(0);		// XXX: Hardcoded.
-//		                	bubble.setVisibility(View.GONE);
-//		                }
+		                // Remove bubble  
+		                if (view.findViewById(bubble.getId()) != null ) {
+		                	view.removeViewAt(0);				// XXX: Hardcoded.
+		                	bubble.setVisibility(View.GONE);
+		                }
 
 		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-									                		370, LayoutParams.WRAP_CONTENT,
-									                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-		            	
+						                		370, LayoutParams.WRAP_CONTENT,
+						                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
 		            	params.mode = MapView.LayoutParams.MODE_MAP;
-		            	
-		            	//TextView tv = (TextView)bubble.findViewById(R.id.locationname);
-		            	//tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
-		            	
-		            	String t	= String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6);
-		            	OverlayItem oItem = new OverlayItem(lpPoint, t, "");
-		            	bubble.setData(oItem);		                
-		            	bubble.setLayoutParams(params);
-		            	
+		                bubble.setLayoutParams(params);
+		            	// Set text
+		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
+		                // Set close button
+		            	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
+		                btn_close.setOnClickListener(new View.OnClickListener() {
+		                    public void onClick(View v) {
+		                    	bubble.setVisibility(View.GONE);
+		                    }
+		                });
+		                // Set send button
+		                Button btn_send	= (Button) bubble.findViewById(R.id.sendreq);
+		                btn_send.setOnClickListener(new View.OnClickListener() {
+		                    public void onClick(View v) {
+		                    	sendRequest(lpPoint);
+		                    }
+		                });
+		                
 		                if (view.findViewById(bubble.getId()) == null)
 		                	view.addView(bubble);
-//		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		
-		            	bubble.setVisibility(View.VISIBLE);		                
+		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+		            				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
 		            	
-		            	// XXX: Fix
-		            	
-//		                // Setting bubble
-//		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
-//		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//		                LinearLayout bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
-//		                
-//		                // Remove bubble  
-//		                if (view.findViewById(bubble.getId()) != null ) {
-//		                	view.removeViewAt(0);		// XXX: Hardcoded.
-//		                	bubble.setVisibility(View.GONE);
-//		                }
-//
-//		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-//		                		370, LayoutParams.WRAP_CONTENT,
-//		                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-//		            	params.mode = MapView.LayoutParams.MODE_MAP;
-//		            	
-//		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
-//		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
-//		                bubble.setLayoutParams(params);
-//		                
-//		                if (view.findViewById(bubble.getId()) == null)
-//		                	view.addView(bubble);
-//		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-//
-//		            	bubble.setVisibility(View.VISIBLE);
-		            	
+		            	bubble.setVisibility(View.VISIBLE);
 		            }
 		        });
 	        }
         });
 		
+    }
+    
+    private void sendRequest(GeoPoint point)
+    {
+    	bubble.setVisibility(View.VISIBLE);
     }
     
     @Override
