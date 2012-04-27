@@ -10,10 +10,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.emapix.MarkerItemizedOverlay;
+//import com.emapix.MarkerItemizedOverlay;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+
 
 public class EmapixMapView extends MapView {
 

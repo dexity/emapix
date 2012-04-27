@@ -1,3 +1,4 @@
+
 package com.emapix;
 
 import java.util.ArrayList;
@@ -7,6 +8,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ScaleDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +36,8 @@ import com.google.android.maps.Projection;
 public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
+	private EmapixMapView mView;
+	private MarkerItemizedOverlay itemOverlay;
 	
     /** Called when the activity is first created. */
     @Override
@@ -41,7 +45,7 @@ public class EmapixActivity extends MapActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        EmapixMapView mView = (EmapixMapView) findViewById(R.id.mapview);
+        mView = (EmapixMapView) findViewById(R.id.mapview);
         mView.setBuiltInZoomControls(true);   
         
         // Initial position
@@ -50,6 +54,16 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
+    	Drawable drawable = getResources().getDrawable(R.drawable.redmarker);	// XXX: Fix drawable size
+    	drawable.setBounds(0, 5, 0, 5);
+		itemOverlay	= new MarkerItemizedOverlay(drawable, mView.getContext());
+    	List<Overlay> mOverlays = mView.getOverlays();
+    	mOverlays.add(itemOverlay);
+
+    	//ScaleDrawable sd = new ScaleDrawable(drawable, 0, 50%, 50%);
+    	//drawable.setBounds(0, 0, drawable.getIntrinsicWidth()/2, drawable.getIntrinsicHeight()/2);
+    	//Log.i("DR", String.format("%d", drawable.getIntrinsicHeight()));
+    	
 //		List<Overlay> mOverlays = mView.getOverlays();
 //        Drawable drawable = this.getResources().getDrawable(R.drawable.androidmarker);
 //        MarkerItemizedOverlay itemizedoverlay = new MarkerItemizedOverlay(drawable, this);        
@@ -73,7 +87,6 @@ public class EmapixActivity extends MapActivity {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
 		            public void run() {
-
 		            	// XXX: Make more modular
 		                // Setting bubble
 		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
@@ -124,7 +137,14 @@ public class EmapixActivity extends MapActivity {
     
     private void sendRequest(GeoPoint point)
     {
-    	bubble.setVisibility(View.VISIBLE);
+    	// Close bubble
+    	bubble.setVisibility(View.GONE);
+    	
+    	// Add DB record
+    	
+    	// Show red marker
+    	OverlayItem item	= new OverlayItem(point, "", "");    	
+    	itemOverlay.addOverlay(item);
     }
     
     @Override
