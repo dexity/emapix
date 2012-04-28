@@ -37,7 +37,9 @@ public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
 	private EmapixMapView mView;
-	private MarkerItemizedOverlay itemOverlay;
+	List<Overlay> mOverlays;
+	Drawable drawable;
+	//private MarkerItemizedOverlay itemOverlay;
 	
     /** Called when the activity is first created. */
     @Override
@@ -54,11 +56,9 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
-    	Drawable drawable = getResources().getDrawable(R.drawable.redmarker);	// XXX: Fix drawable size
+    	drawable = getResources().getDrawable(R.drawable.redmarker);	// XXX: Fix drawable size
     	drawable.setBounds(0, 5, 0, 5);
-		itemOverlay	= new MarkerItemizedOverlay(drawable, mView.getContext());
-    	List<Overlay> mOverlays = mView.getOverlays();
-    	mOverlays.add(itemOverlay);
+    	mOverlays = mView.getOverlays();
 
     	//ScaleDrawable sd = new ScaleDrawable(drawable, 0, 50%, 50%);
     	//drawable.setBounds(0, 0, drawable.getIntrinsicWidth()/2, drawable.getIntrinsicHeight()/2);
@@ -68,7 +68,6 @@ public class EmapixActivity extends MapActivity {
 //        Drawable drawable = this.getResources().getDrawable(R.drawable.androidmarker);
 //        MarkerItemizedOverlay itemizedoverlay = new MarkerItemizedOverlay(drawable, this);        
 //        mOverlays.add(itemizedoverlay);
-        
         
         /*
         //Set up the bubble's close button
@@ -142,9 +141,14 @@ public class EmapixActivity extends MapActivity {
     	
     	// Add DB record
     	
+    	Log.i("SEND_REQ", String.format("%d", mOverlays.size()));
+    	
+    	
     	// Show red marker
-    	OverlayItem item	= new OverlayItem(point, "", "");    	
+    	OverlayItem item	= new OverlayItem(point, "", "");   
+    	MarkerItemizedOverlay itemOverlay	= new MarkerItemizedOverlay(drawable, mView);//.getContext());
     	itemOverlay.addOverlay(item);
+    	mOverlays.add(itemOverlay);
     }
     
     @Override
@@ -154,7 +158,7 @@ public class EmapixActivity extends MapActivity {
        
 }
     
-    
+
 //    private void displayBubble(MapView map, GeoPoint point) {
 //    	
 //        // Setting bubble
