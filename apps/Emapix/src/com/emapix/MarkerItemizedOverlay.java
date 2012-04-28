@@ -54,11 +54,6 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return true;
 	}	
 	
-//	public boolean onTap(GeoPoint p, MapView mapView) {
-//		List<Overlay> mOverlays = mapView.getOverlays();
-//		mOverlays.remove(this);
-//		return true;
-//	}
 
 	@Override
 	protected OverlayItem createItem(int i) {

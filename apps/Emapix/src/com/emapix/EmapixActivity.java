@@ -1,11 +1,15 @@
 
 package com.emapix;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
@@ -32,6 +36,9 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
+import android.graphics.drawable.BitmapDrawable;
+
+
 
 public class EmapixActivity extends MapActivity {
 	
@@ -56,8 +63,17 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
-    	drawable = getResources().getDrawable(R.drawable.redmarker);	// XXX: Fix drawable size
-    	drawable.setBounds(0, 5, 0, 5);
+    	//drawable = getResources().getDrawable(R.drawable.redmarker);
+		Options opts = new BitmapFactory.Options();
+		opts.inDensity = 400;
+
+		String fname = new File(getFilesDir(), "redmarker.png").getAbsolutePath();
+		File file = new File(fname);
+		Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.redmarker, opts);
+		if (bm != null) {
+		  drawable = new BitmapDrawable(getResources(), bm);
+		}
+		
     	mOverlays = mView.getOverlays();
 
     	//ScaleDrawable sd = new ScaleDrawable(drawable, 0, 50%, 50%);
