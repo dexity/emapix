@@ -23,11 +23,15 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	Context mContext;
 	MapView mView;
+	EmapixActivity activity;
+	private long id;
 
-	public MarkerItemizedOverlay(Drawable defaultMarker, MapView mv) {
+	public MarkerItemizedOverlay(Drawable defaultMarker, EmapixActivity activity, long id) {
 		super(boundCenterBottom(defaultMarker));
 		//mContext = context;
-		mView	= mv;
+		mView	= activity.getMapView();
+		this.activity = activity;
+		this.id = id;
 		setLastFocusedIndex(-1);
 		populate();		// Important
 	}
@@ -51,10 +55,15 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	protected boolean onTap(int index) {
 		List<Overlay> mOverlays = mView.getOverlays();
 		mOverlays.remove(this);		// Can throw an exception?
+		EmapixDB db	= activity.getEmapixDB();
+		db.deleteRequest(id);
 		return true;
 	}	
 	
-
+	public long getId() {
+		return id;
+	}
+	
 	@Override
 	protected OverlayItem createItem(int i) {
 		return mOverlays.get(i);
