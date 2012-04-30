@@ -46,6 +46,8 @@ public class EmapixActivity extends MapActivity {
 	private LinearLayout bubble;
 	private EmapixMapView mView;
 	private EmapixDB db;
+	private MarkerItemizedOverlay cOverlay;
+	private MarkerItemizedOverlay itemOverlay;
 	List<Overlay> mOverlays;
 	Drawable drawable;
 	
@@ -98,48 +100,8 @@ public class EmapixActivity extends MapActivity {
         mView.setOnLongpressListener(new EmapixMapView.OnLongpressListener() {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
-		            public void run() {
-		            	// XXX: Make more modular
-		                // Setting bubble
-		                LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
-		        				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		                bubble = (LinearLayout) inflater.inflate(R.layout.bubble, view, false);
-		                
-		                // Remove bubble  
-		                if (view.findViewById(bubble.getId()) != null ) {
-		                	view.removeViewAt(0);				// XXX: Hardcoded.
-		                	bubble.setVisibility(View.GONE);
-		                }
-
-		            	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-						                		370, LayoutParams.WRAP_CONTENT,
-						                 		lpPoint, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-		            	params.mode = MapView.LayoutParams.MODE_MAP;
-		                bubble.setLayoutParams(params);
-		            	// Set text
-		            	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
-		            	tv.setText(String.format("Location: %f; %f", lpPoint.getLatitudeE6()*1E-6, lpPoint.getLongitudeE6()*1E-6));
-		                // Set close button
-		            	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
-		                btn_close.setOnClickListener(new View.OnClickListener() {
-		                    public void onClick(View v) {
-		                    	bubble.setVisibility(View.GONE);
-		                    }
-		                });
-		                // Set send button
-		                Button btn_send	= (Button) bubble.findViewById(R.id.sendreq);
-		                btn_send.setOnClickListener(new View.OnClickListener() {
-		                    public void onClick(View v) {
-		                    	sendRequest(lpPoint);
-		                    }
-		                });
-		                
-		                if (view.findViewById(bubble.getId()) == null)
-		                	view.addView(bubble);
-		            	view.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
-		            				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
-		            	
-		            	bubble.setVisibility(View.VISIBLE);
+		            public void run() { 
+		            	showRequestBubble(lpPoint);		   
 		            }
 		        });
 	        }
@@ -147,16 +109,125 @@ public class EmapixActivity extends MapActivity {
 		
     }
     
+    // Bubbles    
+    public void showRequestBubble(final GeoPoint point) {
+        // Sets request bubble
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bubble = (LinearLayout) inflater.inflate(R.layout.bubble, mView, false);
+        
+        // Remove bubble  
+        if (mView.findViewById(bubble.getId()) != null ) {
+        	mView.removeViewAt(0);				// XXX: Hardcoded.
+        	bubble.setVisibility(View.GONE);
+        }
+
+    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+		                		370, LayoutParams.WRAP_CONTENT,
+		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+    	params.mode = MapView.LayoutParams.MODE_MAP;
+        bubble.setLayoutParams(params);
+    	// Set text
+    	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+    	tv.setText(String.format("Location: %f; %f", point.getLatitudeE6()*1E-6, point.getLongitudeE6()*1E-6));
+        // Set close button
+    	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	bubble.setVisibility(View.GONE);
+            }
+        });
+        // Set send button
+        Button btn_send	= (Button) bubble.findViewById(R.id.sendreq);
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	sendRequest(point);
+            }
+        });
+        
+        if (mView.findViewById(bubble.getId()) == null)
+        	mView.addView(bubble);
+    	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+    				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    	
+    	bubble.setVisibility(View.VISIBLE);   	
+    }
+    
+    
+    public void showActionBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+    	
+    	// Hide current overlay
+    	cOverlay = currOverlay;
+    	mOverlays.remove(cOverlay);
+	
+    	cOverlay.getOverlayItems().get(0).setMarker(null);
+    	
+        // Sets request bubble
+        LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bubble = (LinearLayout) inflater.inflate(R.layout.action_bubble, mView, false);
+        
+        // Remove bubble  
+        if (mView.findViewById(bubble.getId()) != null ) {
+        	mView.removeViewAt(0);				// XXX: Hardcoded.
+        	bubble.setVisibility(View.GONE);
+        }
+
+    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+		                		370, LayoutParams.WRAP_CONTENT,
+		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+    	params.mode = MapView.LayoutParams.MODE_MAP;
+        bubble.setLayoutParams(params);
+    	// Set text
+    	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
+    	tv.setText(String.format("Location: %f; %f", point.getLatitudeE6()*1E-6, point.getLongitudeE6()*1E-6));
+        
+    	// Set close button
+    	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Return to current marker
+            	mOverlays.add(cOverlay);
+            	bubble.setVisibility(View.GONE);
+            }
+        });
+        
+        // Set take picture button
+        Button btn_take	= (Button) bubble.findViewById(R.id.take_pic);
+        btn_take.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// XXX: Takes picture
+            	
+            }
+        });
+        
+        // Set remove marker button
+        Button btn_remove	= (Button) bubble.findViewById(R.id.remove_marker);
+        btn_remove.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Remove marker
+            	
+            	bubble.setVisibility(View.GONE);
+            }
+        });
+        
+        if (mView.findViewById(bubble.getId()) == null)
+        	mView.addView(bubble);
+    	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+    				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    	
+    	bubble.setVisibility(View.VISIBLE);   	
+    }
+    
+    
     private void populateMarkers(Drawable drawable) {
     	// Populates markers from database    	
     	db	= new EmapixDB(this);
     	PhotoRequestCursor cursor	= db.getPhotoRequests();
     	for (int i=0; i<cursor.getCount(); i++) {
     		cursor.moveToPosition(i);
-    		//Log.i("POPULATE", String.format("%s", cursor.getId()));
     		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
     		showMarker(point, cursor.getId());
-    	}    	
+    	}
     }
     
     private void sendRequest(GeoPoint point)
@@ -183,7 +254,7 @@ public class EmapixActivity extends MapActivity {
     public void showMarker(GeoPoint point, long id) {
     	// Show red marker
     	OverlayItem item	= new OverlayItem(point, null, null);   
-    	MarkerItemizedOverlay itemOverlay	= new MarkerItemizedOverlay(drawable, this, id); //.getContext());
+    	itemOverlay	= new MarkerItemizedOverlay(drawable, this, point, id); //.getContext());
     	itemOverlay.addOverlay(item);
     	mOverlays.add(itemOverlay);
     }

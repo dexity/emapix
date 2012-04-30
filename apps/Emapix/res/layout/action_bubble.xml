@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/action_bubble"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/bubble">
+    
+    <LinearLayout
+        android:id="@+id/bubble_inner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" 
+        android:orientation="vertical">
+
+	    <TextView
+	        android:id="@+id/locationname"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Location" />    
+		<Button android:id="@+id/take_pic"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="35sp"
+		        android:paddingRight="35sp"
+		        android:layout_alignParentBottom="true"
+		        android:layout_centerInParent="true"
+		        android:text="Take Picture"
+		        android:textSize="13sp"
+		        android:background="@drawable/button"
+		        />
+		<Button android:id="@+id/select_pic"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="35sp"
+		        android:paddingRight="35sp"
+		        android:layout_alignParentBottom="true"
+		        android:layout_centerInParent="true"
+		        android:text="Select Picture"
+		        android:textSize="13sp"
+		        android:background="@drawable/button"
+		        />
+		<Button android:id="@+id/remove_marker"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="35sp"
+		        android:paddingRight="35sp"
+		        android:layout_alignParentBottom="true"
+		        android:layout_centerInParent="true"
+		        android:text="Remove Marker"
+		        android:textSize="13sp"
+		        android:background="@drawable/button"
+		        />		
+	</LinearLayout>
+	<ImageView android:layout_width="wrap_content" 
+	    android:id="@+id/bubble_close"
+	    android:layout_height="wrap_content"  
+	    android:src="@drawable/close_bubble" 
+	    android:paddingLeft="10dip" 
+	    android:paddingBottom="10dip"  
+	    android:paddingRight="5dip" 
+	    android:paddingTop="5dip"/>
+    	
+</LinearLayout>
