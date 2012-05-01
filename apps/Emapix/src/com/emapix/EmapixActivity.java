@@ -159,7 +159,7 @@ public class EmapixActivity extends MapActivity {
     	cOverlay = currOverlay;
     	mOverlays.remove(cOverlay);
 	
-    	cOverlay.getOverlayItems().get(0).setMarker(null);
+    	//cOverlay.getOverlayItems().get(0).setMarker(null);
     	
         // Sets request bubble
         LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
@@ -205,18 +205,21 @@ public class EmapixActivity extends MapActivity {
         btn_remove.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	// Remove marker
-            	
+            	cOverlay.removeOverlay();
             	bubble.setVisibility(View.GONE);
             }
         });
         
-        if (mView.findViewById(bubble.getId()) == null)
+        if (mView.findViewById(bubble.getId()) == null) {
         	mView.addView(bubble);
+        }
     	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
     				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
     	
     	bubble.setVisibility(View.VISIBLE);   	
     }
+    
+    
     
     
     private void populateMarkers(Drawable drawable) {
