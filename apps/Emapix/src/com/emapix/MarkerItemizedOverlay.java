@@ -60,6 +60,7 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return true;
 	}	
 	
+	// Move to activity?
 	public void removeOverlay() {
 		List<Overlay> mOverlays = mView.getOverlays();
 		mOverlays.remove(this);		// Can throw an exception?

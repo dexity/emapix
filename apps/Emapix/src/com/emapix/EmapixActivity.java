@@ -39,7 +39,7 @@ import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
 import android.graphics.drawable.BitmapDrawable;
 
-
+// XXX: Click marker -> close bubble -> click marker (marker disappears)
 
 public class EmapixActivity extends MapActivity {
 	
@@ -112,14 +112,10 @@ public class EmapixActivity extends MapActivity {
     // Bubbles    
     public void showRequestBubble(final GeoPoint point) {
         // Sets request bubble
+    	cleanupBubbles(); 
+    	
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         bubble = (LinearLayout) inflater.inflate(R.layout.bubble, mView, false);
-        
-        // Remove bubble  
-        if (mView.findViewById(bubble.getId()) != null ) {
-        	mView.removeViewAt(0);				// XXX: Hardcoded.
-        	bubble.setVisibility(View.GONE);
-        }
 
     	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
 		                		370, LayoutParams.WRAP_CONTENT,
@@ -153,25 +149,35 @@ public class EmapixActivity extends MapActivity {
     }
     
     
-    public void showActionBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
-    	
+    public void hideCurrOverlay(MarkerItemizedOverlay currOverlay) {
     	// Hide current overlay
     	cOverlay = currOverlay;
-    	mOverlays.remove(cOverlay);
-	
-    	//cOverlay.getOverlayItems().get(0).setMarker(null);
+    	
+    	mOverlays.remove(currOverlay);	
+    }
+    
+    public void showCurrOverlay() {
+    	mOverlays.add(cOverlay);	
+    }
+    
+    public void cleanupBubbles() {
+        // Removes bubble  
+    	mView.removeAllViews();
+    	
+    	if (bubble != null)
+    		bubble.setVisibility(View.GONE);
+    }
+    
+    public void showActionBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+
+        cleanupBubbles();    	
+    	hideCurrOverlay(currOverlay);
     	
         // Sets request bubble
         LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         bubble = (LinearLayout) inflater.inflate(R.layout.action_bubble, mView, false);
         
-        // Remove bubble  
-        if (mView.findViewById(bubble.getId()) != null ) {
-        	mView.removeViewAt(0);				// XXX: Hardcoded.
-        	bubble.setVisibility(View.GONE);
-        }
-
     	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
 		                		370, LayoutParams.WRAP_CONTENT,
 		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
@@ -186,7 +192,7 @@ public class EmapixActivity extends MapActivity {
         btn_close.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	// Return to current marker
-            	mOverlays.add(cOverlay);
+            	showCurrOverlay();
             	bubble.setVisibility(View.GONE);
             }
         });
@@ -196,7 +202,18 @@ public class EmapixActivity extends MapActivity {
         btn_take.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	// XXX: Takes picture
+            	// Show preview bubble 
+            	showPreviewBubble(cOverlay, point);
             	
+            }
+        });
+        
+        // Set select picture button
+        Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
+        btn_select.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Select picture
+
             }
         });
         
@@ -220,6 +237,70 @@ public class EmapixActivity extends MapActivity {
     }
     
     
+    public void showPreviewBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+    	
+    	cleanupBubbles();
+    	//Log.i("PREVIEW", String.format("%d", mView.));
+    	
+    	bubble.setVisibility(View.GONE);
+        // Sets request bubble
+        LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bubble = (LinearLayout) inflater.inflate(R.layout.preview_bubble, mView, false);
+        
+    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+		                		370, LayoutParams.WRAP_CONTENT,
+		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+    	params.mode = MapView.LayoutParams.MODE_MAP;
+        bubble.setLayoutParams(params);
+
+    	// Set close button
+    	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Return to current marker
+            	mOverlays.add(cOverlay);
+            	bubble.setVisibility(View.GONE);
+            }
+        });
+        
+        // Set submit button
+        Button btn_submit	= (Button) bubble.findViewById(R.id.submit_pic);
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Submitting pic to server
+            	
+            }
+        });
+        
+        // Set take picture button
+        Button btn_take	= (Button) bubble.findViewById(R.id.take_pic);
+        btn_take.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// XXX: Takes picture
+            	// Show preview bubble 
+            	
+            	
+            }
+        });
+        
+        // Set remove marker button
+        Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
+        btn_select.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Remove marker
+
+            }
+        });
+        
+        if (mView.findViewById(bubble.getId()) == null) {
+        	mView.addView(bubble);
+        }
+    	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+    				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    	
+    	bubble.setVisibility(View.VISIBLE);   	
+    }    
     
     
     private void populateMarkers(Drawable drawable) {
