@@ -21,21 +21,28 @@ import com.google.android.maps.OverlayItem;
 public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
-	Context mContext;
+	Context mContext;	// ?
 	GeoPoint point;
 	MapView mView;
+	Drawable marker;
+	private String color;
 	EmapixActivity activity;
 	private long id;
 
-	public MarkerItemizedOverlay(Drawable defaultMarker, EmapixActivity activity, GeoPoint point, long id) {
+	public MarkerItemizedOverlay(Drawable defaultMarker, EmapixActivity activity, String color, GeoPoint point, long id) {
 		super(boundCenterBottom(defaultMarker));
 		//mContext = context;
+		marker	= defaultMarker;
 		mView	= activity.getMapView();
+		this.color		= color;
 		this.activity 	= activity;
 		this.point		= point;
 		this.id 		= id;
-		setLastFocusedIndex(-1);
 		populate();		// Important
+	}
+	
+	public void setColor(String color){
+		this.color	= color;
 	}
 	
 	public void addOverlay(OverlayItem overlay) {
@@ -44,7 +51,6 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	}	
 	 
 	public void removeOverlay(OverlayItem overlay) { //throws IndexOutOfBoundsException {
-		//setLastFocusedIndex(-1);
 		mOverlays.remove(overlay);
 		populate();
 	}	
@@ -55,7 +61,10 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	@Override
 	protected boolean onTap(int index) {
-		activity.showActionBubble(this, point);
+		if (color == "blue")
+			activity.showViewBubble(this, point);
+		else
+			activity.showActionBubble(this, point);
 		
 		return true;
 	}	

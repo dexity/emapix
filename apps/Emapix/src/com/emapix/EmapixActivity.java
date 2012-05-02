@@ -3,10 +3,13 @@ package com.emapix;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -49,9 +52,7 @@ public class EmapixActivity extends MapActivity {
 	private MarkerItemizedOverlay cOverlay;
 	private MarkerItemizedOverlay itemOverlay;
 	List<Overlay> mOverlays;
-	// XXX: Make drawable a hash;
-	Drawable red_marker;
-	Drawable blue_marker;
+	HashMap<String, Drawable> markers;
 	
     /** Called when the activity is first created. */
     @Override
@@ -72,7 +73,7 @@ public class EmapixActivity extends MapActivity {
 		
     	mOverlays = mView.getOverlays();
     	createMarkers();
-    	populateMarkers(red_marker); 
+    	populateMarkers(); 
         
         mView.setOnLongpressListener(new EmapixMapView.OnLongpressListener() {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
@@ -90,8 +91,9 @@ public class EmapixActivity extends MapActivity {
 		Options opts = new BitmapFactory.Options();
 		opts.inDensity = 400;
 
-		red_marker = createMarker(R.drawable.redmarker, opts);
-		blue_marker = createMarker(R.drawable.bluemarker, opts);
+		markers	= new HashMap<String, Drawable>();
+		markers.put("red", createMarker(R.drawable.redmarker, opts));
+		markers.put("blue", createMarker(R.drawable.bluemarker, opts));
     }
     
     private Drawable createMarker(int res_id, Options opts) {
@@ -250,7 +252,7 @@ public class EmapixActivity extends MapActivity {
         btn_close.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	// Return to current marker
-            	mOverlays.add(cOverlay);
+            	showCurrOverlay();
             	bubble.setVisibility(View.GONE);
             }
         });
@@ -263,6 +265,7 @@ public class EmapixActivity extends MapActivity {
             	
             	// Show blue marker            	
             	showMarker(point, cOverlay.getId(), "blue");
+            	updateMarker(cOverlay.getId(), "blue");
             	bubble.setVisibility(View.GONE);
             }
         });
@@ -297,15 +300,62 @@ public class EmapixActivity extends MapActivity {
     }    
     
     
-    private void populateMarkers(Drawable drawable) {
-    	// Populates markers from database    
-    	// XXX: Get drawable based on the db record
+    public void showViewBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+        // Sets request bubble
+    	cleanupBubbles(); 
+    	hideCurrOverlay(currOverlay);
+    	
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        bubble = (LinearLayout) inflater.inflate(R.layout.view_bubble, mView, false);
+
+    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
+		                		370, LayoutParams.WRAP_CONTENT,
+		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
+    	params.mode = MapView.LayoutParams.MODE_MAP;
+        bubble.setLayoutParams(params);
+        // Set close button
+    	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
+        btn_close.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	showCurrOverlay();
+            	bubble.setVisibility(View.GONE);
+            }
+        });
+        // Set remove button
+        Button btn_send	= (Button) bubble.findViewById(R.id.remove_pic);
+        btn_send.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	// Remove marker and picture
+            	
+            	updateMarker(cOverlay.getId(), "red");
+            	showMarker(point, cOverlay.getId(), "red");
+            	bubble.setVisibility(View.GONE);            	
+            }
+        });
+        
+        if (mView.findViewById(bubble.getId()) == null)
+        	mView.addView(bubble);
+    	mView.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED), 
+    				 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+    	
+    	bubble.setVisibility(View.VISIBLE);   	
+    }
+
+    
+    private void populateMarkers() {
+    	// Populates markers from database
     	db	= new EmapixDB(this);
     	PhotoRequestCursor cursor	= db.getPhotoRequests();
     	for (int i=0; i<cursor.getCount(); i++) {
     		cursor.moveToPosition(i);
     		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
-    		showMarker(point, cursor.getId(), "red");	// XXX: Fix here
+    		String color = "red";
+    		String res	= cursor.getResource();
+    		
+    		if (res instanceof String && res.equals("blue")) {
+    			color = "blue";
+    		}
+    		showMarker(point, cursor.getId(), color);
     	}
     }
     
@@ -330,17 +380,16 @@ public class EmapixActivity extends MapActivity {
     	showMarker(point, id, color);
     }
     
-    // updateMarker();
+    public void updateMarker(long id, String color) {
+    	db.updateMarker(id, color);
+    }
     
     public void showMarker(GeoPoint point, long id, String color) {
-    	Drawable marker;
-    	if (color == "red")
-    		marker = red_marker;
-    	else
-    		marker = blue_marker;
-    	// Show red marker
+    	Drawable marker = markers.get(color);
+
+    	// Show marker
     	OverlayItem item	= new OverlayItem(point, null, null);   
-    	itemOverlay	= new MarkerItemizedOverlay(marker, this, point, id); //.getContext());
+    	itemOverlay	= new MarkerItemizedOverlay(marker, this, color, point, id); //.getContext());
     	itemOverlay.addOverlay(item);
     	mOverlays.add(itemOverlay);
     }
@@ -349,7 +398,7 @@ public class EmapixActivity extends MapActivity {
     protected boolean isRouteDisplayed() {
         return false;
     }  
-       
+
 }
     
 

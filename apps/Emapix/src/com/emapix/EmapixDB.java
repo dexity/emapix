@@ -42,6 +42,18 @@ public class EmapixDB extends SQLiteOpenHelper {
 	    public int getLat(){return getInt(getColumnIndexOrThrow("lat"));}
 	    public int getLon(){return getInt(getColumnIndexOrThrow("lon"));}
 	    public int getId(){return getInt(getColumnIndexOrThrow("_id"));}
+	    public String getResource(){return getString(getColumnIndexOrThrow("resource"));}
+	}
+	
+	public void updateMarker(long id, String resource) {
+		ContentValues map = new ContentValues();
+		map.put("resource", resource);
+		String[] whereArgs = new String[]{Long.toString(id)};
+		try{
+			getWritableDatabase().update("photo_request", map, "_id=?", whereArgs);
+		} catch (SQLException e) {
+            Log.e("Error writing new job", e.toString());
+		}
 	}
 	
     private void execMultipleSQL(SQLiteDatabase db, String[] sql){
