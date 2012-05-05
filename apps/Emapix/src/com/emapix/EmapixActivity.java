@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,7 +18,9 @@ import android.graphics.BitmapFactory.Options;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ScaleDrawable;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -45,6 +48,8 @@ import android.graphics.drawable.BitmapDrawable;
 
 // XXX: Click marker -> close bubble -> click marker (marker disappears)
 
+// XXX: Remove "point" param from show...() methods. Use cOverlay.getPoint() instead
+
 public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
@@ -54,6 +59,9 @@ public class EmapixActivity extends MapActivity {
 	private MarkerItemizedOverlay itemOverlay;
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
+	Bitmap currImage;	// TEMP
+	
+	private static final int PICK_IMAGE_CODE = 100;
 	
     /** Called when the activity is first created. */
     @Override
@@ -210,9 +218,10 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// Select picture
 
-            	Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
-            	photoPickerIntent.setType("image/*");
-            	startActivityForResult(photoPickerIntent, 1);            	
+            	Intent pickIntent = new Intent(Intent.ACTION_PICK);
+            	pickIntent.setType("image/*");
+            	startActivityForResult(pickIntent, PICK_IMAGE_CODE);
+            	
             }
         });
         
@@ -235,6 +244,29 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }
     
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
+
+        switch(requestCode) { 
+        case PICK_IMAGE_CODE:
+            if(resultCode == RESULT_OK){  
+                Uri selectedImage = imageReturnedIntent.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                cursor.close();
+
+                currImage = BitmapFactory.decodeFile(filePath);
+                
+                showPreviewBubble(cOverlay, cOverlay.getPoint());
+            }
+        }
+    }    
     
     public void showPreviewBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
     	
@@ -262,15 +294,11 @@ public class EmapixActivity extends MapActivity {
         });
         
         // Set image from file
-        
-        File imgFile = new  File("/sdcard/download/puppy1.jpg");
-
-        if(imgFile.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-            ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
-            image.setImageBitmap(myBitmap);
-        }        
-        
+        if (currImage != null) {
+			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
+			image.setImageBitmap(currImage);        	
+        }
+        	
         
         // Set submit button
         Button btn_submit	= (Button) bubble.findViewById(R.id.submit_pic);
@@ -417,6 +445,15 @@ public class EmapixActivity extends MapActivity {
 }
     
 
+//// XXX: Redo
+//File imgFile = new  File("/sdcard/download/puppy1.jpg");
+//
+//if(imgFile.exists()){
+//    Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+//    ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
+//    image.setImageBitmap(myBitmap);
+//}        
+//
 //    private void displayBubble(MapView map, GeoPoint point) {
 //    	
 //        // Setting bubble

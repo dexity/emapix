@@ -81,6 +81,10 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		return id;
 	}
 	
+	GeoPoint getPoint() {
+		return point;
+	}
+	
 	public ArrayList<OverlayItem> getOverlayItems() {
 		return mOverlays;
 	}
