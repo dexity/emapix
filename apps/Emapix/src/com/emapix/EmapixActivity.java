@@ -9,6 +9,7 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.SQLException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -209,6 +210,9 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// Select picture
 
+            	Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
+            	photoPickerIntent.setType("image/*");
+            	startActivityForResult(photoPickerIntent, 1);            	
             }
         });
         
@@ -256,6 +260,17 @@ public class EmapixActivity extends MapActivity {
             	bubble.setVisibility(View.GONE);
             }
         });
+        
+        // Set image from file
+        
+        File imgFile = new  File("/sdcard/download/puppy1.jpg");
+
+        if(imgFile.exists()){
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
+            image.setImageBitmap(myBitmap);
+        }        
+        
         
         // Set submit button
         Button btn_submit	= (Button) bubble.findViewById(R.id.submit_pic);
