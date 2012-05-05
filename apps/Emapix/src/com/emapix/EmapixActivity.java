@@ -55,8 +55,8 @@ public class EmapixActivity extends MapActivity {
 	private LinearLayout bubble;
 	private EmapixMapView mView;
 	private EmapixDB db;
-	private MarkerItemizedOverlay cOverlay;
-	private MarkerItemizedOverlay itemOverlay;
+	private MarkerOverlay cOverlay;
+	private MarkerOverlay itemOverlay;
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
 	Bitmap currImage;	// TEMP
@@ -153,7 +153,7 @@ public class EmapixActivity extends MapActivity {
     }
     
     
-    public void hideCurrOverlay(MarkerItemizedOverlay currOverlay) {
+    public void hideCurrOverlay(MarkerOverlay currOverlay) {
     	// Hide current overlay
     	cOverlay = currOverlay;
     	
@@ -172,7 +172,7 @@ public class EmapixActivity extends MapActivity {
     		bubble.setVisibility(View.GONE);
     }
     
-    public void showActionBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+    public void showActionBubble(MarkerOverlay currOverlay, final GeoPoint point) {
 
         cleanupBubbles();    	
     	hideCurrOverlay(currOverlay);
@@ -268,7 +268,7 @@ public class EmapixActivity extends MapActivity {
         }
     }    
     
-    public void showPreviewBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+    public void showPreviewBubble(MarkerOverlay currOverlay, final GeoPoint point) {
     	
     	cleanupBubbles();
 
@@ -343,7 +343,7 @@ public class EmapixActivity extends MapActivity {
     }    
     
     
-    public void showViewBubble(MarkerItemizedOverlay currOverlay, final GeoPoint point) {
+    public void showViewBubble(MarkerOverlay currOverlay, final GeoPoint point) {
         // Sets request bubble
     	cleanupBubbles(); 
     	hideCurrOverlay(currOverlay);
@@ -364,6 +364,13 @@ public class EmapixActivity extends MapActivity {
             	bubble.setVisibility(View.GONE);
             }
         });
+        
+        // Set image view
+        if (currImage != null) {
+			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
+			image.setImageBitmap(currImage);        	
+        }        
+        
         // Set remove button
         Button btn_send	= (Button) bubble.findViewById(R.id.remove_pic);
         btn_send.setOnClickListener(new View.OnClickListener() {
@@ -432,7 +439,7 @@ public class EmapixActivity extends MapActivity {
 
     	// Show marker
     	OverlayItem item	= new OverlayItem(point, null, null);   
-    	itemOverlay	= new MarkerItemizedOverlay(marker, this, color, point, id); //.getContext());
+    	itemOverlay	= new MarkerOverlay(marker, this, color, point, id); //.getContext());
     	itemOverlay.addOverlay(item);
     	mOverlays.add(itemOverlay);
     }

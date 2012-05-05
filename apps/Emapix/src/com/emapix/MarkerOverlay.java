@@ -18,7 +18,7 @@ import com.google.android.maps.OverlayItem;
 
 // XXX: Manage overlay items
 
-public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
+public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	Context mContext;	// ?
@@ -29,7 +29,7 @@ public class MarkerItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	EmapixActivity activity;
 	private long id;
 
-	public MarkerItemizedOverlay(Drawable defaultMarker, EmapixActivity activity, String color, GeoPoint point, long id) {
+	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, String color, GeoPoint point, long id) {
 		super(boundCenterBottom(defaultMarker));
 		//mContext = context;
 		marker	= defaultMarker;
