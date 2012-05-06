@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Vector;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
@@ -16,33 +17,34 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
-// XXX: Manage overlay items
+// Note: Context is not stored in MarkerOverlay.
 
 public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	
-	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
-	Context mContext;	// ?
-	GeoPoint point;
-	MapView mView;
-	Drawable marker;
-	private String color;
-	EmapixActivity activity;
-	private long id;
+	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>(); // Holds one item only!
+	private GeoPoint point;
+	private MapView mView;
+	private Drawable marker;	// marker image
+	private EmapixActivity activity;
+	private Bitmap image;		// image related to image
+	private long id;			// db record id
 
-	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, String color, GeoPoint point, long id) {
+	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, GeoPoint point, long id) {
 		super(boundCenterBottom(defaultMarker));
-		//mContext = context;
 		marker	= defaultMarker;
 		mView	= activity.getMapView();
-		this.color		= color;
 		this.activity 	= activity;
 		this.point		= point;
 		this.id 		= id;
 		populate();		// Important
 	}
 	
-	public void setColor(String color){
-		this.color	= color;
+	public void setImage(Bitmap image) {
+		this.image = image;
+	}
+	
+	public Bitmap getImage() {
+		return image;
 	}
 	
 	public void addOverlay(OverlayItem overlay) {
@@ -50,7 +52,7 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	    populate();
 	}	
 	 
-	public void removeOverlay(OverlayItem overlay) { //throws IndexOutOfBoundsException {
+	public void removeOverlay(OverlayItem overlay) {
 		mOverlays.remove(overlay);
 		populate();
 	}	
@@ -61,10 +63,10 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	@Override
 	protected boolean onTap(int index) {
-		if (color == "blue")
-			activity.showViewBubble(this, point);
+		if (image != null)
+			activity.showViewBubble(this);
 		else
-			activity.showActionBubble(this, point);
+			activity.showActionBubble(this);
 		
 		return true;
 	}	

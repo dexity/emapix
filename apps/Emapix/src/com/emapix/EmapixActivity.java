@@ -60,6 +60,7 @@ public class EmapixActivity extends MapActivity {
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
 	Bitmap currImage;	// TEMP
+	Uri currUri;
 	
 	private static final int PICK_IMAGE_CODE = 100;
 	
@@ -152,6 +153,9 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }
     
+    //private void setCloseButton(LinearLayout layout) {
+    //	
+    //}
     
     public void hideCurrOverlay(MarkerOverlay currOverlay) {
     	// Hide current overlay
@@ -172,8 +176,9 @@ public class EmapixActivity extends MapActivity {
     		bubble.setVisibility(View.GONE);
     }
     
-    public void showActionBubble(MarkerOverlay currOverlay, final GeoPoint point) {
+    public void showActionBubble(MarkerOverlay currOverlay) {
 
+    	GeoPoint point = currOverlay.getPoint();
         cleanupBubbles();    	
     	hideCurrOverlay(currOverlay);
     	
@@ -187,6 +192,7 @@ public class EmapixActivity extends MapActivity {
 		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
     	params.mode = MapView.LayoutParams.MODE_MAP;
         bubble.setLayoutParams(params);
+        
     	// Set text
     	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
     	tv.setText(String.format("Location: %f; %f", point.getLatitudeE6()*1E-6, point.getLongitudeE6()*1E-6));
@@ -204,20 +210,19 @@ public class EmapixActivity extends MapActivity {
         // Set take picture button
         Button btn_take	= (Button) bubble.findViewById(R.id.take_pic);
         btn_take.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	// XXX: Takes picture
+            public void onClick(View v) {                
+                // XXX: Takes picture
             	// Show preview bubble 
-            	showPreviewBubble(cOverlay, point);
-            	
+            	showPreviewBubble(cOverlay);            	
             }
         });
+        btn_take.setClickable(false); // XXX: Disables take picture button
         
         // Set select picture button
         Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
         btn_select.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	// Select picture
-
             	Intent pickIntent = new Intent(Intent.ACTION_PICK);
             	pickIntent.setType("image/*");
             	startActivityForResult(pickIntent, PICK_IMAGE_CODE);
@@ -244,32 +249,11 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }
     
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
-        super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
-
-        switch(requestCode) { 
-        case PICK_IMAGE_CODE:
-            if(resultCode == RESULT_OK){  
-                Uri selectedImage = imageReturnedIntent.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-
-                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String filePath = cursor.getString(columnIndex);
-                cursor.close();
-
-                currImage = BitmapFactory.decodeFile(filePath);
-                
-                showPreviewBubble(cOverlay, cOverlay.getPoint());
-            }
-        }
-    }    
     
-    public void showPreviewBubble(MarkerOverlay currOverlay, final GeoPoint point) {
+    
+    public void showPreviewBubble(MarkerOverlay currOverlay) {
     	
+    	GeoPoint point = currOverlay.getPoint();
     	cleanupBubbles();
 
         // Sets request bubble
@@ -293,22 +277,23 @@ public class EmapixActivity extends MapActivity {
             }
         });
         
-        // Set image from file
+        // Set image view
         if (currImage != null) {
 			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
 			image.setImageBitmap(currImage);        	
-        }
-        	
+        }        
         
         // Set submit button
         Button btn_submit	= (Button) bubble.findViewById(R.id.submit_pic);
         btn_submit.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	// Submitting pic to server
+            	// XXX: Submitting pic to server
             	
             	// Show blue marker            	
-            	showMarker(point, cOverlay.getId(), "blue");
-            	updateMarker(cOverlay.getId(), "blue");
+            	showMarker(cOverlay.getPoint(), cOverlay.getId(), currUri);
+            	updateMarker(cOverlay.getId(), currUri);
+            	cOverlay.setImage(currImage);
+            	
             	bubble.setVisibility(View.GONE);
             }
         });
@@ -323,8 +308,9 @@ public class EmapixActivity extends MapActivity {
             	
             }
         });
+        btn_take.setClickable(false); // XXX: Disables take picture button
         
-        // Set remove marker button
+        // Set select button
         Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
         btn_select.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -342,9 +328,9 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }    
     
-    
-    public void showViewBubble(MarkerOverlay currOverlay, final GeoPoint point) {
+    public void showViewBubble(MarkerOverlay currOverlay) {
         // Sets request bubble
+    	GeoPoint point = currOverlay.getPoint();
     	cleanupBubbles(); 
     	hideCurrOverlay(currOverlay);
     	
@@ -366,9 +352,9 @@ public class EmapixActivity extends MapActivity {
         });
         
         // Set image view
-        if (currImage != null) {
+        if (currOverlay.getImage() != null) {
 			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
-			image.setImageBitmap(currImage);        	
+			image.setImageBitmap(currOverlay.getImage());        	
         }        
         
         // Set remove button
@@ -377,8 +363,8 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// Remove marker and picture
             	
-            	updateMarker(cOverlay.getId(), "red");
-            	showMarker(point, cOverlay.getId(), "red");
+            	updateMarker(cOverlay.getId(), null);
+            	showMarker(cOverlay.getPoint(), cOverlay.getId(), null);
             	bubble.setVisibility(View.GONE);            	
             }
         });
@@ -390,30 +376,58 @@ public class EmapixActivity extends MapActivity {
     	
     	bubble.setVisibility(View.VISIBLE);   	
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 
+        super.onActivityResult(requestCode, resultCode, imageReturnedIntent); 
 
+        switch(requestCode) { 
+        case PICK_IMAGE_CODE:
+            if(resultCode == RESULT_OK){  
+                Uri selectedImage = imageReturnedIntent.getData();
+                currImage 	= getImageFromUri(selectedImage);
+                currUri		= selectedImage;
+                showPreviewBubble(cOverlay);
+            }
+        }
+    }    
     
     private void populateMarkers() {
     	// Populates markers from database
     	db	= new EmapixDB(this);
     	PhotoRequestCursor cursor	= db.getPhotoRequests();
+    	// XXX: Retrieve data from server
     	for (int i=0; i<cursor.getCount(); i++) {
     		cursor.moveToPosition(i);
     		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
-    		String color = "red";
-    		String res	= cursor.getResource();
-    		
-    		if (res instanceof String && res.equals("blue")) {
-    			color = "blue";
-    		}
-    		showMarker(point, cursor.getId(), color);
+    		showMarker(point, cursor.getId(), stringToUri(cursor.getResource()));
     	}
+    }
+    
+    private Uri stringToUri(String res) {
+		if (isValidUri(res))
+			return Uri.parse(res);    	
+    	return null;
+    }
+    
+
+    public static boolean isValidUri(String uri) {
+    	// Checks if uri is valid. XXX: Move to some other class
+    	if (uri == null)
+    		return false;
+    	
+		String scheme	= Uri.parse(uri).getScheme(); // filter by scheme
+		if (scheme == null)
+			return false;
+		
+		return true;
     }
     
     private void sendRequest(GeoPoint point)
     {
-    	// Close bubble
-    	bubble.setVisibility(View.GONE);    	
-    	addMarker(point, "red");
+    	// XXX: Send request to the server
+    	bubble.setVisibility(View.GONE); 	// Close bubble
+    	addMarker(point);
     }
     
     public EmapixDB getEmapixDB() {
@@ -424,24 +438,46 @@ public class EmapixActivity extends MapActivity {
     	return mView;
     }
     
-    public void addMarker(GeoPoint point, String color) {
+    public void addMarker(GeoPoint point) {
     	// Add DB record
     	long id = db.addRequest(point.getLatitudeE6(), point.getLongitudeE6());
-    	showMarker(point, id, color);
+    	showMarker(point, id, null);
     }
     
-    public void updateMarker(long id, String color) {
-    	db.updateMarker(id, color);
+    public void updateMarker(long id, Uri uri) {
+    	db.updateMarker(id, String.format("%s", uri));
+    	
     }
     
-    public void showMarker(GeoPoint point, long id, String color) {
-    	Drawable marker = markers.get(color);
+    public void showMarker(GeoPoint point, long id, Uri uri) {
+    	Drawable marker = markers.get(getColor(uri));
 
     	// Show marker
     	OverlayItem item	= new OverlayItem(point, null, null);   
-    	itemOverlay	= new MarkerOverlay(marker, this, color, point, id); //.getContext());
+    	itemOverlay	= new MarkerOverlay(marker, this, point, id);
     	itemOverlay.addOverlay(item);
+    	
     	mOverlays.add(itemOverlay);
+    }
+    
+    private String getColor(Uri uri) {
+    	if (isValidUri(String.format("%s", uri)))
+    		return "blue";				
+    	return "red";
+    }
+    
+    private Bitmap getImageFromUri(Uri uri) {
+    	if (uri == null)
+    		return null;
+    	
+        String[] filePathColumn = {MediaStore.Images.Media.DATA};
+        Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+        cursor.moveToFirst();
+        int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+        String filePath = cursor.getString(columnIndex);
+        cursor.close();
+
+        return BitmapFactory.decodeFile(filePath);    	
     }
     
     @Override

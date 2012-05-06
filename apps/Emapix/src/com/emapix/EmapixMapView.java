@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 
-//import com.emapix.MarkerItemizedOverlay;
+//import com.emapix.MarkerOverlay;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
@@ -68,7 +68,7 @@ public class EmapixMapView extends MapView {
 //			List<Overlay> overlays = this.getOverlays();
 //			if (overlays.size() > 0)
 //			{
-//				MarkerItemizedOverlay overlay	= (MarkerItemizedOverlay)overlays.get(0);
+//				MarkerOverlay overlay	= (MarkerOverlay)overlays.get(0);
 //				overlay.removeOverlays();
 //				this.invalidate();
 //			}
