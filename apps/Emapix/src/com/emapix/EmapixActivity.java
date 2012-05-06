@@ -456,7 +456,7 @@ public class EmapixActivity extends MapActivity {
     	OverlayItem item	= new OverlayItem(point, null, null);   
     	itemOverlay	= new MarkerOverlay(marker, this, point, id);
     	itemOverlay.addOverlay(item);
-    	
+    	itemOverlay.setImage(getImageFromUri(uri));
     	mOverlays.add(itemOverlay);
     }
     
