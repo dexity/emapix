@@ -1,0 +1,12 @@
+{% include 'header.html' %}
+
+<h2>Submit File</h2>
+
+<form action="/" method="post" enctype="multipart/form-data">
+{% csrf_token %}
+{{ form }}
+
+<input type="submit" value="Submit" />
+</form>
+
+{% include 'footer.html' %}

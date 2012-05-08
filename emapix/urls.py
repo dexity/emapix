@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'emapix.views.home', name='home'),
+    url(r'^$', include('emapix.prototype.urls')),
     # url(r'^emapix/', include('emapix.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
