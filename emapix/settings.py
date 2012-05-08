@@ -12,6 +12,7 @@ ADMINS = (
 S3_KEY      = "0GPQ9WD13HX9PFBX5N02"
 S3_SECRET   = "qxFdJQnXJfXhknQO72/fdbZk+DWPqx8XT65R8OIb"
 BUCKET_NAME = "emapix_uploads"
+API_KEY     = "0dae2799bb2d9b88e1d38a337377b221" # test key for api
 
 
 MANAGERS = ADMINS
@@ -101,6 +102,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'emapix.middleware.access.AccessMiddleware',    # checks keys
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
