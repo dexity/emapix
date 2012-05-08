@@ -46,9 +46,7 @@ import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
 import android.graphics.drawable.BitmapDrawable;
 
-// XXX: Click marker -> close bubble -> click marker (marker disappears)
-
-// XXX: Remove "point" param from show...() methods. Use cOverlay.getPoint() instead
+// XXX: Cannot load more than 4 large pictures. Resources are not released 
 
 public class EmapixActivity extends MapActivity {
 	
@@ -83,7 +81,7 @@ public class EmapixActivity extends MapActivity {
 		
     	mOverlays = mView.getOverlays();
     	createMarkers();
-    	populateMarkers(); 
+    	populateMarkers();
         
         mView.setOnLongpressListener(new EmapixMapView.OnLongpressListener() {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
