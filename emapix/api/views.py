@@ -1,11 +1,14 @@
-from django.http import HttpResponse
-from models import PhotoRequest
 import json
 import time
+
+from django.http import HttpResponse
+from models import PhotoRequest
+from emapix.utils.logger import Logger
 
 OK      = "ok"
 FAIL    = "fail"
 
+log = Logger.get("emapix.api.views")
 
 def add(request):
     "Adds record to the photo request"
@@ -43,7 +46,8 @@ def get_all(request):
         for p in prs:
             l.append(to_photo(p))
         return to_status(OK, l)
-    except:
+    except Exception, e:
+        log.debug(str(e))
         return to_status(FAIL)
 
 

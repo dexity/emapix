@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-urlpatterns = patterns('api.views',
+urlpatterns = patterns('emapix.api.views',
     url(r'^add$', 'add'),
     url(r'^(?P<reqid>\d+)/remove$', 'remove'),
     url(r'^(?P<reqid>\d+)/update$', 'update'),

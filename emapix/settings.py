@@ -20,7 +20,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'emapix.db',                    # Or path to database file if using sqlite3.
+        'NAME': '/var/emapix/emapix/emapix.db',                    # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
         'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -131,6 +131,13 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
+
+# Log settings
+LOG_FORMAT      = "[%(asctime)s] %(levelname)-8s PID(%(process)d) THREAD(%(thread)d) %(name)s - %(funcName)s: !!! %(message)s !!!"
+LOG_FILENAME    = "/var/log/emapix/emapix.log"
+LOG_FILESIZE    = 1024 * 1024 * 5   # roatate after 5 MB
+LOG_FILECOUNT   = 5                 # a total of 5 rotating logs
+LOG_DATEFMT     = "%Y-%m-%d %H:%M:%S"
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
