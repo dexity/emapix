@@ -227,16 +227,11 @@ public class EmapixActivity extends MapActivity {
             	// Show preview bubble 
             	//showPreviewBubble(cOverlay);
             	
-            	
-            	// Temp
-            	// Submit to S3
-            	submitPicture();
-            	
             	showCurrOverlay();
             	bubble.setVisibility(View.GONE);            	
             }
         });
-        //btn_take.setClickable(false); // XXX: Disables take picture button
+        btn_take.setClickable(false); // XXX: Disables take picture button
         
         // Set select picture button
         Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
@@ -270,27 +265,25 @@ public class EmapixActivity extends MapActivity {
     }
     
     
-    private void submitPicture() {
+    private void submitImage(Bitmap bm) {
     	// A VERY dirty way of submitting the image to S3
-
-    	String uri = "http://192.168.1.15/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
-    	//String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com?key=0dae2799bb2d9b88e1d38a337377b221";
+    	
+    	// XXX: Check if bitmap is JPEG or PNG
+    	//String uri = "http://192.168.1.15/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
+    	String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
     	
     	try {
-    		Bitmap bm = BitmapFactory.decodeFile("/sdcard/pear.jpg");
-    		
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			bm.compress(CompressFormat.JPEG, 75, bos);
+			bm.compress(CompressFormat.JPEG, 75, bos);	// Fix compression format
 			byte[] data = bos.toByteArray();
+			// Http client
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(uri);
-			ByteArrayBody bab = new ByteArrayBody(data, "pear.jpg");
-			//File file= new File("/sdcard/pear.png");
-			//FileBody bin = new FileBody(file);
+			ByteArrayBody bab = new ByteArrayBody(data, "");	// filename can be anything
+
 			MultipartEntity reqEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("pear", bab);	// change to "uploaded"
-			reqEntity.addPart("photoCaption", new StringBody("sfsdfsdf"));
+			reqEntity.addPart("uploaded", bab);
 			postRequest.setEntity(reqEntity);
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -354,6 +347,9 @@ public class EmapixActivity extends MapActivity {
             	cOverlay.setImage(currImage);
             	
             	bubble.setVisibility(View.GONE);
+            	
+            	// Submit to S3
+            	submitImage(currImage);
             }
         });
         

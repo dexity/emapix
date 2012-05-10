@@ -73,7 +73,7 @@ def update(request, reqid):
 def upload(request):
     "Uploads file to S3"  
     if request.method == 'POST':
-        handle_uploaded_file(request.FILES['pear'])
+        handle_uploaded_file(request.FILES['uploaded'])
         return HttpResponseRedirect('/')           
     
     # XXX: Change default response

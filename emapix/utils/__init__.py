@@ -10,7 +10,7 @@ logger = Logger.get("utils.handle_uploaded_file")
 def handle_uploaded_file(file):
     # Upload file to S3
     #open("/tmp/pic.jpg", "wb").write(file.read())    # works
-    logger.debug(str(file))
+    filename = str(file)
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
         rs  = conn.get_all_buckets()
@@ -18,7 +18,7 @@ def handle_uploaded_file(file):
         b.set_acl('public-read')
         
         k = Key(b)
-        k.key = 'pear.jpg'
+        k.key = filename
         k.set_metadata("Content-Type", 'image/jpeg')
         k.set_contents_from_file(file) # Performs the actual upload
         k.set_acl('public-read')
