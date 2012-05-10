@@ -273,9 +273,9 @@ public class EmapixActivity extends MapActivity {
     private void submitPicture() {
     	// A VERY dirty way of submitting the image to S3
 
-    	// ec2-184-73-88-189.compute-1.amazonaws.com
-    	String uri = "http://192.168.1.15?key=0dae2799bb2d9b88e1d38a337377b221";
-
+    	//String uri = "http://192.168.1.15?key=0dae2799bb2d9b88e1d38a337377b221";
+    	String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com?key=0dae2799bb2d9b88e1d38a337377b221";
+    	
     	try {
     		Bitmap bm = BitmapFactory.decodeFile("/sdcard/pear.jpg");
     		
