@@ -4,6 +4,7 @@ mappings    = {
     "remove":   [],
     "get":      [],
     "get_all":  [],
-    "update":   ["resource",]
+    "update":   ["resource",],
+    "upload":   []
 }
 

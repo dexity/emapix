@@ -11,20 +11,14 @@ logger = Logger.get("emapix.prototype.views")
 
 def index(request):
     c = {}
-    #c.update(csrf(request))
-    try:
-        logger.debug(str(request.FILES.keys()))
-    except Exception, e:
-        logger.debug(str(e))
+    c.update(csrf(request))
     
-    if request.method == 'POST':
-        handle_uploaded_file(request.FILES['pear'])
-        return HttpResponseRedirect('/')        
-#        form = UploadFileForm(request.POST, request.FILES)
-#        logger.debug(str(form))
-#        if form.is_valid():
-#            handle_uploaded_file(request.FILES['file'])
-#            return HttpResponseRedirect('/')
+    if request.method == 'POST':     
+        form = UploadFileForm(request.POST, request.FILES)
+        logger.debug(str(form))
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/')
     else:
         form = UploadFileForm()
     c["form"]   = form

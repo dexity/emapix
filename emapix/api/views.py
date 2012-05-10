@@ -2,6 +2,9 @@ import json
 import time
 
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from emapix.utils import handle_uploaded_file
+
 from models import PhotoRequest
 
 OK      = "ok"
@@ -67,6 +70,15 @@ def update(request, reqid):
         return to_status(FAIL, str(e))
 
 
+def upload(request):
+    "Uploads file to S3"  
+    if request.method == 'POST':
+        handle_uploaded_file(request.FILES['pear'])
+        return HttpResponseRedirect('/')           
+    
+    # XXX: Change default response
+    return to_status(OK)
+    
 # Move to some other class
 
 def timestamp():
