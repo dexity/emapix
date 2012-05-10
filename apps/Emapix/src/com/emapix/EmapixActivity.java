@@ -273,7 +273,8 @@ public class EmapixActivity extends MapActivity {
     private void submitPicture() {
     	// A VERY dirty way of submitting the image to S3
 
-    	String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com?key=0dae2799bb2d9b88e1d38a337377b221";
+    	// ec2-184-73-88-189.compute-1.amazonaws.com
+    	String uri = "http://192.168.1.15?key=0dae2799bb2d9b88e1d38a337377b221";
 
     	try {
     		Bitmap bm = BitmapFactory.decodeFile("/sdcard/pear.jpg");
@@ -288,7 +289,7 @@ public class EmapixActivity extends MapActivity {
 			//FileBody bin = new FileBody(file);
 			MultipartEntity reqEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("uploaded", bab);
+			reqEntity.addPart("pear", bab);	// change to "uploaded"
 			reqEntity.addPart("photoCaption", new StringBody("sfsdfsdf"));
 			postRequest.setEntity(reqEntity);
 			HttpResponse response = httpClient.execute(postRequest);

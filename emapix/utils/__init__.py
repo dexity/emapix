@@ -4,11 +4,13 @@ from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 
+from emapix.utils.logger import Logger
 logger = Logger.get("utils.handle_uploaded_file")
 
 def handle_uploaded_file(file):
     # Upload file to S3
     #open("/tmp/pic.jpg", "wb").write(file.read())    # works
+    logger.debug(str(file))
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
         rs  = conn.get_all_buckets()

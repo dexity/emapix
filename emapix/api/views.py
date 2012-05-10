@@ -3,11 +3,11 @@ import time
 
 from django.http import HttpResponse
 from models import PhotoRequest
-from emapix.utils.logger import Logger
 
 OK      = "ok"
 FAIL    = "fail"
 
+from emapix.utils.logger import Logger
 logger = Logger.get("emapix.api.views")
 
 def add(request):
