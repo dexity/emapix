@@ -8,7 +8,7 @@ from emapix.utils.logger import Logger
 OK      = "ok"
 FAIL    = "fail"
 
-log = Logger.get("emapix.api.views")
+logger = Logger.get("emapix.api.views")
 
 def add(request):
     "Adds record to the photo request"
@@ -17,8 +17,9 @@ def add(request):
         pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), resource=p["resource"])
         pr.save()
         return to_status(OK, to_photo(pr))
-    except:
-        return to_status(FAIL)
+    except Exception, e:
+        logger.debug(str(e))
+        return to_status(FAIL, str(e))
 
 
 def remove(request, reqid):
@@ -27,16 +28,18 @@ def remove(request, reqid):
         pr  = PhotoRequest.objects.get(id=reqid)
         pr.delete()
         return to_status(OK)
-    except:
-        return to_status(FAIL)
+    except Exception, e:
+        logger.debug(str(e))
+        return to_status(FAIL, str(e))
 
 
 def get(request, reqid):
     try:
         pr  = PhotoRequest.objects.get(id=reqid)
         return to_status(OK, to_photo(pr))
-    except:
-        return to_status(FAIL)
+    except Exception, e:
+        logger.debug(str(e))
+        return to_status(FAIL, str(e))
 
 
 def get_all(request):
@@ -47,7 +50,7 @@ def get_all(request):
             l.append(to_photo(p))
         return to_status(OK, l)
     except Exception, e:
-        log.debug(str(e))
+        logger.debug(str(e))
         return to_status(FAIL)
 
 
@@ -59,8 +62,9 @@ def update(request, reqid):
         pr.resource = p["resource"]
         pr.save()
         return to_status(OK, to_photo(pr))
-    except:
-        return to_status(FAIL)
+    except Exception, e:
+        logger.debug(str(e))
+        return to_status(FAIL, str(e))
 
 
 # Move to some other class

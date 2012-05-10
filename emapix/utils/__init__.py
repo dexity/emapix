@@ -14,7 +14,7 @@ def handle_uploaded_file(file):
     b.set_acl('public-read')
     
     k = Key(b)
-    k.key = 'cern.jpg'
+    k.key = 'pear.jpg'
     k.set_metadata("Content-Type", 'image/jpeg')
     k.set_contents_from_file(file) # Performs the actual upload
     k.set_acl('public-read')   

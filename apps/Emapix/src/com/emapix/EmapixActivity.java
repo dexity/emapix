@@ -1,10 +1,23 @@
 
 package com.emapix;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.FileBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -13,6 +26,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.graphics.Point;
@@ -211,10 +225,18 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {                
                 // XXX: Takes picture
             	// Show preview bubble 
-            	showPreviewBubble(cOverlay);            	
+            	//showPreviewBubble(cOverlay);
+            	
+            	
+            	// Temp
+            	// Submit to S3
+            	submitPicture();
+            	
+            	showCurrOverlay();
+            	bubble.setVisibility(View.GONE);            	
             }
         });
-        btn_take.setClickable(false); // XXX: Disables take picture button
+        //btn_take.setClickable(false); // XXX: Disables take picture button
         
         // Set select picture button
         Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
@@ -247,6 +269,44 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }
     
+    
+    private void submitPicture() {
+    	// A VERY dirty way of submitting the image to S3
+
+    	String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com?key=0dae2799bb2d9b88e1d38a337377b221";
+
+    	try {
+    		Bitmap bm = BitmapFactory.decodeFile("/sdcard/pear.jpg");
+    		
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			bm.compress(CompressFormat.JPEG, 75, bos);
+			byte[] data = bos.toByteArray();
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpPost postRequest = new HttpPost(uri);
+			ByteArrayBody bab = new ByteArrayBody(data, "pear.jpg");
+			//File file= new File("/sdcard/pear.png");
+			//FileBody bin = new FileBody(file);
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart("uploaded", bab);
+			reqEntity.addPart("photoCaption", new StringBody("sfsdfsdf"));
+			postRequest.setEntity(reqEntity);
+			HttpResponse response = httpClient.execute(postRequest);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent(), "UTF-8"));
+			String sResponse;
+			StringBuilder s = new StringBuilder();
+
+			while ((sResponse = reader.readLine()) != null) {
+				s = s.append(sResponse);
+			}
+			Log.i("SUBMIT", "Response: " + s);
+		} catch (Exception e) {
+			// handle exception here
+			Log.e(e.getClass().getName(), e.getMessage());
+		}    	
+    	
+    }
     
     
     public void showPreviewBubble(MarkerOverlay currOverlay) {

@@ -1,10 +1,13 @@
 from emapix.views import forbidden, service_error
 from django.http import HttpResponse
-from emapix.api.mappings import mappings
+
 from emapix.settings import API_KEY     # Temp: get from db
 
+from emapix.utils.logger import Logger
+logger = Logger.get("emapix.middleware.access")
+
 class AccessMiddleware(object):
-        
+    
     def process_request(self, request):
         key = request.REQUEST.get("key", "")
         if key != API_KEY:
@@ -14,6 +17,11 @@ class AccessMiddleware(object):
         
     def process_view(self, request, view_func, view_args, view_kwargs):
         method_name  = view_func.__name__
+        if method_name == "index": # XXX: Hardcoded
+            return
+        
+        from emapix.api.mappings import mappings
+        # XXX: Import mappings according to the dispatched app
         if not method_name in mappings.keys():
             return service_error(request)
         
