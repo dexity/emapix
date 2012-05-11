@@ -66,7 +66,8 @@ public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
 	private EmapixMapView mView;
-	private EmapixDB db;
+	private EmapixDB db;	// remove
+	private IPhotoData photoData;
 	private MarkerOverlay cOverlay;
 	private MarkerOverlay itemOverlay;
 	List<Overlay> mOverlays;
@@ -93,7 +94,8 @@ public class EmapixActivity extends MapActivity {
 		mController.animateTo(point);
 
     	//drawable = getResources().getDrawable(R.drawable.redmarker);
-
+		
+		photoData	= new LocalPhotoData();
 		
     	mOverlays = mView.getOverlays();
     	createMarkers();
@@ -102,7 +104,7 @@ public class EmapixActivity extends MapActivity {
         mView.setOnLongpressListener(new EmapixMapView.OnLongpressListener() {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
-		            public void run() { 
+		            public void run() {
 		            	showRequestBubble(lpPoint);		   
 		            }
 		        });
@@ -128,7 +130,7 @@ public class EmapixActivity extends MapActivity {
     	return null;
     }
     
-    // Bubbles    
+    // Bubbles
     public void showRequestBubble(final GeoPoint point) {
         // Sets request bubble
     	cleanupBubbles(); 
@@ -271,8 +273,7 @@ public class EmapixActivity extends MapActivity {
     	// A VERY dirty way of submitting the image to S3
 
     	// XXX: Check if bitmap is JPEG or PNG
-    	String uri = "http://192.168.1.15/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
-    	//String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
+    	String uri = R.string.base_uri + "?key=" + R.string.api_key;
     	
     	try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -451,6 +452,7 @@ public class EmapixActivity extends MapActivity {
     
     private void populateMarkers() {
     	// Populates markers from database
+    	
     	db	= new EmapixDB(this);
     	PhotoRequestCursor cursor	= db.getPhotoRequests();
     	// XXX: Retrieve data from server

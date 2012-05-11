@@ -8,4 +8,7 @@ INSERT INTO photo_request (_id , lat, lon, submitted_date) VALUES (NULL, 3281806
     <string name="EmapixDB_onUpgrade">"
 DROP TABLE IF EXISTS photo_request
 	"</string>
+	<string name="base_uri">http://192.168.1.15/api/upload</string>
+	<!--<string name="base_uri">http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload</string>-->
+	<string name="api_key">0dae2799bb2d9b88e1d38a337377b221</string>
 </resources>

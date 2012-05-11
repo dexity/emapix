@@ -20,13 +20,14 @@ import com.google.android.maps.OverlayItem;
 // Note: Context is not stored in MarkerOverlay.
 
 public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
+
+	private GeoPoint point;
+	private Drawable marker;	// marker image
+	private Bitmap image;		// image related to image
 	
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>(); // Holds one item only!
-	private GeoPoint point;
 	private MapView mView;
-	private Drawable marker;	// marker image
 	private EmapixActivity activity;
-	private Bitmap image;		// image related to image
 	private long id;			// db record id
 
 	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, GeoPoint point, long id) {
