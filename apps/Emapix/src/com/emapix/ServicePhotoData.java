@@ -4,7 +4,7 @@ package com.emapix;
 class ServicePhotoData implements IPhotoData 
 {
 	
-    public void set(int index, String resource) {
+    public void setResource(int index, String resource) {
     	
     }
     public ResourceImage get(int index) {

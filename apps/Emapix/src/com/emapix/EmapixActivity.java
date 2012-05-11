@@ -95,12 +95,13 @@ public class EmapixActivity extends MapActivity {
 
     	//drawable = getResources().getDrawable(R.drawable.redmarker);
 		
-		photoData	= new LocalPhotoData();
+		photoData	= new LocalPhotoData(this);
 		
     	mOverlays = mView.getOverlays();
     	createMarkers();
     	populateMarkers();
         
+    	// Set long press listener
         mView.setOnLongpressListener(new EmapixMapView.OnLongpressListener() {
 	        public void onLongpress(final MapView view, final GeoPoint lpPoint) {
 	            runOnUiThread(new Runnable() {
@@ -452,20 +453,25 @@ public class EmapixActivity extends MapActivity {
     
     private void populateMarkers() {
     	// Populates markers from database
+    	ResourceImage[] photos	= photoData.getAll();
     	
-    	db	= new EmapixDB(this);
-    	PhotoRequestCursor cursor	= db.getPhotoRequests();
-    	// XXX: Retrieve data from server
-    	for (int i=0; i<cursor.getCount(); i++) {
-    		cursor.moveToPosition(i);
-    		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
-    		showMarker(point, cursor.getId(), stringToUri(cursor.getResource()));
+    	for (ResourceImage ri: photos) {
+    		PhotoRequest pr	=  ri.getPhotoRequest();
+    		GeoPoint point = new GeoPoint(pr.getLat(), pr.getLon());
+    		showMarker(point, pr.getResourceId(), stringToUri(pr.getResource()));    		
     	}
+    	
+//    	db	= new EmapixDB(this);
+//    	PhotoRequestCursor cursor	= db.getPhotoRequests();
+//    	// XXX: Retrieve data from server
+//    	for (int i=0; i<cursor.getCount(); i++) {
+//    		cursor.moveToPosition(i);
+//    		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
+//    		showMarker(point, cursor.getId(), stringToUri(cursor.getResource()));
+//    	}
     }
     
     private Uri stringToUri(String res) {
-    	if (res == null)	// XXX: Fix
-    		return null;
 		if (isValidUri(res))
 			return Uri.parse(res);    	
     	return null;

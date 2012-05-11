@@ -12,6 +12,8 @@ import android.database.sqlite.SQLiteQuery;
 import android.util.Log;
 
 
+// Note: I don't care about the record _id, just res_id 
+
 public class EmapixDB extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "Emapix";
@@ -25,7 +27,7 @@ public class EmapixDB extends SQLiteOpenHelper {
 	
 	public static class PhotoRequestCursor extends SQLiteCursor {
     	private static final String QUERY = 
-        		"SELECT _id, lat, lon, submitted_date, resource "+
+        		"SELECT _id, res_id, lat, lon, submitted_date, resource "+
         	    "FROM photo_request";
 	    private PhotoRequestCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
 								   String editTable, SQLiteQuery query) {
@@ -42,15 +44,17 @@ public class EmapixDB extends SQLiteOpenHelper {
 	    public int getLat(){return getInt(getColumnIndexOrThrow("lat"));}
 	    public int getLon(){return getInt(getColumnIndexOrThrow("lon"));}
 	    public int getId(){return getInt(getColumnIndexOrThrow("_id"));}
+	    public int getResId(){return getInt(getColumnIndexOrThrow("res_id"));}
+	    public String getDate(){return getString(getColumnIndexOrThrow("submitted_date"));}
 	    public String getResource(){return getString(getColumnIndexOrThrow("resource"));}
 	}
 	
-	public void updateMarker(long id, String resource) {
+	public void updateMarker(long res_id, String resource) {
 		ContentValues map = new ContentValues();
 		map.put("resource", resource);
-		String[] whereArgs = new String[]{Long.toString(id)};
+		String[] whereArgs = new String[]{Long.toString(res_id)};
 		try{
-			getWritableDatabase().update("photo_request", map, "_id=?", whereArgs);
+			getWritableDatabase().update("photo_request", map, "res_id=?", whereArgs);
 		} catch (SQLException e) {
             Log.e("Error writing new job", e.toString());
 		}
@@ -74,10 +78,10 @@ public class EmapixDB extends SQLiteOpenHelper {
 		return -1;
     }
     
-    public void deleteRequest(long id) {
-		String[] whereArgs = new String[]{Long.toString(id)};
+    public void deleteRequest(long res_id) {
+		String[] whereArgs = new String[]{Long.toString(res_id)};
 		try{
-			getWritableDatabase().delete("photo_request", "_id=?", whereArgs);
+			getWritableDatabase().delete("photo_request", "res_id=?", whereArgs);
 		} catch (SQLException e) {
             Log.e("Error deleteing photo_request", e.toString());
 		}    	

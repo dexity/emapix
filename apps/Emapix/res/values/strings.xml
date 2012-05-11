@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Emapix</string>
     <string name="EmapixDB_onCreate">"
-CREATE TABLE photo_request (_id INTEGER PRIMARY KEY AUTOINCREMENT, lat INTEGER, lon INTEGER, submitted_date TEXT, resource TEXT);
+CREATE TABLE photo_request (_id INTEGER PRIMARY KEY AUTOINCREMENT, res_id INTEGER, lat INTEGER, lon INTEGER, submitted_date TEXT, resource TEXT);
 INSERT INTO photo_request (_id , lat, lon, submitted_date) VALUES (NULL, 32818062, -117269440, "1335661865");
 	"</string>
     <string name="EmapixDB_onUpgrade">"
