@@ -72,6 +72,7 @@ def update(request, reqid):
 
 def upload(request):
     "Uploads file to S3"  
+    logger.debug(request.FILES.keys())
     if request.method == 'POST':
         handle_uploaded_file(request.FILES['uploaded'])
         return HttpResponseRedirect('/')           

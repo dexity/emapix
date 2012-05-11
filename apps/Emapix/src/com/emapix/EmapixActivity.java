@@ -72,6 +72,7 @@ public class EmapixActivity extends MapActivity {
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
 	Bitmap currImage;	// TEMP
+	String currName;
 	Uri currUri;
 	
 	private static final int PICK_IMAGE_CODE = 100;
@@ -92,6 +93,7 @@ public class EmapixActivity extends MapActivity {
 		mController.animateTo(point);
 
     	//drawable = getResources().getDrawable(R.drawable.redmarker);
+
 		
     	mOverlays = mView.getOverlays();
     	createMarkers();
@@ -267,10 +269,10 @@ public class EmapixActivity extends MapActivity {
     
     private void submitImage(Bitmap bm) {
     	// A VERY dirty way of submitting the image to S3
-    	
+
     	// XXX: Check if bitmap is JPEG or PNG
-    	//String uri = "http://192.168.1.15/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
-    	String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
+    	String uri = "http://192.168.1.15/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
+    	//String uri = "http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload?key=0dae2799bb2d9b88e1d38a337377b221";
     	
     	try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -279,7 +281,7 @@ public class EmapixActivity extends MapActivity {
 			// Http client
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(uri);
-			ByteArrayBody bab = new ByteArrayBody(data, "");	// filename can be anything
+			ByteArrayBody bab = new ByteArrayBody(data, currName);	// XXX: Fix filename
 
 			MultipartEntity reqEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -460,6 +462,8 @@ public class EmapixActivity extends MapActivity {
     }
     
     private Uri stringToUri(String res) {
+    	if (res == null)	// XXX: Fix
+    		return null;
 		if (isValidUri(res))
 			return Uri.parse(res);    	
     	return null;
@@ -511,7 +515,8 @@ public class EmapixActivity extends MapActivity {
     	OverlayItem item	= new OverlayItem(point, null, null);   
     	itemOverlay	= new MarkerOverlay(marker, this, point, id);
     	itemOverlay.addOverlay(item);
-    	itemOverlay.setImage(getImageFromUri(uri));
+    	if (uri != null)
+    		itemOverlay.setImage(getImageFromUri(uri));
     	mOverlays.add(itemOverlay);
     }
     
@@ -527,9 +532,14 @@ public class EmapixActivity extends MapActivity {
     	
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
+
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
         String filePath = cursor.getString(columnIndex);
+        
+        File f	= new File(filePath);
+        currName	= new String(f.getName());	// Temp
+        
         cursor.close();
 
         return BitmapFactory.decodeFile(filePath);    	

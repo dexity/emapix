@@ -11,6 +11,9 @@ def handle_uploaded_file(file):
     # Upload file to S3
     #open("/tmp/pic.jpg", "wb").write(file.read())    # works
     filename = str(file)
+    
+    logger.debug(filename)
+    
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
         rs  = conn.get_all_buckets()
