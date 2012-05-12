@@ -109,7 +109,6 @@ public class EmapixActivity extends MapActivity {
 		        });
 	        }
         });
-		
     }
     
     private void createMarkers() {
@@ -129,19 +128,44 @@ public class EmapixActivity extends MapActivity {
     	return null;
     }
     
-    // Bubbles
-    public void showRequestBubble(final GeoPoint point) {
-        // Sets request bubble
-    	cleanupBubbles(); 
+    public void showCurrOverlay() {
+    	mOverlays.add(cOverlay);	
+    }
+    
+    public void hideCurrOverlay(MarkerOverlay currOverlay) {
+    	// Hide current overlay
+    	cOverlay = currOverlay;
+    	mOverlays.remove(currOverlay);	
+    }
+    
+    public void cleanupBubbles() {
+        // Removes bubble  
+    	mView.removeAllViews();
     	
+    	if (bubble != null)
+    		bubble.setVisibility(View.GONE);
+    }
+    
+    private LinearLayout bubbleFactory(int resource, GeoPoint point) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bubble = (LinearLayout) inflater.inflate(R.layout.bubble, mView, false);
+        LinearLayout layout = (LinearLayout) inflater.inflate(resource, mView, false);
 
     	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
 		                		370, LayoutParams.WRAP_CONTENT,
 		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
     	params.mode = MapView.LayoutParams.MODE_MAP;
-        bubble.setLayoutParams(params);
+    	layout.setLayoutParams(params);    	
+        return layout;
+    }
+    
+    
+    // Bubbles
+    public void showRequestBubble(final GeoPoint point) {
+        // Sets request bubble
+    	cleanupBubbles(); 
+    	
+    	bubble	= bubbleFactory(R.layout.bubble, point);
+
     	// Set text
     	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
     	tv.setText(String.format("Location: %f; %f", point.getLatitudeE6()*1E-6, point.getLongitudeE6()*1E-6));
@@ -168,45 +192,14 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }
     
-    //private void setCloseButton(LinearLayout layout) {
-    //	
-    //}
-    
-    public void hideCurrOverlay(MarkerOverlay currOverlay) {
-    	// Hide current overlay
-    	cOverlay = currOverlay;
-    	
-    	mOverlays.remove(currOverlay);	
-    }
-    
-    public void showCurrOverlay() {
-    	mOverlays.add(cOverlay);	
-    }
-    
-    public void cleanupBubbles() {
-        // Removes bubble  
-    	mView.removeAllViews();
-    	
-    	if (bubble != null)
-    		bubble.setVisibility(View.GONE);
-    }
-    
+        
     public void showActionBubble(MarkerOverlay currOverlay) {
 
     	GeoPoint point = currOverlay.getPoint();
         cleanupBubbles();    	
     	hideCurrOverlay(currOverlay);
     	
-        // Sets request bubble
-        LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bubble = (LinearLayout) inflater.inflate(R.layout.action_bubble, mView, false);
-        
-    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-		                		370, LayoutParams.WRAP_CONTENT,
-		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-    	params.mode = MapView.LayoutParams.MODE_MAP;
-        bubble.setLayoutParams(params);
+    	bubble	= bubbleFactory(R.layout.action_bubble, point);
         
     	// Set text
     	TextView tv = (TextView)bubble.findViewById(R.id.locationname);
@@ -268,60 +261,13 @@ public class EmapixActivity extends MapActivity {
     }
     
     
-    private void submitImage(Bitmap bm) {
-    	// A VERY dirty way of submitting the image to S3
-
-    	// XXX: Check if bitmap is JPEG or PNG
-    	String uri = String.format("%s?key=%s", getString(R.string.base_uri), 
-    											getString(R.string.api_key));
-    	
-    	try {
-			ByteArrayOutputStream bos = new ByteArrayOutputStream();
-			bm.compress(CompressFormat.JPEG, 75, bos);	// Fix compression format
-			byte[] data = bos.toByteArray();
-			// Http client
-			HttpClient httpClient = new DefaultHttpClient();
-			HttpPost postRequest = new HttpPost(uri);
-			ByteArrayBody bab = new ByteArrayBody(data, currName);	// XXX: Fix filename
-
-			MultipartEntity reqEntity = new MultipartEntity(
-					HttpMultipartMode.BROWSER_COMPATIBLE);
-			reqEntity.addPart("uploaded", bab);
-			postRequest.setEntity(reqEntity);
-			HttpResponse response = httpClient.execute(postRequest);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent(), "UTF-8"));
-			String sResponse;
-			StringBuilder s = new StringBuilder();
-
-			while ((sResponse = reader.readLine()) != null) {
-				s = s.append(sResponse);
-			}
-			Log.i("SUBMIT", "Response: " + s);
-		} catch (Exception e) {
-			// handle exception here
-			Log.e(e.getClass().getName(), e.getMessage());
-		}    	
-    	
-    }
-    
-    
     public void showPreviewBubble(MarkerOverlay currOverlay) {
-    	
+    	// XXX: Add cache
     	GeoPoint point = currOverlay.getPoint();
     	cleanupBubbles();
 
-        // Sets request bubble
-        LayoutInflater inflater = (LayoutInflater) EmapixActivity.this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bubble = (LinearLayout) inflater.inflate(R.layout.preview_bubble, mView, false);
-        
-    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-		                		370, LayoutParams.WRAP_CONTENT,
-		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-    	params.mode = MapView.LayoutParams.MODE_MAP;
-        bubble.setLayoutParams(params);
-
+    	bubble	= bubbleFactory(R.layout.preview_bubble, point);
+    	
     	// Set close button
     	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
@@ -386,20 +332,16 @@ public class EmapixActivity extends MapActivity {
     	bubble.setVisibility(View.VISIBLE);   	
     }    
     
+    
     public void showViewBubble(MarkerOverlay currOverlay) {
+    	// XXX: Add cache
         // Sets request bubble
     	GeoPoint point = currOverlay.getPoint();
     	cleanupBubbles(); 
     	hideCurrOverlay(currOverlay);
     	
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        bubble = (LinearLayout) inflater.inflate(R.layout.view_bubble, mView, false);
-
-    	EmapixMapView.LayoutParams params = new EmapixMapView.LayoutParams(
-		                		370, LayoutParams.WRAP_CONTENT,
-		                 		point, EmapixMapView.LayoutParams.BOTTOM_CENTER);
-    	params.mode = MapView.LayoutParams.MODE_MAP;
-        bubble.setLayoutParams(params);
+    	bubble	= bubbleFactory(R.layout.view_bubble, point);
+    	
         // Set close button
     	ImageView btn_close	= (ImageView) bubble.findViewById(R.id.bubble_close);
         btn_close.setOnClickListener(new View.OnClickListener() {
@@ -434,6 +376,45 @@ public class EmapixActivity extends MapActivity {
     	
     	bubble.setVisibility(View.VISIBLE);   	
     }
+
+    
+    private void submitImage(Bitmap bm) {
+    	// A VERY dirty way of submitting the image to S3
+
+    	// XXX: Check if bitmap is JPEG or PNG
+    	String uri = String.format("%s?key=%s", getString(R.string.base_uri), 
+    											getString(R.string.api_key));
+    	
+    	try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			bm.compress(CompressFormat.JPEG, 75, bos);	// Fix compression format
+			byte[] data = bos.toByteArray();
+			// Http client
+			HttpClient httpClient = new DefaultHttpClient();
+			HttpPost postRequest = new HttpPost(uri);
+			ByteArrayBody bab = new ByteArrayBody(data, currName);	// XXX: Fix filename
+
+			MultipartEntity reqEntity = new MultipartEntity(
+					HttpMultipartMode.BROWSER_COMPATIBLE);
+			reqEntity.addPart("uploaded", bab);
+			postRequest.setEntity(reqEntity);
+			HttpResponse response = httpClient.execute(postRequest);
+			BufferedReader reader = new BufferedReader(new InputStreamReader(
+					response.getEntity().getContent(), "UTF-8"));
+			String sResponse;
+			StringBuilder s = new StringBuilder();
+
+			while ((sResponse = reader.readLine()) != null) {
+				s = s.append(sResponse);
+			}
+			Log.i("SUBMIT", "Response: " + s);
+		} catch (Exception e) {
+			// handle exception here
+			Log.e(e.getClass().getName(), e.getMessage());
+		}    	
+    	
+    }
+    
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) { 

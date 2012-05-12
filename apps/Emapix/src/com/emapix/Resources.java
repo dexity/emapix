@@ -38,7 +38,8 @@ class PhotoRequest
 	public void setDate(String date) {submitted_date = date;}
 }
 
-//
+// ResourceImage holds both model data and view data 
+
 class ResourceImage 
 {
 	private PhotoRequest request;
