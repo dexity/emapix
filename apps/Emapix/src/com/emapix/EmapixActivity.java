@@ -93,11 +93,9 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
-    	//drawable = getResources().getDrawable(R.drawable.redmarker);
-		
-		photoData	= new LocalPhotoData(this);
-		
-    	mOverlays = mView.getOverlays();
+		photoData	= new LocalPhotoData(this);		
+    	mOverlays 	= mView.getOverlays();
+    	
     	createMarkers();
     	populateMarkers();
         
@@ -274,7 +272,8 @@ public class EmapixActivity extends MapActivity {
     	// A VERY dirty way of submitting the image to S3
 
     	// XXX: Check if bitmap is JPEG or PNG
-    	String uri = R.string.base_uri + "?key=" + R.string.api_key;
+    	String uri = String.format("%s?key=%s", getString(R.string.base_uri), 
+    											getString(R.string.api_key));
     	
     	try {
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -459,16 +458,7 @@ public class EmapixActivity extends MapActivity {
     		PhotoRequest pr	=  ri.getPhotoRequest();
     		GeoPoint point = new GeoPoint(pr.getLat(), pr.getLon());
     		showMarker(point, pr.getResourceId(), stringToUri(pr.getResource()));    		
-    	}
-    	
-//    	db	= new EmapixDB(this);
-//    	PhotoRequestCursor cursor	= db.getPhotoRequests();
-//    	// XXX: Retrieve data from server
-//    	for (int i=0; i<cursor.getCount(); i++) {
-//    		cursor.moveToPosition(i);
-//    		GeoPoint point = new GeoPoint((int) cursor.getLat(), (int) cursor.getLon());
-//    		showMarker(point, cursor.getId(), stringToUri(cursor.getResource()));
-//    	}
+    	}    	
     }
     
     private Uri stringToUri(String res) {
@@ -497,8 +487,8 @@ public class EmapixActivity extends MapActivity {
     	addMarker(point);
     }
     
-    public EmapixDB getEmapixDB() {
-    	return db;
+    public IPhotoData getPhotoData() {
+    	return photoData;
     }
     
     public EmapixMapView getMapView() {
@@ -507,13 +497,12 @@ public class EmapixActivity extends MapActivity {
     
     public void addMarker(GeoPoint point) {
     	// Add DB record
-    	long id = db.addRequest(point.getLatitudeE6(), point.getLongitudeE6());
-    	showMarker(point, id, null);
+    	ResourceImage ri = photoData.add(point.getLatitudeE6(), point.getLongitudeE6());
+    	showMarker(point, ri.getPhotoRequest().getResourceId(), null);
     }
     
     public void updateMarker(long id, Uri uri) {
-    	db.updateMarker(id, String.format("%s", uri));
-    	
+    	photoData.setResource((int)id, String.format("%s", uri));
     }
     
     public void showMarker(GeoPoint point, long id, Uri uri) {

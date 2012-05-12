@@ -8,14 +8,16 @@ import com.google.android.maps.GeoPoint;
 class LocalPhotoData implements IPhotoData 
 {
 	private EmapixDB db;
-	private final Context mContext;
 	
 	public LocalPhotoData(Context context) {
-		mContext	= context;
 		db			= new EmapixDB(context);
 	}
 	
     public ResourceImage get(int res_id) {
+    	PhotoRequestCursor c	= db.getPhotoRequests();
+    	if (c.getCount() == 0)
+    		return null;
+    	c.moveToPosition(0);	// take the first record
     	ResourceImage ri = new ResourceImage();
 		ri.setPhotoRequest(new PhotoRequest(c.getLat(), c.getLon(), 
 				  c.getResId(), c.getResource(), c.getDate()));    	
@@ -35,20 +37,37 @@ class LocalPhotoData implements IPhotoData
     }
     
     public void setResource(int res_id, String resource) {
+    	db.updateMarker(res_id, resource);
+    }
+    
+    public ResourceImage add(int lat, int lon) {
+    	// generate resource
+    	long _id	= db.addRequest(lat, lon);	// returns _id
+    	if (_id == -1)
+    		return null;
+    	String date	= String.format("%s", System.currentTimeMillis()/1000);
+    	// Notes: 
+    	//		- Use get(rid) instead. Requires separate call to db
+    	// 		- For now _id == res_id
+    	//		- Generate resource. For now it is null
+    	int res_id	= (int)_id;	// Temp
+    	db.updateResId(_id);	// Temp
     	
+    	ResourceImage ri = new ResourceImage();
+		ri.setPhotoRequest(new PhotoRequest(lat, lon, res_id, null, date));  
+		return ri;
     }
     
     public void remove(int res_id) {
-    	
+    	db.deleteRequest(res_id);
     }
     
     public boolean isEmpty(int res_id) {
-    	
-    	return true;
+    	return get(res_id) == null;
     }
     
     public int size() {
-    	
+    	// useful?
     	return 0;
     }
 }

@@ -15,6 +15,10 @@ class ServicePhotoData implements IPhotoData
     	
     	return null;
     }
+    
+    public ResourceImage add(int lat, int lon) {
+    	return null;
+    }
     public void remove(int index) {
     	
     }

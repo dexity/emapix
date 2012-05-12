@@ -25,10 +25,15 @@ public class EmapixDB extends SQLiteOpenHelper {
         this.mContext = context;
 	}	
 	
+    // Cursor
 	public static class PhotoRequestCursor extends SQLiteCursor {
     	private static final String QUERY = 
         		"SELECT _id, res_id, lat, lon, submitted_date, resource "+
         	    "FROM photo_request";
+    	private static final String QUERY_ID = 
+        		"SELECT _id, res_id, lat, lon, submitted_date, resource "+
+        	    "FROM photo_request " +
+        		"WHERE res_id=%s";
 	    private PhotoRequestCursor(SQLiteDatabase db, SQLiteCursorDriver driver,
 								   String editTable, SQLiteQuery query) {
 			super(db, driver, editTable, query);
@@ -48,6 +53,18 @@ public class EmapixDB extends SQLiteOpenHelper {
 	    public String getDate(){return getString(getColumnIndexOrThrow("submitted_date"));}
 	    public String getResource(){return getString(getColumnIndexOrThrow("resource"));}
 	}
+	
+	// Refactor update methods?
+	public void updateResId(long id) {
+		ContentValues map = new ContentValues();
+		map.put("res_id", id);
+		String[] whereArgs = new String[]{Long.toString(id)};
+		try{
+			getWritableDatabase().update("photo_request", map, "_id=?", whereArgs);
+		} catch (SQLException e) {
+            Log.e("Error writing new job", e.toString());
+		}
+	}	
 	
 	public void updateMarker(long res_id, String resource) {
 		ContentValues map = new ContentValues();
@@ -97,6 +114,19 @@ public class EmapixDB extends SQLiteOpenHelper {
     	c.moveToFirst();
         return c;
     }    
+    
+	public PhotoRequestCursor getPhotoRequest(int res_id) {
+		// Returns record specified by res_id
+		SQLiteDatabase d = getReadableDatabase();
+    	PhotoRequestCursor c = (PhotoRequestCursor) d.rawQueryWithFactory(
+			new PhotoRequestCursor.Factory(),
+			String.format(PhotoRequestCursor.QUERY_ID, res_id),
+			null,
+			null);
+    	c.moveToFirst();
+        return c;		
+	}
+    
     
 	@Override
 	public void onCreate(SQLiteDatabase db) {

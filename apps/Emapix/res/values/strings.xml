@@ -3,7 +3,6 @@
     <string name="app_name">Emapix</string>
     <string name="EmapixDB_onCreate">"
 CREATE TABLE photo_request (_id INTEGER PRIMARY KEY AUTOINCREMENT, res_id INTEGER, lat INTEGER, lon INTEGER, submitted_date TEXT, resource TEXT);
-INSERT INTO photo_request (_id , lat, lon, submitted_date) VALUES (NULL, 32818062, -117269440, "1335661865");
 	"</string>
     <string name="EmapixDB_onUpgrade">"
 DROP TABLE IF EXISTS photo_request
@@ -12,3 +11,6 @@ DROP TABLE IF EXISTS photo_request
 	<!--<string name="base_uri">http://ec2-184-73-88-189.compute-1.amazonaws.com/api/upload</string>-->
 	<string name="api_key">0dae2799bb2d9b88e1d38a337377b221</string>
 </resources>
+
+<!-- INSERT INTO photo_request (_id , lat, lon, submitted_date) VALUES (NULL, 32818062, -117269440, "1335661865");
+ -->

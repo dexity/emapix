@@ -76,8 +76,9 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	public void removeOverlay() {
 		List<Overlay> mOverlays = mView.getOverlays();
 		mOverlays.remove(this);		// Can throw an exception?
-		EmapixDB db	= activity.getEmapixDB();
-		db.deleteRequest(id);
+
+		IPhotoData pd	= activity.getPhotoData();
+		pd.remove((int)id);
 	}
 	
 	public long getId() {
