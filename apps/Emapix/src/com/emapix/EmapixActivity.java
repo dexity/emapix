@@ -60,21 +60,19 @@ import com.google.android.maps.OverlayItem;
 import com.google.android.maps.Projection;
 import android.graphics.drawable.BitmapDrawable;
 
-// XXX: Cannot load more than 4 large pictures. Resources are not released 
+// XXX: Cannot load more than 4 large pictures. Resources are not released?
 
 public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
 	private EmapixMapView mView;
-	private EmapixDB db;	// remove
 	private IPhotoData photoData;
 	private MarkerOverlay cOverlay;
 	private MarkerOverlay itemOverlay;
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
-	Bitmap currImage;	// TEMP
-	String currName;
-	Uri currUri;
+	ResourceImage crImage;	// current resource image
+	String currName;	// remove
 	
 	private static final int PICK_IMAGE_CODE = 100;
 	
@@ -93,9 +91,13 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
-		photoData	= new LocalPhotoData(this);		
+		photoData	= new ServicePhotoData(this); //new LocalPhotoData(this);		
     	mOverlays 	= mView.getOverlays();
+    	crImage		= new ResourceImage();	// create current resource image
     	
+    	
+    	//photoData.add(32818062,-117269440);
+    	photoData.get(1);
     	createMarkers();
     	populateMarkers();
         
@@ -237,7 +239,6 @@ public class EmapixActivity extends MapActivity {
             	Intent pickIntent = new Intent(Intent.ACTION_PICK);
             	pickIntent.setType("image/*");
             	startActivityForResult(pickIntent, PICK_IMAGE_CODE);
-            	
             }
         });
         
@@ -279,9 +280,9 @@ public class EmapixActivity extends MapActivity {
         });
         
         // Set image view
-        if (currImage != null) {
+        if (crImage.image != null) {
 			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
-			image.setImageBitmap(currImage);        	
+			image.setImageBitmap(crImage.image);        	
         }        
         
         // Set submit button
@@ -291,14 +292,14 @@ public class EmapixActivity extends MapActivity {
             	// XXX: Submitting pic to server
             	
             	// Show blue marker            	
-            	showMarker(cOverlay.getPoint(), cOverlay.getId(), currUri);
-            	updateMarker(cOverlay.getId(), currUri);
-            	cOverlay.setImage(currImage);
+            	showMarker(cOverlay.getPoint(), cOverlay.getId(), crImage.localUri);
+            	updateMarker(cOverlay.getId(), crImage.localUri);
+            	cOverlay.setImage(crImage.image);
             	
             	bubble.setVisibility(View.GONE);
             	
             	// Submit to S3
-            	submitImage(currImage);
+            	submitImage(crImage.image);
             }
         });
         
@@ -308,8 +309,7 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// XXX: Takes picture
             	// Show preview bubble 
-            	
-            	
+
             }
         });
         btn_take.setClickable(false); // XXX: Disables take picture button
@@ -422,10 +422,11 @@ public class EmapixActivity extends MapActivity {
 
         switch(requestCode) { 
         case PICK_IMAGE_CODE:
+        	// Local image
             if(resultCode == RESULT_OK){  
                 Uri selectedImage = imageReturnedIntent.getData();
-                currImage 	= getImageFromUri(selectedImage);
-                currUri		= selectedImage;
+                crImage.image 	= getImageFromUri(selectedImage);
+                crImage.localUri	= selectedImage;
                 showPreviewBubble(cOverlay);
             }
         }

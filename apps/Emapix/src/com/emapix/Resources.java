@@ -1,7 +1,16 @@
 package com.emapix;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.util.Log;
 
 // XXX: Encapsulate data
 
@@ -16,7 +25,7 @@ class PhotoRequest
 	
 	public PhotoRequest() {}
 	
-	public PhotoRequest(int lat, int lon, int id, String resource, String date) {
+	public PhotoRequest(int id, int lat, int lon, String resource, String date) {
 		this.lat	= lat;
 		this.lon	= lon;
 		this.resourceId	= id;
@@ -36,6 +45,10 @@ class PhotoRequest
 	public void setResource(String resource) {this.resource = resource;}
 	public void setResourceId(int id) {resourceId = id;}
 	public void setDate(String date) {submitted_date = date;}
+	
+	public String toString() {
+		return "";
+	}	
 }
 
 // ResourceImage holds both model data and view data 
@@ -44,16 +57,29 @@ class ResourceImage
 {
 	private PhotoRequest request;
 	public Bitmap image;
-	public String resourceUri;	// global uri
-	public Uri localUri;
+	public String resourceUri;	// Http uri
+	public Uri localUri;		// For caching?
 	
 	public ResourceImage() {}
-	public ResourceImage(Bitmap image, String resource, Uri uri) {
-		this.image		= image;
-		this.resourceUri = resource;
-		this.localUri	= uri;
-	}
 	
 	public void setPhotoRequest(PhotoRequest request) {this.request = request;}	
 	public PhotoRequest getPhotoRequest() {return request;}	
+	
+	public void setBitmapUri(String uri) {
+		//String _uri	= "https://s3.amazonaws.com/emapix_uploads/cern.jpg";
+		try {
+			URLConnection conn = new URL(uri).openConnection();
+			BufferedInputStream bis	= new BufferedInputStream(conn.getInputStream());
+			image 	= BitmapFactory.decodeStream(bis);
+			resourceUri = uri;
+		} catch (Exception e) {
+			Log.e("setBitmapUri", String.format("%s", e));
+		}
+	}
+	
+	public String toString() {
+		return "";
+	}
+	
+	
 }
