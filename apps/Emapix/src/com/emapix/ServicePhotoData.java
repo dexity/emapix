@@ -116,6 +116,12 @@ class ServicePhotoData implements IPhotoData
     	return new BigInteger(130, random).toString(16);
     }
     
+    private String getFullUri(String resource) {
+    	// Returns full uri of the image
+		String base_s3	= context.getString(R.string.base_s3);
+		return String.format("%s/%s.%s", base_s3, resource, FILE_EXT);    	
+    }
+    
     public ResourceImage toResourceImage(JSONObject obj) {
     	// Converts JSON object to ResourceImage object
     	try {
@@ -124,13 +130,12 @@ class ServicePhotoData implements IPhotoData
 	    			obj.getString("resource"), obj.getString("submitted_date"));
 	    	ResourceImage ri	= new ResourceImage();
 	    	ri.setPhotoRequest(pr);
-	    	try {
-	    		String base_s3	= context.getString(R.string.base_s3);
-	    		ri.setBitmapUri(String.format("%s/%s.%s", base_s3, obj.getString("resource"), FILE_EXT));
-	    	} catch (Exception e){
-	    		// Do nothing
-	    		Log.e("toResourceImage", e.toString());
-	    	}
+//	    	try {
+//	    		ri.setBitmapUri(getFullUri(obj.getString("resource")));
+//	    	} catch (Exception e){
+//	    		// Do nothing
+//	    		Log.e("toResourceImage", e.toString());
+//	    	}
 	    	return ri;
     	} catch (JSONException e){
     		Log.e("toResourceImage", e.toString());
@@ -179,7 +184,7 @@ class ServicePhotoData implements IPhotoData
 		return ENDPOINT + method + "?" + join(ps, "&");
 	}    
     
-	public static String join(Collection s, String delimiter) {
+	public static String join(Collection<String> s, String delimiter) {
 	    StringBuffer buffer = new StringBuffer();
 	    Iterator<String> iter = s.iterator();
 	    while (iter.hasNext()) {

@@ -195,7 +195,7 @@ public class EmapixActivity extends MapActivity {
     public void showActionBubble(MarkerOverlay currOverlay) {
 
     	GeoPoint point = currOverlay.getPoint();
-        cleanupBubbles();    	
+        cleanupBubbles();
     	hideCurrOverlay(currOverlay);
     	
     	bubble	= bubbleFactory(R.layout.action_bubble, point);
@@ -260,6 +260,7 @@ public class EmapixActivity extends MapActivity {
     
     
     public void showPreviewBubble(MarkerOverlay currOverlay) {
+    	// Shows preview bubble. File is not submitted and resource is not set yet. 
     	// XXX: Add cache
     	GeoPoint point = currOverlay.getPoint();
     	cleanupBubbles();
@@ -376,8 +377,8 @@ public class EmapixActivity extends MapActivity {
 
     
     private void submitImage(Bitmap bm) {
-    	// A VERY dirty way of submitting the image to S3
-
+    	// Submits image to the server
+    	
     	// XXX: Check if bitmap is JPEG or PNG
     	String uri = String.format("%s?key=%s", getString(R.string.base_uri), 
     											getString(R.string.api_key));
@@ -461,7 +462,6 @@ public class EmapixActivity extends MapActivity {
     
     private void sendRequest(GeoPoint point)
     {
-    	// XXX: Send request to the server
     	bubble.setVisibility(View.GONE); 	// Close bubble
     	addMarker(point);
     }
@@ -475,13 +475,13 @@ public class EmapixActivity extends MapActivity {
     }
     
     public void addMarker(GeoPoint point) {
-    	// Add DB record
+    	// Adds record to service
     	ResourceImage ri = photoData.add(point.getLatitudeE6(), point.getLongitudeE6());
     	showMarker(point, ri.getPhotoRequest().getResourceId(), null);
     }
     
     public void updateMarker(long id, Uri uri) {
-    	photoData.setResource((int)id, String.format("%s", uri));
+    	photoData.setResource((int)id, uri.toString());
     }
     
     public void showMarker(GeoPoint point, long id, Uri uri) {

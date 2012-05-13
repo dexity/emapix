@@ -47,7 +47,8 @@ class PhotoRequest
 	public void setDate(String date) {submitted_date = date;}
 	
 	public String toString() {
-		return "";
+		return String.format("lat = %s; lon = %s; resourceId = %s; resource = %s; date = %s", 
+							 lat, lon, resourceId, resource, submitted_date);
 	}	
 }
 
@@ -73,12 +74,13 @@ class ResourceImage
 			image 	= BitmapFactory.decodeStream(bis);
 			resourceUri = uri;
 		} catch (Exception e) {
-			Log.e("setBitmapUri", String.format("%s", e));
+			Log.e("setBitmapUri", e.toString());
 		}
 	}
 	
 	public String toString() {
-		return "";
+		return String.format("request = (%s); image = %s; resourceUri = %s; localUri = %s", 
+							 request, image, resourceUri, localUri);
 	}
 	
 	
