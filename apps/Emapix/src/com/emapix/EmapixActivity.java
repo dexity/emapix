@@ -91,13 +91,10 @@ public class EmapixActivity extends MapActivity {
 		mController.setZoom(14);
 		mController.animateTo(point);
 
-		photoData	= new ServicePhotoData(this); //new LocalPhotoData(this);		
+		photoData	= new ServicePhotoData(this); // new LocalPhotoData(this);		
     	mOverlays 	= mView.getOverlays();
     	crImage		= new ResourceImage();	// create current resource image
     	
-    	
-    	//photoData.add(32818062,-117269440);
-    	photoData.get(1);
     	createMarkers();
     	populateMarkers();
         

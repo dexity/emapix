@@ -36,8 +36,9 @@ class LocalPhotoData implements IPhotoData
     	return ri;
     }
     
-    public void setResource(int res_id, String resource) {
+    public boolean setResource(int res_id, String resource) {
     	db.updateMarker(res_id, resource);
+    	return true;	// XXX: Fix
     }
     
     public ResourceImage add(int lat, int lon) {
@@ -58,8 +59,9 @@ class LocalPhotoData implements IPhotoData
 		return ri;
     }
     
-    public void remove(int res_id) {
+    public boolean remove(int res_id) {
     	db.deleteRequest(res_id);
+    	return true;	// XXX: Fix
     }
     
     public boolean isEmpty(int res_id) {

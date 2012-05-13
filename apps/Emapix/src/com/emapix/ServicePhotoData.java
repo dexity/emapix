@@ -34,8 +34,17 @@ class ServicePhotoData implements IPhotoData
 		this.context	= context;
 	}
 	
-    public void setResource(int res_id, String resource) {
-    	
+    public boolean setResource(int res_id, String resource) {
+    	// Updates resource data 
+		HashMap<String, String> params	= new HashMap<String, String>();
+		params.put("resource", resource);
+		JSONObject js	= getContentObject(String.format("%s/update", res_id), params);
+		try {
+			return isSuccess(js.getString("status"));
+		} catch (Exception e){
+    		Log.e("ServicePhotoData.setResource", e.toString());
+    		return false;			
+		}    	
     }
     
     public ResourceImage get(int res_id) {
@@ -51,10 +60,7 @@ class ServicePhotoData implements IPhotoData
     
     public ResourceImage[] getAll() {
     	// Returns all photo requests
-//		HashMap<String, String> params	= new HashMap<String, String>();
-//		params.put("action", "getall");
-		JSONObject js	= getContentObject("all", null);
-		 
+		JSONObject js	= getContentObject("all", null);		
 		try {
 			JSONArray arr	= js.getJSONArray("result");
 			ResourceImage[] ri = new ResourceImage[arr.length()];
@@ -69,21 +75,41 @@ class ServicePhotoData implements IPhotoData
     }
     
     public ResourceImage add(int lat, int lon) {
-    	
-    	return null;
+    	// Adds resource image
+		HashMap<String, String> params	= new HashMap<String, String>();
+		params.put("lat", String.format("%s", lat));
+		params.put("lon", String.format("%s", lon));
+		params.put("resource", genRes());
+		JSONObject js	= getContentObject("add", params);
+		try {
+			return toResourceImage(js.getJSONObject("result"));
+		} catch (Exception e){
+    		Log.e("ServicePhotoData.add", e.toString());
+    		return null;			
+		}
     }
     
-    public void remove(int res_id) {
-    	
+    public boolean remove(int res_id) {
+    	// Removes record
+		JSONObject js	= getContentObject(String.format("%s/remove", res_id), null);
+		try {
+			return isSuccess(js.getString("status"));
+		} catch (Exception e){
+    		Log.e("ServicePhotoData.add", e.toString());
+    		return false;			
+		}    	
     }
     
-    public boolean isEmpty(int res_id) {
-    	
-    	return true;
+    public boolean isEmpty(int res_id) {    	
+    	return get(res_id) == null;
     }
-    public int size() {
-    	
+    
+    public int size() {    	
     	return 0;
+    }
+    
+    private boolean isSuccess(String status) {    	
+		return status.equals("ok");
     }
     
     private String genRes() {
@@ -103,11 +129,11 @@ class ServicePhotoData implements IPhotoData
 	    		ri.setBitmapUri(String.format("%s/%s.%s", base_s3, obj.getString("resource"), FILE_EXT));
 	    	} catch (Exception e){
 	    		// Do nothing
-	    		Log.e("toResourceImage", String.format("%s", e));
+	    		Log.e("toResourceImage", e.toString());
 	    	}
 	    	return ri;
     	} catch (JSONException e){
-    		Log.e("toResourceImage", String.format("%s", e));
+    		Log.e("toResourceImage", e.toString());
     		return null;
     	}
 
@@ -139,7 +165,6 @@ class ServicePhotoData implements IPhotoData
 			Log.e("Json", e.toString());
 			return null;
 		}
-		
 	}
 	
 	public static String createUrl(String method, HashMap<String, String> params)
