@@ -40,6 +40,9 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.MeasureSpec;
@@ -51,6 +54,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.emapix.EmapixDB.PhotoRequestCursor;
 import com.google.android.maps.GeoPoint;
@@ -82,6 +86,7 @@ public class EmapixActivity extends MapActivity {
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
 	ResourceImage crImage;	// current resource image
+	Menu mMenu;
 	
 	private static final int PICK_IMAGE_CODE = 100;
 	
@@ -118,6 +123,31 @@ public class EmapixActivity extends MapActivity {
 	        }
         });
     }
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {   
+        // Hold on to this
+        mMenu = menu;
+        
+        // Inflate the currently selected menu XML resource.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.controls, menu);        
+                
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        
+        switch (item.getItemId()) {
+            case R.id.refresh:
+            	refreshMap();
+                Toast.makeText(this, "Refreshed", Toast.LENGTH_SHORT).show();
+                return true;              
+        }
+        return false;
+    }
+    
     
     private void createMarkers() {
 		Options opts = new BitmapFactory.Options();
@@ -440,6 +470,12 @@ public class EmapixActivity extends MapActivity {
         }
     }    
     
+    private void refreshMap() {
+    	mOverlays.clear();
+    	populateMarkers();
+    	mView.invalidate();
+    }
+    
     private void populateMarkers() {
     	// Populates markers from database
     	ResourceImage[] photos	= photoData.getAll();
@@ -497,18 +533,26 @@ public class EmapixActivity extends MapActivity {
     //
     public void showMarker(GeoPoint point, long id, Uri uri, String resource) {
     	// Creates and sets overlay on the map
-    	Drawable marker = markers.get(getColor(uri));
+    	Bitmap im = null;
+    	if (uri != null)
+    		im	= getImage(uri);	// XXX: Dirty way of setting color
+    	String color	= "red";
+    	if (im != null)
+    		color	= "blue";
+    	Drawable marker = markers.get(color);
 
     	// Show marker  
     	itemOverlay	= new MarkerOverlay(marker, this, point, id, resource);	// The only place where the MarkerOverlay is created
     	itemOverlay.addOverlay(new OverlayItem(point, null, null));
-    	if (uri != null)
-    		itemOverlay.setImage(getImage(uri));
+    	if (im != null)
+    		itemOverlay.setImage(im);
     	mOverlays.add(itemOverlay);
     }
     
     private String getColor(Uri uri) {
-    	if (isValidUri(String.format("%s", uri)))
+    	// Not used
+		String scheme	= uri.getScheme(); // filter by scheme
+		if (scheme.equals("https") || scheme.equals("http"))
     		return "blue";				
     	return "red";
     }
@@ -554,7 +598,7 @@ public class EmapixActivity extends MapActivity {
     }  
 
 }
-    
+   
 
 //// XXX: Redo
 //File imgFile = new  File("/sdcard/download/puppy1.jpg");

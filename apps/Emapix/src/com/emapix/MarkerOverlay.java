@@ -114,7 +114,3 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	}
 }		
 
-//try {
-//} catch(IndexOutOfBoundsException e1){
-//      //throw e1;
-//}
