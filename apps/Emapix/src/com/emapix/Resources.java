@@ -78,6 +78,14 @@ class ResourceImage
 		}
 	}
 	
+	public String getResource() {
+		try {
+			return request.getResource();
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 	public String toString() {
 		return String.format("request = (%s); image = %s; resourceUri = %s; localUri = %s", 
 							 request, image, resourceUri, localUri);

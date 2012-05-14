@@ -23,8 +23,6 @@ import android.util.Log;
 
 class ServicePhotoData implements IPhotoData 
 {
-	private static final String ENDPOINT 	= "http://192.168.1.15/api/";
-	private static final String KEY 		= "0dae2799bb2d9b88e1d38a337377b221";	
 	private static final String FILE_EXT	= "jpg";
 	
 	private SecureRandom random = new SecureRandom();
@@ -116,7 +114,7 @@ class ServicePhotoData implements IPhotoData
     	return new BigInteger(130, random).toString(16);
     }
     
-    private String getFullUri(String resource) {
+    public String getFullUri(String resource) {
     	// Returns full uri of the image
 		String base_s3	= context.getString(R.string.base_s3);
 		return String.format("%s/%s.%s", base_s3, resource, FILE_EXT);    	
@@ -149,7 +147,7 @@ class ServicePhotoData implements IPhotoData
 		String js = "";
 		if (params == null)
 			params	= new HashMap<String, String>();
-		params.put("key", KEY);		// Default param
+		params.put("key", context.getString(R.string.api_key));		// Default param
 				
 		try
 		{ 
@@ -172,7 +170,7 @@ class ServicePhotoData implements IPhotoData
 		}
 	}
 	
-	public static String createUrl(String method, HashMap<String, String> params)
+	public String createUrl(String method, HashMap<String, String> params)
 	{
 		Iterator<String> keyIter = params.keySet().iterator();
 		ArrayList<String> ps	= new ArrayList<String>();
@@ -181,7 +179,8 @@ class ServicePhotoData implements IPhotoData
 			String	key	= keyIter.next();	//(String)keyIter.next();
 		    ps.add(key + "=" + params.get(key));
 		}
-		return ENDPOINT + method + "?" + join(ps, "&");
+		return String.format("%s/%s?%s", context.getString(R.string.base_uri),
+							 method, join(ps, "&"));
 	}    
     
 	public static String join(Collection<String> s, String delimiter) {
@@ -194,7 +193,8 @@ class ServicePhotoData implements IPhotoData
 	        }
 	    }
 	    return buffer.toString();
-	}	
-	
-    
+	}
 }
+
+
+

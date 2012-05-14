@@ -1,10 +1,13 @@
 
 package com.emapix;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,18 +64,24 @@ import com.google.android.maps.Projection;
 import android.graphics.drawable.BitmapDrawable;
 
 // XXX: Cannot load more than 4 large pictures. Resources are not released?
+// XXX: Refactor Uri to separate local uri and remove uri.
+
+/*
+ * Notes:
+ * 		- All images are uploaded from a local storage
+ */
 
 public class EmapixActivity extends MapActivity {
 	
 	private LinearLayout bubble;
 	private EmapixMapView mView;
-	private IPhotoData photoData;
+	//private IPhotoData photoData;
+	private ServicePhotoData photoData;
 	private MarkerOverlay cOverlay;
 	private MarkerOverlay itemOverlay;
 	List<Overlay> mOverlays;
 	HashMap<String, Drawable> markers;
 	ResourceImage crImage;	// current resource image
-	String currName;	// remove
 	
 	private static final int PICK_IMAGE_CODE = 100;
 	
@@ -281,7 +290,7 @@ public class EmapixActivity extends MapActivity {
         if (crImage.image != null) {
 			ImageView image = (ImageView) bubble.findViewById(R.id.bubble_image);
 			image.setImageBitmap(crImage.image);        	
-        }        
+        }
         
         // Set submit button
         Button btn_submit	= (Button) bubble.findViewById(R.id.submit_pic);
@@ -290,8 +299,8 @@ public class EmapixActivity extends MapActivity {
             	// XXX: Submitting pic to server
             	
             	// Show blue marker            	
-            	showMarker(cOverlay.getPoint(), cOverlay.getId(), crImage.localUri);
-            	updateMarker(cOverlay.getId(), crImage.localUri);
+            	showMarker(cOverlay.getPoint(), cOverlay.getId(), crImage.localUri, cOverlay.getResource());
+            	//updateMarker(cOverlay.getId(), crImage.localUri);
             	cOverlay.setImage(crImage.image);
             	
             	bubble.setVisibility(View.GONE);
@@ -361,11 +370,12 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// Remove marker and picture
             	
-            	updateMarker(cOverlay.getId(), null);
-            	showMarker(cOverlay.getPoint(), cOverlay.getId(), null);
+            	//updateMarker(cOverlay.getId(), null);
+            	showMarker(cOverlay.getPoint(), cOverlay.getId(), null, null);
             	bubble.setVisibility(View.GONE);            	
             }
         });
+        
         
         if (mView.findViewById(bubble.getId()) == null)
         	mView.addView(bubble);
@@ -380,7 +390,7 @@ public class EmapixActivity extends MapActivity {
     	// Submits image to the server
     	
     	// XXX: Check if bitmap is JPEG or PNG
-    	String uri = String.format("%s?key=%s", getString(R.string.base_uri), 
+    	String uri = String.format("%s/upload?key=%s", getString(R.string.base_uri), 
     											getString(R.string.api_key));
     	
     	try {
@@ -390,7 +400,7 @@ public class EmapixActivity extends MapActivity {
 			// Http client
 			HttpClient httpClient = new DefaultHttpClient();
 			HttpPost postRequest = new HttpPost(uri);
-			ByteArrayBody bab = new ByteArrayBody(data, currName);	// XXX: Fix filename
+			ByteArrayBody bab = new ByteArrayBody(data, cOverlay.getResource()+".jpg"); // Hope, resource is set	//currName);	// XXX: Fix filename
 
 			MultipartEntity reqEntity = new MultipartEntity(
 					HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -398,7 +408,7 @@ public class EmapixActivity extends MapActivity {
 			postRequest.setEntity(reqEntity);
 			HttpResponse response = httpClient.execute(postRequest);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
-					response.getEntity().getContent(), "UTF-8"));
+										response.getEntity().getContent(), "UTF-8"));
 			String sResponse;
 			StringBuilder s = new StringBuilder();
 
@@ -423,7 +433,7 @@ public class EmapixActivity extends MapActivity {
         	// Local image
             if(resultCode == RESULT_OK){  
                 Uri selectedImage = imageReturnedIntent.getData();
-                crImage.image 	= getImageFromUri(selectedImage);
+                crImage.image 	= getImageFromFile(selectedImage);
                 crImage.localUri	= selectedImage;
                 showPreviewBubble(cOverlay);
             }
@@ -437,8 +447,9 @@ public class EmapixActivity extends MapActivity {
     	for (ResourceImage ri: photos) {
     		PhotoRequest pr	=  ri.getPhotoRequest();
     		GeoPoint point = new GeoPoint(pr.getLat(), pr.getLon());
-    		showMarker(point, pr.getResourceId(), stringToUri(pr.getResource()));    		
-    	}    	
+    		showMarker(point, pr.getResourceId(), 
+    				   stringToUri(photoData.getFullUri(pr.getResource())), pr.getResource());    		
+    	}
     }
     
     private Uri stringToUri(String res) {
@@ -446,7 +457,6 @@ public class EmapixActivity extends MapActivity {
 			return Uri.parse(res);    	
     	return null;
     }
-    
 
     public static boolean isValidUri(String uri) {
     	// Checks if uri is valid. XXX: Move to some other class
@@ -477,22 +487,23 @@ public class EmapixActivity extends MapActivity {
     public void addMarker(GeoPoint point) {
     	// Adds record to service
     	ResourceImage ri = photoData.add(point.getLatitudeE6(), point.getLongitudeE6());
-    	showMarker(point, ri.getPhotoRequest().getResourceId(), null);
+    	showMarker(point, ri.getPhotoRequest().getResourceId(), null, ri.getResource());
     }
     
     public void updateMarker(long id, Uri uri) {
     	photoData.setResource((int)id, uri.toString());
     }
     
-    public void showMarker(GeoPoint point, long id, Uri uri) {
+    //
+    public void showMarker(GeoPoint point, long id, Uri uri, String resource) {
+    	// Creates and sets overlay on the map
     	Drawable marker = markers.get(getColor(uri));
 
-    	// Show marker
-    	OverlayItem item	= new OverlayItem(point, null, null);   
-    	itemOverlay	= new MarkerOverlay(marker, this, point, id);
-    	itemOverlay.addOverlay(item);
+    	// Show marker  
+    	itemOverlay	= new MarkerOverlay(marker, this, point, id, resource);	// The only place where the MarkerOverlay is created
+    	itemOverlay.addOverlay(new OverlayItem(point, null, null));
     	if (uri != null)
-    		itemOverlay.setImage(getImageFromUri(uri));
+    		itemOverlay.setImage(getImage(uri));
     	mOverlays.add(itemOverlay);
     }
     
@@ -502,23 +513,39 @@ public class EmapixActivity extends MapActivity {
     	return "red";
     }
     
-    private Bitmap getImageFromUri(Uri uri) {
+    private Bitmap getImage(Uri uri) {
+		String scheme	= uri.getScheme(); // filter by scheme
+		if (scheme.equals("https") || scheme.equals("http"))
+			return getImageFromServer(uri);
+		return getImageFromFile(uri);
+    }
+    
+    private Bitmap getImageFromFile(Uri uri) {
+    	// Returns bitmap object from the file uri
     	if (uri == null)
     		return null;
     	
         String[] filePathColumn = {MediaStore.Images.Media.DATA};
         Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-
         cursor.moveToFirst();
         int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-        String filePath = cursor.getString(columnIndex);
-        
-        File f	= new File(filePath);
-        currName	= new String(f.getName());	// Temp
-        
+        String filePath = cursor.getString(columnIndex);        
         cursor.close();
 
         return BitmapFactory.decodeFile(filePath);    	
+    }
+   
+    
+    private Bitmap getImageFromServer(Uri uri) {
+    	// Returns bitmap object from http uri
+		try {
+			URLConnection conn = new URL(uri.toString()).openConnection();
+			BufferedInputStream bis	= new BufferedInputStream(conn.getInputStream());
+			return BitmapFactory.decodeStream(bis);
+		} catch (Exception e) {
+			Log.e("getImageFromServer", e.toString());
+			return null;
+		}
     }
     
     @Override

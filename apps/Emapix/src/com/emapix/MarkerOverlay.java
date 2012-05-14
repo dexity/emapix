@@ -25,22 +25,24 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 
 	private GeoPoint point;
 	private Drawable marker;	// marker image
-	// XXX: ResourceImage rImage; 
-	// resource
-	private Bitmap image;		// image related to image
-	private long id;			// db record id
+	private ResourceImage rImage;	// XXX 
+	private String resource;	// XXX: Remove; 
+	private Bitmap image;		// XXX: Remove; image related to image
+	private long id;			// XXX: Remove; db record id
 	
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>(); // Holds one item only!
 	private MapView mView;
 	private EmapixActivity activity;
 
-	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, GeoPoint point, long id) {
+	public MarkerOverlay(Drawable defaultMarker, EmapixActivity activity, 
+						 GeoPoint point, long id, String resource) {
 		super(boundCenterBottom(defaultMarker));
 		marker	= defaultMarker;
 		mView	= activity.getMapView();
 		this.activity 	= activity;
 		this.point		= point;
 		this.id 		= id;
+		this.resource	= resource;
 		populate();		// Important
 	}
 	
@@ -91,6 +93,10 @@ public class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	GeoPoint getPoint() {
 		return point;
+	}
+	
+	String getResource() {
+		return resource;
 	}
 	
 	public ArrayList<OverlayItem> getOverlayItems() {
