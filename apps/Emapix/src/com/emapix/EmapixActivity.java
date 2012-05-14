@@ -73,6 +73,7 @@ import android.graphics.drawable.BitmapDrawable;
 /*
  * Notes:
  * 		- All images are uploaded from a local storage
+ * 		- When completed request gets removed, both record and S3 image (TODO) gets removed
  */
 
 public class EmapixActivity extends MapActivity {
@@ -284,6 +285,7 @@ public class EmapixActivity extends MapActivity {
             public void onClick(View v) {
             	// Remove marker
             	cOverlay.removeOverlay();
+            	photoData.remove((int)cOverlay.getId());
             	bubble.setVisibility(View.GONE);
             }
         });
@@ -355,7 +357,7 @@ public class EmapixActivity extends MapActivity {
         Button btn_select	= (Button) bubble.findViewById(R.id.select_pic);
         btn_select.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	// Remove marker
+            	// marker
 
             }
         });
@@ -401,7 +403,9 @@ public class EmapixActivity extends MapActivity {
             	// Remove marker and picture
             	
             	//updateMarker(cOverlay.getId(), null);
-            	showMarker(cOverlay.getPoint(), cOverlay.getId(), null, null);
+            	//showMarker(cOverlay.getPoint(), cOverlay.getId(), null, null);
+            	// XXX: Need to remove image from S3
+            	photoData.remove((int)cOverlay.getId());
             	bubble.setVisibility(View.GONE);            	
             }
         });
