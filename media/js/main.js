@@ -22,17 +22,15 @@ var reqStr		= 'Location: {0}; {1}<br/>' +
 	'<button type="button" id="send_request">Send Request</button><br/>';
 	
 var actionStr	= 'Location: {0}; {1}<br/>' +
-	'<button type="button">Take Picture</button><br/>' +
-	'<button type="button">Select Picture</button><br/>' +
-	'<button type="button">Remove Marker</button><br/>';
+	'<button type="button" id="upload_picture">Upload Picture</button><br/>' +
+	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
 	
 var previewStr	= '<img src="{0}" width=200/><br/>' +
-	'<button type="button">Submit Picture</button><br/>' +
-	'<button type="button">Take Picture</button><br/>' +
-	'<button type="button">Remove Marker</button><br/>';
+	'<button type="button" >Submit Picture</button><br/>' +
+	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
 	
 var viewStr		= '<img src="{0}" width=200/><br/>' +
-'<button type="button">Remove</button>';
+'<button type="button" id="remove_marker">Remove</button>';
 
 function createMarker(lat, lon, resource) {
 	// Creates marker and sets it on the map
@@ -58,15 +56,17 @@ function showMarkers() {
 					// Add click listener in closure
 					(function(){
 						var _marker = marker;
-						var lat		= req_lat(req);
-						var lon		= req_lon(req)
-						google.maps.event.addListener(_marker, 'click', function(event) {
+						var _req	= req;
+						var lat		= req_lat(_req);
+						var lon		= req_lon(_req)
+						google.maps.event.addListener(_marker, 'click', function() {
 							uri	= imageUri(_marker.title);
 							// Check if photo exists
-							if (req["photo_exists"])
+							if (_req["photo_exists"]) {
 								showView(_marker, uri);
-							else
+							} else {
 								showAction(_marker, lat, lon);
+							}
 						});								
 					})();
 					markersArray.push(marker);
