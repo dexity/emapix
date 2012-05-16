@@ -63,9 +63,9 @@ function showMarkers() {
 							uri	= imageUri(_marker.title);
 							// Check if photo exists
 							if (_req["photo_exists"]) {
-								showView(_marker, uri);
+								showView(_marker, uri, _req["id"]);
 							} else {
-								showAction(_marker, lat, lon);
+								showAction(_marker, lat, lon, _req["id"]);
 							}
 						});								
 					})();
@@ -84,19 +84,16 @@ function randomStr() {
 		randomstring += chars.substring(rnum,rnum+1);
 	}
 	return randomstring;
-	
 }
 
 function submitRequest(bubble, lat, lon) {
 	$.get(base_api+"/add", {"key": api_key, "lat": Math.round(lat*1e6), 
 							"lon": Math.round(lon*1e6), "resource": randomStr()}, 
 			function(data){
-				console.log(data);
 				var res	= $.parseJSON(data);
 				if (res["status"] == "ok") {
 					req	= res["result"]
 					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-					//marker.setMap(map);
 				}
 				// display error
 			});
@@ -128,23 +125,45 @@ function showRequest(location) {
 		});
 	}
 
-function showView(marker, uri) {
+function showView(marker, uri, id) {
 	iw = new google.maps.InfoWindow({
 		content:	viewStr.format(uri),
 	});	
 	iw.open(map, marker);
+	
+	// Refactor?
+	$('button#remove_marker').click(function(event) {
+		$.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
+				function(data) {
+					var res	= $.parseJSON(data);
+					if (res["status"] == "ok") {
+						iw.close();
+						marker.setMap(null);
+					}
+				});
+	});
 }
 
-function showAction(marker, lat, lon) {
+function showAction(marker, lat, lon, id) {
 	iw = new google.maps.InfoWindow({
 		content:	actionStr.format(lat, lon),
 	});
 	iw.open(map, marker);
-	$("#upload_picture").click(function() {
+	$('button#upload_picture').click(function(event) {
 		
 	});
 	
-	$("#remove_marker").click();
+	// Refactor?
+	$('button#remove_marker').click(function(event) {
+		$.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
+				function(data) {
+					var res	= $.parseJSON(data);
+					if (res["status"] == "ok") {
+						iw.close();
+						marker.setMap(null);
+					}
+				});
+	});
 }
 
 function showPreview(marker) {
