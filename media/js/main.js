@@ -1,7 +1,7 @@
 
 var map;
 var infoWindow;
-var markersArray;
+var markersArray	= [];
 var pressTimer;
 
 var base_api	= "http://localhost/api";
@@ -39,7 +39,7 @@ function createMarker(lat, lon, resource) {
 	return new google.maps.Marker({
 	    position:  	new google.maps.LatLng(lat, lon),
 	    title:		resource,
-	    map:		map
+	    map:		map		// set map?
 	    });	
 }
 
@@ -48,13 +48,18 @@ function showMarkers() {
 			function(data) { 
 				var res	= $.parseJSON(data);
 				var reqs	= res["result"];
-				for (i=0; i<reqs.length; i++) {
+				for (i in reqs) {
 					req	= reqs[i];
-					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-					google.maps.event.addListener(marker, 'click', function() {
-							infoWindow.setContent(viewStr.format(req["resource"]));//reqStr.format(req_lat(req), req_lon(req)));
-							infoWindow.open(map, marker);
-					});
+					marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+					// Add click listener in closure
+					(function(){
+						var _marker = marker
+						google.maps.event.addListener(_marker, 'click', function() {
+							infoWindow.setContent(viewStr.format(_marker.title));	//reqStr.format(req_lat(req), req_lon(req)));
+							infoWindow.open(map, _marker);
+						});								
+					})();
+					markersArray.push(marker);
 				}
 			});
 }
@@ -81,6 +86,7 @@ function submitRequest(bubble, lat, lon) {
 				if (res["status"] == "ok") {
 					req	= res["result"]
 					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+					//marker.setMap(map);
 				}
 				// display error
 			});
