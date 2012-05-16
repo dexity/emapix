@@ -3,7 +3,7 @@ import time
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from emapix.utils import handle_uploaded_file
+from emapix.utils import *
 
 from models import PhotoRequest
 
@@ -17,7 +17,8 @@ def add(request):
     "Adds record to the photo request"
     p   = request.REQUEST
     try:
-        pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), resource=p["resource"])
+        pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), 
+                           resource=p["resource"])
         pr.save()
         return to_status(OK, to_photo(pr))
     except Exception, e:
@@ -36,18 +37,36 @@ def remove(request, reqid):
         return to_status(FAIL, str(e))
 
 
+def _update_photo_request(pr):
+    "Checks if file actually exists and updates"
+    # not used
+    if file_exists(pr.resource):
+        pr.photo_exists = True
+        pr.save()
+    
+    
+def _update_list_photo_request(prs):
+    "Checks S3 data set with "
+    # not used
+    pass
+
+
+# cache file check
 def get(request, reqid):
     try:
         pr  = PhotoRequest.objects.get(id=reqid)
+        #_update_photo_request(pr)   # hide
         return to_status(OK, to_photo(pr))
     except Exception, e:
         logger.debug(str(e))
         return to_status(FAIL, str(e))
 
 
+# cache file check
 def get_all(request):
     try:
         prs  = PhotoRequest.objects.all()
+        #_update_list_photo_request(prs)
         l   = []
         for p in prs:
             l.append(to_photo(p))
@@ -55,7 +74,6 @@ def get_all(request):
     except Exception, e:
         logger.debug(str(e))
         return to_status(FAIL)
-
 
 
 def update(request, reqid):
@@ -90,7 +108,8 @@ def to_photo(p):
            "lat":   p.lat,
            "lon":   p.lon,
            "submitted_date": p.submitted_date,
-           "resource":  p.resource}
+           "resource":  p.resource,
+           "photo_exists":  p.photo_exists}
     return s
 
 def to_json(obj):

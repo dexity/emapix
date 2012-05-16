@@ -26,12 +26,12 @@ var actionStr	= 'Location: {0}; {1}<br/>' +
 	'<button type="button">Select Picture</button><br/>' +
 	'<button type="button">Remove Marker</button><br/>';
 	
-var previewStr	= '<img src="https://s3.amazonaws.com/emapix_uploads/{0}.jpg" width=200/><br/>' +
+var previewStr	= '<img src="{0}" width=200/><br/>' +
 	'<button type="button">Submit Picture</button><br/>' +
 	'<button type="button">Take Picture</button><br/>' +
 	'<button type="button">Remove Marker</button><br/>';
 	
-var viewStr		= '<img src="https://s3.amazonaws.com/emapix_uploads/{0}.jpg" width=200/><br/>' +
+var viewStr		= '<img src="{0}" width=200/><br/>' +
 '<button type="button">Remove</button>';
 
 function createMarker(lat, lon, resource) {
@@ -41,6 +41,10 @@ function createMarker(lat, lon, resource) {
 	    title:		resource,
 	    map:		map		// set map?
 	    });	
+}
+
+function imageUri(resource) {
+	return "{0}/{1}.jpg".format(base_s3, resource);
 }
 
 function showMarkers() {
@@ -53,10 +57,16 @@ function showMarkers() {
 					marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
 					// Add click listener in closure
 					(function(){
-						var _marker = marker
-						google.maps.event.addListener(_marker, 'click', function() {
-							infoWindow.setContent(viewStr.format(_marker.title));	//reqStr.format(req_lat(req), req_lon(req)));
-							infoWindow.open(map, _marker);
+						var _marker = marker;
+						var lat		= req_lat(req);
+						var lon		= req_lon(req)
+						google.maps.event.addListener(_marker, 'click', function(event) {
+							uri	= imageUri(_marker.title);
+							// Check if photo exists
+							if (req["photo_exists"])
+								showView(_marker, uri);
+							else
+								showAction(_marker, lat, lon);
 						});								
 					})();
 					markersArray.push(marker);
@@ -105,7 +115,7 @@ function req_lon(req) {
 	return lon.toFixed(6);
 }
 
-
+// Bubbles
 function showRequest(location) {
 
 	  iw = new google.maps.InfoWindow({
@@ -116,10 +126,27 @@ function showRequest(location) {
 	  $('#send_request').click(function(){
 			submitRequest(iw, _lat(location), _lon(location));
 		});
-	  
-	  //markersArray.push(marker);
 	}
 
+function showView(marker, uri) {
+	iw = new google.maps.InfoWindow({
+		content:	viewStr.format(uri),
+	});	
+	iw.open(map, marker);
+}
+
+function showAction(marker, lat, lon) {
+	iw = new google.maps.InfoWindow({
+		content:	actionStr.format(lat, lon),
+	});
+	iw.open(map, marker);
+}
+
+function showPreview(marker) {
+	
+}
+
+// Main function
 function initialize() {
 	var lajolla = new google.maps.LatLng(32.818062,-117.269440);
 	var myOptions = {
@@ -132,7 +159,7 @@ function initialize() {
 	    clearTimeout(map.pressButtonTimer); 
 	    map.pressButtonTimer = setTimeout(function(){ 
 	    	showRequest(event.latLng);
-	    }, 800); 
+	    }, 500); 
 	  }); 	
 	google.maps.event.addListener(map, 'mouseup', function(event){ 
 	    clearTimeout(map.pressButtonTimer); 
