@@ -4,7 +4,9 @@ var infoWindow;
 var markersArray;
 var pressTimer;
 
-// XXX: Implement long click
+var base_api	= "http://localhost/api";
+var base_s3		= "https://s3.amazonaws.com/emapix_uploads";
+var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
 
 String.prototype.format = function() {
 	  var args = arguments;
@@ -32,42 +34,81 @@ var previewStr	= '<img src="https://s3.amazonaws.com/emapix_uploads/{0}.jpg" wid
 var viewStr		= '<img src="https://s3.amazonaws.com/emapix_uploads/{0}.jpg" width=200/><br/>' +
 '<button type="button">Remove</button>';
 
-function getMarkers() {
-	$.get("http://localhost/api/all", {"key": "0dae2799bb2d9b88e1d38a337377b221"},
+function createMarker(lat, lon, resource) {
+	// Creates marker and sets it on the map
+	return new google.maps.Marker({
+	    position:  	new google.maps.LatLng(lat, lon),
+	    title:		resource,
+	    map:		map
+	    });	
+}
+
+function showMarkers() {
+	$.get(base_api + "/all", {"key": api_key},
 			function(data) { 
 				var res	= $.parseJSON(data);
 				var reqs	= res["result"];
 				for (i=0; i<reqs.length; i++) {
 					req	= reqs[i];
-					lat	= req["lat"]/1e6;
-					lon	= req["lon"]/1e6;
-					var marker = new google.maps.Marker({
-					    position:  	new google.maps.LatLng(lat, lon),
-					    title:		req["resource"],
-					    map:		map
-					    });	
+					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
 					google.maps.event.addListener(marker, 'click', function() {
-							infoWindow.setContent(viewStr.format(req["resource"]));//reqStr.format(lat, lon));
+							infoWindow.setContent(viewStr.format(req["resource"]));//reqStr.format(req_lat(req), req_lon(req)));
 							infoWindow.open(map, marker);
 					});
 				}
 			});
 }
 
+function randomStr() {
+	// Returns 16 characters string
+	var chars = "0123456789abcdef";
+	var string_length = 32;
+	var randomstring = '';
+	for (var i=0; i<string_length; i++) {
+		var rnum = Math.floor(Math.random() * chars.length);
+		randomstring += chars.substring(rnum,rnum+1);
+	}
+	return randomstring;
+	
+}
+
 function submitRequest(bubble, lat, lon) {
+	$.get(base_api+"/add", {"key": api_key, "lat": Math.round(lat*1e6), 
+							"lon": Math.round(lon*1e6), "resource": randomStr()}, 
+			function(data){
+				console.log(data);
+				var res	= $.parseJSON(data);
+				if (res["status"] == "ok") {
+					req	= res["result"]
+					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+				}
+				// display error
+			});
+	
 	bubble.close();
+}
+
+function _lat(loc) { return loc.lat().toFixed(6); }
+function _lon(loc) { return loc.lng().toFixed(6); }
+function req_lat(req) {
+	lat	= req["lat"]/1e6;
+	return lat.toFixed(6);
+}
+function req_lon(req) {
+	lon	= req["lon"]/1e6;
+	return lon.toFixed(6);
 }
 
 
 function showRequest(location) {
 
 	  iw = new google.maps.InfoWindow({
-		content:	reqStr.format(location.lat(), location.lng()),
+		content:	reqStr.format(_lat(location), _lon(location)),
 	    position: 	location,
 	    map: map
 	  });
 	  $('#send_request').click(function(){
-			submitRequest(iw, location.lat(), location.lng());
+			submitRequest(iw, _lat(location), _lon(location));
 		});
 	  
 	  //markersArray.push(marker);
@@ -90,12 +131,9 @@ function initialize() {
 	google.maps.event.addListener(map, 'mouseup', function(event){ 
 	    clearTimeout(map.pressButtonTimer); 
 	  });
-//	google.maps.event.addListener(map, 'click', function(event) {
-//		showRequest(event.latLng);
-//	});
 	
 	infoWindow	= new google.maps.InfoWindow();
 	
-	getMarkers();
+	showMarkers();
 	
 }
