@@ -140,6 +140,11 @@ function showAction(marker, lat, lon) {
 		content:	actionStr.format(lat, lon),
 	});
 	iw.open(map, marker);
+	$("#upload_picture").click(function() {
+		
+	});
+	
+	$("#remove_marker").click();
 }
 
 function showPreview(marker) {
