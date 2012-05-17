@@ -26,11 +26,7 @@ var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' +
 	'<input type="file" name="uploaded" />' +
 	'<button type="button" id="upload_picture">Upload Picture</button><br/>' +
 	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
-	
-//var previewStr	= '<img src="{0}" width=200/><br/>' +
-//	'<button type="button" >Submit Picture</button><br/>' +
-//	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
-	
+		
 var viewStr		= '<img src="{0}" width=200/><br/>' +
 '<button type="button" id="remove_marker">Remove</button>';
 
@@ -61,6 +57,7 @@ function showMarkers() {
 						var _req	= req;
 						var lat		= req_lat(_req);
 						var lon		= req_lon(_req)
+						// Refactor?
 						google.maps.event.addListener(_marker, 'click', function() {
 							uri	= imageUri(_marker.title);
 							// Check if photo exists
@@ -69,7 +66,7 @@ function showMarkers() {
 							} else {
 								showAction(_marker, lat, lon, _req["id"]);
 							}
-						});								
+						});		
 					})();
 					markersArray.push(marker);
 				}
@@ -98,8 +95,12 @@ function submitRequest(bubble, lat, lon) {
 					var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
 				}
 				// display error
+				google.maps.event.addListener(marker, 'click', function() {
+					// Check if photo exists
+					showAction(marker, req_lat(req), req_lon(req), req["id"]);
+				});								
+				
 			});
-	
 	bubble.close();
 }
 
@@ -177,6 +178,15 @@ function showAction(marker, lat, lon, id) {
 		    processData: false,
 		    type: 	'POST',
 		    success: function(data){
+				
+				google.maps.event.clearListeners(marker, "click");	// Remove listeners
+						    	
+		    	// Refactor?
+				google.maps.event.addListener(marker, 'click', function() {
+					uri	= imageUri(marker.title);
+					showView(marker, uri, id);
+				});								
+		    	
 		    	iw.close();
 		    }
 		});
