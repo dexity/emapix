@@ -23,10 +23,8 @@ var reqStr		= 'Location: {0}; {1}<br/>' +
 	
 var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
 	'Location: {0}; {1}<br/>' +
-	'<form action="api/upload?key={2}&resource={3}" method="POST" enctype="multipart/form-data">' +
 	'<input type="file" name="uploaded" />' +
 	'<button type="button" id="upload_picture">Upload Picture</button><br/>' +
-	'</form>' +
 	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
 	
 //var previewStr	= '<img src="{0}" width=200/><br/>' +
@@ -154,20 +152,6 @@ function showAction(marker, lat, lon, id) {
 	});
 	iw.open(map, marker);
 	
-//	// Create form
-//    var form 	= document.createElement("form"); 
-//    form.target = uniqueString; 
-//    form.action = "http://localhost/api/upload?key=" + api_key; 
-//    form.enctype = "multipart/form-data"; 
-//    form.method = "POST"; 	
-//	
-//    input    = document.createElement("input"); 
-//    input.type   = "file"; 
-//    input.name   = "uploaded"; 
-//    form.appendChild(input);
-//    
-//    document.body.appendChild(form);
-    
 	$('input').change(function(){
 		// Set image
 	    if (this.files && this.files[0]) {
@@ -181,8 +165,22 @@ function showAction(marker, lat, lon, id) {
 	});
 	
 	$('button#upload_picture').click(function(event) {
-		$("form").submit();
-		iw.close();
+		var data = new FormData();
+		$.each($('input')[0].files, function(i, file) {
+		    data.append('uploaded', file);	// should have one file
+		});
+		$.ajax({
+		    url: 	"http://localhost/api/upload?key=" + api_key + "&resource=" + marker.title,
+		    data: 	data,
+		    cache: 	false,
+		    contentType: false,
+		    processData: false,
+		    type: 	'POST',
+		    success: function(data){
+		    	iw.close();
+		    }
+		});
+		
 	});
 	
 	// Refactor?

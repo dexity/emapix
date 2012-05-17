@@ -5,7 +5,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from emapix.utils import handle_uploaded_file, file_exists
 
-from models import PhotoRequest
+from emapix.api.models import PhotoRequest
 
 OK      = "ok"
 FAIL    = "fail"
@@ -92,8 +92,10 @@ def upload(request):
     "Uploads file to S3"  
     logger.debug(request.FILES.keys())
     if request.method == 'POST':
+        # XXX: Check status of uploaded file
         handle_uploaded_file(request.FILES['uploaded'], request.REQUEST.get("resource", None))
-        return HttpResponseRedirect('/')           
+        return to_status(OK)
+        #return HttpResponseRedirect('/')           
     
     # XXX: Change default response
     return to_status(OK)
