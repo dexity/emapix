@@ -4,7 +4,8 @@ var infoWindow;
 var markersArray	= [];
 var pressTimer;
 
-var base_api	= "http://localhost/api";
+//var base_api	= "http://localhost/api";
+var base_api	= "http://ec2-184-73-88-189.compute-1.amazonaws.com/api";
 var base_s3		= "https://s3.amazonaws.com/emapix_uploads";
 var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
 
@@ -171,7 +172,7 @@ function showAction(marker, lat, lon, id) {
 		    data.append('uploaded', file);	// should have one file
 		});
 		$.ajax({
-		    url: 	"http://localhost/api/upload?key=" + api_key + "&resource=" + marker.title,
+		    url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
 		    data: 	data,
 		    cache: 	false,
 		    contentType: false,
