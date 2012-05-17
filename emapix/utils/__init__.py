@@ -3,6 +3,7 @@ from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+from emapix.api.models import PhotoRequest
 
 from emapix.utils.logger import Logger
 logger = Logger.get("utils.handle_uploaded_file")
@@ -30,12 +31,14 @@ def list_files():
     pass
 
 
-def handle_uploaded_file(file):
+def handle_uploaded_file(file, resource):
     # Upload file to S3
     #open("/tmp/pic.jpg", "wb").write(file.read())    # works
     filename = str(file)
+    if resource:
+        filename    = "%s.jpg" % resource
     logger.debug(filename)
-    
+        
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
         b   = conn.get_bucket(BUCKET_NAME)
@@ -47,9 +50,16 @@ def handle_uploaded_file(file):
         k.set_contents_from_file(file) # Performs the actual upload
         k.set_acl('public-read')
         
-        # XXX: set record that photo exists
-    except Exception, e:
+        # Record that file exists on S3
+        _resource   = filename.split(".jpg")[0]
+        prs  = PhotoRequest.objects.filter(resource=_resource)
+        if (len(prs) > 0):
+            pr  = prs[0]
+            pr.photo_exists = True
+            pr.save()
+    except Exception, e:    # object doesn't exist or something else
         logger.debug(str(e))
+
 
     
     

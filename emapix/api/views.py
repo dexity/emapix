@@ -3,7 +3,7 @@ import time
 
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
-from emapix.utils import *
+from emapix.utils import handle_uploaded_file, file_exists
 
 from models import PhotoRequest
 
@@ -92,7 +92,7 @@ def upload(request):
     "Uploads file to S3"  
     logger.debug(request.FILES.keys())
     if request.method == 'POST':
-        handle_uploaded_file(request.FILES['uploaded'])
+        handle_uploaded_file(request.FILES['uploaded'], request.REQUEST.get("resource", None))
         return HttpResponseRedirect('/')           
     
     # XXX: Change default response

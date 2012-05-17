@@ -424,6 +424,7 @@ public class EmapixActivity extends MapActivity {
     	// Submits image to the server
     	
     	// XXX: Check if bitmap is JPEG or PNG
+    	// XXX: Add parameter: resource=<resource>
     	String uri = String.format("%s/upload?key=%s", getString(R.string.base_uri), 
     											getString(R.string.api_key));
     	
@@ -466,8 +467,8 @@ public class EmapixActivity extends MapActivity {
         case PICK_IMAGE_CODE:
         	// Local image
             if(resultCode == RESULT_OK){  
-                Uri selectedImage = imageReturnedIntent.getData();
-                crImage.image 	= getImageFromFile(selectedImage);
+                Uri selectedImage 	= imageReturnedIntent.getData();
+                crImage.image 		= getImageFromFile(selectedImage);
                 crImage.localUri	= selectedImage;
                 showPreviewBubble(cOverlay);
             }

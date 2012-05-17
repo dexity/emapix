@@ -5,6 +5,6 @@ mappings    = {
     "get":      [],
     "get_all":  [],
     "update":   ["resource",],
-    "upload":   []
+    "upload":   []  # XXX: Add "resource"
 }
 

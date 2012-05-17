@@ -21,13 +21,17 @@ String.prototype.format = function() {
 var reqStr		= 'Location: {0}; {1}<br/>' +
 	'<button type="button" id="send_request">Send Request</button><br/>';
 	
-var actionStr	= 'Location: {0}; {1}<br/>' +
+var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
+	'Location: {0}; {1}<br/>' +
+	'<form action="api/upload?key={2}&resource={3}" method="POST" enctype="multipart/form-data">' +
+	'<input type="file" name="uploaded" />' +
 	'<button type="button" id="upload_picture">Upload Picture</button><br/>' +
+	'</form>' +
 	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
 	
-var previewStr	= '<img src="{0}" width=200/><br/>' +
-	'<button type="button" >Submit Picture</button><br/>' +
-	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
+//var previewStr	= '<img src="{0}" width=200/><br/>' +
+//	'<button type="button" >Submit Picture</button><br/>' +
+//	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
 	
 var viewStr		= '<img src="{0}" width=200/><br/>' +
 '<button type="button" id="remove_marker">Remove</button>';
@@ -146,11 +150,39 @@ function showView(marker, uri, id) {
 
 function showAction(marker, lat, lon, id) {
 	iw = new google.maps.InfoWindow({
-		content:	actionStr.format(lat, lon),
+		content:	actionStr.format(lat, lon, api_key, marker.title),
 	});
 	iw.open(map, marker);
+	
+//	// Create form
+//    var form 	= document.createElement("form"); 
+//    form.target = uniqueString; 
+//    form.action = "http://localhost/api/upload?key=" + api_key; 
+//    form.enctype = "multipart/form-data"; 
+//    form.method = "POST"; 	
+//	
+//    input    = document.createElement("input"); 
+//    input.type   = "file"; 
+//    input.name   = "uploaded"; 
+//    form.appendChild(input);
+//    
+//    document.body.appendChild(form);
+    
+	$('input').change(function(){
+		// Set image
+	    if (this.files && this.files[0]) {
+	        var reader = new FileReader();
+	        reader.onload = function (e) {
+	        	$('#img_id').show();
+	            $('#img_id').attr('src', e.target.result);
+	        }
+	        reader.readAsDataURL(this.files[0]);
+	    }
+	});
+	
 	$('button#upload_picture').click(function(event) {
-		
+		$("form").submit();
+		iw.close();
 	});
 	
 	// Refactor?
@@ -166,9 +198,6 @@ function showAction(marker, lat, lon, id) {
 	});
 }
 
-function showPreview(marker) {
-	
-}
 
 // Main function
 function initialize() {
@@ -183,7 +212,7 @@ function initialize() {
 	    clearTimeout(map.pressButtonTimer); 
 	    map.pressButtonTimer = setTimeout(function(){ 
 	    	showRequest(event.latLng);
-	    }, 500); 
+	    }, 800); 
 	  }); 	
 	google.maps.event.addListener(map, 'mouseup', function(event){ 
 	    clearTimeout(map.pressButtonTimer); 
