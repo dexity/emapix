@@ -1,0 +1,5 @@
+.. _objects:
+
+Objects
+=======
+
