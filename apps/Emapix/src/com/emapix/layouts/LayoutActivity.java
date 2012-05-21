@@ -9,13 +9,16 @@ import com.emapix.R;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
@@ -32,8 +35,21 @@ public class LayoutActivity extends ListActivity {
     	
     	private Context mContext;
     	private String[] mLayouts = {
-    		"Hello",
-    		"world"
+    		"Login view",
+    		"Login loading",
+    		"Incorrect password",
+    		"Main view",
+    		"Mapker on map",
+    		"Request bubble",
+    		"Action bubble",
+    		"Preview bubble",
+    		"View bubble",
+    		"Requests list",
+    		"Request details",
+    		"Photo list",
+    		"Photo details",
+    		"User details",
+    		"Filter"
     	};
     	
     
@@ -58,6 +74,16 @@ public class LayoutActivity extends ListActivity {
         public long getItemId(int position) {
             return position;
         }        
+    }
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
+    
+		// Show map view
+	    Intent intent = new Intent();
+	    intent.setClass(this, EmapixMapView.class);
+	    startActivity(intent);
+
     }
     
 }

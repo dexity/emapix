@@ -19,5 +19,15 @@
                 <data android:name="vnd.android.cursor.dir/vnd.emapix.photo_request" />
             </intent-filter>
         </activity>
+        
+        
+        <!-- Layouts -->
+        <activity android:name=".layouts.EmapixMapView"
+                  android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
     </application>
 </manifest> 
