@@ -6,4 +6,5 @@
   android:gravity="center_vertical"
   android:height="50px"
   android:paddingLeft="20px"
-  android:text="Hello, Maluta"/>
+  android:background="@layout/list_bg"
+  android:textColor="@color/text_color"/>
