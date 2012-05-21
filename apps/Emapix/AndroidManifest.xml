@@ -22,7 +22,7 @@
         
         
         <!-- Layouts -->
-        <activity android:name=".layouts.EmapixMapView"
+        <activity android:name=".layouts.MainView"
                   android:theme="@android:style/Theme.NoTitleBar">
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />

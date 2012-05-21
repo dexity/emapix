@@ -5,7 +5,7 @@
     <com.emapix.EmapixMapView android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:apiKey="0JMgpeXt9Y8fFTaDAiEINwDLPE57A5dmI0amxug"
+        android:apiKey="0JMgpeXt9Y8cn8gMOHn3Qmw4uDaUBdp0d1UZzqA"
         android:clickable="true"/>
 </RelativeLayout>
 

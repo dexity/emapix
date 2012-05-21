@@ -81,7 +81,7 @@ public class LayoutActivity extends ListActivity {
     
 		// Show map view
 	    Intent intent = new Intent();
-	    intent.setClass(this, EmapixMapView.class);
+	    intent.setClass(this, MainView.class);
 	    startActivity(intent);
 
     }
