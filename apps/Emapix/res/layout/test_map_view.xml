@@ -1,10 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
+    <fragment android:name="com.emapix.layouts.ControlFragment"
+            android:id="@+id/control_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="50px" />    
     <com.emapix.layouts.SimpleMapView android:id="@+id/simplemapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:apiKey="0JMgpeXt9Y8cn8gMOHn3Qmw4uDaUBdp0d1UZzqA"
         android:clickable="true"/>
-</RelativeLayout>
+</FrameLayout>
+
+
+<!-- <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="50px">
+	    
+      <TextView
+          android:text="red"
+          android:gravity="center_horizontal"
+          android:background="#aa0000"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"/>
+      <TextView
+          android:text="green"
+          android:gravity="center_horizontal"
+          android:background="#00aa00"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"/>
+      <TextView
+          android:text="blue"
+          android:gravity="center_horizontal"
+          android:background="#0000aa"
+          android:layout_width="wrap_content"
+          android:layout_height="fill_parent"
+          android:layout_weight="1"/>	    
+    </LinearLayout>
+    <fragment android:name="com.emapix.layouts.ControlFragment"
+            android:id="@+id/control_fragment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent" />
+</LinearLayout> -->
