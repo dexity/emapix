@@ -2,6 +2,8 @@
 
 package com.emapix.layouts;
 
+import java.util.HashMap;
+
 import com.actionbarsherlock.app.SherlockListActivity;
 import com.emapix.R;
 
@@ -32,37 +34,48 @@ public class LayoutActivity extends SherlockListActivity {
     private class SimpleListAdapter extends BaseAdapter {
     	
     	private Context mContext;
-    	private String[] mLayouts = {
-    		"Login view",
-    		"Login loading",
-    		"Incorrect password",
-    		"Main view",
-    		"Mapker on map",
-    		"Request bubble",
-    		"Action bubble",
-    		"Preview bubble",
-    		"View bubble",
-    		"Requests list",
-    		"Request details",
-    		"Photo list",
-    		"Photo details",
-    		"User details",
-    		"Filter"
-    	};
+    	private HashMap<Integer, StringClass> mLayouts;
     	
-    
+        private class StringClass {
+        	String name;
+        	Class cls;   
+        	public StringClass(String name, Class cls) {
+        		this.name	= name;
+        		this.cls	= cls;
+        	}
+        }
+            
         public SimpleListAdapter(Context context) {
             mContext = context;
+            setItems();
+        }
+        
+        public void setItems() {
+        	mLayouts	= new HashMap<Integer, StringClass>();
+    		mLayouts.put(0, new StringClass("Login view", MainView.class));
+    		mLayouts.put(1, new StringClass("Login loading", MainView.class));
+    		mLayouts.put(2, new StringClass("Incorrect password", MainView.class));
+    		mLayouts.put(3, new StringClass("+ Main view", MainView.class));
+    		mLayouts.put(4, new StringClass("Request bubble", MainView.class));
+    		mLayouts.put(5, new StringClass("Action bubble", MainView.class));
+    		mLayouts.put(6, new StringClass("Preview bubble", MainView.class));
+    		mLayouts.put(7, new StringClass("View bubble", MainView.class));
+    		mLayouts.put(8, new StringClass("Requests list", MainView.class));
+    		mLayouts.put(9, new StringClass("Request details", MainView.class));
+    		mLayouts.put(10, new StringClass("Photo list", MainView.class));
+    		mLayouts.put(11, new StringClass("Photo details", MainView.class));
+    		mLayouts.put(12, new StringClass("User details", MainView.class));
+    		mLayouts.put(13, new StringClass("Filter", MainView.class));      	
         }
         
         public View getView(int position, View convertView, ViewGroup parent) {
         	TextView tv	= (TextView)View.inflate(mContext, R.layout.test_text, null);
-        	tv.setText(mLayouts[position]);
+        	tv.setText(mLayouts.get(position).name);
         	return tv;
         }
         
         public int getCount() {
-        	return mLayouts.length;
+        	return mLayouts.size();
         }
         
         public Object getItem(int position) {
