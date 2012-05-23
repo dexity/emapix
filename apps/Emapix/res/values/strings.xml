@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Emapix</string>
+    <string name="map_api_key">0JMgpeXt9Y8cn8gMOHn3Qmw4uDaUBdp0d1UZzqA</string>
     <string name="EmapixDB_onCreate">"
 CREATE TABLE photo_request (_id INTEGER PRIMARY KEY AUTOINCREMENT, res_id INTEGER, lat INTEGER, lon INTEGER, submitted_date TEXT, resource TEXT);
 	"</string>

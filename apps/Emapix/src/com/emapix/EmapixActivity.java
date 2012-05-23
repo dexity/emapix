@@ -132,7 +132,7 @@ public class EmapixActivity extends MapActivity {
         
         // Inflate the currently selected menu XML resource.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.controls, menu);        
+        inflater.inflate(R.menu.menu, menu);        
                 
         return true;
     }

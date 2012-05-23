@@ -1,22 +1,16 @@
 
 package com.emapix.layouts;
 
-import com.emapix.EmapixMapView;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.emapix.R;
 import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 
 /*
  * I use here custom library which handles FragmentActivity and MapActivity issue.
@@ -24,52 +18,78 @@ import android.widget.Toast;
  * Caution needs to be taken for production!
  */
 
-public class MainView extends FragmentActivity // MapActivity
+public class MainView extends SherlockFragmentActivity
 {
-	private SimpleMapView mView;
+	private NavigationFragment navFragment;
+	private MapFragment mMapFragment;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.test_map_view);
-        mView = (SimpleMapView) findViewById(R.id.simplemapview);
-        mView.setBuiltInZoomControls(true);   
+        
+        Exchanger.mMapView = new MapView(this, getString(R.string.map_api_key));
+        Exchanger.mMapView.setBuiltInZoomControls(true);   
         
         // Initial position
         GeoPoint point	= new GeoPoint(32818062,-117269440);
-		MapController mController = mView.getController();
+		MapController mController = Exchanger.mMapView.getController();
 		mController.setZoom(14);
 		mController.animateTo(point);
 		
-		// Attempt to use fragment
-        ControlFragment details = new ControlFragment();
-        details.setArguments(getIntent().getExtras());
-        getSupportFragmentManager()
-        	.beginTransaction()
-        	.add(android.R.id.content, details)
-        	//.setTransition( FragmentTransaction.TRANSIT_FRAGMENT_FADE )
-        	.commit();
-		
+		setupFragments();
     }
+    
+	private void setupFragments() {
+		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+		/*
+		 * If the activity is killed while in BG, it's possible that the
+		 * fragment still remains in the FragmentManager, so, we don't need to
+		 * add it again.
+		 */
+		navFragment	= (NavigationFragment) getSupportFragmentManager().findFragmentByTag(NavigationFragment.TAG);
+        if (navFragment == null) {
+        	navFragment = new NavigationFragment();
+        	ft.add(R.id.navigation, navFragment, NavigationFragment.TAG);
+        }
+        
+		mMapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.TAG);
+        if (mMapFragment == null) {
+        	mMapFragment = new MapFragment();
+        	ft.add(R.id.fragment_container, mMapFragment, MapFragment.TAG);
+        }
+        
+        ft.commit();
+	}
     
     @Override
     protected boolean isRouteDisplayed() {
         return false;
     }
     
+	public static class Exchanger {
+		// We will use this MapView always.
+    	public static MapView mMapView;
+    }    
+    
+	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the currently selected menu XML resource.
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.controls, menu);        
-                
-        return true;
+    	getSupportMenuInflater().inflate(R.menu.menu, menu);
+		return true;
+		
+//        MenuInflater inflater = getMenuInflater();
+//        inflater.inflate(R.menu.controls, menu);        
+//                
+//        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        
-        return false;
+        // XXX: Finish
+    	return super.onOptionsItemSelected(item);
     }
     
 }
