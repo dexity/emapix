@@ -2,12 +2,10 @@
 
 package com.emapix.layouts;
 
-import org.xmlpull.v1.XmlPullParser;
-
+import com.actionbarsherlock.app.SherlockListActivity;
 import com.emapix.R;
 
-import android.app.Activity;
-import android.app.ListActivity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,7 +21,7 @@ import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 
-public class LayoutActivity extends ListActivity {
+public class LayoutActivity extends SherlockListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,6 +79,7 @@ public class LayoutActivity extends ListActivity {
     
 		// Show map view
 	    Intent intent = new Intent();
+	    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 	    intent.setClass(this, MainView.class);
 	    startActivity(intent);
 

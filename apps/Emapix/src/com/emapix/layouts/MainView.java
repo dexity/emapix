@@ -59,7 +59,6 @@ public class MainView extends SherlockFragmentActivity
         	mMapFragment = new MapFragment();
         	ft.add(R.id.fragment_container, mMapFragment, MapFragment.TAG);
         }
-        
         ft.commit();
 	}
     
@@ -79,11 +78,6 @@ public class MainView extends SherlockFragmentActivity
         // Inflate the currently selected menu XML resource.
     	getSupportMenuInflater().inflate(R.menu.menu, menu);
 		return true;
-		
-//        MenuInflater inflater = getMenuInflater();
-//        inflater.inflate(R.menu.controls, menu);        
-//                
-//        return true;
     }
 
     @Override
