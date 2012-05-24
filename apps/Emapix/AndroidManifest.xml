@@ -20,6 +20,7 @@
             </intent-filter>
         </activity>
         
+        
         <!-- Layouts -->
         <activity android:name=".layouts.MainView"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
@@ -29,5 +30,48 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <activity android:name=".layouts.MarkerView"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
+            <uses-library android:name="com.google.android.maps" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".layouts.RequestBubble"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
+            <uses-library android:name="com.google.android.maps" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!-- <activity android:name=".layouts.ActionBubble"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
+            <uses-library android:name="com.google.android.maps" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".layouts.PreviewBubble"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
+            <uses-library android:name="com.google.android.maps" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".layouts.ViewBubble"
+                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
+            <uses-library android:name="com.google.android.maps" />
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity> -->
+        
+        
+        
     </application>
 </manifest> 

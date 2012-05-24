@@ -25,10 +25,13 @@ import android.widget.LinearLayout.LayoutParams;
 
 public class LayoutActivity extends SherlockListActivity {
     /** Called when the activity is first created. */
+	SimpleListAdapter adapter;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setListAdapter(new SimpleListAdapter(this));
+        adapter	= new SimpleListAdapter(this);
+        setListAdapter(adapter);
     }
     
     private class SimpleListAdapter extends BaseAdapter {
@@ -50,13 +53,17 @@ public class LayoutActivity extends SherlockListActivity {
             setItems();
         }
         
+        public Class getClass(int position) {
+        	return mLayouts.get(position).cls;
+        }
+        
         public void setItems() {
         	mLayouts	= new HashMap<Integer, StringClass>();
     		mLayouts.put(0, new StringClass("Login view", MainView.class));
     		mLayouts.put(1, new StringClass("Login loading", MainView.class));
     		mLayouts.put(2, new StringClass("Incorrect password", MainView.class));
-    		mLayouts.put(3, new StringClass("+ Main view", MainView.class));
-    		mLayouts.put(4, new StringClass("Request bubble", MainView.class));
+    		mLayouts.put(3, new StringClass("+ Main view", MarkerView.class));
+    		mLayouts.put(4, new StringClass("Request bubble", RequestBubble.class));
     		mLayouts.put(5, new StringClass("Action bubble", MainView.class));
     		mLayouts.put(6, new StringClass("Preview bubble", MainView.class));
     		mLayouts.put(7, new StringClass("View bubble", MainView.class));
@@ -89,11 +96,9 @@ public class LayoutActivity extends SherlockListActivity {
     
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-    
 		// Show map view
 	    Intent intent = new Intent();
-	    //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-	    intent.setClass(this, MainView.class);
+	    intent.setClass(this, adapter.getClass(position));
 	    startActivity(intent);
 
     }

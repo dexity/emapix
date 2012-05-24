@@ -13,6 +13,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -20,6 +21,11 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.LinearLayout;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 
@@ -33,8 +39,8 @@ public class MainView extends SherlockFragmentActivity
 {
 	private NavigationFragment navFragment;
 	private MapFragment mMapFragment;
-	private Drawable marker;
-	private List<Overlay> mOverlays;
+	protected Drawable marker;
+	protected List<Overlay> mOverlays;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,10 +57,9 @@ public class MainView extends SherlockFragmentActivity
 		mController.animateTo(point);
 		
 		setupFragments();
-		setupMarker(point);
     }
     
-    private Drawable createMarker(int res_id, Options opts) {
+    protected Drawable createMarker(int res_id, Options opts) {
 		Bitmap bm = BitmapFactory.decodeResource(getResources(), res_id, opts);
 		if (bm != null) {
 			return new BitmapDrawable(getResources(), bm);
@@ -63,7 +68,7 @@ public class MainView extends SherlockFragmentActivity
     	return null;
     }    
     
-    private void setupMarker(GeoPoint point) {
+    protected void setupMarker(GeoPoint point) {
 		Options opts = new BitmapFactory.Options();
 		opts.inDensity = 400;
     	
@@ -72,7 +77,7 @@ public class MainView extends SherlockFragmentActivity
         MarkerOverlay mo	= new MarkerOverlay(marker, point);
         mo.addOverlay(new OverlayItem(point, null, null));
         mOverlays.add(mo);
-    }
+    }    
     
 	private void setupFragments() {
 		final FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -106,9 +111,9 @@ public class MainView extends SherlockFragmentActivity
     	public static MapView mMapView;
     }    
     
-	private class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
+	protected class MarkerOverlay extends ItemizedOverlay<OverlayItem> {
 		// Minimal version for overlay
-		private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+		private ArrayList<OverlayItem> mmOverlays = new ArrayList<OverlayItem>();
 		
 		public MarkerOverlay(Drawable defaultMarker, GeoPoint point) {
 			super(boundCenterBottom(defaultMarker));
@@ -116,16 +121,16 @@ public class MainView extends SherlockFragmentActivity
 			populate();
 		}
 		public void addOverlay(OverlayItem overlay) {
-			mOverlays.add(overlay);
+			mmOverlays.add(overlay);
 		    populate();
 		}			
 		@Override
 		protected OverlayItem createItem(int i) {
-			return mOverlays.get(i);
+			return mmOverlays.get(i);
 		}		
 		@Override
 		public int size() {
-			return mOverlays.size();
+			return mmOverlays.size();
 		}		
 	}
 	
@@ -141,5 +146,18 @@ public class MainView extends SherlockFragmentActivity
         // XXX: Finish
     	return super.onOptionsItemSelected(item);
     }
+    
+    protected LinearLayout bubbleFactory(int resource, GeoPoint point) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout layout = (LinearLayout) inflater.inflate(resource, Exchanger.mMapView, false);
+
+    	MapView.LayoutParams params = new MapView.LayoutParams(
+		                		370, LayoutParams.WRAP_CONTENT,
+		                 		point, MapView.LayoutParams.BOTTOM_CENTER);
+    	params.mode = MapView.LayoutParams.MODE_MAP;
+    	layout.setLayoutParams(params);    	
+        return layout;
+    }
+    
     
 }
