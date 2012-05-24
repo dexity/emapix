@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/preview_bubble"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/bubble">
+    
+    <LinearLayout
+        android:id="@+id/bubble_inner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" 
+        android:orientation="vertical"
+        android:paddingTop="5dp"
+        android:paddingLeft="5dp"
+        android:paddingBottom="20dp">
+
+        <ImageView
+            android:id="@+id/bubble_image"
+            android:src="@drawable/sample_1"
+            android:adjustViewBounds="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" 
+            android:paddingBottom="10dp"/>        
+        <TextView
+            android:id="@+id/locationname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="Location" />     
+        <Button android:id="@+id/sendreq"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:text="Submit Photo"
+            android:textSize="13sp"
+            android:background="@drawable/test_button"
+            />
+        <TextView
+            android:id="@+id/take_photo"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="bottom"
+            android:paddingBottom="5dp"
+            android:textColor="#00f"
+            android:text="Take another photo" />         
+        <TextView
+            android:id="@+id/select_photo"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="bottom"
+            android:paddingBottom="5dp"
+            android:textColor="#00f"
+            android:text="Select another photo" />         
+    </LinearLayout>
+    <ImageView android:layout_width="wrap_content" 
+        android:id="@+id/bubble_close"
+        android:layout_height="wrap_content"  
+        android:src="@drawable/close_bubble" 
+        android:paddingLeft="10dp" 
+        android:paddingBottom="10dp"/>
+        
+</LinearLayout>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/action_bubble"
+    android:layout_width="match_parent" 
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/bubble">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="15dp" >
+        <LinearLayout
+            android:id="@+id/bubble_inner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" 
+            android:orientation="vertical"
+            android:paddingLeft="5dp"
+            android:paddingTop="5dp">
+
+	        <ImageView
+	            android:id="@+id/bubble_image"
+	            android:src="@drawable/sample_1"
+	            android:adjustViewBounds="true"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" 
+	            android:paddingBottom="10dp"/>        
+            
+            <TextView
+                android:id="@+id/locationname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:text="Location" />
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="5dp"
+                android:textStyle="italic" />        
+        </LinearLayout>
+        <ImageView android:layout_width="wrap_content" 
+            android:id="@+id/bubble_close"
+            android:layout_height="wrap_content"  
+            android:src="@drawable/close_bubble" 
+            android:paddingLeft="10dp" 
+            android:paddingBottom="10dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="15dp" >
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:layout_weight="1"
+            android:textColor="#00f"
+            android:text="Photo Details"/>         
+        <TextView android:layout_width="match_parent"
+            android:layout_height="wrap_content" 
+            android:layout_weight="1"
+            android:textColor="#f00"
+            android:paddingRight="5dp"
+            android:text="Remove"
+            android:gravity="right"/>        
+    </LinearLayout>
+</LinearLayout>

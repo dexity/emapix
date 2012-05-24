@@ -51,7 +51,8 @@ public class MainView extends SherlockFragmentActivity
         Exchanger.mMapView.setBuiltInZoomControls(true);   
                 
         // Initial position
-        GeoPoint point	= new GeoPoint(32818062,-117269440);
+        GeoPoint point	= new GeoPoint(32855636, -117270762);	// (32818062,-117269440)
+        
 		MapController mController = Exchanger.mMapView.getController();
 		mController.setZoom(14);
 		mController.animateTo(point);
