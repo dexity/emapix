@@ -152,7 +152,7 @@ public class MainView extends SherlockFragmentActivity
         LinearLayout layout = (LinearLayout) inflater.inflate(resource, Exchanger.mMapView, false);
 
     	MapView.LayoutParams params = new MapView.LayoutParams(
-		                		370, LayoutParams.WRAP_CONTENT,
+		                		450, LayoutParams.WRAP_CONTENT,
 		                 		point, MapView.LayoutParams.BOTTOM_CENTER);
     	params.mode = MapView.LayoutParams.MODE_MAP;
     	layout.setLayoutParams(params);    	

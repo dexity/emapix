@@ -63,7 +63,7 @@ public class LayoutActivity extends SherlockListActivity {
     		mLayouts.put(1, new StringClass("Login loading", MainView.class));
     		mLayouts.put(2, new StringClass("Incorrect password", MainView.class));
     		mLayouts.put(3, new StringClass("+ Main view", MarkerView.class));
-    		mLayouts.put(4, new StringClass("Request bubble", RequestBubble.class));
+    		mLayouts.put(4, new StringClass("+ Request bubble", RequestBubble.class));
     		mLayouts.put(5, new StringClass("Action bubble", MainView.class));
     		mLayouts.put(6, new StringClass("Preview bubble", MainView.class));
     		mLayouts.put(7, new StringClass("View bubble", MainView.class));
