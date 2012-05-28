@@ -18,11 +18,13 @@ import android.widget.Toast;
 public class NavigationFragment extends SherlockFragment {
 
 	public static final String TAG = "navFragment";
+	private static final int ACTIVE = 0xFFBBBBBB;
 	public NavigationFragment() {}
 	
-	private TextView req;
-	private TextView photo;
-	private TextView filter;
+	protected TextView req;
+	protected TextView photo;
+	protected TextView filter;
+	private int activeTab = -1;
 	
 	@Override
 	public void onCreate(Bundle arg0) {
@@ -41,6 +43,24 @@ public class NavigationFragment extends SherlockFragment {
 		};
 	}
 	
+	public void setTabActive(int order) {
+		activeTab	= order;
+	}
+	
+	private void setTab() {
+		switch (activeTab) {
+			case 0:
+				req.setBackgroundColor(ACTIVE);
+				break;
+			case 1:
+				photo.setBackgroundColor(ACTIVE);
+				break;
+			case 2:
+				filter.setBackgroundColor(ACTIVE);
+				break;
+		}
+	}
+	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup vg, Bundle data) {
 		View v	= (View)inflater.inflate(R.layout.test_navigation, vg, false);
@@ -55,31 +75,8 @@ public class NavigationFragment extends SherlockFragment {
         filter	= (TextView)v.findViewById(R.id.nav_filter);
         filter.setOnClickListener(getListener());			
         
+        setTab();      
+        
 		return v;
 	}
 }	
-
-//public class NavigationFragment extends Fragment {
-//	
-//    static NavigationFragment newInstance(int index) {
-//        return new NavigationFragment();
-//    }	
-//	
-//    @Override 
-//    public void onInflate(Activity activity, AttributeSet attrs,
-//            Bundle savedInstanceState) {
-//        super.onInflate(activity, attrs, savedInstanceState);
-//    }
-//    
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        TextView tv	= new TextView(getActivity());
-//        tv.setText("Hello");
-//        tv.setHeight(50);
-//    	return tv;
-//    	// Inflate the layout for this fragment
-//        //return inflater.inflate(R.layout.test_control_fragment, container, false);
-//    	
-//    }
-//}

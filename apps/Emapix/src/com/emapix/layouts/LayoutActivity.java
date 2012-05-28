@@ -67,7 +67,7 @@ public class LayoutActivity extends SherlockListActivity {
     		mLayouts.put(5, new StringClass("+ Action bubble", ActionBubble.class));
     		mLayouts.put(6, new StringClass("+ Preview bubble", PreviewBubble.class));
     		mLayouts.put(7, new StringClass("+ View bubble", ViewBubble.class));
-    		mLayouts.put(8, new StringClass("Requests list", MainView.class));
+    		mLayouts.put(8, new StringClass("Requests list", RequestList.class));
     		mLayouts.put(9, new StringClass("Request details", MainView.class));
     		mLayouts.put(10, new StringClass("Photo list", MainView.class));
     		mLayouts.put(11, new StringClass("Photo details", MainView.class));
@@ -76,7 +76,7 @@ public class LayoutActivity extends SherlockListActivity {
         }
         
         public View getView(int position, View convertView, ViewGroup parent) {
-        	TextView tv	= (TextView)View.inflate(mContext, R.layout.test_text, null);
+        	TextView tv	= (TextView)View.inflate(mContext, R.layout.test_list_item, null);
         	tv.setText(mLayouts.get(position).name);
         	return tv;
         }
