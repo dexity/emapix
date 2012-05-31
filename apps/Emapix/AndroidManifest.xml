@@ -86,7 +86,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity> 
+        </activity> -->
         <activity android:name=".layouts.PhotoList"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
             <uses-library android:name="com.google.android.maps" />
@@ -95,7 +95,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity> 
-        <activity android:name=".layouts.PhotoView"
+        <!-- <activity android:name=".layouts.PhotoView"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
             <uses-library android:name="com.google.android.maps" />
             <intent-filter >

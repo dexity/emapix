@@ -40,7 +40,7 @@ public class RequestList extends SherlockFragmentActivity
         	ft.add(R.id.navigation, navFragment, NavigationFragment.TAG);
         }
         
-        reqFragment = (RequestFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.TAG);
+        reqFragment = (RequestFragment) getSupportFragmentManager().findFragmentByTag(RequestFragment.TAG);
         if (reqFragment == null) {
         	reqFragment = new RequestFragment(this);
         	ft.add(R.id.fragment_container, reqFragment, RequestFragment.TAG);
@@ -90,6 +90,4 @@ public class RequestList extends SherlockFragmentActivity
 	        }        
 	    }
     }
-
-
 }
