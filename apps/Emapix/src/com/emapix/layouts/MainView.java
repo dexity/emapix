@@ -148,6 +148,7 @@ public class MainView extends SherlockFragmentActivity
     	return super.onOptionsItemSelected(item);
     }
     
+    // Not quite related to the view
     protected LinearLayout bubbleFactory(int resource, GeoPoint point) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout layout = (LinearLayout) inflater.inflate(resource, Exchanger.mMapView, false);
