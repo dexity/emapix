@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical"   
+	    android:paddingLeft="10dp"
+	    android:paddingRight="10dp"
+	    android:paddingBottom="20dp">
+	    <TextView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingTop="10dp"
+	        android:paddingBottom="10dp"
+	        android:text="Photo" 
+	        android:textSize="20dp"
+	        android:textStyle="bold"/>
+	    <ImageView
+	        android:id="@+id/photo_image"
+	        android:src="@drawable/sample_1"
+	        android:layout_gravity="left"
+	        android:layout_width="wrap_content"
+	        android:layout_height="200dp"
+	        android:paddingBottom="10dp"/>        
+	    <FrameLayout
+	        android:id="@+id/map_view"
+	        android:layout_width="match_parent"
+	        android:layout_height="200dp" 
+	        android:paddingBottom="10dp" />
+	    <TextView
+	        android:id="@+id/description"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingBottom="15dp"
+	        android:textStyle="italic" />
+	    <TextView
+	        android:id="@+id/locationname"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:paddingBottom="5dp"/>
+	    <!-- Request -->
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="horizontal">
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="Requested by "/> 
+	        <TextView
+	            android:id="@+id/request_username"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textColor="#00f"
+	            android:textStyle="bold"            
+	            android:textSize="14dp" /> 
+		</LinearLayout>
+	    <TextView 
+			android:id="@+id/request_time"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="#aaa"
+			android:textStyle="italic"
+			android:textSize="12dp"
+			android:paddingBottom="15dp" />
+	    
+	    <!-- Submit -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Submitted by "/> 
+            <TextView
+                android:id="@+id/submit_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#00f"
+                android:textStyle="bold"            
+                android:textSize="14dp" /> 
+        </LinearLayout>
+        <TextView 
+			android:id="@+id/submit_time"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textColor="#aaa"
+			android:textStyle="italic"
+			android:textSize="12dp"
+			android:paddingBottom="15dp" />
+        
+       <TextView 
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content" 
+           android:layout_weight="1"
+           android:textColor="#f00"
+           android:paddingRight="5dp"
+           android:text="Remove"
+           android:gravity="right"/>          
+
+	</LinearLayout>
+</ScrollView>
