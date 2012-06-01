@@ -73,14 +73,5 @@
             android:text="Remove"
             android:gravity="right"/>       	    	    
 	    
-	</LinearLayout>    
-    
-    <!-- <TextView 
-
-      android:id="@+id/description"
-      android:layout_width="match_parent"
-      android:layout_height="20dp"
-      android:gravity="center_vertical" 
-      android:text="Hello"
-      android:textSize="13dp" /> -->
+	</LinearLayout>
 </LinearLayout>
