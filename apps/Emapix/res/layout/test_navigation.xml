@@ -4,7 +4,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
         
-	<TextView xmlns:android="http://schemas.android.com/apk/res/android"	
+    <TextView 
+        android:id="@+id/nav_map"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"  
+        android:gravity="center"
+        android:text="Map"
+        android:clickable="true"
+        android:background="@drawable/border"/>
+	<TextView 
 	    android:id="@+id/nav_request"
 	    android:layout_weight="1"
 		android:layout_width="match_parent"
@@ -13,7 +22,7 @@
 		android:text="Request"
 		android:clickable="true"
 		android:background="@drawable/border"/>
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    <TextView 
         android:id="@+id/nav_photo"
         android:layout_weight="1"  
 		android:layout_width="match_parent"
@@ -21,12 +30,12 @@
 		android:gravity="center"
 		android:text="Photo"
 		android:background="@drawable/border"/>
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/nav_filter"
+    <TextView 
+        android:id="@+id/nav_search"
         android:layout_weight="1"    
 		android:layout_width="match_parent"
 		android:layout_height="match_parent"  
 		android:gravity="center"
-		android:text="Filter"
+		android:text="Search"
 		android:background="@drawable/border"/>
 </LinearLayout>

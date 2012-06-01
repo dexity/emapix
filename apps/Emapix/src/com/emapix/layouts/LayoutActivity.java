@@ -71,8 +71,7 @@ public class LayoutActivity extends SherlockListActivity {
     		mLayouts.put(9, new StringClass("+ Request details", RequestView.class));
     		mLayouts.put(10, new StringClass("+ Photo list", PhotoList.class));
     		mLayouts.put(11, new StringClass("+ Photo details", PhotoView.class));
-    		mLayouts.put(12, new StringClass("User details", UserView.class));
-    		mLayouts.put(13, new StringClass("Filter", MainView.class));      	
+    		mLayouts.put(12, new StringClass("+ User details", UserView.class));   	
         }
         
         public View getView(int position, View convertView, ViewGroup parent) {

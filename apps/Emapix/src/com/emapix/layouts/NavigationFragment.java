@@ -21,6 +21,7 @@ public class NavigationFragment extends SherlockFragment {
 	private static final int ACTIVE = 0xFFBBBBBB;
 	public NavigationFragment() {}
 	
+	protected TextView map;
 	protected TextView req;
 	protected TextView photo;
 	protected TextView filter;
@@ -30,7 +31,6 @@ public class NavigationFragment extends SherlockFragment {
 	public void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
 		setRetainInstance(true);
-		
 	}
 	
 	private View.OnClickListener getListener() {
@@ -38,7 +38,8 @@ public class NavigationFragment extends SherlockFragment {
 		return new View.OnClickListener() {			
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(NavigationFragment.this.getActivity(), ((TextView)v).getText(), Toast.LENGTH_SHORT).show();				
+				Toast.makeText(NavigationFragment.this.getActivity(), 
+							  ((TextView)v).getText(), Toast.LENGTH_SHORT).show();				
 			}
 		};
 	}
@@ -50,12 +51,15 @@ public class NavigationFragment extends SherlockFragment {
 	private void setTab() {
 		switch (activeTab) {
 			case 0:
-				req.setBackgroundColor(ACTIVE);
+				map.setBackgroundColor(ACTIVE);
 				break;
 			case 1:
-				photo.setBackgroundColor(ACTIVE);
+				req.setBackgroundColor(ACTIVE);
 				break;
 			case 2:
+				photo.setBackgroundColor(ACTIVE);
+				break;
+			case 3:
 				filter.setBackgroundColor(ACTIVE);
 				break;
 		}
@@ -66,13 +70,16 @@ public class NavigationFragment extends SherlockFragment {
 		View v	= (View)inflater.inflate(R.layout.test_navigation, vg, false);
 		
         // Set clicks for navigation 
+        map	= (TextView)v.findViewById(R.id.nav_map);
+        map.setOnClickListener(getListener());			
+
         req	= (TextView)v.findViewById(R.id.nav_request);
         req.setOnClickListener(getListener());			
 
         photo	= (TextView)v.findViewById(R.id.nav_photo);
         photo.setOnClickListener(getListener());			        
         
-        filter	= (TextView)v.findViewById(R.id.nav_filter);
+        filter	= (TextView)v.findViewById(R.id.nav_search);
         filter.setOnClickListener(getListener());			
         
         setTab();      
