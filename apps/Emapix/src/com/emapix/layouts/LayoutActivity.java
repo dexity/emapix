@@ -59,7 +59,7 @@ public class LayoutActivity extends SherlockListActivity {
         
         public void setItems() {
         	mLayouts	= new HashMap<Integer, StringClass>();
-    		mLayouts.put(0, new StringClass("Login view", MainView.class));
+    		mLayouts.put(0, new StringClass("+ Login view", LoginView.class));
     		mLayouts.put(1, new StringClass("Login loading", MainView.class));
     		mLayouts.put(2, new StringClass("Incorrect password", MainView.class));
     		mLayouts.put(3, new StringClass("+ Main view", MarkerView.class));
@@ -68,10 +68,10 @@ public class LayoutActivity extends SherlockListActivity {
     		mLayouts.put(6, new StringClass("+ Preview bubble", PreviewBubble.class));
     		mLayouts.put(7, new StringClass("+ View bubble", ViewBubble.class));
     		mLayouts.put(8, new StringClass("+ Requests list", RequestList.class));
-    		mLayouts.put(9, new StringClass("+ Request details", RequestView.class));
+    		mLayouts.put(9, new StringClass("+ Request view", RequestView.class));
     		mLayouts.put(10, new StringClass("+ Photo list", PhotoList.class));
-    		mLayouts.put(11, new StringClass("+ Photo details", PhotoView.class));
-    		mLayouts.put(12, new StringClass("+ User details", UserView.class));   	
+    		mLayouts.put(11, new StringClass("+ Photo view", PhotoView.class));
+    		mLayouts.put(12, new StringClass("+ User view", UserView.class));   	
         }
         
         public View getView(int position, View convertView, ViewGroup parent) {

@@ -22,18 +22,19 @@
             android:layout_height="wrap_content"
             android:paddingBottom="5dp"
             android:text="Location" />
-        <EditText android:layout_width="fill_parent"
-            android:layout_height="wrap_content" android:gravity="top"
-            android:singleLine="false" android:lines="5"
-            />        
+        <EditText 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:gravity="top"
+            android:singleLine="false" 
+            android:lines="5" />        
         <Button android:id="@+id/sendreq"
                 android:layout_width="200dp"
                 android:layout_height="50dp"
                 android:gravity="center"
                 android:text="Submit Request"
                 android:textSize="13sp"
-                android:background="@drawable/test_button"
-                />
+                android:background="@drawable/test_button" />
     </LinearLayout>
     <ImageView android:layout_width="wrap_content" 
         android:id="@+id/bubble_close"

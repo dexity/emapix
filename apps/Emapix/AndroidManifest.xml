@@ -110,23 +110,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity> 
-        <!-- <activity android:name=".layouts.FilterView"
-                  android:theme="@style/Theme.Sherlock.Light.NoActionBar">
-            <uses-library android:name="com.google.android.maps" />
-            <intent-filter >
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity> 
         <activity android:name=".layouts.LoginView"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
-            <uses-library android:name="com.google.android.maps" />
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity> 
-        <activity android:name=".layouts.LoginLoading"
+        <!-- <activity android:name=".layouts.LoginLoading"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
             <uses-library android:name="com.google.android.maps" />
             <intent-filter >

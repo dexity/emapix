@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="15dp">
+	<TextView 
+		android:layout_width="match_parent"
+		android:layout_height="200dp"
+		android:gravity="center" 
+		android:text="Emapix"
+		android:textStyle="bold"
+		android:textSize="30dp" />  
+    <EditText 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:gravity="top"
+        android:textColor="#bbb"
+        android:textStyle="italic"
+        android:text="Email"
+        android:singleLine="true" />  
+    <EditText 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:gravity="top"
+        android:textColor="#bbb"
+        android:textStyle="italic"
+        android:text="Password"
+        android:singleLine="true" />  
+    <Button 
+        android:id="@+id/login"
+        android:layout_width="200dp"
+        android:layout_height="50dp"
+        android:gravity="center"
+        android:text="Log In"
+        android:textSize="13sp"
+        android:background="@drawable/test_button" />  
+    <TextView 
+		android:id="@+id/signup"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:text="Sign Up for Emapix"
+		android:paddingTop="40dp"
+		android:textColor="#00f"
+		android:textStyle="bold"
+		android:textSize="16dp" />    
+    <TextView 
+		android:id="@+id/help"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:gravity="center_vertical"
+		android:paddingTop="15dp"
+		android:text="Help"
+		android:textColor="#00f"
+		android:textStyle="bold"
+		android:textSize="16dp" />         
+</LinearLayout>
