@@ -60,7 +60,7 @@ public class LayoutActivity extends SherlockListActivity {
         public void setItems() {
         	mLayouts	= new HashMap<Integer, StringClass>();
     		mLayouts.put(0, new StringClass("+ Login view", LoginView.class));
-    		mLayouts.put(1, new StringClass("Login loading", MainView.class));
+    		mLayouts.put(1, new StringClass("Login loading", LoginLoading.class));
     		mLayouts.put(2, new StringClass("Incorrect password", MainView.class));
     		mLayouts.put(3, new StringClass("+ Main view", MarkerView.class));
     		mLayouts.put(4, new StringClass("+ Request bubble", RequestBubble.class));
