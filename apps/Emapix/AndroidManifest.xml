@@ -124,18 +124,13 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity> 
-        <!-- <activity android:name=".layouts.LoginPassword"
+        <activity android:name=".layouts.LoginPassword"
                   android:theme="@style/Theme.Sherlock.Light.NoActionBar">
             <uses-library android:name="com.google.android.maps" />
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
-        
-        -->
-        
-        
-        
+        </activity>        
     </application>
 </manifest> 
