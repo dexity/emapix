@@ -17,8 +17,6 @@ class AccessMiddleware(object):
         
     def process_view(self, request, view_func, view_args, view_kwargs):
         method_name  = view_func.__name__
-        if method_name == "index": # XXX: Hardcoded
-            return
         
         from emapix.api.mappings import mappings
         # XXX: Import mappings according to the dispatched app

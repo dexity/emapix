@@ -102,7 +102,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    'emapix.middleware.access.AccessMiddleware',    # checks keys
+    #'emapix.middleware.access.AccessMiddleware',    # checks keys
     'django.contrib.sessions.middleware.SessionMiddleware',
     #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,6 +112,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'emapix.urls'
 
 TEMPLATE_DIRS = (
+    os.path.join(os.path.dirname(__file__), 'layout/templates'),
     os.path.join(os.path.dirname(__file__), 'templates'),
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
@@ -126,10 +127,10 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'emapix.api',
-    # Uncomment the next line to enable the admin:
-    # 'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
+    'emapix.prototype',
+    'emapix.layout'
+    #'django.contrib.admin',        # Uncomment the next line to enable the admin
+    #'django.contrib.admindocs',    # Uncomment the next line to enable admin documentation:
 )
 
 # Log settings
