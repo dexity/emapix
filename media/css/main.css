@@ -1,0 +1,45 @@
+
+/* Basic */
+
+.clear_both {
+	clear: both;
+}
+
+/* Navigation */
+.e-nav-user {
+	margin-bottom: 3px;
+}
+.e-nav-user a {
+	padding-left: 10px;
+}
+.e-nav li > a {
+	background-color: #eeeeee;
+}
+.e-nav ul > li {
+    margin-right: 10px;
+}
+.e-nav .search-query,
+.e-nav .btn {
+	margin-top: 3px;
+}
+
+/* Colors */
+.brown {
+	color: #bd362f;
+}
+.brown:hover {
+	color: #bf1910;
+}
+.green {
+	color: #62c462;
+}
+.green:hover {
+	color: #51a351;
+}
+
+#logo {
+    float: left!important;
+    margin-right: 10px;
+    margin-top: -10px;
+    width: 50px;
+}
