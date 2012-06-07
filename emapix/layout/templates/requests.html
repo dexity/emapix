@@ -3,14 +3,14 @@
 <div class="container">
 	<div class="pull-right e-nav-user">
 		<a href="#"><b>dexity</b></a> <a href="#">Settings</a> 
-		<a href="#" class="brown">Requests</a> <b>34</b> 
-		<a href="#" class="green">Photos</a> <b>12</b>
+		<a href="#" class="brown">Requests</a> <span class="badge badge-important">34</span>
+		<a href="#" class="green">Photos</a> <span class="badge badge-success">12</span>
 		<a href="#">Help</a> <a href="#">Logout</a>
 	</div>
 	<div class="clear_both"></div>
 	<div class="row e-nav">
 	   <div class="span3">
-	       <a href="#" id="logo"><img src="/media/img/mountains.png"></a><h2>Emapix</h2>
+	       <a href="#" id="logo"><img src="/media/img/mountains.png" /></a><h2>Emapix</h2>
 	   </div>
 	   <div class="span6">
            <ul class="nav nav-pills pull-left">
@@ -25,7 +25,27 @@
 	       <button class="btn btn-success"><b>Make Request</b></button>
 	   </div>
 	</div>
-	Hello
+	<div class="clear_both"></div>
+	<button class="btn-large btn-success" id="join"><b>Join Emapix</b></button>
+    <h3>Recent Requests</h3>
+    
+    <div id="e-requests-list">
+        <div class="e-request-item e-first-item span8">
+            <a href=""><img src="/media/img/request.png"/></a>
+            <div>
+                <div class="e-request-description"><a href="">Planning to hike in this place ...</a><button class="close">&times;</button></div>
+                <div> 6983 Navajo Rd. <span class="label">San Diego, CA</span> 
+	                <div class="pull-right">
+		                <div class="e-request-time">10 hr 1 min ago</div>
+                        <div class="pull-right">Requested by <a href="">dexity</a></div>
+	                </div>
+                </div>
+            </div>
+        </div>
+        <div class="e-request-item span8">
+            world!
+        </div>            
+    </div>
 </div>
 
 {% include 'footer.html' %}

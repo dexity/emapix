@@ -23,6 +23,50 @@
 	margin-top: 3px;
 }
 
+/* Request */
+#e-requests-list {
+	margin-left: -20px;
+}
+.e-request-item {
+    border-bottom: 1px dotted #ccdcef;
+    padding:5px 10px 5px 0px;	
+}
+.e-request-item:after {
+	clear: both;
+}
+.e-request-item a > img {
+	float:left;
+	margin-right: 10px;
+	height: 50px;
+}
+.e-first-item {
+	border-top: 1px solid #ccdcef;
+}
+.e-last-item {
+	border-bottom:none;
+}
+.e-request-description {
+	font-size: 17px;
+	height: 25px;
+	padding-top: 5px;
+}
+.e-request-user {
+	
+}
+.e-request-time {
+	color: #999;
+	font-size: 11px;
+	margin-top: 1px;
+	margin-left: 10px;
+	float: right;
+	display: inline;
+}
+
+/* Misc */
+#join {
+	margin-bottom: 10px;
+}
+
 /* Colors */
 .brown {
 	color: #bd362f;
