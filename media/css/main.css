@@ -146,3 +146,18 @@
 .e-photo-row {
 	margin-bottom: 10px;
 }
+.e-search-query {
+	font-size: 17px;
+	margin-left: 20px;
+	padding-top: 5px;
+}
+.e-padding-top-5 {
+	padding-top: 5px;
+}
+.e-margin-bottom-10 {
+	margin-bottom: 10px;
+}
+.e-margin-bottom-20 {
+    margin-bottom: 20px;
+}
+
