@@ -13,8 +13,8 @@ def requests(request):
 def request(request):
     return render_to_response('request.html')
 
-def requests2(request):
-    return render_to_response('requests2.html')
+def request2(request):
+    return render_to_response('request2.html')
 
 def photos(request):
     return render_to_response('photos.html')
