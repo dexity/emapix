@@ -175,7 +175,9 @@
 .e-text-small {
 	font-size: 11px;
 }
-
+.e-checkbox {
+	margin-top: -5px;
+}
 
 
 
