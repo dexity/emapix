@@ -1,0 +1,89 @@
+{% include 'header.html' %}
+
+<div class="pull-left"><h3>Join Emapix</h3></div>
+<div class="e-alert pull-left">It's easy and free. Take a breath... and you are done!</div>
+<div class="clear_both"></div>
+<div class="span8">
+  <form class="form-horizontal" id="e-form-id">
+    <fieldset>
+      <div class="control-group">
+        <label class="control-label" for="input01">Username</label>
+        <div class="controls">
+          <input type="text" class="input-large" id="input01">
+          <span class="help-inline e-color-grey">(Required)</span>
+          <span class="help-block">Your username can only contain letters A-Z or numbers 0-9</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input02">Email</label>
+        <div class="controls">
+          <input type="text" class="input-large" id="input02">
+          <span class="help-inline e-color-grey">(Required)</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input03">Password</label>
+        <div class="controls">
+          <input type="password" class="input-large" id="input03">
+          <span class="help-inline e-color-grey">(Required)</span>
+          <span class="help-block">Password should be from 6 to 30 characters</span>
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input04">Location</label>
+        <div class="controls">
+          <input type="text" class="input-large" id="input04" placeholder="City, State">
+          <select id="select01" class="input-medium">
+            <option>United States</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>        
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="input05">Birthday</label>
+        <div class="controls">
+          <select id="select02" class="input-small">
+            <option>Month</option>
+            <option>January</option>
+          </select>        
+          <select id="select03" class="input-mini">
+            <option>Day</option>
+            <option>1</option>
+          </select>        
+          <select id="select04" class="input-mini">
+            <option>Year</option>
+            <option>2012</option>
+          </select>
+          <span class="help-inline e-color-grey">(<abbr title="Used for authenticity and hidden by default">Required</abbr>)</span>          
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="inlineRadio">Gender</label>
+        <div class="controls">
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                Male
+            </label>        
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                Female
+            </label>        
+            <label class="radio inline">
+                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
+                Rather not say
+            </label>        
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Join Emapix</button>
+      </div>      
+    </fieldset>
+  </form>
+</div>
+
+
+
+{% include 'footer.html' %}

@@ -106,6 +106,10 @@
 	color: #bd362f;
 }
 
+.controls .e-color-grey {
+	color: #999;
+}
+
 .e-alert {
   padding: 4px 35px 4px 14px;
   margin-left: 20px;
@@ -164,6 +168,12 @@
 	width: 460px
 	height: 460px;
 }
+
+/* Form */
+
+
+
+
 
 
 

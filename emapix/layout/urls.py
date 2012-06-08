@@ -2,6 +2,16 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('emapix.layout.views',
     url(r'^$', 'index'),
+    
+    url(r'^join$', 'join'),
+    url(r'^confirm$', 'confirm'),
+    url(r'^login$', 'login'),
+    url(r'^forgot$', 'forgot'),
+    url(r'^set_profile$', 'set_profile'),
+    url(r'^set_password$', 'set_password'),
+    url(r'^profile$', 'profile'),
+    url(r'^users$', 'users'),
+    url(r'^help$', 'help'),
     url(r'^requests$', 'requests'),
     url(r'^request$', 'request'),
     url(r'^request2$', 'request2'),
