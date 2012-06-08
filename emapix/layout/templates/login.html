@@ -1,5 +1,36 @@
 {% include 'header.html' %}
 
+<h3>Login</h3>
+<form class="form-horizontal">
+	<fieldset>
+	  <div class="control-group">
+	    <label class="control-label" for="input01">Email</label>
+	    <div class="controls">
+	      <input type="text" class="input-large" id="input01">
+	    </div>
+	  </div>
+      <div class="control-group">
+        <label class="control-label" for="input02">Password</label>
+        <div class="controls">
+          <input type="password" class="input-large" id="input02">
+          <span class="help-inline"><a href="">Forgot?</a></span>
+        </div>
+		<div class="controls">
+		  <label class="checkbox">
+		    <input type="checkbox" id="optionsCheckbox" value="option1">
+		      Keep me logged in
+		  </label>
+		</div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+	        <button type="submit" class="btn btn-primary">Login</button>
+		    <div class="e-margin-bottom-20"></div>
+		    Don't have an account? <a href="">Create one</a>
+        </div>
+      </div>
+	</fieldset>
+</form>
 
 
 {% include 'footer.html' %}
