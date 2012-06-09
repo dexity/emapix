@@ -178,6 +178,24 @@
 .e-checkbox {
 	margin-top: -5px;
 }
+.e-users-stat {
+	float:left;
+	margin-left: 5px;
+}
+/* Users */
+.user-info {
+    height:60px;
+    width:185px;
+    padding-bottom: 15px;
+}
+.user-info img {
+    float:left;
+}
+.user-info .user-details{
+    float:left;
+    margin-left:10px;
+    white-space:nowrap;
+}
 
 
 

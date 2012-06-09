@@ -1,5 +1,37 @@
 {% include 'header.html' %}
+{% load get_range %}
 
-
+<h3>Users</h3>
+<div class="e-margin-bottom-10"></div>
+<table>
+    <tbody>
+        {% for i in 7|get_range %}
+        <tr>
+            {% for i in 5|get_range %}
+            <td class="user-info">
+                <img src="/media/img/user.png" height="60" width="60" alt=""/>
+                <div class="user-details">
+	                <a href=""><b>dexity</b></a><br />
+	                Requests <b>34</b><br />
+	                Photos <b>12</b><br />
+                </div>
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="pagination">
+  <ul>
+    <li><a href="#">Prev</a></li>
+    <li class="active">
+      <a href="#">1</a>
+    </li>
+    <li><a href="#">2</a></li>
+    <li><a href="#">3</a></li>
+    <li><a href="#">4</a></li>
+    <li><a href="#">Next</a></li>
+  </ul>
+</div>
 
 {% include 'footer.html' %}
