@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 """
 ISO 3166 Country Codes

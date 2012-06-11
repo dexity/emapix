@@ -1,5 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
+from emapix.utils.const import *
+
+from django.db import models
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.layout.views")
@@ -8,7 +11,17 @@ def index(request):
     return render_to_response('index.html')
 
 def join(request):
-    return render_to_response('join.html')
+    
+    # Temp
+#    class Country(models.Model):
+#        code    = models.CharField(max_length=2)
+#        country = models.CharField(max_length=128)
+#    
+#    countries   = models.QuerySet()
+#    for i in COUNTRY_CHOICES:
+#        countries.append(Country(code=i[0], country=i[1]))
+    
+    return render_to_response('join.html')#, {"countries": countries})
 
 def confirm(request):
     return render_to_response('confirm.html')
