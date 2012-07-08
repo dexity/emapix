@@ -7,11 +7,11 @@ GENDER_CHOICES = (
 )
 
 STATUS_CHOICES  = (
-    ('n', 'Not Active')
+    ('n', 'Not Active'),
     ('a', 'Active'),
     ('w', 'Waiting'),   # waiting confirmation
-    ('p', 'New Password')
-    ('b', 'Banned')
+    ('p', 'New Password'),
+    ('b', 'Banned'),
 )
 
 COUNTRY_CHOICES = (
