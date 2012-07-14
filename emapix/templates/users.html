@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_users").attr("class", "active");
+    });
+</script>
+{% endblock header %}
+
 {% block content %}
 {% load get_range %}
 

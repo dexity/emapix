@@ -9,10 +9,17 @@
     <script type="text/javascript"
       src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=true">
     </script>
+    <script src="/media/js/twitter_widgets.js"></script>
+    <script src="/media/js/jquery-1.7.2.min.js"></script>
+    <script src="/media/js/bootstrap.js"></script>    
+    
     <script type="text/javascript" src="/media/js/main.js"></script>    
     <link href="/media/css/main.css" rel="stylesheet">
     <link href="/media/css/bootstrap.css" rel="stylesheet">
     <link href="/media/css/bootstrap-responsive.css" rel="stylesheet">
+      
+    {% block header %}{% endblock header %}
+
   </head>
 <body data-spy="scroll" data-target=".subnav" data-offset="50" onload="initialize()">
     <div class="container">
@@ -27,13 +34,13 @@
         <div class="clear_both"></div>
         <div class="row e-nav">
            <div class="span3">
-               <a href="/layout" id="logo"><img src="/media/img/mountains.png" /></a><h2>Emapix</h2>
+               <a href="/" id="logo"><img src="/media/img/mountains.png" /></a><h2>Emapix</h2>
            </div>
            <div class="span6">
                <ul class="nav nav-pills pull-left">
-                <li class="active"><a href="/requests"><b>Requests</b></a></li>
-                <li><a href="/photos"><b>Photos</b></a></li>
-                <li><a href="/users"><b>Users</b></a></li>
+                <li id="nav_requests"><a href="/requests"><b>Requests</b></a></li>
+                <li id="nav_photos"><a href="/photos"><b>Photos</b></a></li>
+                <li id="nav_users"><a href="/users"><b>Users</b></a></li>
                </ul>
                <form class="pull-left" action="">
                 <input type="text" class="search-query span2" placeholder="City, Zip code ...">
@@ -48,7 +55,7 @@
 
         <div class="clear_both"></div>
         <div class="footer">
-            <a href="">Help</a>
+            <a href="/help">Help</a>
             <a href="">About</a>
             <a href="">Forum</a>
             <a href="">Feedback</a>
@@ -58,8 +65,5 @@
             Emapix &copy; 2012
         </div>
     </div>
-    <script src="/media/js/twitter_widgets.js"></script>
-    <script src="/media/js/jquery-1.7.2.min.js"></script>
-    <script src="/media/js/bootstrap.js"></script>
 </body>
 </html>

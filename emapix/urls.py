@@ -6,7 +6,7 @@ from django.conf.urls.defaults import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^prototype/', include('emapix.prototype.urls')),
-    #url(r'^layout/', include('emapix.layout.urls')),
+    url(r'^layout/', include('emapix.layout.urls')),
     url(r'^api/', include('emapix.api.urls')),  # Web service
 
     url(r'', include('emapix.core.urls')),

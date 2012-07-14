@@ -1,4 +1,13 @@
 {% extends "base.html" %}
+
+{% block header %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_requests").attr("class", "active");
+    });
+</script>
+{% endblock header %}
+
 {% load get_range %}
 
 {% block content %}
@@ -10,7 +19,7 @@
     <div class="e-request-item e-first-item span8">
         <a href=""><img src="/media/img/request.png"/></a>
         <div>
-            <div class="e-request-description"><a href="">Planning to hike in this place ...</a><button class="close">&times;</button></div>
+            <div class="e-request-description"><a href="/request">Planning to hike in this place ...</a><button class="close">&times;</button></div>
             <div> 6983 Navajo Rd. <span class="label">San Diego, CA</span> 
              <div class="pull-right">
               <div class="e-request-time">10 hr 1 min ago</div>
@@ -24,7 +33,7 @@
     <div class="e-request-item span8">
         <a href=""><img src="/media/img/request.png"/></a>
         <div>
-            <div class="e-request-description"><a href="">Planning to hike in this place ...</a><button class="close">&times;</button></div>
+            <div class="e-request-description"><a href="/request">Planning to hike in this place ...</a><button class="close">&times;</button></div>
             <div> 6983 Navajo Rd. <span class="label">San Diego, CA</span> 
                 <div class="pull-right">
                     <div class="e-request-time">10 hr 1 min ago</div>

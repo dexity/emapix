@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_photos").attr("class", "active");
+    });
+</script>
+{% endblock header %}
+
 {% block content %}
 
 <h3>Recent Photos</h3>
