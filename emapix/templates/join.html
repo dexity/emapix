@@ -5,12 +5,14 @@
 <div class="e-alert pull-left">It's easy and free. Take a breath... and you are done!</div>
 <div class="clear_both"></div>
 <div class="span8">
-  <form class="form-horizontal" action="/layout/confirm">
+  <form class="form-horizontal" action="/join" method="post" >
+    {% csrf_token %}
     <fieldset>
       <div class="control-group">
         <label class="control-label" for="input01">Username</label>
+        {{ form.username.errors }}
         <div class="controls">
-          <input type="text" class="input-large" id="input01">
+          {{ form.username }}
           <span class="help-inline e-color-grey">(Required)</span>
           <span class="help-block">Your username can only contain letters A-Z or numbers 0-9</span>
         </div>

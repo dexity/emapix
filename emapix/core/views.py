@@ -1,6 +1,8 @@
-from django.http import HttpResponse
-from django.shortcuts import render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, render
+from django.views.decorators.csrf import csrf_protect
 from emapix.utils.const import *
+from emapix.core.forms import JoinForm
 
 from django.db import models
 
@@ -10,8 +12,18 @@ logger = Logger.get("emapix.core.views")
 def index(request):
     return render_to_response('index.html')
 
+@csrf_protect
 def join(request):
     
+    if request.method == "POST":
+        form    = JoinForm(request.POST)
+        if form.is_valid():
+            username    = form.cleaned_data["username"]
+            # ...
+            return HttpResponseRedirect("/confirm")
+    else:
+        form    = JoinForm()
+        
     # Temp
 #    class Country(models.Model):
 #        code    = models.CharField(max_length=2)
@@ -20,13 +32,17 @@ def join(request):
 #    countries   = models.QuerySet()
 #    for i in COUNTRY_CHOICES:
 #        countries.append(Country(code=i[0], country=i[1]))
-    
-    return render_to_response('join.html')#, {"countries": countries})
+    c   = {
+        "form":     form
+    }
+    #return render_to_response('join.html', c)
+    return render(request, "join.html", c)
 
 def confirm(request):
     return render_to_response('confirm.html')
 
 def login(request):
+    
     return render_to_response('login.html')
 
 def forgot(request):
