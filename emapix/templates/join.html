@@ -4,7 +4,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $("input").focus(function(){
-            $(".alert-error").remove();
+            $(".alert-error").fadeOut(1000);
         });
     });
 </script>
@@ -14,12 +14,12 @@
 <div class="pull-left"><h3>Join Emapix</h3></div>
 <div class="e-alert pull-left">It's easy and free. Take a breath... and you are done!</div>
 <div class="clear_both"></div>
-<div class="span11">
+<div class="span10">
   <form class="form-horizontal" action="/join" method="post" >
     {% csrf_token %}
     <fieldset>
       <div class="control-group">
-        <label class="control-label" for="input01">Username</label>
+        <label class="control-label" for="{{ form.username.auto_id }}"><b>{{ form.username.label }}</b></label>
         <div class="controls">
             {{ form.username }}
             <span class="help-inline e-color-grey">(Required)</span>
@@ -32,6 +32,35 @@
             {% endif %}
         </div>
       </div>
+      <div class="control-group">
+        <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
+        <div class="controls">
+            {{ form.email }}
+            <span class="help-inline e-color-grey">(Required)</span>
+            {% if form.email.errors %}
+            <div class="alert alert-error error_spaces" style="">
+                <button class="close" data-dismiss="alert">×</button>
+                {{ form.email.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="{{ form.password.auto_id }}"><b>{{ form.password.label }}</b></label>
+        <div class="controls">
+            {{ form.password }}
+            <span class="help-inline e-color-grey">(Required)</span>
+            <span class="help-block">Password should be from 6 to 30 characters</span>
+            {% if form.password.errors %}
+            <div class="alert alert-error error_spaces" style="">
+                <button class="close" data-dismiss="alert">×</button>
+                {{ form.password.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      
+      <!--
       <div class="control-group">
         <label class="control-label" for="input02">Email</label>
         <div class="controls">
@@ -94,7 +123,7 @@
                 Rather not say
             </label>        
         </div>
-      </div>
+      </div>-->
       <div class="form-actions">
         <button type="submit" class="btn btn-primary">Join Emapix</button>
       </div>      
