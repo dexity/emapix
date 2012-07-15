@@ -1,20 +1,35 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("input").focus(function(){
+            $(".alert-error").remove();
+        });
+    });
+</script>
+{% endblock header %}
+
 {% block content %}
 <div class="pull-left"><h3>Join Emapix</h3></div>
 <div class="e-alert pull-left">It's easy and free. Take a breath... and you are done!</div>
 <div class="clear_both"></div>
-<div class="span8">
+<div class="span11">
   <form class="form-horizontal" action="/join" method="post" >
     {% csrf_token %}
     <fieldset>
       <div class="control-group">
         <label class="control-label" for="input01">Username</label>
-        {{ form.username.errors }}
         <div class="controls">
-          {{ form.username }}
-          <span class="help-inline e-color-grey">(Required)</span>
-          <span class="help-block">Your username can only contain letters A-Z or numbers 0-9</span>
+            {{ form.username }}
+            <span class="help-inline e-color-grey">(Required)</span>
+            <span class="help-block">Username can only contain letters A-Z or numbers 0-9</span>
+            {% if form.username.errors %}
+            <div class="alert alert-error error_spaces" style="">
+                <button class="close" data-dismiss="alert">×</button>
+                {{ form.username.errors|first }}
+            </div>
+            {% endif %}
         </div>
       </div>
       <div class="control-group">

@@ -32,10 +32,10 @@ def join(request):
 #    countries   = models.QuerySet()
 #    for i in COUNTRY_CHOICES:
 #        countries.append(Country(code=i[0], country=i[1]))
+
     c   = {
         "form":     form
     }
-    #return render_to_response('join.html', c)
     return render(request, "join.html", c)
 
 def confirm(request):

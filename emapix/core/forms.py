@@ -8,9 +8,10 @@ def input_widget():
 class JoinForm(forms.Form):
     username    = forms.CharField(max_length=100,
                                   widget=input_widget(),
-                                  validators=[RegexValidator(regex      = re.compile("\d+"),
-                                                             message    = "Should have all digits")])
+                                  validators=[RegexValidator(regex      = re.compile("^[A-Za-z0-9]{3,}$"),
+                                                             message    = "Should contain 3 or more letters A-Z or numbers 0-9 Should contain 3 or more ",
+                                                             code       = "format")])
     
-
+    
         
     
