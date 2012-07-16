@@ -59,7 +59,44 @@
             {% endif %}
         </div>
       </div>
-      
+      <div class="control-group">
+        <label class="control-label" for="{{ form.location.auto_id }}"><b>{{ form.location.label }}</b></label>
+        <div class="controls">
+            {{ form.location }}
+            {{ form.country }}
+            {% if form.location.errors %}
+            <div class="alert alert-error error_spaces" style="">
+                <button class="close" data-dismiss="alert">×</button>
+                {{ form.location.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label"><b>Birthday</b></label>
+        <div class="controls">
+            {{ form.b_month }}
+            {{ form.b_day }}
+            {{ form.b_year }}
+            <span class="help-inline e-color-grey">(<abbr title="Used to verify age and hidden by default">Required</abbr>)</span>          
+            {% if form.b_year.errors %}
+            <div class="alert alert-error error_spaces" style="">
+                <button class="close" data-dismiss="alert">×</button>
+                {{ form.b_year.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+      </div>
+      <div class="control-group">
+        <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
+        <div class="controls">
+            {% for radio in form.gender.choices %}
+            <div class="radio inline">
+                {{ radio }}
+            </div>
+            {% endfor %}
+        </div>
+      </div>
       <!--
       <div class="control-group">
         <label class="control-label" for="input02">Email</label>
@@ -104,7 +141,7 @@
             <option>Year</option>
             <option>2012</option>
           </select>
-          <span class="help-inline e-color-grey">(<abbr title="Used for authenticity and hidden by default">Required</abbr>)</span>          
+          <span class="help-inline e-color-grey">(<abbr title="Used to verify age and hidden by default">Required</abbr>)</span>          
         </div>
       </div>
       <div class="control-group">
