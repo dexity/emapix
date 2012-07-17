@@ -6,6 +6,16 @@
         $("input").focus(function(){
             $(".alert-error").fadeOut(1000);
         });
+        
+        $("select[id='{{ form.b_month.auto_id }}']").change(function(){
+            days    = '<option value="" selected="selected">Day</option>';
+            if (this.value in month_days) {
+                for (var i = 1; i< month_days[this.value]+1; i++) {
+                    days    += '<option value="' + i + '">' + i + '</option>'
+                }
+            }
+            $("select[id='{{ form.b_day.auto_id }}']").html(days);
+        });
     });
 </script>
 {% endblock header %}
@@ -90,7 +100,7 @@
       <div class="control-group">
         <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
         <div class="controls">
-            {% for radio in form.gender.choices %}
+            {% for radio in form.gender %}
             <div class="radio inline">
                 {{ radio }}
             </div>
