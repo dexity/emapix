@@ -29,24 +29,6 @@ MONTH_CHOICES    = [
     ("DEC", "December")
 ]
 
-def month_days(days):
-    return [(str(x), str(x)) for x in range(1, days+1)]
-
-DAY_CHOICES     = {
-    "JAN":  month_days(31),
-    "FEB":  month_days(29),
-    "MAR":  month_days(31),
-    "APR":  month_days(30),
-    "MAY":  month_days(31),
-    "JUN":  month_days(30),
-    "JUL":  month_days(31),
-    "AUG":  month_days(31),
-    "SEP":  month_days(30),
-    "OCT":  month_days(31),
-    "NOV":  month_days(30),
-    "DEC":  month_days(31),
-    }
-
 YEAR_CHOICES    = [(str(x), str(x)) for x in range(2006, 1899, -1)]
 
 COUNTRY_CHOICES = [

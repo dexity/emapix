@@ -41,7 +41,8 @@ class JoinForm(forms.Form):
                                     error_messages={'invalid': 'Enter the birth year.',
                                                     'required': 'Birth year is required'})
     gender      = forms.ChoiceField(choices=GENDER_CHOICES,
-                                    widget=forms.RadioSelect()) #attrs={"class": "input-mini"}))
+                                    widget=forms.RadioSelect(),
+                                    initial='n')
 
 
 
