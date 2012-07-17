@@ -9,7 +9,10 @@
 
 /* Basic */
 .clear_both {
-	clear: both;
+    clear: both;
+}
+.div_inline {
+    display: inline;
 }
 
 /* Navigation */
@@ -171,6 +174,10 @@
 }
 
 /* Form */
+.alert-error.error_spaces {
+    margin-top: 5px;
+    margin-bottom: 0px;
+}
 
 .e-text-small {
 	font-size: 11px;
@@ -182,6 +189,8 @@
 	float:left;
 	margin-left: 5px;
 }
+
+
 /* Users */
 .user-info {
     height:60px;
