@@ -2,31 +2,25 @@
 
 import os.path
 
-DEBUG = True
+try:
+    import emapixconf
+except:
+    import emapixconf_default as emapixconf
+
+DEBUG   = emapixconf.DEBUG
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-    ('Alex Dementsov', 'dexity@gmail.com'),
-)
+ADMINS = emapixconf.ADMINS
 
-S3_KEY      = "0GPQ9WD13HX9PFBX5N02"
-S3_SECRET   = "qxFdJQnXJfXhknQO72/fdbZk+DWPqx8XT65R8OIb"
-BUCKET_NAME = "emapix_uploads"
-API_KEY     = "0dae2799bb2d9b88e1d38a337377b221" # test key for api
+S3_KEY      = emapixconf.S3_KEY
+S3_SECRET   = emapixconf.S3_SECRET
+BUCKET_NAME = emapixconf.BUCKET_NAME
+API_KEY     = emapixconf.API_KEY    # test key for api
 
 
-MANAGERS = ADMINS
+MANAGERS    = ADMINS
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '/var/emapix/emapix/emapix.db',                    # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    }
-}
+DATABASES   = emapixconf.DATABASES
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name

@@ -23,15 +23,6 @@ def join(request):
             return HttpResponseRedirect("/confirm")
     else:
         form    = JoinForm()
-        
-    # Temp
-#    class Country(models.Model):
-#        code    = models.CharField(max_length=2)
-#        country = models.CharField(max_length=128)
-#    
-#    countries   = models.QuerySet()
-#    for i in COUNTRY_CHOICES:
-#        countries.append(Country(code=i[0], country=i[1]))
 
     c   = {
         "form":     form
