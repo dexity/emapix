@@ -122,7 +122,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'emapix.api',
     'emapix.prototype',
-    'emapix.layout'
+    'emapix.layout',
+    'emapix.core'
     #'django.contrib.admin',        # Uncomment the next line to enable the admin
     #'django.contrib.admindocs',    # Uncomment the next line to enable admin documentation:
 )
