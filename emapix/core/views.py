@@ -25,26 +25,22 @@ def join(request):
             username    = form.cleaned_data["username"]
             email       = form.cleaned_data["email"]
             password    = form.cleaned_data["password"]
-            #location    = form.cleaned_data["location"]
-            #country     = form.cleaned_data["country"]
-            #b_day       = form.cleaned_data["b_day"]
-            #b_month     = form.cleaned_data["b_month"]
-            #b_year      = form.cleaned_data["b_year"]
-            #gender      = form.cleaned_data["gender"]
             
             # Do something with the data
             # Let's just create a user for now!
             
-            #profile     = UserProfile()
-            #profile.user    = User.objects.create_user(username, email, password)
-            profile    = User.objects.create_user(username, email, password)
+            profile     = UserProfile()
+            # Creates user
+            profile.user    = User.objects.create_user(username, email, password)
             
-            #profile.location    = location
-            #profile.country     = country
-            #profile.b_day       = b_day
-            #profile.b_month     = b_month
-            #profile.b_year      = b_year
-            #profile.gender      = gender
+            profile.location    = form.cleaned_data["location"]
+            profile.country     = form.cleaned_data["country"]
+            b_day   = form.cleaned_data["b_day"]
+            if b_day:
+                profile.b_day   = b_day
+            profile.b_month     = form.cleaned_data["b_month"]
+            profile.b_year      = form.cleaned_data["b_year"]
+            profile.gender      = form.cleaned_data["gender"]
             profile.save()
             
             return HttpResponseRedirect("/confirm")
