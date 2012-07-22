@@ -25,13 +25,18 @@ def join(request):
             username    = form.cleaned_data["username"]
             email       = form.cleaned_data["email"]
             password    = form.cleaned_data["password"]
-            
-            # Do something with the data
-            # Let's just create a user for now!
-            
-            profile     = UserProfile()
             # Creates user
-            profile.user    = User.objects.create_user(username, email, password)
+            try:
+                #User.objects.filter()
+                user        = User.objects.create_user(username, email, password)
+            except:
+                c   = {
+                    "form":     form
+                }
+                return render(request, "join.html", c)                
+
+            profile     = UserProfile()
+            profile.user    = user
             
             profile.location    = form.cleaned_data["location"]
             profile.country     = form.cleaned_data["country"]

@@ -1,5 +1,7 @@
 from django import forms
 from django.core.validators import RegexValidator, validate_email, validate_slug
+from emapix.core.validators import ObjectExists
+from django.contrib.auth.models import User
 import re
 
 from emapix.utils.const import *
@@ -10,12 +12,16 @@ def text_widget():
 def password_widget():
     return forms.PasswordInput(attrs={"class": "input-large"})
 
+
 class JoinForm(forms.Form):
     username    = forms.CharField(max_length=100,
                                   widget=text_widget(),
                                   validators=[RegexValidator(regex      = re.compile("^[A-Za-z0-9]{5,}$"),
                                                              message    = "Should contain 5 or more letters A-Z or numbers 0-9",
-                                                             code       = "username")])
+                                                             code       = "username"),
+                                              ObjectExists("Username already exists",
+                                                           "username_exists",
+                                                           User.objects)])
     email       = forms.EmailField(max_length=100,
                                   widget=text_widget())
     password    = forms.CharField(max_length=30,

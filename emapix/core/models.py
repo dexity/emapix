@@ -19,7 +19,7 @@ class UserProfile(models.Model):
     
     location    = models.CharField(max_length=128)
     country_alpha2     = models.CharField(max_length=2)
-    b_day       = models.SmallIntegerField(null=True)
+    b_day       = models.SmallIntegerField(blank=True)
     b_month     = models.CharField(max_length=12)   # Full month
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1)
