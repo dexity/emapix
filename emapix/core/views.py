@@ -102,15 +102,19 @@ def confirm(request, token):
     # Check user token
     c   = {}
     try:
+        #User.objects.get(username=)
+        
         profile = UserProfile.objects.get(activ_token = token)
-        profile.active  = True
-        profile.activ_token = ""
+        profile.user.is_active  = True
+        profile.user.save()
+        profile.activ_token = None
+        logger.debug(profile.user)
         profile.save()
         c   = {"type": "confirm"}
     except Exception, e:
         logger.debug(str(e))
         c   = {"type": "confirm_failed"}
-        
+
     return render(request, "message.html", c)
 
 def login(request):

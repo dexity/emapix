@@ -11,7 +11,7 @@ class UserProfile(models.Model):
     b_month     = models.CharField(max_length=12)   # Full month
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1)
-    activ_token = models.CharField(max_length=64, default="None")
+    activ_token = models.CharField(max_length=64, null=True)
 
 
 class UserStatus(models.Model):
