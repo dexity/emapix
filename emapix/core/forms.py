@@ -1,6 +1,6 @@
 from django import forms
 from django.core.validators import RegexValidator, validate_email, validate_slug
-from emapix.core.validators import ObjectExists
+from emapix.core.validators import *
 from django.contrib.auth.models import User
 import re
 
@@ -19,11 +19,14 @@ class JoinForm(forms.Form):
                                   validators=[RegexValidator(regex      = re.compile("^[A-Za-z0-9]{5,}$"),
                                                              message    = "Should contain 5 or more letters A-Z or numbers 0-9",
                                                              code       = "username"),
-                                              ObjectExists("Username already exists",
-                                                           "username_exists",
-                                                           User.objects)])
+                                              UsernameExists("Username already exists",
+                                                            "username_exists",
+                                                            User.objects)])
     email       = forms.EmailField(max_length=100,
-                                  widget=text_widget())
+                                  widget=text_widget(),
+                                  validators=[EmailExists("Email already exists",
+                                                           "email_exists",
+                                                           User.objects)])
     password    = forms.CharField(max_length=30,
                                   widget=password_widget(),
                                   # XXX: Change password regex

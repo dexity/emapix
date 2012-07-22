@@ -2,18 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from emapix.utils.const import *
 
-#class User(models.Model):
-#    username    = CharField(max_length=32)
-#    email       = CharField(max_length=64)
-#    name        = CharField(max_length=64)
-#    auth        = CharField(max_length=128) # ?
-#    gender      = CharField(max_length=1, choices=GENDER_CHOICES)
-#    city_state  = CharField(max_length=128)
-#    country_alpha2 = CharField(max_length=2, choices=COUNTRY_CHOICES) # ISO 3166:alpha2
-#    birthday    = CharField(max_length=8)    # MMDDYYYY
-#    created_date    = CharField(max_length=16)  # date when account was first created
-
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
     
@@ -23,6 +11,7 @@ class UserProfile(models.Model):
     b_month     = models.CharField(max_length=12)   # Full month
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1)
+    #activ_token = models.CharField(max_length=128, blank=True)
 
 
 class UserStatus(models.Model):

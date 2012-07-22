@@ -14,21 +14,31 @@ logger = Logger.get("emapix.core.views")
 def index(request):
     return render_to_response('index.html')
 
+
+def generate_token():
+    
+    pass
+
+def send_activation_email(email, username):
+    "Send verification email"
+    pass
+    
+
 @csrf_protect
 def join(request):
     
     if request.method == "POST":
         form    = JoinForm(request.POST)
         if form.is_valid():
-            # TODO: Check if username and email already exist
-            
             username    = form.cleaned_data["username"]
             email       = form.cleaned_data["email"]
             password    = form.cleaned_data["password"]
             # Creates user
             try:
-                #User.objects.filter()
-                user        = User.objects.create_user(username, email, password)
+                user        = User(username=username, email=email)    #.objects.create_user(username, email, password)
+                user.set_password(password)
+                user.is_active  = False
+                user.save()
             except:
                 c   = {
                     "form":     form
@@ -48,7 +58,10 @@ def join(request):
             profile.gender      = form.cleaned_data["gender"]
             profile.save()
             
-            return HttpResponseRedirect("/confirm")
+            send_activation_email(email, username)
+            
+            #return HttpResponseRedirect("/confirm")
+            return HttpResponseRedirect("/verify")
     else:
         form    = JoinForm()
 
@@ -57,8 +70,14 @@ def join(request):
     }
     return render(request, "join.html", c)
 
+
+def verify(request):
+    return render(request, "message.html", {"type": "verify"})
+
+
 def confirm(request):
-    return render_to_response('confirm.html')
+    
+    #return render_to_response('confirm.html')
 
 def login(request):
     

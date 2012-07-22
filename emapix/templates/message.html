@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block header %}
+<script type="text/javascript">
+    
+    function fadeToMain() {
+        $("#message").fadeOut(10000, function(){
+            window.location.replace("/");
+        });        
+    }
+    
+</script>
+{% endblock %}
+
+{% block content %}
+    {% if type == "verify" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-success">
+            <b>Thank you for joining Emapix!</b><br />
+            Verification message is sent to your email. Please click the link in the message
+            to confirm the registration.
+            <br />
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if type == "confirm" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-success">
+            <b>Welcome to Emapix!</b><br />
+            You can now send photo requests or help other people to see the world.
+            See some photos submitted by other users <a href="/photos">Photos</a>
+            For help go to <a href="/help">Help</a> page.<br />
+            <br />
+            Explore the world!<br/>
+        </div>
+    </div>
+    {% endif %}    
+    
+{% endblock %}
