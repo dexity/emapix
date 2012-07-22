@@ -4,6 +4,14 @@ DEBUG   = True
 ADMINS = (
     ('Alex Dementsov', 'dexity@gmail.com'),
 )
+
+# Email
+EMAIL_HOST  = ""
+EMAIL_PORT  = ""
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
+EMAIL_USE_TLS   = ""
+
 # Amazon S3
 S3_KEY      = "AMAZONS3KEY"
 S3_SECRET   = "AMAZONS3SECRET"

@@ -10,6 +10,21 @@ except:
 DEBUG   = emapixconf.DEBUG
 TEMPLATE_DEBUG = DEBUG
 
+# Email
+NOREPLY_EMAIL  = "noreply@emapix.com"
+
+if DEBUG:
+    EMAIL_BACKEND   = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = '/tmp/emapix_emails'
+else:
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST  = ""
+    EMAIL_PORT  = ""
+    EMAIL_HOST_USER = ""
+    EMAIL_HOST_PASSWORD = ""
+    EMAIL_USE_TLS   = ""
+
+
 ADMINS = emapixconf.ADMINS
 
 S3_KEY      = emapixconf.S3_KEY

@@ -1,12 +1,17 @@
+import time
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.views.decorators.csrf import csrf_protect
 from django.db import models
+from django.core.mail import send_mail
+from django.contrib.auth.models import User
 
 from emapix.utils.const import *
+from emapix.utils.utils import sha1
 from emapix.core.forms import JoinForm
 from emapix.core.models import UserProfile
-from django.contrib.auth.models import User
+from emapix.settings import NOREPLY_EMAIL
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -15,13 +20,28 @@ def index(request):
     return render_to_response('index.html')
 
 
-def generate_token():
-    
-    pass
+def generate_token(value):
+    "Generates 40 character token"
+    return sha1(value + str(time.time()))
 
-def send_activation_email(email, username):
+
+def send_activation_email(request, email, username):
     "Send verification email"
-    pass
+    token   = generate_token(username)
+    url     = "http://%s/confirm/%s" % (request.META["SERVER_NAME"], token)
+    msg     = """
+Hi, %s!
+
+Please confirm your registration by following the link: %s
+
+Explore the world!
+Emapix Team
+
+P.S. If you received this email by error, please ignore it.
+
+""" % (username, url)
+
+    send_mail('Verify registration', msg, NOREPLY_EMAIL, [email,], fail_silently=False)
     
 
 @csrf_protect
@@ -33,6 +53,11 @@ def join(request):
             username    = form.cleaned_data["username"]
             email       = form.cleaned_data["email"]
             password    = form.cleaned_data["password"]
+            
+            send_activation_email(request, email, username)
+            # TEMP
+            return HttpResponseRedirect("/verify")
+            
             # Creates user
             try:
                 user        = User(username=username, email=email)    #.objects.create_user(username, email, password)
@@ -58,7 +83,7 @@ def join(request):
             profile.gender      = form.cleaned_data["gender"]
             profile.save()
             
-            send_activation_email(email, username)
+            send_activation_email(request, email, username)
             
             #return HttpResponseRedirect("/confirm")
             return HttpResponseRedirect("/verify")
@@ -75,8 +100,9 @@ def verify(request):
     return render(request, "message.html", {"type": "verify"})
 
 
-def confirm(request):
-    
+def confirm(request, token):
+    # Check user token
+    logger.debug(token)
     #return render_to_response('confirm.html')
 
 def login(request):
