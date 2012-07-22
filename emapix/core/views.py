@@ -25,9 +25,8 @@ def generate_token(value):
     return sha1(value + str(time.time()))
 
 
-def send_activation_email(request, email, username):
+def send_activation_email(request, email, username, token):
     "Send verification email"
-    token   = generate_token(username)
     url     = "http://%s/confirm/%s" % (request.META["SERVER_NAME"], token)
     msg     = """
 Hi, %s!
@@ -54,10 +53,6 @@ def join(request):
             email       = form.cleaned_data["email"]
             password    = form.cleaned_data["password"]
             
-            send_activation_email(request, email, username)
-            # TEMP
-            return HttpResponseRedirect("/verify")
-            
             # Creates user
             try:
                 user        = User(username=username, email=email)    #.objects.create_user(username, email, password)
@@ -81,9 +76,12 @@ def join(request):
             profile.b_month     = form.cleaned_data["b_month"]
             profile.b_year      = form.cleaned_data["b_year"]
             profile.gender      = form.cleaned_data["gender"]
+            
+            token   = generate_token(username)  # token for confirmation
+            profile.activ_token = token
             profile.save()
             
-            send_activation_email(request, email, username)
+            send_activation_email(request, email, username, token)
             
             #return HttpResponseRedirect("/confirm")
             return HttpResponseRedirect("/verify")
@@ -102,8 +100,18 @@ def verify(request):
 
 def confirm(request, token):
     # Check user token
-    logger.debug(token)
-    #return render_to_response('confirm.html')
+    c   = {}
+    try:
+        profile = UserProfile.objects.get(activ_token = token)
+        profile.active  = True
+        profile.activ_token = ""
+        profile.save()
+        c   = {"type": "confirm"}
+    except Exception, e:
+        logger.debug(str(e))
+        c   = {"type": "confirm_failed"}
+        
+    return render(request, "message.html", c)
 
 def login(request):
     

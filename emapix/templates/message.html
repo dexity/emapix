@@ -37,4 +37,14 @@
     </div>
     {% endif %}    
     
+    {% if type == "confirm_failed" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-error">
+            <b>Confirmation failed</b><br />
+            Something went wrong. Confirmation token is either invalid or expired.
+            Please visit page to resend verification link <a href="/verify/resend">Resend Verification</a>
+            <br/>
+        </div>
+    </div>
+    {% endif %}       
 {% endblock %}
