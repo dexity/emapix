@@ -7,10 +7,9 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^verify$', 'verify'),
     #url(r'^verify/resend$', 'verify'),   # TODO
     url(r'^confirm/(\w{40})$', 'confirm'),
-    
+    url(r'^login$', 'login'),
     
     # Layouts
-    url(r'^login$', 'login'),
     url(r'^forgot$', 'forgot'),
     url(r'^set_profile$', 'set_profile'),
     url(r'^set_password$', 'set_password'),

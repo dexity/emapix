@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+PASSWORD_REGEX  = "^[A-Za-z0-9]{6,30}$" # XXX: Change password regex
+USERNAME_REGEX  = "^[A-Za-z0-9]{5,}$"
+
 GENDER_CHOICES = (
     ('m', 'Male'),
     ('f', 'Female'),

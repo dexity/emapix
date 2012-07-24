@@ -1,10 +1,15 @@
+
+import re
 from django import forms
 from django.core.validators import RegexValidator, validate_email, validate_slug
-from emapix.core.validators import *
 from django.contrib.auth.models import User
-import re
+from django.contrib.auth import authenticate, login
 
+from emapix.core.validators import *
 from emapix.utils.const import *
+
+from emapix.utils.logger import Logger
+logger = Logger.get("emapix.core.forms")
 
 def text_widget():
     return forms.TextInput(attrs={"class": "input-large"})
@@ -16,7 +21,7 @@ def password_widget():
 class JoinForm(forms.Form):
     username    = forms.CharField(max_length=100,
                                   widget=text_widget(),
-                                  validators=[RegexValidator(regex      = re.compile("^[A-Za-z0-9]{5,}$"),
+                                  validators=[RegexValidator(regex      = re.compile(USERNAME_REGEX),
                                                              message    = "Should contain 5 or more letters A-Z or numbers 0-9",
                                                              code       = "username"),
                                               UsernameExists("Username already exists",
@@ -29,11 +34,9 @@ class JoinForm(forms.Form):
                                                            User.objects)])
     password    = forms.CharField(max_length=30,
                                   widget=password_widget(),
-                                  # XXX: Change password regex
-                                  validators=[RegexValidator(regex      = re.compile("^[A-Za-z0-9]{6,30}$"),
+                                  validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX),
                                                              message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
                                                              code       = "password")])
-    
     location    = forms.CharField(max_length=100,
                                   required=False,
                                   widget=forms.TextInput(attrs={"class": "input-large",
@@ -58,5 +61,33 @@ class JoinForm(forms.Form):
                                     initial='n')
 
 
+class LoginForm(forms.Form):
+    username    = forms.CharField(max_length=100,
+                                  widget=text_widget(),
+                                  validators=[RegexValidator(regex      = re.compile(USERNAME_REGEX))])
+    password    = forms.CharField(max_length=30,
+                                  widget=password_widget(),
+                                  validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX))])    
 
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        username    = cleaned_data.get("username")
+        password    = cleaned_data.get("password")
+        
+        msg     = "Username or password is not valid"
+        code    = "auth_invalid"
+        if username is None or password is None:   # one of them or both are invalid
+            raise forms.ValidationError(msg, code=code)
+            
+        # Check if user entered right credentials
+        user    = authenticate(username=username, password=password)
+        if user is None:    # authentication failed
+            raise forms.ValidationError(msg, code=code)
+        
+        if not user.is_active:
+            raise forms.ValidationError("User profile is not activated", code="activ_failed")
+        
+        cleaned_data["user"]    = user
+        return cleaned_data
+        
     

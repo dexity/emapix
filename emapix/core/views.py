@@ -6,10 +6,11 @@ from django.views.decorators.csrf import csrf_protect
 from django.db import models
 from django.core.mail import send_mail
 from django.contrib.auth.models import User
+import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1
-from emapix.core.forms import JoinForm
+from emapix.core.forms import JoinForm, LoginForm
 from emapix.core.models import UserProfile
 from emapix.settings import NOREPLY_EMAIL
 
@@ -82,8 +83,8 @@ def join(request):
             profile.save()
             
             send_activation_email(request, email, username, token)
-            
-            #return HttpResponseRedirect("/confirm")
+
+            # TODO: Add reCAPTCHA verification
             return HttpResponseRedirect("/verify")
     else:
         form    = JoinForm()
@@ -102,8 +103,6 @@ def confirm(request, token):
     # Check user token
     c   = {}
     try:
-        #User.objects.get(username=)
-        
         profile = UserProfile.objects.get(activ_token = token)
         profile.user.is_active  = True
         profile.user.save()
@@ -117,9 +116,21 @@ def confirm(request, token):
 
     return render(request, "message.html", c)
 
+
+@csrf_protect
 def login(request):
-    
-    return render_to_response('login.html')
+    if request.method == "POST":
+        form    = LoginForm(request.POST)
+        if form.is_valid():
+            django_auth.login(request, form.cleaned_data["user"])   # should have user authenticated already
+            return HttpResponseRedirect("/")
+    else:
+        form    = LoginForm()
+    c   = {
+        "form": form
+    }
+    return render(request, 'login.html', c)
+
 
 def forgot(request):
     return render_to_response('forgot.html')
