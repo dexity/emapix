@@ -18,7 +18,7 @@ from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
 
 def index(request):
-    return render_to_response('index.html')
+    return render_to_response("index.html")
 
 
 def generate_token(value):
@@ -132,6 +132,11 @@ def login(request):
     return render(request, 'login.html', c)
 
 
+def logout(request):
+    django_auth.logout(request)
+    return HttpResponseRedirect("/")
+
+
 def forgot(request):
     return render_to_response('forgot.html')
 
@@ -150,8 +155,15 @@ def users(request):
 def help(request):
     return render_to_response('help.html')
 
+
 def requests(request):
-    return render_to_response('requests.html')
+    logger.debug(str(request.user))
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}    
+    return render(request, 'requests.html', c)
+
 
 def request(request):
     return render_to_response('request.html')
