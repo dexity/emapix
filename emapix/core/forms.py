@@ -91,3 +91,24 @@ class LoginForm(forms.Form):
         return cleaned_data
         
     
+class ForgotForm(forms.Form):
+    email       = forms.EmailField(max_length=100,
+                                  widget=text_widget())
+    
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        email    = cleaned_data.get("email")        
+    
+        msg     = "Account with this email does not exist"
+        code    = "email_invalid"
+        if email is None:
+            raise forms.ValidationError(msg, code=code)
+        try:
+            user    = User.objects.get(email=email)
+            cleaned_data["user"]    = user
+            return cleaned_data
+        except Exception, e:
+            raise forms.ValidationError(msg, code=code)
+        
+    
+    

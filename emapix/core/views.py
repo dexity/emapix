@@ -4,14 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
 from django.views.decorators.csrf import csrf_protect
 from django.db import models
-from django.core.mail import send_mail
 from django.contrib.auth.models import User
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1
-from emapix.core.forms import JoinForm, LoginForm
+from emapix.core.forms import JoinForm, LoginForm, ForgotForm
 from emapix.core.models import UserProfile
+from emapix.core.emails import send_activation_email, 
 from emapix.settings import NOREPLY_EMAIL
 
 from emapix.utils.logger import Logger
@@ -24,24 +24,6 @@ def index(request):
 def generate_token(value):
     "Generates 40 character token"
     return sha1(value + str(time.time()))
-
-
-def send_activation_email(request, email, username, token):
-    "Send verification email"
-    url     = "http://%s/confirm/%s" % (request.META["SERVER_NAME"], token)
-    msg     = """
-Hi, %s!
-
-Please confirm your registration by following the link: %s
-
-Explore the world!
-Emapix Team
-
-P.S. If you received this email by error, please ignore it.
-
-""" % (username, url)
-
-    send_mail('Verify registration', msg, NOREPLY_EMAIL, [email,], fail_silently=False)
     
 
 @csrf_protect
@@ -107,7 +89,6 @@ def confirm(request, token):
         profile.user.is_active  = True
         profile.user.save()
         profile.activ_token = None
-        logger.debug(profile.user)
         profile.save()
         c   = {"type": "confirm"}
     except Exception, e:
@@ -138,7 +119,29 @@ def logout(request):
 
 
 def forgot(request):
-    return render_to_response('forgot.html')
+    if request.method == "POST":
+        form    = ForgotForm(request.POST)
+        if form.is_valid():
+            user    = form.cleaned_data["user"]
+            try:
+                profile = UserProfile.objects.get(user=user)
+            
+                #  
+                send_forgot_email(request, user)
+            except Exception, e:
+                logger.debug(str(e))
+    else:
+        form    = ForgotForm()
+    c   = {
+        "form": form
+    }
+    return render(request, 'forgot.html', c)
+
+
+# XXX
+def renew_password(request):
+    pass
+
 
 def set_profile(request):
     return render_to_response('set_profile.html')
