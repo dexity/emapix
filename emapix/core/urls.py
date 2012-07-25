@@ -9,7 +9,7 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^confirm/(\w{40})$', 'confirm'),
     url(r'^login$', 'login'),
     url(r'^logout$', 'logout'),
-    url(r'^password/renew$', 'renew_password'),
+    url(r'^password/renew/(\w{40})$', 'renew_password'),
     
     # Layouts
     url(r'^forgot$', 'forgot'),

@@ -146,9 +146,12 @@ def forgot(request):
     return render(request, 'forgot.html', c)
 
 
-# XXX
-def renew_password(request):
-    pass
+def renew_password(request ,token):
+    try:
+        profile = UserProfile.objects.get(forgot_token = token)
+    except Exception, e:
+        logger.debug(str(e))
+        return render(request, "message.html", {"type": "newpass_failed"})
 
 
 def set_profile(request):

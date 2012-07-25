@@ -58,4 +58,16 @@
         </div>
     </div>
     {% endif %}
+
+    {% if type == "newpass_failed" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-error">
+            <b>Password renewal failed</b><br />
+            Something went wrong. Password renewal token is either invalid or expired.
+            Please visit <a href="/forgot">Forgot Password</a> page to send another request.
+            <br/>
+        </div>
+    </div>    
+    {% endif %}
+    
 {% endblock %}
