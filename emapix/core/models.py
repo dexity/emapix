@@ -12,6 +12,7 @@ class UserProfile(models.Model):
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1)
     activ_token = models.CharField(max_length=64, null=True)
+    forgot_token = models.CharField(max_length=64, null=True)
 
 
 class UserStatus(models.Model):

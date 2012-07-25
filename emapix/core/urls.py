@@ -4,8 +4,8 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^$', 'requests'),
     
     url(r'^join$', 'join'),
-    url(r'^verify$', 'verify'),
-    #url(r'^verify/resend$', 'verify'),   # TODO
+    #url(r'^verify$', 'verify'),        # Don't need for now
+    #url(r'^verify/resend$', 'verify'), # TODO
     url(r'^confirm/(\w{40})$', 'confirm'),
     url(r'^login$', 'login'),
     url(r'^logout$', 'logout'),

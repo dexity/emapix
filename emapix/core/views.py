@@ -11,8 +11,7 @@ from emapix.utils.const import *
 from emapix.utils.utils import sha1
 from emapix.core.forms import JoinForm, LoginForm, ForgotForm
 from emapix.core.models import UserProfile
-from emapix.core.emails import send_activation_email, 
-from emapix.settings import NOREPLY_EMAIL
+from emapix.core.emails import send_activation_email, send_forgot_email
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -67,7 +66,8 @@ def join(request):
             send_activation_email(request, email, username, token)
 
             # TODO: Add reCAPTCHA verification
-            return HttpResponseRedirect("/verify")
+            #return HttpResponseRedirect("/verify")
+            return render(request, "message.html", {"type": "verify"})
     else:
         form    = JoinForm()
 
@@ -78,7 +78,9 @@ def join(request):
 
 
 def verify(request):
-    return render(request, "message.html", {"type": "verify"})
+    # TODO: Add reCAPTCHA verification
+    #return render(request, "message.html", {"type": "verify"})
+    pass
 
 
 def confirm(request, token):
@@ -118,6 +120,7 @@ def logout(request):
     return HttpResponseRedirect("/")
 
 
+@csrf_protect
 def forgot(request):
     if request.method == "POST":
         form    = ForgotForm(request.POST)
@@ -126,8 +129,13 @@ def forgot(request):
             try:
                 profile = UserProfile.objects.get(user=user)
             
-                #  
-                send_forgot_email(request, user)
+                token   = generate_token(user.username)
+                profile.forgot_token    = token
+                profile.save()
+                
+                send_forgot_email(request, user.email, user.username, token)
+                return render(request, "message.html", {"type": "forgot"})
+            
             except Exception, e:
                 logger.debug(str(e))
     else:

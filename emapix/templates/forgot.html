@@ -1,5 +1,15 @@
 {% extends "base.html" %}
 
+{% block header %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("input").focus(function(){
+            $(".alert-error").fadeOut(1000);
+        });
+    });
+</script>
+{% endblock header %}
+
 {% block content %}
 
 <div class="pull-left"><h3>Forgot Password</h3></div>
@@ -8,18 +18,25 @@ your email and we will send you a new password.
 You can change it later on.</div>
 <div class="clear_both"></div>
 <div class="span10">
-<form class="form-horizontal">
+<form class="form-horizontal" action="/forgot" method="post" >
+    {% csrf_token %}
     <fieldset>
       <div class="control-group">
-        <label class="control-label" for="input01">Email</label>
+        <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
         <div class="controls">
-          <input type="text" class="input-large" id="input01">
+            {{ form.email }}
+	    {% if form.non_field_errors %}
+	    <div class="alert alert-error error_spaces" style="">
+		<button class="close" data-dismiss="alert">×</button>
+		{{ form.non_field_errors|first }}
+	    </div>
+	    {% endif %}            
         </div>
       </div>
       <div class="control-group">
         <div class="controls">
             <button type="submit" class="btn btn-primary">Send Password</button>
-            <button type="submit" class="btn">I remember now</button>
+            <a class="btn" href="/">I remember now</a>
         </div>
       </div>
     </fieldset>

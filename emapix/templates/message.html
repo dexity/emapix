@@ -46,5 +46,16 @@
             <br/>
         </div>
     </div>
-    {% endif %}       
+    {% endif %}    
+
+    {% if type == "forgot" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-success">
+            <b>New password request</b><br />
+            The new password request is sent to your email. Please click the link in the message
+            to get your new password.
+            <br />
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
