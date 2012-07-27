@@ -109,6 +109,25 @@ class ForgotForm(forms.Form):
             return cleaned_data
         except Exception, e:
             raise forms.ValidationError(msg, code=code)
+
+
+class NewPasswordForm(forms.Form):
+    newpass    = forms.CharField(max_length=30,
+                                  widget=password_widget(),
+                                  validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX),
+                                                             message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
+                                                             code       = "password")])
+    renewpass  = forms.CharField(max_length=30,
+                                  widget=password_widget())
+    
+    
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        newpass     = cleaned_data.get("newpass")
+        renewpass   = cleaned_data.get("renewpass")
         
+        # XXX: newpass == renewpass
+        
+        return cleaned_data
     
     

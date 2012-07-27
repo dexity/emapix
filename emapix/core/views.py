@@ -9,7 +9,7 @@ import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1
-from emapix.core.forms import JoinForm, LoginForm, ForgotForm
+from emapix.core.forms import JoinForm, LoginForm, ForgotForm, NewPasswordForm
 from emapix.core.models import UserProfile
 from emapix.core.emails import send_activation_email, send_forgot_email
 
@@ -146,9 +146,25 @@ def forgot(request):
     return render(request, 'forgot.html', c)
 
 
-def renew_password(request ,token):
+@csrf_protect
+def renew_password(request, token):
+
     try:
         profile = UserProfile.objects.get(forgot_token = token)
+        if request.method == "POST":
+            # XXX: Finish
+            # profile.forgot_token = ""
+            # profile.save()
+            
+            pass
+        else:
+            form    = NewPasswordForm()
+        c   = {
+            "form":     form,
+            "token":    token
+        }
+        return render(request, "newpass.html", c)
+        
     except Exception, e:
         logger.debug(str(e))
         return render(request, "message.html", {"type": "newpass_failed"})
