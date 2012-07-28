@@ -69,5 +69,14 @@
         </div>
     </div>    
     {% endif %}
+
+    {% if type == "newpass_success" %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-success">
+            <b>New password set</b><br />
+            New password has been applied.
+        </div>
+    </div>
+    {% endif %}  
     
 {% endblock %}

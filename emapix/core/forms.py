@@ -126,7 +126,8 @@ class NewPasswordForm(forms.Form):
         newpass     = cleaned_data.get("newpass")
         renewpass   = cleaned_data.get("renewpass")
         
-        # XXX: newpass == renewpass
+        if newpass != renewpass:
+            raise forms.ValidationError("Passwords do not match", code="passwords_match")
         
         return cleaned_data
     

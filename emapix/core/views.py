@@ -11,7 +11,7 @@ from emapix.utils.const import *
 from emapix.utils.utils import sha1
 from emapix.core.forms import JoinForm, LoginForm, ForgotForm, NewPasswordForm
 from emapix.core.models import UserProfile
-from emapix.core.emails import send_activation_email, send_forgot_email
+from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -152,11 +152,19 @@ def renew_password(request, token):
     try:
         profile = UserProfile.objects.get(forgot_token = token)
         if request.method == "POST":
-            # XXX: Finish
-            # profile.forgot_token = ""
-            # profile.save()
-            
-            pass
+            form    = NewPasswordForm(request.POST)
+            if form.is_valid():
+                newpass = form.cleaned_data["newpass"]
+                profile.forgot_token = ""
+                profile.user.set_password(newpass)
+                profile.user.save() # Important
+                profile.save()
+                
+                email   = profile.user.email
+                username    = profile.user.username
+                # Send email
+                send_newpass_confirm_email(request, email, username)
+                return render(request, "message.html", {"type": "newpass_success"})
         else:
             form    = NewPasswordForm()
         c   = {
