@@ -204,7 +204,11 @@ def requests(request):
 
 
 def request(request):
-    return render_to_response('request.html')
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    return render(request, 'request.html', c)
 
 def request2(request):
     return render_to_response('request2.html')
@@ -228,7 +232,11 @@ def submit3(request):
     return render_to_response('submit3.html')
 
 def make(request):
-    return render_to_response('make.html')
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}    
+    return render_to_response('make.html', c)
 
 
 

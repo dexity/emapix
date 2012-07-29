@@ -21,7 +21,7 @@
     {% block header %}{% endblock header %}
 
   </head>
-<body data-spy="scroll" data-target=".subnav" data-offset="50" onload="initialize()">
+<body data-spy="scroll" data-target=".subnav" data-offset="50">
     <div class="container">
         {% if username %}
         <div class="pull-right e-nav-user">
@@ -57,6 +57,9 @@
                <a href="/make" class="btn btn-success"><b>Make Request</b></a>
            </div>
         </div>
+        {% if not username %}
+        <button class="btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
+        {% endif %}
         
         {% block content %}{% endblock content %}
 
