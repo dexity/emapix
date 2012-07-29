@@ -1,0 +1,5 @@
+.. _registration:
+
+User Registration
+=================
+
