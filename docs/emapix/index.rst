@@ -6,7 +6,7 @@
 Emapix Web Application
 ======================
  
-Emapix is a photo sharing web site.
+Emapix is a photo sharing web application.
 
 .. toctree::
    :maxdepth: 2
