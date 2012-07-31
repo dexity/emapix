@@ -132,3 +132,11 @@ class NewPasswordForm(forms.Form):
         return cleaned_data
     
     
+class RequestForm(forms.Form):
+    lat     = forms.FloatField()
+    lon     = forms.FloatField()
+    description = forms.CharField(max_length=140,
+                                  widget    = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ..."}))
+    
+    
+    

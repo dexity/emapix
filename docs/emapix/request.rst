@@ -3,12 +3,13 @@
 Photo Request
 =============
 
-.. ----
+Photo Request Methods
+---------------------
 
-Submit Request
-~~~~~~~~~~~~~~
+Make Request View
+~~~~~~~~~~~~~~~~~
 
-Submits photo request.
+Make request view.
 
 .. list-table::
    :widths: 30 10 10 10
@@ -18,8 +19,26 @@ Submits photo request.
      - HTTP Method
      - Authentication
      - HTTPS
-   * - ``/photo/request/add``
-     - POST
+   * - ``/request/make``
+     - GET
+     - no
+     - no
+
+Request Form
+~~~~~~~~~~~~
+
+Photo request form.
+
+.. list-table::
+   :widths: 30 10 10 10
+   :header-rows: 1
+
+   * - Endpoint
+     - HTTP Method
+     - Authentication
+     - HTTPS
+   * - ``/request/add``
+     - GET,POST
      - yes
      - yes
 
@@ -32,10 +51,15 @@ Submits photo request.
    * - Parameter
      - Required
      - Description
-   * - service
+   * - lat
      - yes
-     - The service to add.
-
+     - Latitude
+   * - lon
+     - yes
+     - Longitude
+   * - description
+     - no
+     - Request description
   
 ..  
     **Example:**

@@ -10,6 +10,8 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^login$', 'login'),
     url(r'^logout$', 'logout'),
     url(r'^password/renew/(\w{40})$', 'renew_password'),
+    url(r'^request/make$', 'make_request'),
+    url(r'^request/add$', 'add_request'),
     
     # Layouts
     url(r'^forgot$', 'forgot'),
@@ -27,5 +29,5 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^submit$', 'submit'),
     url(r'^submit2$', 'submit2'),
     url(r'^submit3$', 'submit3'),
-    url(r'^make$', 'make'),    
+    
 )

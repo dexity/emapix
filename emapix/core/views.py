@@ -9,7 +9,7 @@ import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1
-from emapix.core.forms import JoinForm, LoginForm, ForgotForm, NewPasswordForm
+from emapix.core.forms import *
 from emapix.core.models import UserProfile
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 
@@ -178,6 +178,26 @@ def renew_password(request, token):
         return render(request, "message.html", {"type": "newpass_failed"})
 
 
+def make_request(request):
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    return render_to_response('make.html', c)
+
+
+def add_request(request):
+    c   = {
+        "lat":  request.GET.get("lat", ""),
+        "lon":  request.GET.get("lon", "")
+    }
+    if request.user.is_authenticated():
+        c["username"]   = request.user
+
+    c["form"]   = RequestForm()
+    return render_to_response('forms/request_form.html', c)
+
+
 def set_profile(request):
     return render_to_response('set_profile.html')
 
@@ -230,13 +250,6 @@ def submit2(request):
 
 def submit3(request):
     return render_to_response('submit3.html')
-
-def make(request):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}    
-    return render_to_response('make.html', c)
 
 
 
