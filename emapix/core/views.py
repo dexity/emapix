@@ -187,9 +187,11 @@ def make_request(request):
 
 
 def add_request(request):
+    # XXX: Check number of requests which user made
     c   = {
         "lat":  request.GET.get("lat", ""),
-        "lon":  request.GET.get("lon", "")
+        "lon":  request.GET.get("lon", ""),
+        #"max_limit": True       # Temp
     }
     if request.user.is_authenticated():
         c["username"]   = request.user

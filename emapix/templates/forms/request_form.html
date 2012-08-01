@@ -1,7 +1,23 @@
-<div style="margin-bottom: -10px;">
-Location: {{lat}}; {{lon}}
-<form action="/request/add" method="post">
-    {{form.description}}<br/>
-    <button class="btn btn-primary" id="send_request">Submit Request</button>
-</form>
+{% if username %}
+    {% if max_limit %}
+    <div class="alert alert-error" style="margin-top: 10px;">
+        You reached 10 requests. <br />
+        Please wait till the end of the promo <br />
+        or <a href="#">manage requests</a>
+        <!--XXX: Add link -->
+    </div>
+    {% else %}
+    <div style="margin-bottom: -10px;">
+        <div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
+        <form action="/request/add" method="post">
+            {{form.description}}<br/>
+            <div class="" style="margin-bottom: 10px;">Here are my errors</div>
+            <button class="btn btn-primary" id="send_request">Submit Request</button>
+        </form>
+    </div>
+    {% endif %}
+{% else %}
+<div class="alert alert-error" style="margin-top: 10px;">
+    Please <a href="/login">login</a> or <a href="/join">sign up</a> to make a request
 </div>
+{% endif %}

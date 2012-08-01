@@ -54,11 +54,12 @@
                </form>
            </div>
            <div class="span3">
-               <a href="/make" class="btn btn-success"><b>Make Request</b></a>
+               <a href="/request/make" class="btn btn-success"><b>Make Request</b></a>
            </div>
         </div>
         {% if not username %}
         <button class="btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
+        <div class="clear_both"></div>
         {% endif %}
         
         {% block content %}{% endblock content %}
