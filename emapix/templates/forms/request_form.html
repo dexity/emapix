@@ -10,9 +10,17 @@
     <div style="margin-bottom: -10px;">
         <div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
         <form action="/request/add" method="post">
-            {{form.description}}<br/>
-            <div class="" style="margin-bottom: 10px;">Here are my errors</div>
-            <button class="btn btn-primary" id="send_request">Submit Request</button>
+            {% csrf_token %}
+            {{ form.lat }}
+            {{ form.lon }}
+            {{ form.description }}<br/>
+            {% if form.description.errors %}
+            <div class="red">{{ form.description.errors|first }}</div>
+            {% endif %}
+            {% if form.non_field_errors %}
+            <div class="red">{{ form.non_field_errors|first }}</div>
+            {% endif %}
+            <button class="btn btn-primary" id="send_request" style="margin-top: 10px;" >Submit Request</button>
         </form>
     </div>
     {% endif %}

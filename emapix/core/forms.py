@@ -133,8 +133,8 @@ class NewPasswordForm(forms.Form):
     
     
 class RequestForm(forms.Form):
-    lat     = forms.FloatField()
-    lon     = forms.FloatField()
+    lat     = forms.FloatField(widget=forms.HiddenInput())
+    lon     = forms.FloatField(widget=forms.HiddenInput())
     description = forms.CharField(min_length=6, max_length=140,
                                   widget    = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ..."}))
     

@@ -185,18 +185,27 @@ def make_request(request):
         c   = {}
     return render_to_response('make.html', c)
 
-
+@csrf_protect
 def add_request(request):
-    # XXX: Check number of requests which user made
-    c   = {
-        "lat":  request.GET.get("lat", ""),
-        "lon":  request.GET.get("lon", ""),
-        #"max_limit": True       # Temp
-    }
+    c   = {}
     if request.user.is_authenticated():
         c["username"]   = request.user
+        
+    if request.method == "POST":
+        pass
+    else:
+        pass
+    # XXX: Check number of requests which user made
+    lat = request.GET.get("lat", "")
+    lon = request.GET.get("lon", "")
+    c["lat"]    = lat
+    c["lon"]    = lon        
+    #"max_limit": True       # Temp
 
-    c["form"]   = RequestForm()
+    form    = RequestForm(initial={"lat": lat, "lon": lon})
+
+    c["form"]   = form
+    
     return render_to_response('forms/request_form.html', c)
 
 
