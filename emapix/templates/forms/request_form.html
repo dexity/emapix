@@ -9,7 +9,7 @@
     {% else %}
     <div style="margin-bottom: -10px;">
         <div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
-        <form action="/request/add" method="post">
+        <form action="/request/add" method="post" id="request_form">
             {% csrf_token %}
             {{ form.lat }}
             {{ form.lon }}

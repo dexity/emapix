@@ -185,28 +185,45 @@ def make_request(request):
         c   = {}
     return render_to_response('make.html', c)
 
+
 @csrf_protect
 def add_request(request):
-    c   = {}
-    if request.user.is_authenticated():
-        c["username"]   = request.user
+    "Displays and handles photo request form"
+    if not request.user.is_authenticated():
+        return render_to_response('forms/request_form.html')
+    
+    c   = {
+        "username": request.user
+    }
         
     if request.method == "POST":
-        pass
+        # POST request
+        form    = RequestForm(request.POST)
+        #logger.debug(form.is_valid())
+        if form.is_valid():
+            lat = form.cleaned_data["lat"]
+            lon = form.cleaned_data["lon"]
+            description = form.cleaned_data["description"]
+            
+            return HttpResponse("ok")
+        else:
+            lat     = request.POST.get("lat", "")
+            lon     = request.POST.get("lon", "")
     else:
-        pass
-    # XXX: Check number of requests which user made
-    lat = request.GET.get("lat", "")
-    lon = request.GET.get("lon", "")
+        # GET request
+        lat = request.GET.get("lat", "")
+        lon = request.GET.get("lon", "")
+        form    = RequestForm(initial={"lat": lat, "lon": lon})
+    
     c["lat"]    = lat
     c["lon"]    = lon        
+
+    # XXX: Check number of requests which user made (revise after request is submitted)
     #"max_limit": True       # Temp
-
-    form    = RequestForm(initial={"lat": lat, "lon": lon})
-
+    
     c["form"]   = form
     
-    return render_to_response('forms/request_form.html', c)
+    return render(request, 'forms/request_form.html', c)
 
 
 def set_profile(request):
