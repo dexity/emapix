@@ -14,6 +14,9 @@
 .div_inline {
     display: inline;
 }
+.red {
+    color: #b94a48;
+}
 
 /* Navigation */
 .e-nav-user {

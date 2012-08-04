@@ -4,22 +4,20 @@ var markersArray	= [];
 var pressTimer;
 
 var base_api	= "http://localhost/api";
+var host        = "http://localhost";
 //var base_api	= "http://ec2-184-73-88-189.compute-1.amazonaws.com/api";
 var base_s3		= "https://s3.amazonaws.com/emapix_uploads";
 var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
 
 String.prototype.format = function() {
-	  var args = arguments;
-	  return this.replace(/{(\d+)}/g, function(match, number) { 
-	    return typeof args[number] != 'undefined'
-	      ? args[number]
-	      : match
-	    ;
-	  });
-	};
-
-var reqStr  = 'Location: {0}; {1}<br/>' +
-    '<button type="button" id="send_request">Send Request</button><br/>';
+        var args = arguments;
+        return this.replace(/{(\d+)}/g, function(match, number) { 
+          return typeof args[number] != 'undefined'
+            ? args[number]
+            : match
+          ;
+        });
+    };
 
 
 var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
@@ -88,22 +86,30 @@ function randomStr() {
 
 function submitRequest(bubble, lat, lon)
 {
-    $.get(base_api+"/add", {"key": api_key, "lat": Math.round(lat*1e6), 
-                            "lon": Math.round(lon*1e6), "resource": randomStr()}, 
+    $.post(host+"/request/add",
+        $("#request_form").serialize(),
         function(data){
-                var res	= $.parseJSON(data);
-                if (res["status"] == "ok") {
-                        req	= res["result"]
-                        var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-                }
-                // display error
-                google.maps.event.addListener(marker, 'click', function() {
-                        // Check if photo exists
-                        showAction(marker, req_lat(req), req_lon(req), req["id"]);
-                });								
-                
+            if (data == "ok") {
+                console.debug(data);
+                //var res	= $.parseJSON(data);
+                //if (res["status"] == "ok") {
+                //        req	= res["result"]
+                //        var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+                //}
+                //// display error
+                //google.maps.event.addListener(marker, 'click', function() {
+                //        // Check if photo exists
+                //        showAction(marker, req_lat(req), req_lon(req), req["id"]);
+                //});
+                bubble.close();
+            }
+            else {
+                // XXX: Fix location
+                //requestBubble(location, data);
+                infoWindow.setContent(data);
+            }
         });
-    bubble.close();
+    
 }
 
 function _lat(loc) { return loc.lat().toFixed(6); }
@@ -117,18 +123,38 @@ function req_lon(req) {
 	return lon.toFixed(6);
 }
 
-// Bubbles
-function showRequest(location)
-{   // Displays request bubble
-    
-    iw = new google.maps.InfoWindow({
-        content:    reqStr.format(_lat(location), _lon(location)),
+function wrap_content(content, id)
+{
+    return '<div id="'+id+'">'+content+'</div>';
+}
+
+function setRequestBubble(location, data)
+{
+    // Server handles errors
+    infoWindow = new google.maps.InfoWindow({
+        content:    data,   //wrap_content(data, "request_content"),
         position:   location,
         map:        map
     });
-    $('#send_request').click(function(){
-        submitRequest(iw, _lat(location), _lon(location));
-    });
+    $('#send_request').click(function(e){
+        e.preventDefault();
+        submitRequest(infoWindow, _lat(location), _lon(location));
+    });      
+}
+
+// Bubbles
+function showRequest(location, req_data)
+{   // Displays request bubble
+    if (req_data){
+        requestBubble(location, data);
+    } else {
+        // Show the form. Not sure why I wanna do this hack :)
+        $.get("/request/add?lat="+_lat(location)+"&lon="+_lon(location),
+            function(data){
+                setRequestBubble(location, data);
+            }
+        );        
+    }
 }
 
 function showView(marker, uri, id) {
@@ -222,7 +248,7 @@ function initialize() {
 	google.maps.event.addListener(map, 'mousedown', function(event){ 
 	    clearTimeout(map.pressButtonTimer); 
 	    map.pressButtonTimer = setTimeout(function(){ 
-	    	showRequest(event.latLng);
+	    	showRequest(event.latLng, null);
 	    }, 800); 
 	  }); 	
 	google.maps.event.addListener(map, 'mouseup', function(event){ 
