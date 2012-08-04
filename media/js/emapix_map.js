@@ -72,17 +72,6 @@ function showMarkers() {
         });
 }
 
-function randomStr() {
-    // Returns 16 characters string
-    var chars = "0123456789abcdef";
-    var string_length = 32;
-    var randomstring = '';
-    for (var i=0; i<string_length; i++) {
-        var rnum = Math.floor(Math.random() * chars.length);
-        randomstring += chars.substring(rnum,rnum+1);
-    }
-    return randomstring;
-}
 
 function submitRequest(bubble, lat, lon)
 {
@@ -101,7 +90,7 @@ function submitRequest(bubble, lat, lon)
                 //        // Check if photo exists
                 //        showAction(marker, req_lat(req), req_lon(req), req["id"]);
                 //});
-                bubble.close();
+                //bubble.close();
             }
             else {
                 // XXX: Fix location

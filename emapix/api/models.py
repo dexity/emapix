@@ -1,6 +1,8 @@
 from django.db import models
 from django.db.models import IntegerField, CharField, BooleanField
 
+# XXX: Leave for now but needs big refactoring
+
 class PhotoRequest(models.Model):
     lat     = IntegerField(default=0)
     lon     = IntegerField(default=0)

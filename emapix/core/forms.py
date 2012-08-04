@@ -120,7 +120,6 @@ class NewPasswordForm(forms.Form):
     renewpass  = forms.CharField(max_length=30,
                                   widget=password_widget())
     
-    
     def clean(self):
         cleaned_data = super(forms.Form, self).clean()
         newpass     = cleaned_data.get("newpass")
@@ -136,14 +135,15 @@ class RequestForm(forms.Form):
     lat     = forms.FloatField(widget=forms.HiddenInput())
     lon     = forms.FloatField(widget=forms.HiddenInput())
     description = forms.CharField(min_length=6, max_length=140,
+                                  error_messages={"min_length": "Should be at least 6 characters",
+                                                  "max_length": "Should be less than 140 characters"},
                                   widget    = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ..."}))
     
-    def clean(self):
-        cleaned_data = super(forms.Form, self).clean()
-        #lat, lon
-        
+    #def clean(self):
+    #    cleaned_data = super(forms.Form, self).clean()
+    #    #lat, lon
+    #
+    #    return cleaned_data
 
-        
-        return cleaned_data
     
     

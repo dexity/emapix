@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1
+from emapix.utils.utils import sha1, random16
+from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import UserProfile
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
@@ -199,13 +200,25 @@ def add_request(request):
     if request.method == "POST":
         # POST request
         form    = RequestForm(request.POST)
-        #logger.debug(form.is_valid())
         if form.is_valid():
             lat = form.cleaned_data["lat"]
             lon = form.cleaned_data["lon"]
             description = form.cleaned_data["description"]
             
-            return HttpResponse("ok")
+            # Create Request
+            #random32()
+            #pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), 
+            #                   resource=p["resource"])
+            #pr.save()
+            #return to_status(OK, to_photo(pr))
+            #return HttpResponse("ok")
+            
+            photo   = {
+                "lat":  lat,
+                "lon":  lon,
+                "resource": random16()
+            }
+            return to_status(OK, photo)
         else:
             lat     = request.POST.get("lat", "")
             lon     = request.POST.get("lon", "")

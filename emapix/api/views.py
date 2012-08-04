@@ -4,11 +4,12 @@ import time
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from emapix.utils import handle_uploaded_file, file_exists
+from emapix.utils.utils import timestamp
+from emapix.utils.format import *
+from emapix.utils.const import OK, FAIL
 
-from emapix.api.models import PhotoRequest
+from emapix.api.models import PhotoRequest 
 
-OK      = "ok"
-FAIL    = "fail"
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.api.views")
@@ -100,23 +101,5 @@ def upload(request):
     # XXX: Change default response
     return to_status(OK)
     
-# Move to some other class
-
-def timestamp():
-    return int(time.time())
-
-def to_photo(p):
-    s   = {"id":    p.id,
-           "lat":   p.lat,
-           "lon":   p.lon,
-           "submitted_date": p.submitted_date,
-           "resource":  p.resource,
-           "photo_exists":  p.photo_exists}
-    return s
-
-def to_json(obj):
-    return json.dumps(obj)
 
 
-def to_status(status, result=None):
-    return HttpResponse(to_json({"status": status, "result": result}))
