@@ -207,11 +207,16 @@ def add_request(request):
             
             # Create Request
             #random32()
+            lat = int(lat*1e6)
+            lon = int(lon*1e6)
+            # lat -> int(lat*1e6); lon -> int(lon*1e6)
             #pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), 
             #                   resource=p["resource"])
             #pr.save()
             #return to_status(OK, to_photo(pr))
             #return HttpResponse("ok")
+            
+            logger.debug("%s, %s" % (lat, lon))
             
             photo   = {
                 "lat":  lat,
@@ -256,7 +261,6 @@ def help(request):
 
 
 def requests(request):
-    logger.debug(str(request.user))
     if request.user.is_authenticated():
         c   = {"username": request.user}
     else:

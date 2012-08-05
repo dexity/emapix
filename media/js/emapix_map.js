@@ -78,23 +78,23 @@ function submitRequest(bubble, lat, lon)
     $.post(host+"/request/add",
         $("#request_form").serialize(),
         function(data){
-            if (data == "ok") {
-                console.debug(data);
-                //var res	= $.parseJSON(data);
-                //if (res["status"] == "ok") {
-                //        req	= res["result"]
-                //        var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-                //}
-                //// display error
-                //google.maps.event.addListener(marker, 'click', function() {
-                //        // Check if photo exists
-                //        showAction(marker, req_lat(req), req_lon(req), req["id"]);
-                //});
-                //bubble.close();
+            try
+            {
+                var res	= $.parseJSON(data);
+                if ("status" in res && res["status"] == "ok") {
+                    req	= res["result"]
+                    var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+                    
+                    // Set click event
+                    google.maps.event.addListener(marker, 'click', function() {
+                        // Check if photo exists
+                        showAction(marker, req_lat(req), req_lon(req), req["id"]);
+                    });
+                    bubble.close();
+                }
             }
-            else {
-                // XXX: Fix location
-                //requestBubble(location, data);
+            catch (e){
+                // Not json
                 infoWindow.setContent(data);
             }
         });
@@ -111,45 +111,38 @@ function req_lon(req) {
 	lon	= req["lon"]/1e6;
 	return lon.toFixed(6);
 }
-
+// Keep it for now
 function wrap_content(content, id)
 {
     return '<div id="'+id+'">'+content+'</div>';
 }
 
-function setRequestBubble(location, data)
-{
-    // Server handles errors
-    infoWindow = new google.maps.InfoWindow({
-        content:    data,   //wrap_content(data, "request_content"),
-        position:   location,
-        map:        map
-    });
-    $('#send_request').click(function(e){
-        e.preventDefault();
-        submitRequest(infoWindow, _lat(location), _lon(location));
-    });      
-}
 
 // Bubbles
 function showRequest(location, req_data)
 {   // Displays request bubble
-    if (req_data){
-        requestBubble(location, data);
-    } else {
-        // Show the form. Not sure why I wanna do this hack :)
-        $.get("/request/add?lat="+_lat(location)+"&lon="+_lon(location),
-            function(data){
-                setRequestBubble(location, data);
-            }
-        );        
-    }
+    
+    // Not sure why I wanna do this hack :)
+    $.get("/request/add?lat="+_lat(location)+"&lon="+_lon(location),
+        function(data){
+            // Server handles errors
+            infoWindow = new google.maps.InfoWindow({
+                content:    data,
+                position:   location,
+                map:        map
+            });
+            $('#send_request').click(function(e){
+                e.preventDefault();
+                submitRequest(infoWindow, _lat(location), _lon(location));
+            });  
+        }
+    );
 }
 
 function showView(marker, uri, id) {
 	iw = new google.maps.InfoWindow({
 		content:	viewStr.format(uri),
-	});	
+	});
 	iw.open(map, marker);
 	
 	// Refactor?
@@ -171,12 +164,13 @@ function showAction(marker, lat, lon, id) {
 	});
 	iw.open(map, marker);
 	
+        /*
 	$('input').change(function(){
-		// Set image
+	    // Set image
 	    if (this.files && this.files[0]) {
 	        var reader = new FileReader();
 	        reader.onload = function (e) {
-	        	$('#img_id').show();
+	            $('#img_id').show();
 	            $('#img_id').attr('src', e.target.result);
 	        }
 	        reader.readAsDataURL(this.files[0]);
@@ -184,30 +178,29 @@ function showAction(marker, lat, lon, id) {
 	});
 	
 	$('button#upload_picture').click(function(event) {
-		var data = new FormData();
-		$.each($('input')[0].files, function(i, file) {
-		    data.append('uploaded', file);	// should have one file
-		});
-		$.ajax({
-		    url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
-		    data: 	data,
-		    cache: 	false,
-		    contentType: false,
-		    processData: false,
-		    type: 	'POST',
-		    success: function(data){
-				
-				google.maps.event.clearListeners(marker, "click");	// Remove listeners
-						    	
-		    	// Refactor?
-				google.maps.event.addListener(marker, 'click', function() {
-					uri	= imageUri(marker.title);
-					showView(marker, uri, id);
-				});								
-		    	
-		    	iw.close();
-		    }
-		});
+            var data = new FormData();
+            $.each($('input')[0].files, function(i, file) {
+                data.append('uploaded', file);	// should have one file
+            });
+            $.ajax({
+                url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
+                data: 	data,
+                cache: 	false,
+                contentType: false,
+                processData: false,
+                type: 	'POST',
+                success: function(data){
+                    google.maps.event.clearListeners(marker, "click");	// Remove listeners
+
+                    // Refactor?
+                    google.maps.event.addListener(marker, 'click', function() {
+                            uri	= imageUri(marker.title);
+                            showView(marker, uri, id);
+                    });								
+                    
+                    iw.close();
+                }
+            });
 		
 	});
 	
@@ -221,7 +214,7 @@ function showAction(marker, lat, lon, id) {
 						marker.setMap(null);
 					}
 				});
-	});
+	}); */
 }
 
 
