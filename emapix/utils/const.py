@@ -7,18 +7,25 @@ PASSWORD_REGEX  = "^[A-Za-z0-9]{6,30}$" # XXX: Change password regex
 USERNAME_REGEX  = "^[A-Za-z0-9]{5,}$"
 
 GENDER_CHOICES = (
-    ('m', 'Male'),
-    ('f', 'Female'),
-    ('n', 'Rather not say')
+    ("m", "Male"),
+    ("f", "Female"),
+    ("n", "Rather not say")
 )
 
 STATUS_CHOICES  = (
-    ('n', 'Not Active'),
-    ('a', 'Active'),
-    ('w', 'Waiting'),   # waiting confirmation
-    ('p', 'New Password'),
-    ('b', 'Banned'),
+    ("n", "Not Active"),
+    ("a", "Active"),
+    ("w", "Waiting"),   # waiting confirmation
+    ("p", "New Password"),
+    ("b", "Banned"),
 )
+
+REQ_STATUS_CHOICES =[
+    ("o", "Open"),
+    ("c", "Closed"),
+    ("a", "Accepted")
+    ("f", "Completed"),
+]
 
 MONTH_CHOICES    = [
     ("JAN", "January"),
@@ -95,7 +102,7 @@ COUNTRY_CHOICES = [
     ("CU", "Cuba"),
     ("CY", "Cyprus"),
     ("CZ", "Czech Republic"),
-    ("CI", "Côte d'Ivoire"),
+    ("CI", "Côte d"Ivoire"),
     ("DK", "Denmark"),
     ("DJ", "Djibouti"),
     ("DM", "Dominica"),
@@ -153,11 +160,11 @@ COUNTRY_CHOICES = [
     ("KZ", "Kazakhstan"),
     ("KE", "Kenya"),
     ("KI", "Kiribati"),
-    ("KP", "Korea, Democratic People's Republic of"),
+    ("KP", "Korea, Democratic People"s Republic of"),
     ("KR", "Korea, Republic of"),
     ("KW", "Kuwait"),
     ("KG", "Kyrgyzstan"),
-    ("LA", "Lao People's Democratic Republic"),
+    ("LA", "Lao People"s Democratic Republic"),
     ("LV", "Latvia"),
     ("LB", "Lebanon"),
     ("LS", "Lesotho"),

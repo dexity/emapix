@@ -220,25 +220,26 @@ function showAction(marker, lat, lon, id) {
 
 // Main function
 function initialize() {
-	var lajolla = new google.maps.LatLng(32.818062,-117.269440);
-	var myOptions = {
-	  center: lajolla,
-	  zoom: 13,
-	  mapTypeId: google.maps.MapTypeId.ROADMAP
-	};
-	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	google.maps.event.addListener(map, 'mousedown', function(event){ 
-	    clearTimeout(map.pressButtonTimer); 
-	    map.pressButtonTimer = setTimeout(function(){ 
-	    	showRequest(event.latLng, null);
-	    }, 800); 
-	  }); 	
-	google.maps.event.addListener(map, 'mouseup', function(event){ 
-	    clearTimeout(map.pressButtonTimer); 
-	  });
-	
-	infoWindow	= new google.maps.InfoWindow();
-	
-	showMarkers();
+    var lajolla = new google.maps.LatLng(32.818062,-117.269440);
+    var myOptions = {
+        center: lajolla,
+        zoom: 13,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        draggableCursor: "crosshair"
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    google.maps.event.addListener(map, 'mousedown', function(event){ 
+        clearTimeout(map.pressButtonTimer); 
+        map.pressButtonTimer = setTimeout(function(){ 
+            showRequest(event.latLng, null);
+        }, 800); 
+      }); 	
+    google.maps.event.addListener(map, 'mouseup', function(event){ 
+        clearTimeout(map.pressButtonTimer); 
+      });
+    
+    infoWindow	= new google.maps.InfoWindow();
+    
+    showMarkers();
 	
 }
