@@ -193,8 +193,9 @@ def add_request(request):
     if not request.user.is_authenticated():
         return render_to_response('forms/request_form.html')
     
+    _user   = request.user
     c   = {
-        "username": request.user
+        "username": _user
     }
         
     if request.method == "POST":
@@ -204,7 +205,7 @@ def add_request(request):
             # Create Request
             p   = request.POST
             r   = Request()
-            r.user  = request.user
+            r.user  = _user
             r.lat   = 1e6*form.cleaned_data["lat"]
             r.lon   = 1e6*form.cleaned_data["lon"]
             r.description   = form.cleaned_data["description"]
@@ -225,8 +226,12 @@ def add_request(request):
     c["lat"]    = lat
     c["lon"]    = lon        
 
-    # XXX: Check number of requests which user made (revise after request is submitted)
-    #"max_limit": True       # Temp
+    # Check is request limit is reached
+    reqs    = Request.objects.filter(user=_user)
+    ups     = UserProfile.objects.filter(user=_user)
+    if (len(ups) > 0 and len(reqs) >= ups[0].req_limit):
+        c["limit_reached"]  = True
+        c["max_limit"]  = ups[0].req_limit
     
     c["form"]   = form
     

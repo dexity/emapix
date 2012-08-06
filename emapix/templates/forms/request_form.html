@@ -1,7 +1,7 @@
 {% if username %}
-    {% if max_limit %}
+    {% if limit_reached %}
     <div class="alert alert-error" style="margin-top: 10px;">
-        You reached 10 requests. <br />
+        You reached {{max_limit}} requests. <br />
         Please wait till the end of the promo <br />
         or <a href="#">manage requests</a>
         <!--XXX: Add link -->
