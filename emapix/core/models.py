@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from emapix.utils.const import *
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User)
-    
+    user        = models.OneToOneField(User)
     location    = models.CharField(max_length=128)
     country_alpha2     = models.CharField(max_length=2)
     b_day       = models.SmallIntegerField(null=True)
@@ -23,36 +22,9 @@ class UserStatus(models.Model):
     updated_date = models.CharField(max_length=16)
 
 
-class Request(models.Model):
-    user    = models.ForeignKey(User)  # user who submitted request
-    lat     = models.IntegerField(default=0)
-    lon     = models.IntegerField(default=0)
-    description  = models.CharField(max_length=140)
-    submitted_date  = models.CharField(max_length=16)  # timestamp
-    photos  = models.ManyToManyField(Photo, through="PhotoRequest")
-
-
-class RequestStatus(models.Model):
-    request = models.ForeignKey(Request)
-    user    = models.ForeignKey(User)   # user who changes the status
-    status  = models.CharField(max_length=1, choices=REQ_STATUS_CHOICES)
-    comment = models.CharField(max_length=140)
-    submitted_date  = models.CharField(max_length=16)  # timestamp
-
-
-class PhotoRequest(models.Model):
-    photo       = models.ForeignKey(Photo)
-    request     = models.ForeignKey(Request)
-    resource    = models.CharField(max_length=16)       # id of the photo request (?)
-    is_avail    = models.BooleanField(default=False)
-    
-    def __unicode__(self):
-        return ""   #"(%s, %s)" % (self.lat, self.lon)    
-
-
 class Photo(models.Model):
     user    = models.ForeignKey(User)   # user who uploads the photo
-    title   = models.CharField(max_length=64)
+    title   = models.CharField(max_length=64, default="")
     source  = models.CharField(max_length=64)   # URL of the photo
     height  = models.IntegerField(default=0)
     width   = models.IntegerField(default=0)
@@ -62,6 +34,34 @@ class Photo(models.Model):
     #picture     # The thumbnail-sized source of the photo
     #images      
     #location
+
+
+class Request(models.Model):
+    user    = models.ForeignKey(User)  # user who submitted request
+    lat     = models.IntegerField(default=0)
+    lon     = models.IntegerField(default=0)
+    description  = models.CharField(max_length=140)
+    resource    = models.CharField(max_length=16)       # id of the photo request
+    submitted_date  = models.CharField(max_length=16)   # timestamp
+    photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True)
+
+
+class PhotoRequest(models.Model):
+    photo       = models.ForeignKey(Photo)
+    request     = models.ForeignKey(Request)
+    is_avail    = models.BooleanField(default=False)
+    # Some access control (?)
+    
+    def __unicode__(self):
+        return ""   #"(%s, %s)" % (self.lat, self.lon)    
+
+
+class RequestStatus(models.Model):
+    request = models.ForeignKey(Request)
+    user    = models.ForeignKey(User, null=True)   # user who changes the status
+    status  = models.CharField(max_length=1, choices=REQ_STATUS_CHOICES)
+    comment = models.CharField(max_length=140, null=True)
+    submitted_date  = models.CharField(max_length=16)  # timestamp
 
 
 #class UserSession(models.Model):

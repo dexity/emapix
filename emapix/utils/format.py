@@ -1,13 +1,12 @@
 from django.http import HttpResponse
 import json
 
-def to_photo(p):
-    s   = {"id":    p.id,
-           "lat":   p.lat,
-           "lon":   p.lon,
-           "submitted_date": p.submitted_date,
-           "resource":  p.resource,
-           "photo_exists":  p.photo_exists}
+def to_request(r):
+    s   = {"id":    r.id,
+           "lat":   r.lat,
+           "lon":   r.lon,
+           "submitted_date": r.submitted_date,
+           "resource":  r.resource}
     return s
 
 def to_json(obj):

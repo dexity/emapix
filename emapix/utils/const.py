@@ -23,7 +23,7 @@ STATUS_CHOICES  = (
 REQ_STATUS_CHOICES =[
     ("o", "Open"),
     ("c", "Closed"),
-    ("a", "Accepted")
+    ("a", "Accepted"),
     ("f", "Completed"),
 ]
 
@@ -102,7 +102,7 @@ COUNTRY_CHOICES = [
     ("CU", "Cuba"),
     ("CY", "Cyprus"),
     ("CZ", "Czech Republic"),
-    ("CI", "Côte d"Ivoire"),
+    ("CI", "Côte d'Ivoire"),
     ("DK", "Denmark"),
     ("DJ", "Djibouti"),
     ("DM", "Dominica"),
@@ -160,11 +160,11 @@ COUNTRY_CHOICES = [
     ("KZ", "Kazakhstan"),
     ("KE", "Kenya"),
     ("KI", "Kiribati"),
-    ("KP", "Korea, Democratic People"s Republic of"),
+    ("KP", "Korea, Democratic People's Republic of"),
     ("KR", "Korea, Republic of"),
     ("KW", "Kuwait"),
     ("KG", "Kyrgyzstan"),
-    ("LA", "Lao People"s Democratic Republic"),
+    ("LA", "Lao People's Democratic Republic"),
     ("LV", "Latvia"),
     ("LB", "Lebanon"),
     ("LS", "Lesotho"),

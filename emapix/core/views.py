@@ -8,10 +8,10 @@ from django.contrib.auth.models import User
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16
+from emapix.utils.utils import sha1, random16, timestamp
 from emapix.utils.format import *
 from emapix.core.forms import *
-from emapix.core.models import UserProfile
+from emapix.core.models import *
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 
 from emapix.utils.logger import Logger
@@ -201,29 +201,18 @@ def add_request(request):
         # POST request
         form    = RequestForm(request.POST)
         if form.is_valid():
-            lat = form.cleaned_data["lat"]
-            lon = form.cleaned_data["lon"]
-            description = form.cleaned_data["description"]
-            
             # Create Request
-            #random32()
-            lat = int(lat*1e6)
-            lon = int(lon*1e6)
-            # lat -> int(lat*1e6); lon -> int(lon*1e6)
-            #pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), 
-            #                   resource=p["resource"])
-            #pr.save()
-            #return to_status(OK, to_photo(pr))
-            #return HttpResponse("ok")
+            p   = request.POST
+            r   = Request()
+            r.user  = request.user
+            r.lat   = 1e6*form.cleaned_data["lat"]
+            r.lon   = 1e6*form.cleaned_data["lon"]
+            r.description   = form.cleaned_data["description"]
+            r.submitted_date    = timestamp()
+            r.resource  = random16()
+            r.save()
             
-            logger.debug("%s, %s" % (lat, lon))
-            
-            photo   = {
-                "lat":  lat,
-                "lon":  lon,
-                "resource": random16()
-            }
-            return to_status(OK, photo)
+            return to_status(OK, to_request(r))
         else:
             lat     = request.POST.get("lat", "")
             lon     = request.POST.get("lon", "")
