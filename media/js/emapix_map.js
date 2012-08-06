@@ -39,7 +39,7 @@ function createMarker(lat, lon, resource) {
 }
 
 function imageUri(resource) {
-	return "{0}/{1}.jpg".format(base_s3, resource);
+    return "{0}/{1}.jpg".format(base_s3, resource);
 }
 
 function showMarkers() {
@@ -122,9 +122,9 @@ function wrap_content(content, id)
 function showRequest(location, req_data)
 {   // Displays request bubble
     
-    // Not sure why I wanna do this hack :)
     $.get("/request/add?lat="+_lat(location)+"&lon="+_lon(location),
         function(data){
+            infoWindow.close(); // Close previous request bubble before opening a new one
             // Server handles errors
             infoWindow = new google.maps.InfoWindow({
                 content:    data,
@@ -241,5 +241,8 @@ function initialize() {
     infoWindow	= new google.maps.InfoWindow();
     
     showMarkers();
-	
+
+    $("#show_requests").change(function(){
+        
+    });
 }
