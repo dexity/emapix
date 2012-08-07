@@ -9,6 +9,14 @@ def to_request(r):
            "resource":  r.resource}
     return s
 
+
+def to_requests(rs):
+    l   = []
+    for r in rs:
+        l.append(to_request(r))
+    return l
+
+
 def to_json(obj):
     return json.dumps(obj)
 

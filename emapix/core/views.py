@@ -238,6 +238,17 @@ def add_request(request):
     return render(request, 'forms/request_form.html', c)
 
 
+def get_requests_json(request):
+    # Returns list of all user's markers
+    if not request.user.is_authenticated():
+        return to_status(FAIL, "User is not authenticated")
+    
+    _user   = request.user
+    reqs    = Request.objects.filter(user=_user)
+    return to_status(OK, to_requests(reqs))
+
+
+
 def set_profile(request):
     return render_to_response('set_profile.html')
 
