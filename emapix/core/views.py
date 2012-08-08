@@ -248,6 +248,23 @@ def get_requests_json(request):
     return to_status(OK, to_requests(reqs))
 
 
+def request_info(request, res):
+    "Displays the request info"
+    if not request.user.is_authenticated():
+        return render(request, 'ajax/request_info.html')
+    
+    c   = {"username": request.user}    
+    reqs = Request.objects.filter(resource=res)
+    if len(reqs) > 0:
+        req = reqs[0]
+        c["req_exists"]  = True
+        c["id"]     = req.id
+        c["lat"]    = req.lat/1e6
+        c["lon"]    = req.lon/1e6
+        c["description"]    = req.description
+    
+    return render(request, 'ajax/request_info.html', c)
+
 
 def set_profile(request):
     return render_to_response('set_profile.html')

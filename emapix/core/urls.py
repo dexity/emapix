@@ -11,7 +11,10 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^logout$', 'logout'),
     url(r'^password/renew/(\w{40})$', 'renew_password'),
     url(r'^request/make$', 'make_request'),
+    # Ajax
     url(r'^request/add$', 'add_request'),
+    url(r'^request/info/(\w{16})$', 'request_info'),
+    # Json
     url(r'^request/all/json$', 'get_requests_json'),
     
     # Layouts

@@ -41,7 +41,7 @@ class Request(models.Model):
     lat     = models.IntegerField(default=0)
     lon     = models.IntegerField(default=0)
     description  = models.CharField(max_length=140)
-    resource    = models.CharField(max_length=16)       # id of the photo request
+    resource    = models.CharField(max_length=16)       # the photo request identification
     submitted_date  = models.CharField(max_length=16)   # timestamp
     photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True)
 

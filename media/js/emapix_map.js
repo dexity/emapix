@@ -20,11 +20,16 @@ String.prototype.format = function() {
     };
 
 
-var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
-	'Location: {0}; {1}<br/>' +
-	'<input type="file" name="uploaded" />' +
-	'<button type="button" id="upload_picture">Upload Picture</button><br/>' +
-	'<button type="button" id="remove_marker">Remove Marker</button><br/>';
+var infoStr  = '<div style="margin-bottom: 10px;"><i>{0}</i></div>' + 
+    '<b>Location</b>: {1}; {2}' +
+    '<div style="margin-top: 10px;"><a href="#" target="_blank" class="pull-left">Request Details</a>' +
+    '<a href="" target="_blank" class="pull-right" style="color: red;">Remove</a><div>';
+    
+//var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
+//    'Location: {0}; {1}<br/>' +
+//    '<input type="file" name="uploaded" />' +
+//    '<button type="button" id="upload_picture">Upload Picture</button><br/>' +
+//    '<button type="button" id="remove_marker">Remove Marker</button><br/>';
 		
 var viewStr		= '<img src="{0}" width=200/><br/>' +
 '<button type="button" id="remove_marker">Remove</button>';
@@ -53,7 +58,6 @@ function showMarkers() {
             for (i in reqs) {
                 req	= reqs[i];
                 marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-                markersArray.push(marker);
                 
                 // Add click listener in closure
                 (function(){
@@ -61,11 +65,13 @@ function showMarkers() {
                     var _req	= req;
                     var lat	= req_lat(_req);
                     var lon	= req_lon(_req)
-                    // Refactor?
                     google.maps.event.addListener(_marker, 'click', function() {
-                        uri	= imageUri(_marker.title);
+                        // Will not make a separate request for every marker
+                        showInfo(_marker, lat, lon, _req["id"], _req["description"]);
+                        
+                        /*uri	= imageUri(_marker.title);
                         showAction(_marker, lat, lon, _req["id"]);
-                        /*
+                        
                         // Check if photo exists
                         if (_req["photo_exists"]) {
                             showView(_marker, uri, _req["id"]);
@@ -167,63 +173,73 @@ function showView(marker, uri, id) {
 	});
 }
 
-function showAction(marker, lat, lon, id) {
-	iw = new google.maps.InfoWindow({
-		content:	actionStr.format(lat, lon, api_key, marker.title),
-	});
-	iw.open(map, marker);
-	
-        /*
-	$('input').change(function(){
-	    // Set image
-	    if (this.files && this.files[0]) {
-	        var reader = new FileReader();
-	        reader.onload = function (e) {
-	            $('#img_id').show();
-	            $('#img_id').attr('src', e.target.result);
-	        }
-	        reader.readAsDataURL(this.files[0]);
-	    }
-	});
-	
-	$('button#upload_picture').click(function(event) {
-            var data = new FormData();
-            $.each($('input')[0].files, function(i, file) {
-                data.append('uploaded', file);	// should have one file
-            });
-            $.ajax({
-                url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
-                data: 	data,
-                cache: 	false,
-                contentType: false,
-                processData: false,
-                type: 	'POST',
-                success: function(data){
-                    google.maps.event.clearListeners(marker, "click");	// Remove listeners
+function showInfo(marker, lat, lon, id, desc) {
+    iw = new google.maps.InfoWindow({
+        content:    infoStr.format(desc, lat, lon)
+    });
+    iw.open(map, marker);
+    
+}
 
-                    // Refactor?
-                    google.maps.event.addListener(marker, 'click', function() {
-                            uri	= imageUri(marker.title);
-                            showView(marker, uri, id);
-                    });								
-                    
-                    iw.close();
-                }
-            });
-		
-	});
-	
-	// Refactor?
-	$('button#remove_marker').click(function(event) {
-		$.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
-				function(data) {
-					var res	= $.parseJSON(data);
-					if (res["status"] == "ok") {
-						iw.close();
-						marker.setMap(null);
-					}
-				});
-	}); */
+
+function showAction(marker, lat, lon, id) {
+    iw = new google.maps.InfoWindow({
+        content:    actionStr.format(lat, lon, api_key, marker.title),
+    });
+    iw.open(map, marker);
+    
+    /*
+    $('input').change(function(){
+        // Set image
+        if (this.files && this.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#img_id').show();
+                $('#img_id').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(this.files[0]);
+        }
+    });
+    
+    $('button#upload_picture').click(function(event) {
+        var data = new FormData();
+        $.each($('input')[0].files, function(i, file) {
+            data.append('uploaded', file);	// should have one file
+        });
+        $.ajax({
+            url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
+            data: 	data,
+            cache: 	false,
+            contentType: false,
+            processData: false,
+            type: 	'POST',
+            success: function(data){
+                google.maps.event.clearListeners(marker, "click");	// Remove listeners
+
+                // Refactor?
+                google.maps.event.addListener(marker, 'click', function() {
+                        uri	= imageUri(marker.title);
+                        showView(marker, uri, id);
+                });								
+                
+                iw.close();
+            }
+        });
+            
+    });
+    
+    // Refactor?
+    $('button#remove_marker').click(function(event) {
+            $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
+                            function(data) {
+                                    var res	= $.parseJSON(data);
+                                    if (res["status"] == "ok") {
+                                            iw.close();
+                                            marker.setMap(null);
+                                    }
+                            });
+    });
+    */
 }
 
 function clearOverlays() {
@@ -258,8 +274,6 @@ function initialize() {
     
     infoWindow	= new google.maps.InfoWindow();
     
-    //showMarkers();
-
     $("#show_requests").change(function(e){
         if ($(this).is(":checked"))
             showMarkers();

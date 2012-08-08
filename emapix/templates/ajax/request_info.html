@@ -1,0 +1,16 @@
+{% if username %}
+    {% if req_exists %}
+    <div style="margin-bottom: -10px;">
+        <div style="margin-bottom: 10px;"><i>{{ description }}</i></div>
+        <b>Location</b>: {{ lat }}; {{ lon }}
+        <div style="margin-top: 10px;"><a href="#" target="_blank" class="pull-left">Request Details</a>
+        <a href="" target="_blank" class="pull-right" style="color: red;">Remove</a><div>
+    </div>
+    {% else %}
+    <!-- Error -->
+    {% endif %}
+{% else %}
+<div class="alert alert-error" style="margin-top: 10px;">
+    Please <a href="/login">login</a> or <a href="/join">sign up</a> to see the request details
+</div>
+{% endif}
