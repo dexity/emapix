@@ -67,7 +67,7 @@ function showMarkers() {
                     var lon	= req_lon(_req)
                     google.maps.event.addListener(_marker, 'click', function() {
                         // Will not make a separate request for every marker
-                        showInfo(_marker, lat, lon, _req["id"], _req["description"]);
+                        showInfo(_marker, _req["resource"]);
                         
                         /*uri	= imageUri(_marker.title);
                         showAction(_marker, lat, lon, _req["id"]);
@@ -173,12 +173,12 @@ function showView(marker, uri, id) {
 	});
 }
 
-function showInfo(marker, lat, lon, id, desc) {
-    iw = new google.maps.InfoWindow({
-        content:    infoStr.format(desc, lat, lon)
-    });
-    iw.open(map, marker);
-    
+function showInfo(marker, resource) {
+    $.get("/request/info/" + resource,
+          function(data){
+            iw = new google.maps.InfoWindow({content:   data});            
+            iw.open(map, marker);            
+        });
 }
 
 
