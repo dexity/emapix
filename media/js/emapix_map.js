@@ -181,7 +181,7 @@ function showInfo(marker, resource) {
         });
 }
 
-
+// XXX: Refactor
 function showAction(marker, lat, lon, id) {
     iw = new google.maps.InfoWindow({
         content:    actionStr.format(lat, lon, api_key, marker.title),
@@ -279,5 +279,23 @@ function initialize() {
             showMarkers();
         else
             clearOverlays();
+    });
+    
+    $(document).on("click", "#remove_link", function(e){
+        e.preventDefault();
+        console.debug("Cool");
+        $("#remove_modal").modal();
+        // Set events
+        //$("#delete_btn").click(function() {
+        //    console.debug("Hello");
+        //    //_modal.modal("hide");
+        //});
+        $("#remove_modal").on("shown", function(){
+            //_modal  = $(this);
+            $(this).find("#delete_btn").click(function() {
+                console.debug("Hello");
+                //_modal.modal("hide");
+            });
+        });
     });
 }

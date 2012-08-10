@@ -262,8 +262,17 @@ def request_info(request, res):
         c["lat"]    = req.lat/1e6
         c["lon"]    = req.lon/1e6
         c["description"]    = req.description
-    
+        c["resource"]   = req.resource
+
     return render(request, 'ajax/request_info.html', c)
+
+
+def get_request(request, res):
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    return render(request, 'request.html', c)
 
 
 def set_profile(request):
@@ -289,13 +298,6 @@ def requests(request):
         c   = {}    
     return render(request, 'requests.html', c)
 
-
-def request(request):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
-    return render(request, 'request.html', c)
 
 def request2(request):
     return render_to_response('request2.html')
