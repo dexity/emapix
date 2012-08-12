@@ -2,7 +2,7 @@ import time
 
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, render
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db import models
 from django.contrib.auth.models import User
 import django.contrib.auth as django_auth
@@ -273,6 +273,22 @@ def get_request(request, res):
     else:
         c   = {}
     return render(request, 'request.html', c)
+
+
+def remove_request(request, res):
+    "Removes request"
+    if not request.user.is_authenticated():
+        return render(request, 'ajax/error.html', {"error": AUTH_ERROR})
+    
+    if request.method != "POST":
+        return render(request, 'ajax/error.html', {"error":  "Invalid request" })
+    try:
+        req     = Request.objects.get(resource=res)
+        req.delete()
+        return to_status(OK)
+    except Exception, e:
+        return render(request, 'ajax/error.html', {"error":  "Request does not exist"})
+
 
 
 def set_profile(request):

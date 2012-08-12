@@ -1,6 +1,8 @@
 var map;
 var infoWindow;
-var markersArray	= [];
+var markersArray    = [];
+var currMarker      = null;
+var currBubble      = null;
 var pressTimer;
 
 var base_api	= "http://localhost/api";
@@ -30,7 +32,7 @@ var infoStr  = '<div style="margin-bottom: 10px;"><i>{0}</i></div>' +
 //    '<input type="file" name="uploaded" />' +
 //    '<button type="button" id="upload_picture">Upload Picture</button><br/>' +
 //    '<button type="button" id="remove_marker">Remove Marker</button><br/>';
-		
+
 var viewStr		= '<img src="{0}" width=200/><br/>' +
 '<button type="button" id="remove_marker">Remove</button>';
 
@@ -132,6 +134,15 @@ function wrap_content(content, id)
     return '<div id="'+id+'">'+content+'</div>';
 }
 
+function openWindow(iw, map, marker)
+{
+    if (currBubble) {
+        currBubble.close();
+    }
+    iw.open(map, marker);
+    currBubble  = iw;
+    currMarker  = marker;
+}
 
 // Bubbles
 function showRequest(location, req_data)
@@ -155,29 +166,29 @@ function showRequest(location, req_data)
 }
 
 function showView(marker, uri, id) {
-	iw = new google.maps.InfoWindow({
-		content:	viewStr.format(uri),
-	});
-	iw.open(map, marker);
-	
-	// Refactor?
-	$('button#remove_marker').click(function(event) {
-            $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
-                function(data) {
-                        var res	= $.parseJSON(data);
-                        if (res["status"] == "ok") {
-                                iw.close();
-                                marker.setMap(null);
-                        }
-                });
-	});
+    iw = new google.maps.InfoWindow({
+        content:	viewStr.format(uri),
+    });
+    iw.open(map, marker);
+    
+    // Refactor?
+    $('button#remove_marker').click(function(event) {
+        $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
+            function(data) {
+                var res	= $.parseJSON(data);
+                if (res["status"] == "ok") {
+                    iw.close();
+                    marker.setMap(null);
+                }
+            });
+    });
 }
 
 function showInfo(marker, resource) {
     $.get("/request/info/" + resource,
-          function(data){
-            iw = new google.maps.InfoWindow({content:   data});            
-            iw.open(map, marker);            
+        function(data){
+          iw = new google.maps.InfoWindow({content:   data});            
+          openWindow(iw, map, marker);
         });
 }
 
@@ -271,7 +282,7 @@ function initialize() {
     google.maps.event.addListener(map, 'mouseup', function(event){ 
         clearTimeout(map.pressButtonTimer); 
       });
-    
+
     infoWindow	= new google.maps.InfoWindow();
     
     $("#show_requests").change(function(e){
@@ -280,22 +291,37 @@ function initialize() {
         else
             clearOverlays();
     });
-    
+
+    // Set events
+    $("#delete_btn").click(function() {
+        url = $("#remove_link").attr("href");
+        $.post(url,
+            {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+            function(data) {
+                try
+                {
+                    var res	= $.parseJSON(data);    // OK
+                    if (res["status"] == "ok")
+                    {
+                        $("#remove_modal").modal("hide");
+                        currMarker.setMap(null);
+                        currMarker  = null;
+                    }
+                    else
+                    {
+                        $("#body_errors").html("result");
+                    }
+                }
+                catch (e)
+                {
+                    $("#body_errors").html(data);
+                }
+            });
+    });
+        
     $(document).on("click", "#remove_link", function(e){
         e.preventDefault();
-        console.debug("Cool");
+        $("#body_errors").html("");
         $("#remove_modal").modal();
-        // Set events
-        //$("#delete_btn").click(function() {
-        //    console.debug("Hello");
-        //    //_modal.modal("hide");
-        //});
-        $("#remove_modal").on("shown", function(){
-            //_modal  = $(this);
-            $(this).find("#delete_btn").click(function() {
-                console.debug("Hello");
-                //_modal.modal("hide");
-            });
-        });
     });
 }

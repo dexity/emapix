@@ -12,10 +12,10 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^password/renew/(\w{40})$', 'renew_password'),
     url(r'^request/make$', 'make_request'),
     url(r'^request/(\w{16})$', 'get_request'),
-    url(r'^request/(\w{16})/remove$', 'get_request'),
     # Ajax
     url(r'^request/add$', 'add_request'),
     url(r'^request/info/(\w{16})$', 'request_info'),
+    url(r'^request/(\w{16})/remove$', 'remove_request'),
     # Json
     url(r'^request/all/json$', 'get_requests_json'),
     

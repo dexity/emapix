@@ -5,7 +5,8 @@
         <div style="margin-bottom: 10px;"><i>{{ description }}</i></div>
         <b>Location</b>: {{ lat }}; {{ lon }}
         <div style="margin-top: 10px;"><a href="/request/{{ resource }}" class="pull-left">Request Details</a>
-        <a href="" class="pull-right" style="color: red;" id="remove_link">Remove</a><div>
+        {% csrf_token %}
+        <a href="/request/{{ resource }}/remove" class="pull-right" style="color: red;" id="remove_link">Remove</a><div>
     </div>
     {% else %}
     <div class="alert alert-error" style="margin-top: 10px;">

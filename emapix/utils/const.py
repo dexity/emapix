@@ -44,6 +44,8 @@ MONTH_CHOICES    = [
 
 YEAR_CHOICES    = [(str(x), str(x)) for x in range(2006, 1899, -1)]
 
+AUTH_ERROR      = 'Please <a href="/login">login</a> or <a href="/join">sign up</a>'
+
 COUNTRY_CHOICES = [
     ("AF", "Afghanistan"),
     ("AX", "Aland Islands"),
