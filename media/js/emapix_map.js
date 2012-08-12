@@ -105,7 +105,7 @@ function submitRequest(bubble, lat, lon)
                     // Set click event
                     google.maps.event.addListener(marker, 'click', function() {
                         // Check if photo exists
-                        showAction(marker, req_lat(req), req_lon(req), req["id"]);
+                        showInfo(marker, req["resource"]);
                     });
                     bubble.close();
                 }
