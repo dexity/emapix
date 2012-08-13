@@ -265,6 +265,7 @@ function clearOverlays() {
 
 // Main function
 function initialize() {
+    // XXX: Fix default location
     var lajolla = new google.maps.LatLng(32.818062,-117.269440);
     var myOptions = {
         center: lajolla,
@@ -272,16 +273,23 @@ function initialize() {
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         draggableCursor: "crosshair"
     };
-    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    google.maps.event.addListener(map, 'mousedown', function(event){ 
-        clearTimeout(map.pressButtonTimer); 
-        map.pressButtonTimer = setTimeout(function(){ 
-            showRequest(event.latLng, null);
-        }, 800); 
-      }); 	
-    google.maps.event.addListener(map, 'mouseup', function(event){ 
-        clearTimeout(map.pressButtonTimer); 
-      });
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    // Create map
+    
+    google.maps.event.addListener(map, 'click', function(event){
+        showRequest(event.latLng, null);
+    });
+    
+    //google.maps.event.addListener(map, 'mousedown', function(event){ 
+    //    clearTimeout(map.pressButtonTimer); 
+    //    map.pressButtonTimer = setTimeout(function(){ 
+    //        
+    //        google.maps.event.trigger(map, 'mouseup');
+    //        showRequest(event.latLng, null);
+    //    }, 800);
+    //  }); 	
+    //google.maps.event.addListener(map, 'mouseup', function(event){ 
+    //    clearTimeout(map.pressButtonTimer); 
+    //  });
 
     infoWindow	= new google.maps.InfoWindow();
     
