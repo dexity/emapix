@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, render
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
@@ -307,11 +308,26 @@ def help(request):
     return render_to_response('help.html')
 
 
-def requests(request):
+def get_requests(request):
     if request.user.is_authenticated():
         c   = {"username": request.user}
     else:
-        c   = {}    
+        c   = {}
+    reqs    = Request.objects.all().order_by("-submitted_date")
+    paginator   = Paginator(reqs, 2)    # Fix num
+    page    = request.GET.get("page")
+    
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        items = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        items = paginator.page(paginator.num_pages)    
+    
+    c["items"]   = items
+    c["is_paginated"]   = True
     return render(request, 'requests.html', c)
 
 

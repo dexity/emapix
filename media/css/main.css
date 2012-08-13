@@ -8,6 +8,10 @@
 
 
 /* Basic */
+a img {
+    border: 0px;
+}
+
 .clear_both {
     clear: both;
 }
