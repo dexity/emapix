@@ -262,6 +262,13 @@ function clearOverlays() {
   markersArray  = [];
 }
 
+function onShowRequests(chkBox, event)
+{
+    if (chkBox.is(":checked"))
+        showMarkers();
+    else
+        clearOverlays();    
+}
 
 // Main function
 function initialize() {
@@ -279,6 +286,7 @@ function initialize() {
         showRequest(event.latLng, null);
     });
     
+    // Long click implementation (keep for now)
     //google.maps.event.addListener(map, 'mousedown', function(event){ 
     //    clearTimeout(map.pressButtonTimer); 
     //    map.pressButtonTimer = setTimeout(function(){ 
@@ -292,13 +300,11 @@ function initialize() {
     //  });
 
     infoWindow	= new google.maps.InfoWindow();
-    
-    $("#show_requests").change(function(e){
-        if ($(this).is(":checked"))
-            showMarkers();
-        else
-            clearOverlays();
+
+    $("#show_requests").change(function(e) {
+        onShowRequests($(this), e);
     });
+    onShowRequests($("#show_requests"));
 
     // Set events
     $("#delete_btn").click(function() {
@@ -326,7 +332,8 @@ function initialize() {
                 }
             });
     });
-        
+    
+    // Remove request
     $(document).on("click", "#remove_link", function(e){
         e.preventDefault();
         $("#body_errors").html("");
