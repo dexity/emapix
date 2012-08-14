@@ -314,7 +314,7 @@ def get_requests(request):
     else:
         c   = {}
     reqs    = Request.objects.all().order_by("-submitted_date")
-    paginator   = Paginator(reqs, 2)    # Fix num
+    paginator   = Paginator(reqs, 30)   # 30 items per page
     page    = request.GET.get("page")
     
     try:
@@ -326,8 +326,8 @@ def get_requests(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         items = paginator.page(paginator.num_pages)    
     
-    c["items"]   = items
-    c["is_paginated"]   = True
+    c["items"]  = items
+    c["paginator"]  = paginator
     return render(request, 'requests.html', c)
 
 
