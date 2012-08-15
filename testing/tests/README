@@ -1,0 +1,61 @@
+
+1. Run all tests
+----------------
+
+To run the tests just use the command:
+
+$ python runtests.py
+
+You can also run tests separately for each test suite and even each test case.
+
+2. Run test suite
+-----------------
+
+$ nosetests -s -v content.napster.service_tests
+test_get_album (content.napster.service_tests.NapsterServicesAlbumTest) ... ok
+test_get_album_art (content.napster.service_tests.NapsterServicesAlbumTest) ... ok
+test_get_album_by_name (content.napster.service_tests.NapsterServicesAlbumTest) ... ok
+test_get_new_releases (content.napster.service_tests.NapsterServicesAlbumTest) ... ok
+...
+
+
+3. Run test case
+----------------
+
+$ nosetests -s -v content.napster.service_tests.NapsterServicesAlbumTest
+
+----------------------------------------------------------------------
+Ran 0 tests in 0.000s
+
+OK
+
+If you want to see just the status of the tests without test names, just omit "-v" key:
+
+$ nosetests -s content.napster.service_tests
+.S..S.S.........S......SS.
+----------------------------------------------------------------------
+Ran 26 tests in 7.911s
+
+OK (SKIP=6)
+
+
+4. Run a single test
+--------------------
+
+You can even run a single test in the test case. This way of testing is especially 
+helpful for debugging of a single method.
+
+$ nosetests -s -v tests.content.napster.interface_tests:NapsterInterfaceTest.test_get_genres
+test_get_genres (tests.content.napster.interface_tests.NapsterInterfaceTest) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.366s
+
+OK
+
+Notes
+-----
+    - We use "nose" package http://packages.python.org/nose to discover tests and run them.
+    - Key "-s" allows to display stdout in the terminal
+
+
