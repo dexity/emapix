@@ -42,6 +42,9 @@ MONTH_CHOICES    = [
     ("DEC", "December")
 ]
 
+MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+               "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
 YEAR_CHOICES    = [(str(x), str(x)) for x in range(2006, 1899, -1)]
 
 AUTH_ERROR      = 'Please <a href="/login">login</a> or <a href="/join">sign up</a>'
