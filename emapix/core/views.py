@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
@@ -26,6 +26,12 @@ def generate_token(value):
     "Generates 40 character token"
     return sha1(value + str(time.time()))
     
+
+class HumanTime(object):
+    def __init__(self, ht, utc):
+        self.human_time = ht
+        self.utc_time   = utc
+        
 
 @csrf_protect
 def join(request):
@@ -326,10 +332,12 @@ def get_requests(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         items = paginator.page(paginator.num_pages)    
     
-    ct  = int(time.time())
+    ct  = int(time.time())  # current time
     ht  = []
     for item in items:
-        ht.append(ts2h(int(item.submitted_date), ct))
+        sd  = int(item.submitted_date)
+        t   = HumanTime(ts2h(sd, ct), ts2utc(sd))
+        ht.append(t)
     
     c["items"]  = zip(items, ht)
     c["paginator"]  = paginator

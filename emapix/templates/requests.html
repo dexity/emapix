@@ -16,8 +16,8 @@
 
 <div id="e-requests-list">
     
-{% for req, t in items %}
-    {% if req != items|first %}
+{% for req, ht in items %}
+    {% if req != items|slice:":1"|first|first %}
         <div class="e-request-item span8">
     {% else %}
         <div class="e-request-item e-first-item span8">
@@ -27,7 +27,7 @@
             <div class="e-request-description"><a href="/request/{{ req.resource }}">{{ req.description }}</a></div>
             <div> {{ req.lat }}, {{ req.lon }} <!--<span class="label">San Diego, CA</span> -->
                 <div class="pull-right">
-                    <div class="e-request-time">{{ t }}</div>
+                    <div class="e-request-time" title="{{ ht.utc_time }}" >{{ ht.human_time }}</div>
                     <div class="pull-right">Requested by <a href="">{{req.user.username}}</a></div>
                 </div>
             </div>
