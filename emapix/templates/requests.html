@@ -24,7 +24,11 @@
     {% endif %}
         <a href=""><img src="/media/img/request.png"/></a>
         <div>
-            <div class="e-request-description"><a href="/request/{{ req.resource }}">{{ req.description }}</a></div>
+            <div class="e-request-description" title="{{ req.description }}">
+                <a href="/request/{{ req.resource }}">
+                    {{ req.description|slice:":60" }}{% if req.description|length > 60 %}...{% endif %}
+                </a>
+            </div>
             <div> {{ req.lat }}, {{ req.lon }} <!--<span class="label">San Diego, CA</span> -->
                 <div class="pull-right">
                     <div class="e-request-time" title="{{ ht.utc_time }}" >{{ ht.human_time }}</div>
