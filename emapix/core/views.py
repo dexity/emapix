@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp
+from emapix.utils.utils import sha1, random16, timestamp, ts2h
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
@@ -326,7 +326,12 @@ def get_requests(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         items = paginator.page(paginator.num_pages)    
     
-    c["items"]  = items
+    ct  = int(time.time())
+    ht  = []
+    for item in items:
+        ht.append(ts2h(int(item.submitted_date), ct))
+    
+    c["items"]  = zip(items, ht)
     c["paginator"]  = paginator
     return render(request, 'requests.html', c)
 
