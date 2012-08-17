@@ -17,7 +17,11 @@ class UtilsTest(unittest.TestCase):
     
     def test_ts2h(self):
         self.assertEqual(ts2h(TS, TS1, False), TS1_H)
-        
+        self.assertEqual(ts2h(TS, TS2, False), TS2_H)
+        self.assertEqual(ts2h(TS, TS3, False), TS3_H)
+        self.assertEqual(ts2h(TS, TS4, False), TS4_H)
+        self.assertEqual(ts2h(TS, TS5, False), TS5_H)
+        self.assertEqual(ts2h(TS, TS6, False), TS6_H)
         
         
     def test_ts2utc(self):

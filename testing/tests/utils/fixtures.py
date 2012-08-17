@@ -13,8 +13,8 @@ TS1_H  = "1 min"   # less than min
 TS2_H  = "5 min"
 TS3_H  = "2 hr 10 min"
 TS4_H  = "3 d 2 hr"
-TS5_H  = "Aug 21, 17:19"       # this year, more than 5 days
-TS6_H  = "Aug 21, 2013 17:19"  # year ago
+TS5_H  = "Aug 15, 15:19"       # this year, more than 5 days (Aug 21, 17:19)
+TS6_H  = "Aug 15, 2012 15:19"  # year ago (Aug 21, 2013 17:19)
 
 TS2_HD = "Aug 15, 2012 15:24"
 TS4_HD = "Aug 18, 2012 17:29"
