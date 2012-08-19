@@ -3,11 +3,14 @@ import json
 
 def to_request(r):
     s   = {"id":    r.id,
-           "lat":   r.lat,
-           "lon":   r.lon,
+           "lat":   "",
+           "lon":   "",
            "description": r.description,
            "submitted_date": r.submitted_date,
            "resource":  r.resource}
+    if r.location:
+        s["lat"]    = r.location.lat
+        s["lon"]    = r.location.lon
     return s
 
 

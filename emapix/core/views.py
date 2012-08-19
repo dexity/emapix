@@ -209,12 +209,18 @@ def add_request(request):
         # POST request
         form    = RequestForm(request.POST)
         if form.is_valid():
-            # Create Request
             p   = request.POST
+            
+            # Create Location
+            l   = Location()
+            l.lat   = 1e6*form.cleaned_data["lat"]
+            l.lon   = 1e6*form.cleaned_data["lon"]
+            l.save()
+            
+            # Create Request
             r   = Request()
             r.user  = _user
-            r.lat   = 1e6*form.cleaned_data["lat"]
-            r.lon   = 1e6*form.cleaned_data["lon"]
+            r.location  = l
             r.description   = form.cleaned_data["description"]
             r.submitted_date    = timestamp()
             r.resource  = random16()
@@ -266,8 +272,9 @@ def request_info(request, res):
         req = reqs[0]
         c["req_exists"]  = True
         c["id"]     = req.id
-        c["lat"]    = req.lat/1e6
-        c["lon"]    = req.lon/1e6
+        if req.location:
+            c["lat"]    = req.location.lat/1e6
+            c["lon"]    = req.location.lon/1e6
         c["description"]    = req.description
         c["resource"]   = req.resource
 
@@ -291,6 +298,7 @@ def remove_request(request, res):
         return render(request, 'ajax/error.html', {"error":  "Invalid request" })
     try:
         req     = Request.objects.get(resource=res)
+        req.location.delete()   # Remove location
         req.delete()
         return to_status(OK)
     except Exception, e:
