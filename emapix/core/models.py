@@ -39,16 +39,17 @@ class Photo(models.Model):
 class Location(models.Model):
     lat     = models.IntegerField(default=0)
     lon     = models.IntegerField(default=0)
-    street  = models.CharField(max_length=64)
-    city    = models.CharField(max_length=64)
-    country = models.CharField(max_length=64)
+    street  = models.CharField(max_length=64, null=True)
+    city    = models.CharField(max_length=64, null=True)
+    country = models.CharField(max_length=64, null=True)
+    res_lat = models.IntegerField(default=0)
+    res_lon = models.IntegerField(default=0)
+    res_type    = CharField(max_length=64, null=True)
     
 
 class Request(models.Model):
     user    = models.ForeignKey(User)  # user who submitted request
     location    = models.ForeignKey(Location)
-    #lat     = models.IntegerField(default=0)
-    #lon     = models.IntegerField(default=0)
     description  = models.CharField(max_length=140)
     resource    = models.CharField(max_length=16)       # the photo request identification
     submitted_date  = models.CharField(max_length=16)   # timestamp
