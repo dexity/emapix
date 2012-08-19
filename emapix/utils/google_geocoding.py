@@ -21,17 +21,19 @@ def latlon2addr(lat, lon):
             (32.616577, -117.70824) =>
             ((37.09024, -95.712891), (None, None, "United States"), "APPROXIMATE")
     4. Response with no lat or lon (hardly possible)
+            (32.616577, -117.70824) =>
             ((None, None), (None, None, "United States"), "APPROXIMATE")
     """
     url = "%s?latlng=%s,%s&sensor=false" % (URL_BASE, lat, lon)
     (street, city, country) = (None, None, None)    # Default
+    (lat, lon)  = (None, None)
     try:
         req = urllib2.Request(url)
         res = urllib2.urlopen(req)
         s   = res.read()
         js  = json.loads(s)        
     except Exception, e:
-        return (None, None, None)
+        return None
 
     status  = js["status"]
     if status == "OK" and len(js["results"]) > 0:
@@ -57,12 +59,11 @@ def latlon2addr(lat, lon):
                 city    += comp["short_name"]
             elif "country" in comp["types"]:
                 country = comp["long_name"]
-            
-    #    print json.dumps(adr_comp, indent=4)
-    #
-    ## Dumping
-    #latlon  = js["results"][0]["geometry"]["location"]
-    #address = "%s, %s, %s" % (street, city, country)
-    #print "(%s, %s) | %s | (%s, %s)" % (lat, lon, address, latlon["lat"], latlon["lng"])    
     
-    return (street, city, country)
+    latlon      = js["results"][0]["geometry"]["location"]
+    loc_type    = js["results"][0]["geometry"]["location_type"]
+    (lat, lon)  = (latlon["lat"], latlon["lng"]) 
+    
+    return ((lat, lon), (street, city, country), loc_type)
+
+

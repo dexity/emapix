@@ -13,7 +13,7 @@ class UtilsTest(unittest.TestCase):
     def test_ts2hd(self):
         self.assertEqual(ts2hd(TS2), TS2_HD)
         self.assertEqual(ts2hd(TS4), TS4_HD)
-        
+
     
     def test_ts2h(self):
         self.assertEqual(ts2h(TS, TS1, False), TS1_H)
