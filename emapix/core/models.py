@@ -36,10 +36,19 @@ class Photo(models.Model):
     #location
 
 
-class Request(models.Model):
-    user    = models.ForeignKey(User)  # user who submitted request
+class Location(models.Model):
     lat     = models.IntegerField(default=0)
     lon     = models.IntegerField(default=0)
+    street  = models.CharField(max_length=64)
+    city    = models.CharField(max_length=64)
+    country = models.CharField(max_length=64)
+    
+
+class Request(models.Model):
+    user    = models.ForeignKey(User)  # user who submitted request
+    location    = models.ForeignKey(Location)
+    #lat     = models.IntegerField(default=0)
+    #lon     = models.IntegerField(default=0)
     description  = models.CharField(max_length=140)
     resource    = models.CharField(max_length=16)       # the photo request identification
     submitted_date  = models.CharField(max_length=16)   # timestamp
