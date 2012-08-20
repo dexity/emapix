@@ -13,6 +13,7 @@ from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
+from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 
 from emapix.utils.logger import Logger
@@ -210,11 +211,23 @@ def add_request(request):
         form    = RequestForm(request.POST)
         if form.is_valid():
             p   = request.POST
+            lat = form.cleaned_data["lat"]
+            lon = form.cleaned_data["lon"]
             
             # Create Location
             l   = Location()
-            l.lat   = 1e6*form.cleaned_data["lat"]
-            l.lon   = 1e6*form.cleaned_data["lon"]
+            l.lat   = 1e6*lat
+            l.lon   = 1e6*lon
+            
+            # Set address (to separate function)
+            addr    = latlon2addr(lat, lon)
+            if addr is not None:
+                ll  = addr[0]
+                l.res_lat   = ll[0]
+                l.res_lon   = ll[1]
+                (l.street, l.city, l.country) = addr[1]
+                l.res_type  = addr[2]
+                
             l.save()
             
             # Create Request

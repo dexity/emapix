@@ -29,7 +29,10 @@
                     {{ req.description|slice:":60" }}{% if req.description|length > 60 %}...{% endif %}
                 </a>
             </div>
-            <div> {{ req.location.lat }}, {{ req.location.lon }} <!--<span class="label">San Diego, CA</span> -->
+            <div>
+                {{ req.location.street }}
+                <span class="label label-success">{{ req.location.city }}</span>
+                <span class="label label-info">{{ req.location.country }}</span>
                 <div class="pull-right">
                     <div class="e-request-time" title="{{ ht.utc_time }}" >{{ ht.human_time }}</div>
                     <div class="pull-right"><a href="">{{req.user.username}}</a></div>
