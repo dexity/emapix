@@ -44,7 +44,7 @@ class Location(models.Model):
     country = models.CharField(max_length=64, null=True)
     res_lat = models.IntegerField(default=0)
     res_lon = models.IntegerField(default=0)
-    res_type    = CharField(max_length=64, null=True)
+    res_type    = models.CharField(max_length=64, null=True)
     
 
 class Request(models.Model):
