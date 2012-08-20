@@ -27,6 +27,7 @@ def latlon2addr(lat, lon):
     url = "%s?latlng=%s,%s&sensor=false" % (URL_BASE, lat, lon)
     (street, city, country) = (None, None, None)    # Default
     (lat, lon)  = (None, None)
+    loc_type    = ""
     try:
         req = urllib2.Request(url)
         res = urllib2.urlopen(req)
@@ -60,9 +61,11 @@ def latlon2addr(lat, lon):
             elif "country" in comp["types"]:
                 country = comp["long_name"]
     
-    latlon      = js["results"][0]["geometry"]["location"]
-    loc_type    = js["results"][0]["geometry"]["location_type"]
-    (lat, lon)  = (latlon["lat"], latlon["lng"]) 
+        latlon      = js["results"][0]["geometry"]["location"]
+        loc_type    = js["results"][0]["geometry"]["location_type"]
+        (lat, lon)  = (latlon["lat"], latlon["lng"])
+    else:
+        return None
     
     return ((lat, lon), (street, city, country), loc_type)
 
