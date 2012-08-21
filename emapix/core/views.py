@@ -288,6 +288,9 @@ def request_info(request, res):
         if req.location:
             c["lat"]    = req.location.lat/1e6
             c["lon"]    = req.location.lon/1e6
+            c["street"] = req.location.street
+            c["city"]   = req.location.city
+            c["country"]    = req.location.country
         c["description"]    = req.description
         c["resource"]   = req.resource
 
@@ -359,6 +362,8 @@ def get_requests(request):
         sd  = int(item.submitted_date)
         t   = HumanTime(ts2h(sd, ct), ts2utc(sd))
         ht.append(t)
+        item.location.lat   = item.location.lat/1e6
+        item.location.lon   = item.location.lon/1e6
     
     c["items"]  = zip(items, ht)
     c["paginator"]  = paginator

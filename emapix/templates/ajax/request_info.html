@@ -3,7 +3,18 @@
 
     <div style="margin-bottom: -10px;">
         <div style="margin-bottom: 10px;"><i>{{ description }}</i></div>
-        <b>Location</b>: {{ lat }}; {{ lon }}
+        <b>Address</b>:
+        <div title="latitude={{ lat }}, longitude={{ lon }}">
+            {% if street%}
+                {{ street }}
+            {% endif %}
+            {% if city %}
+                <span class="label label-success">{{ city }}</span>
+            {% endif %}
+            {% if country %}
+                <span class="label label-info">{{ country }}</span>
+            {% endif %}        
+        </div>
         <div style="margin-top: 10px;"><a href="/request/{{ resource }}" class="pull-left">Request Details</a>
         {% csrf_token %}
         <a href="/request/{{ resource }}/remove" class="pull-right" style="color: red;" id="remove_link">Remove</a><div>
