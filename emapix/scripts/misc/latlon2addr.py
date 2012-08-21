@@ -18,6 +18,7 @@ def convert():
             loc.res_lon = ll[1]*1e6
             (loc.street, loc.city, loc.country) = addr[1]
             loc.res_type    = addr[2]
+            loc.zipcode = addr[3]
             loc.save()
 
 

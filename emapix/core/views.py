@@ -227,6 +227,7 @@ def add_request(request):
                 l.res_lon   = ll[1]
                 (l.street, l.city, l.country) = addr[1]
                 l.res_type  = addr[2]
+                l.zipcode   = addr[3]
                 
             l.save()
             
