@@ -42,6 +42,7 @@ class Location(models.Model):
     street  = models.CharField(max_length=64, null=True)
     city    = models.CharField(max_length=64, null=True)
     country = models.CharField(max_length=64, null=True)
+    zipcode = models.CharField(max_length=16, null=True)
     res_lat = models.IntegerField(default=0)
     res_lon = models.IntegerField(default=0)
     res_type    = models.CharField(max_length=64, null=True)

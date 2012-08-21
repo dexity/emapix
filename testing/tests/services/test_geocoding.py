@@ -25,5 +25,5 @@ class GeocodingTest(unittest.TestCase):
         
         res = latlon2addr(*LATLON4)
         self.assertEqual(res, ADDR4)
-    
+        
     

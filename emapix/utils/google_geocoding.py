@@ -14,20 +14,21 @@ def latlon2addr(lat, lon):
     Examples:
     1. Valid response
             (32.816547, -117.261629) =>
-            ((32.8165539, -117.261437), ("1064 Skylark Dr", "La Jolla, CA", "United States"), "ROOFTOP")
+            ((32.8165539, -117.261437), ("1064 Skylark Dr", "La Jolla, CA", "United States"), "ROOFTOP", 92037)
     2. Invalid response (something happened)
             (32.816547, -117.261629) => None
     3. Incomplete address
             (32.616577, -117.70824) =>
-            ((37.09024, -95.712891), (None, None, "United States"), "APPROXIMATE")
+            ((37.09024, -95.712891), (None, None, "United States"), "APPROXIMATE", None)
     4. Response with no lat or lon (hardly possible)
             (32.616577, -117.70824) =>
-            ((None, None), (None, None, "United States"), "APPROXIMATE")
+            ((None, None), (None, None, "United States"), "APPROXIMATE", None)
     """
     url = "%s?latlng=%s,%s&sensor=false" % (URL_BASE, lat, lon)
     (street, city, country) = (None, None, None)    # Default
     (lat, lon)  = (None, None)
     loc_type    = ""
+    zipcode     = None
     try:
         req = urllib2.Request(url)
         res = urllib2.urlopen(req)
@@ -60,6 +61,8 @@ def latlon2addr(lat, lon):
                 city    += comp["short_name"]
             elif "country" in comp["types"]:
                 country = comp["long_name"]
+            elif "postal_code" in comp["types"]:
+                zipcode = comp["short_name"]
     
         latlon      = js["results"][0]["geometry"]["location"]
         loc_type    = js["results"][0]["geometry"]["location_type"]
@@ -67,6 +70,6 @@ def latlon2addr(lat, lon):
     else:
         return None
     
-    return ((lat, lon), (street, city, country), loc_type)
+    return ((lat, lon), (street, city, country), loc_type, zipcode)
 
 
