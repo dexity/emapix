@@ -1,0 +1,10 @@
+
+{% if req.location.street%}
+    {{ req.location.street }}
+{% endif %}
+{% if req.location.city %}
+    <span class="label label-success">{{ req.location.city }}</span>
+{% endif %}
+{% if req.location.country %}
+    <span class="label label-info">{{ req.location.country }}</span>
+{% endif %}

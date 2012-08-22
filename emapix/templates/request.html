@@ -13,6 +13,7 @@
 
 {% block content %}
 
+{% if req %}
 <style type="text/css">
   #map_canvas { width:460px; height:460px; }
 </style>
@@ -22,20 +23,24 @@
 <div class="clear_both"></div>
 <div class="row">
     <div class="span6">
-        <button class="btn btn-success"><b>Submit Photo</b></button>
-        <div class="full-description">Planning to hike in this place ... In my own projects I'd like to use the same type of toolbar that the Delphi XE2 IDE uses for the Project Manager: with icons and the option to show a caption for each icon.</div>
-        <div class="row">
-            <div class="span2">Location:</div>
-            <div>32.798580,-117.263261</div>
-        </div>
+        <a class="btn btn-success" href=""><b>Submit Photo</b></a>
+        <div class="full-description" title="Description">{{ req.description }}</div>
+	<div class="row">
+	    <div class="span2">Approximate Address:</div>
+	    {% include "misc/address.html" %}
+	</div>
         <div class="e-request-info">
-	        <div class="row">
-	            <div class="span2">Requested by:</div>
-	            <div><a href="">dexity</a></div>
-	        </div>
+	    <div class="row">
+		<div class="span2">Location:</div>
+		<div>{{ req.location.lat }}, {{ req.location.lon }}</div>
+	    </div>
+	    <div class="row">
+		<div class="span2">Requested by:</div>
+		<a href="/">{{ req.user.username }}</a>
+	    </div>
             <div class="row">
                 <div class="span2">Date:</div>
-                <div class="e-time">May 18 2012 5:13pm</div>
+                <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
             </div>
         </div>
         <div class="row e-control-options">
@@ -44,8 +49,32 @@
                 <a href="" class="red e-red-option" >Remove Request</a>
             </div>            
         </div>
+	<hr />
+        <div class="e-request-info">
+	    <div class="row">
+		<div class="span2">Status:</div>
+		<span class="label label-success">Accepted</span>
+	    </div>
+	    <div class="row">
+		<div class="span2">Accepted by:</div>
+		<a href="">dexity</a>
+	    </div>
+            <div class="row">
+                <div class="span2">Date:</div>
+                <div class="e-time" title="">Aug 21, 2012 14:05</div>
+            </div>    
+	</div>
+	<div class="full-description" title="Description">Here I'll leave my comment</div>
     </div>    
     <div class="span6"><div id="map_canvas"></div></div>
 </div>
+{% else %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-error">
+            Request is not found
+            <br/>
+        </div>
+    </div>   
+{% endif %}
 
 {% endblock content %}

@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
@@ -303,6 +303,15 @@ def get_request(request, res):
         c   = {"username": request.user}
     else:
         c   = {}
+    try:
+        req = Request.objects.get(resource=res)
+        req.location.lat    = req.location.lat/1e6
+        req.location.lon    = req.location.lon/1e6
+        c["req"]    = req
+        c["hdate"]  = ts2hd(req.submitted_date)
+        c["utcdate"]    = ts2utc(req.submitted_date)
+    except Exception, e:
+        pass
     return render(request, 'request.html', c)
 
 
