@@ -282,22 +282,22 @@ function initialize() {
     };
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);    // Create map
     
-    google.maps.event.addListener(map, 'click', function(event){
-        showRequest(event.latLng, null);
-    });
+    //google.maps.event.addListener(map, 'click', function(event){
+    //    showRequest(event.latLng, null);
+    //});
     
     // Long click implementation (keep for now)
-    //google.maps.event.addListener(map, 'mousedown', function(event){ 
-    //    clearTimeout(map.pressButtonTimer); 
-    //    map.pressButtonTimer = setTimeout(function(){ 
-    //        
-    //        google.maps.event.trigger(map, 'mouseup');
-    //        showRequest(event.latLng, null);
-    //    }, 800);
-    //  }); 	
-    //google.maps.event.addListener(map, 'mouseup', function(event){ 
-    //    clearTimeout(map.pressButtonTimer); 
-    //  });
+    google.maps.event.addListener(map, 'mousedown', function(event){ 
+        clearTimeout(map.pressButtonTimer); 
+        map.pressButtonTimer = setTimeout(function(){ 
+            
+            google.maps.event.trigger(map, 'mouseup');
+            showRequest(event.latLng, null);
+        }, 800);
+      }); 	
+    google.maps.event.addListener(map, 'mouseup', function(event){ 
+        clearTimeout(map.pressButtonTimer); 
+      });
 
     infoWindow	= new google.maps.InfoWindow();
 

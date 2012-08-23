@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import patterns, include, url
 
+from emapix.utils.const import USERNAME_REGEX
+uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
+
 urlpatterns = patterns('emapix.core.views',
     url(r'^$', 'requests'),
     
@@ -13,6 +16,8 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^request/make$', 'make_request'),
     url(r'^request/(\w{16})$', 'get_request'),
     url(r'^requests$', 'get_requests'),
+    url(r'^submit/(\w{16})$', 'submit'),
+    url(r'^user/(?P<username>(%s))$' % uregex, 'get_user'),
     # Ajax
     url(r'^request/add$', 'add_request'),
     url(r'^request/info/(\w{16})$', 'request_info'),
@@ -31,7 +36,6 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^photos$', 'photos'),
     url(r'^search$', 'search'),
     url(r'^search2$', 'search2'),
-    url(r'^submit$', 'submit'),
     url(r'^submit2$', 'submit2'),
     url(r'^submit3$', 'submit3'),
     

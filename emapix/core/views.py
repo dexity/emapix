@@ -338,8 +338,18 @@ def set_profile(request):
 def set_password(request):
     return render_to_response('set_password.html')
 
-def profile(request):
-    return render_to_response('profile.html')
+def get_user(request, username):
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    try:
+        user    = User.objects.get(username)
+        c["user"]   = user
+    except:
+        pass
+    return render(request, 'profile.html', c)
+
 
 def users(request):
     return render_to_response('users.html')
@@ -392,8 +402,17 @@ def search(request):
 def search2(request):
     return render_to_response('search2.html')
 
-def submit(request):
-    return render_to_response('submit.html')
+def submit(request, res):
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    try:
+        req = Request.objects.get(resource=res)
+        c["req"]    = req
+    except Exception, e:
+        pass
+    return render(request, 'submit.html', c)
 
 def submit2(request):
     return render_to_response('submit2.html')

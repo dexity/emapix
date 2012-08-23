@@ -1,12 +1,27 @@
 {% extends "base.html" %}
 
 {% block header %}
-<script type="text/javascript" src="/media/js/emapix_map.js"></script>
 
 <script type="text/javascript">
-//    $(document).ready(function(){
-//	initialize();
-//    });
+   
+    $(document).ready(function(){
+	{% if req %}
+	var lat	= {{ req.location.lat }};
+	var lon	= {{ req.location.lon }};
+	var location = new google.maps.LatLng(lat, lon);
+	var myOptions = {
+	    center: location,
+	    zoom: 13,
+	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	};
+	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	marker	= new google.maps.Marker({
+			position:  	new google.maps.LatLng(lat, lon),
+			title:		"{{ req.description }}",
+			map:		map
+		    });		
+	{% endif %}
+    });
 </script>
 
 {% endblock header %}
@@ -23,7 +38,9 @@
 <div class="clear_both"></div>
 <div class="row">
     <div class="span6">
-        <a class="btn btn-success" href=""><b>Submit Photo</b></a>
+	{% if username|stringformat:"s" == req.user.username %}
+        <a class="btn btn-success" href="/submit/{{ req.resource }}"><b>Submit Photo</b></a>
+	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
 	    <div class="span2">Approximate Address:</div>
@@ -36,7 +53,7 @@
 	    </div>
 	    <div class="row">
 		<div class="span2">Requested by:</div>
-		<a href="/">{{ req.user.username }}</a>
+		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
 	    </div>
             <div class="row">
                 <div class="span2">Date:</div>
@@ -46,7 +63,9 @@
         <div class="row e-control-options">
             <div class="span3 pull-left"></div>
             <div class="span3 pull-right">
+		{% if username|stringformat:"s" == req.user.username %}
                 <a href="" class="red e-red-option" >Remove Request</a>
+		{% endif %}
             </div>            
         </div>
 	<hr />
@@ -57,7 +76,7 @@
 	    </div>
 	    <div class="row">
 		<div class="span2">Accepted by:</div>
-		<a href="">dexity</a>
+		<a href="/user/dexity">dexity</a>
 	    </div>
             <div class="row">
                 <div class="span2">Date:</div>

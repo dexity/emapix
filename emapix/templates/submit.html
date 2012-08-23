@@ -2,6 +2,7 @@
 
 {% block content %}
 
+{% if req %}
 <div class="pull-left"><h3>Submit Photo</h3></div>
 <div class="e-alert pull-left">Please submit photo for this location only! Photo can be up to 5Mb and in JPEG or PNG formats.</div>
 <div class="clear_both"></div>
@@ -12,5 +13,13 @@
 <button class="btn btn-success"><b>Select Photo</b></button>
 <div class="clean_both  e-margin-bottom-20"></div>
 <a href="/layout/request">Request details</a>
+{% else %}
+    <div class="row" id="message" onclick="fadeToMain()">
+        <div class="span8 alert alert-error">
+            Request is not found
+            <br/>
+        </div>
+    </div> 
+{% endif %}
 
 {% endblock content %}
