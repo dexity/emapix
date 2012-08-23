@@ -13,6 +13,7 @@ from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
+from emapix.core.dbutils import remove_request
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 
@@ -323,9 +324,10 @@ def remove_request(request, res):
     if request.method != "POST":
         return render(request, 'ajax/error.html', {"error":  "Invalid request" })
     try:
-        req     = Request.objects.get(resource=res)
-        req.location.delete()   # Remove location
-        req.delete()
+        #req     = Request.objects.get(resource=res)
+        #req.location.delete()   # Remove location
+        #req.delete()
+        remove_request(res)
         return to_status(OK)
     except Exception, e:
         return render(request, 'ajax/error.html', {"error":  "Request does not exist"})
