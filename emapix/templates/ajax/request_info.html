@@ -17,7 +17,7 @@
         </div>
         <div style="margin-top: 10px;"><a href="/request/{{ resource }}" class="pull-left">Request Details</a>
         {% csrf_token %}
-        <a href="/request/{{ resource }}/remove" class="pull-right" style="color: red;" id="remove_link">Remove</a><div>
+        <a href="/request/{{ resource }}/remove" class="red pull-right" id="remove_link">Remove</a><div>
     </div>
     {% else %}
     <div class="alert alert-error" style="margin-top: 10px;">

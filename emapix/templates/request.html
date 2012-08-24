@@ -19,8 +19,40 @@
 			position:  	new google.maps.LatLng(lat, lon),
 			title:		"{{ req.description }}",
 			map:		map
-		    });		
-	{% endif %}
+		    });
+	$("#remove_link").click(function(e){
+		e.preventDefault();
+		$("#body_errors").html("");
+		$("#remove_modal").modal();
+	    });
+	
+	// Set events
+	$("#delete_btn").click(function() {
+	    url = $("#remove_link").attr("href");
+	    $.post(url,
+		{"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+		function(data) {
+		    try
+		    {
+			var res	= $.parseJSON(data);    // OK
+			if (res["status"] == "ok")
+			{
+			    $("#remove_modal").modal("hide");
+			    // Go to requests list
+			    window.location.href = "/requests"
+			}
+			else
+			{
+			    $("#body_errors").html("result");
+			}
+		    }
+		    catch (e)
+		    {
+			$("#body_errors").html(data);
+		    }
+		});
+	});
+	{% endif %}	
     });
 </script>
 
@@ -62,11 +94,23 @@
         </div>
         <div class="row e-control-options">
             <div class="span3 pull-left"></div>
+	    {% csrf_token %}
             <div class="span3 pull-right">
 		{% if username|stringformat:"s" == req.user.username %}
-                <a href="" class="red e-red-option" >Remove Request</a>
+                <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
 		{% endif %}
-            </div>            
+            </div>
+	    <div id="remove_modal" class="modal hide fade">
+		<div class="modal-header"><h3>Delete Request</h3></div>
+		<div class="modal-body">
+		    <div id="body_errors"></div>
+		    Are you sure you want to delete the request?
+		</div>
+		<div class="modal-footer">
+		  <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
+		  <a href="#" class="btn" data-dismiss="modal" >Close</a>
+		</div>
+	    </div>	    
         </div>
 	<hr />
 	<!-- XXX: Finish -->
