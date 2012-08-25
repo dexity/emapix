@@ -198,6 +198,9 @@ a img {
 	margin-left: 5px;
 }
 
+#submit_body {
+    max-height: 500px;
+}
 
 /* Users */
 .user-info {

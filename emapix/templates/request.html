@@ -3,6 +3,16 @@
 {% block header %}
 
 <script type="text/javascript">
+
+    function pick_image()
+    {
+	
+    }
+    
+    function submit_photo()
+    {
+	$("#submit_modal").modal();
+    }
    
     $(document).ready(function(){
 	{% if req %}
@@ -71,7 +81,26 @@
 <div class="row">
     <div class="span6">
 	{% if username|stringformat:"s" == req.user.username %}
-        <a class="btn btn-success" href="/submit/{{ req.resource }}"><b>Submit Photo</b></a>
+        <button class="btn btn-success" onclick="submit_photo()"><b>Submit Photo</b></button>
+	<!-- Modal -->
+	<div id="submit_modal" class="modal hide fade">
+	    <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		<h3>Submit Photo</h3>
+	    </div>
+	    <div class="modal-body" id="submit_body">
+		<div id="body_errors"></div>
+		<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
+		Photo can be up to 5Mb and in JPEG or PNG formats.
+		</div>
+		<input type="file" style="margin-bottom: 10px;"/>
+		<div class="clear_both"></div>
+		<img src="/media/img/photo_large.png" width="300" height="300" />
+		<div class="clear_both e-margin-bottom-10"></div>
+		<button class="btn btn-success"><b>Trim Photo</b></button>		
+	    </div>
+	</div>
+	
 	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
