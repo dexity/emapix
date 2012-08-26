@@ -414,7 +414,11 @@ def submit(request, res):
     return render(request, 'submit.html', c)
 
 def submit2(request):
-    return render_to_response('submit2.html')
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}    
+    return render(request, 'submit2.html', c)
 
 def submit3(request):
     return render_to_response('submit3.html')

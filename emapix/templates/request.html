@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
 {% block header %}
-
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
+</script>
 <script type="text/javascript">
 
     function pick_image()
@@ -94,10 +96,10 @@
 		Photo can be up to 5Mb and in JPEG or PNG formats.
 		</div>
 		<input type="file" style="margin-bottom: 10px;"/>
-		<div class="clear_both"></div>
+		<!--<div class="clear_both"></div>
 		<img src="/media/img/photo_large.png" width="300" height="300" />
 		<div class="clear_both e-margin-bottom-10"></div>
-		<button class="btn btn-success"><b>Trim Photo</b></button>		
+		<button class="btn btn-success"><b>Crop Photo</b></button> -->
 	    </div>
 	</div>
 	

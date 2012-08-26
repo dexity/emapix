@@ -4,7 +4,7 @@ from emapix.utils.const import USERNAME_REGEX
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
 
 urlpatterns = patterns('emapix.core.views',
-    url(r'^$', 'requests'),
+    url(r'^$', 'get_requests'),
     
     url(r'^join$', 'join'),
     #url(r'^verify$', 'verify'),        # Don't need for now

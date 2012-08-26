@@ -1,8 +1,30 @@
 {% extends "base.html" %}
 
+{% block header %}
+<link rel="stylesheet" href="/media/fileuploader/css/jquery.fileupload-ui.css">
+<script src="/media/fileuploader/js/jquery.fileupload.js"></script>
+<script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
+<script src="/media/js/misc/load-image.min.js"></script>
+<script src="/media/js/misc/canvas-to-blob.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#fileupload').fileupload();
+    });
+</script>
+{% endblock header %}
+
 {% block content %}
 
-<div class="pull-left"><h3>Submit Photo</h3></div>
+<div id="body_errors"></div>
+<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
+Photo can be up to 5Mb and in JPEG or PNG formats.
+</div>
+<div class="clear_both"></div>
+<input id="fileupload" type="file" name="file" style="margin-bottom: 10px;"/>
+
+<!--<div class="pull-left"><h3>Submit Photo</h3></div>
 <div class="e-alert pull-left">Photo can be up to 5Mb and in JPEG or PNG formats.</div>
 <div class="clear_both"></div>
 <img src="/media/img/photo_large.png" width="460" height="460" />
@@ -10,6 +32,10 @@
 <button class="btn btn-success"><b>Trim Photo</b></button>
 <div class="clean_both e-margin-bottom-20"></div>
 <a href="/layout/request">Request details</a><br />
-<a href="">Select another photo</a>
+<a href="">Select another photo</a>-->
 
 {% endblock content %}
+
+{% block footer %}
+    
+{% endblock footer %}
