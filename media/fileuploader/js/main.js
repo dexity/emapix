@@ -28,7 +28,7 @@ $(function () {
         )
     );
 
-    if (window.location.hostname === 'blueimp.github.com') {
+    if (window.location.hostname === 'localhost') {
         // Demo settings:
         $('#fileupload').fileupload('option', {
             url: '//jquery-file-upload.appspot.com/',

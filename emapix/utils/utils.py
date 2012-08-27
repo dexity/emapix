@@ -1,6 +1,9 @@
 import hashlib
 import time
 
+from emapix.utils.logger import Logger
+logger = Logger.get("emapix.utils.utils")
+
 def sha1(value):
     "Returns hex digest value of sha1 encryption"
     m   = hashlib.sha1()
@@ -24,7 +27,6 @@ def time_list(ts):
     return [d, h, m]
     
     
-
 def ts2hd(ts, show_year=True):
     "Converts timestamp to date string"
     df   = "%b %d, %H:%M"
@@ -73,3 +75,18 @@ def ts2utc(ts):
     except Exception, e:    # Common exceptions: TypeError
         utc = ""
     return utc
+
+
+def handle_uploaded_file(f):
+    # Refactor emapix.utils.handle_uploaded_file()
+    
+    dest    = open("/tmp/pic.jpg", "wb+")
+    for chunk in f.chunks():
+        dest.write(chunk)
+    dest.close() 
+    #destination = open('some/file/name.txt', 'wb+')
+    #for chunk in f.chunks():
+    #    destination.write(chunk)
+    #destination.close() 
+    logger.debug(str(f.content_type))
+

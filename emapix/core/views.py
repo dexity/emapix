@@ -9,7 +9,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, handle_uploaded_file
 from emapix.utils.format import *
 from emapix.core.forms import *
 from emapix.core.models import *
@@ -413,12 +413,27 @@ def submit(request, res):
         pass
     return render(request, 'submit.html', c)
 
+
 def submit2(request):
+    # Testing file uploading
     if request.user.is_authenticated():
         c   = {"username": request.user}
     else:
-        c   = {}    
+        c   = {}
+    if request.method == "POST":
+        form   = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fd  = request.FILES['file']
+            if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
+                # Return error
+                pass
+            handle_uploaded_file(fd)
+            return HttpResponseRedirect("/submit2")
+    else:
+        form   = UploadFileForm()
+    c["form"]   = form
     return render(request, 'submit2.html', c)
+
 
 def submit3(request):
     return render_to_response('submit3.html')

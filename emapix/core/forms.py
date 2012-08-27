@@ -144,6 +144,8 @@ class RequestForm(forms.Form):
     #    #lat, lon
     #
     #    return cleaned_data
-
     
+
+class UploadFileForm(forms.Form):
+    file  = forms.FileField()
     
