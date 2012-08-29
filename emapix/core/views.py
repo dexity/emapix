@@ -413,8 +413,7 @@ def submit(request, res):
         pass
     return render(request, 'submit.html', c)
 
-TEMP_UP = """
-{% for (var i=0, file; file=o.files[i]; i++) { %}
+TEMP_UP = """{% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-upload fade">
         <td class="preview"><span class="fade"></span></td>
         <td class="name"><span>{%=file.name%}</span></td>
@@ -441,11 +440,9 @@ TEMP_UP = """
             </button>
         {% } %}</td>
     </tr>
-{% } %}
-"""
+{% } %}"""
 
-TEMP_DN = """
-{% for (var i=0, file; file=o.files[i]; i++) { %}
+TEMP_DN = """{% for (var i=0, file; file=o.files[i]; i++) { %}
     <tr class="template-download fade">
         {% if (file.error) { %}
             <td></td>
@@ -470,9 +467,7 @@ TEMP_DN = """
             <input type="checkbox" name="delete" value="1">
         </td>
     </tr>
-{% } %}
-
-"""
+{% } %}"""
 
 def submit2(request):
     # Testing file uploading
