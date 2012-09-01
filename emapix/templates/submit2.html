@@ -2,20 +2,26 @@
 
 {% block header %}
 <link rel="stylesheet" href="/media/fileuploader/css/jquery.fileupload-ui.css">
+<link rel="stylesheet" href="/media/jcrop/css/jquery.Jcrop.css" type="text/css" />
+    
 {% endblock header %}
 
 {% block content %}
+<div id="body_errors"></div>
+<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
+Photo can be up to 5Mb and in JPEG or PNG formats.
+</div>
 
+<div class="clear_both"></div>
 <form id="fileupload" action="/submit2" method="POST" enctype="multipart/form-data">
-    <div class="row fileupload-buttonbar">
-        <span class="btn btn-success fileinput-button">
-            <i class="icon-plus icon-white"></i>
-            <span>Add files...</span>
-            <input type="file" name="files[]" multiple>
-        </span>
-    </div>
+    <span class="btn btn-primary fileinput-button">
+        <span>Select File</span>
+        <input type="file" name="files[]" multiple>
+    </span>
     <!-- The table listing the files available for upload/download -->
-    <table role="presentation" class="table table-striped"><tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody></table>
+    <table role="presentation" class="table table-striped">
+        <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
+    </table>
 </form>
 
 <!-- The template to display files available for upload -->
@@ -38,8 +44,84 @@
 <script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
 <script src="/media/fileuploader/js/locale.js"></script>
-<script src="/media/fileuploader/js/main.js"></script>
-<!--<script src="/media/js/main.js"></script>-->
+
+<script src="/media/jcrop/js/jquery.Jcrop.js"></script>
+
+
+<script type="text/javascript">
+    
+$(document).ready(function(){
+    $('#cropbox').Jcrop({
+        trackDocument: true
+    });    
+});
+
+$(function () {
+    'use strict';
+
+    // Initialize the jQuery File Upload widget:
+    $('#fileupload').fileupload();
+
+    // Enable iframe cross-domain access via redirect option:
+    $('#fileupload').fileupload(
+        'option',
+        'redirect',
+        window.location.href.replace(
+            /\/[^\/]*$/,
+            '/cors/result.html?%s'
+        )
+    );
+
+    if (window.location.hostname === 'localhost') {
+        // Demo settings:
+        $('#fileupload').fileupload('option', {
+            url: '//jquery-file-upload.appspot.com/',
+            maxFileSize: 5000000,
+            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+            process: [
+                {
+                    action: 'load',
+                    fileTypes: /^image\/(gif|jpeg|png)$/,
+                    maxFileSize: 20000000 // 20MB
+                },
+                {
+                    action: 'resize',
+                    maxWidth: 1440,
+                    maxHeight: 900
+                },
+                {
+                    action: 'save'
+                }
+            ]
+        });
+        // Upload server status check for browsers with CORS support:
+        if ($.support.cors) {
+            $.ajax({
+                url: '//jquery-file-upload.appspot.com/',
+                type: 'HEAD'
+            }).fail(function () {
+                $('<span class="alert alert-error"/>')
+                    .text('Upload server currently unavailable - ' +
+                            new Date())
+                    .appendTo('#fileupload');
+            });
+        }
+    } else {
+        // Load existing files:
+        $('#fileupload').each(function () {
+            var that = this;
+            $.getJSON(this.action, function (result) {
+                if (result && result.length) {
+                    $(that).fileupload('option', 'done')
+                        .call(that, null, {result: result});
+                }
+            });
+        });
+    }
+
+});
+    
+</script>
 
 <!--[if gte IE 8]><script src="/media/fileuploader/js/cors/jquery.xdr-transport.js"></script><![endif]-->
 
