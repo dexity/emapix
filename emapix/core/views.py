@@ -476,14 +476,20 @@ def submit2(request):
     else:
         c   = {}
     if request.method == "POST":
-        form   = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fd  = request.FILES['file']
-            if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
-                # Return error
-                pass
-            handle_uploaded_file(fd)
-            return HttpResponseRedirect("/submit2")
+        x   = request.POST.get("x", None)
+        y   = request.POST.get("y", None)
+        h   = request.POST.get("h", None)
+        w   = request.POST.get("w", None)
+        if x and y and h and w:
+            logger.debug("x=%s; y=%s; h=%s, w=%s" % (x, y, h, w))
+        #form   = UploadFileForm(request.POST, request.FILES)
+        #if form.is_valid():
+        #    fd  = request.FILES['file']
+        #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
+        #        # Return error
+        #        pass
+        #    handle_uploaded_file(fd)
+        return HttpResponseRedirect("/submit2")
     else:
         form   = UploadFileForm()
     c["form"]   = form

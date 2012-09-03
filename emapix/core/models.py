@@ -23,17 +23,24 @@ class UserStatus(models.Model):
 
 
 class Photo(models.Model):
+    "Photo abstraction"
     user    = models.ForeignKey(User)   # user who uploads the photo
     title   = models.CharField(max_length=64, default="")
-    source  = models.CharField(max_length=64)   # URL of the photo
-    height  = models.IntegerField(default=0)
-    width   = models.IntegerField(default=0)
     created_time    = models.CharField(max_length=16)  
     updated_time    = models.CharField(max_length=16)
-    
-    #picture     # The thumbnail-sized source of the photo
-    #images      
-    #location
+    type    = models.CharField(max_length=16, choices=PHOTO_CHOICES)
+    marked_delete   = models.BooleanField(default=False)
+
+
+class Image(models.Model):
+    "Photo representation"
+    photo   = models.ForeignKey(Photo)
+    height  = models.IntegerField(default=0)
+    width   = models.IntegerField(default=0)
+    url     = models.CharField(max_length=64)   # URL of the photo
+    size    = models.IntegerField(default=0)    # Size of image in bytes
+    size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES)
+    is_avail    = models.BooleanField(default=False)
 
 
 class Location(models.Model):
@@ -49,7 +56,7 @@ class Location(models.Model):
     
 
 class Request(models.Model):
-    user    = models.ForeignKey(User)  # user who submitted request
+    user    = models.ForeignKey(User)           # user who submitted request
     location    = models.ForeignKey(Location)
     description  = models.CharField(max_length=140)
     resource    = models.CharField(max_length=16)       # the photo request identification
@@ -60,11 +67,10 @@ class Request(models.Model):
 class PhotoRequest(models.Model):
     photo       = models.ForeignKey(Photo)
     request     = models.ForeignKey(Request)
-    is_avail    = models.BooleanField(default=False)
     # Some access control (?)
     
     def __unicode__(self):
-        return ""   #"(%s, %s)" % (self.lat, self.lon)    
+        return ""
 
 
 class RequestStatus(models.Model):
@@ -75,8 +81,6 @@ class RequestStatus(models.Model):
     submitted_date  = models.CharField(max_length=16)  # timestamp
 
 
-#class UserSession(models.Model):
-#    pass
 
 
 """

@@ -11,31 +11,35 @@
 <div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
 Photo can be up to 5Mb and in JPEG or PNG formats.
 </div>
+<div style="clear: both"></div>
+<img src="/media/img/photo_large.png" id="cropbox"/>
 
 <div class="clear_both"></div>
-<form id="fileupload" action="/submit2" method="POST" enctype="multipart/form-data">
-    <span class="btn btn-primary fileinput-button">
+<form id="fileupload" action="/submit2" method="POST">
+    {% csrf_token %}
+    <input type="hidden" id="x" name="x" />
+    <input type="hidden" id="y" name="y" />
+    <input type="hidden" id="w" name="w" />
+    <input type="hidden" id="h" name="h" />    
+    <!--<span class="btn btn-primary fileinput-button">
         <span>Select File</span>
         <input type="file" name="files[]" multiple>
     </span>
-    <!-- The table listing the files available for upload/download -->
     <table role="presentation" class="table table-striped">
         <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
-    </table>
+    </table>-->
+    <button type="submit" class="btn btn-primary">Crop</button>
 </form>
-
-<!-- The template to display files available for upload -->
-<script id="template-upload" type="text/x-tmpl">
+<!--<script id="template-upload" type="text/x-tmpl">
 {{ temp_up|safe }}
 </script>
-<!-- The template to display files available for download -->
 <script id="template-download" type="text/x-tmpl">
 {{ temp_dn|safe }}
-</script>
+</script>-->
 {% endblock content %}
 
 {% block footer %}
-<script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
+<!--<script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
 <script src="/media/fileuploader/js/misc/tmpl.min.js"></script>
 <script src="/media/fileuploader/js/misc/load-image.min.js"></script>
 <script src="/media/fileuploader/js/misc/canvas-to-blob.min.js"></script>
@@ -43,7 +47,7 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 <script src="/media/fileuploader/js/jquery.fileupload.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
-<script src="/media/fileuploader/js/locale.js"></script>
+<script src="/media/fileuploader/js/locale.js"></script>-->
 
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 
@@ -51,75 +55,86 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 <script type="text/javascript">
     
 $(document).ready(function(){
-    $('#cropbox').Jcrop({
-        trackDocument: true
-    });    
+    $(function(){
+        $('#cropbox').Jcrop({
+            aspectRatio: 1,
+            onSelect: updateCoords
+        });
+    });
+    
+    function updateCoords(c)
+    {
+        $('#x').val(c.x);
+        $('#y').val(c.y);
+        $('#w').val(c.w);
+        $('#h').val(c.h);
+    }; 
 });
 
-$(function () {
-    'use strict';
-
-    // Initialize the jQuery File Upload widget:
-    $('#fileupload').fileupload();
-
-    // Enable iframe cross-domain access via redirect option:
-    $('#fileupload').fileupload(
-        'option',
-        'redirect',
-        window.location.href.replace(
-            /\/[^\/]*$/,
-            '/cors/result.html?%s'
-        )
-    );
-
-    if (window.location.hostname === 'localhost') {
-        // Demo settings:
-        $('#fileupload').fileupload('option', {
-            url: '//jquery-file-upload.appspot.com/',
-            maxFileSize: 5000000,
-            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
-            process: [
-                {
-                    action: 'load',
-                    fileTypes: /^image\/(gif|jpeg|png)$/,
-                    maxFileSize: 20000000 // 20MB
-                },
-                {
-                    action: 'resize',
-                    maxWidth: 1440,
-                    maxHeight: 900
-                },
-                {
-                    action: 'save'
-                }
-            ]
-        });
-        // Upload server status check for browsers with CORS support:
-        if ($.support.cors) {
-            $.ajax({
-                url: '//jquery-file-upload.appspot.com/',
-                type: 'HEAD'
-            }).fail(function () {
-                $('<span class="alert alert-error"/>')
-                    .text('Upload server currently unavailable - ' +
-                            new Date())
-                    .appendTo('#fileupload');
-            });
-        }
-    } else {
-        // Load existing files:
-        $('#fileupload').each(function () {
-            var that = this;
-            $.getJSON(this.action, function (result) {
-                if (result && result.length) {
-                    $(that).fileupload('option', 'done')
-                        .call(that, null, {result: result});
-                }
-            });
-        });
-    }
-
-});
+//$(function () {
+//    'use strict';
+//
+//    // Initialize the jQuery File Upload widget:
+//    $('#fileupload').fileupload();
+//
+//    // Enable iframe cross-domain access via redirect option:
+//    $('#fileupload').fileupload(
+//        'option',
+//        'redirect',
+//        window.location.href.replace(
+//            /\/[^\/]*$/,
+//            '/cors/result.html?%s'
+//        )
+//    );
+//
+//    if (window.location.hostname === 'localhost') {
+//        // Demo settings:
+//        $('#fileupload').fileupload('option', {
+//            url: '//jquery-file-upload.appspot.com/',
+//            maxFileSize: 5000000,
+//            acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+//            process: [
+//                {
+//                    action: 'load',
+//                    fileTypes: /^image\/(gif|jpeg|png)$/,
+//                    maxFileSize: 20000000 // 20MB
+//                },
+//                {
+//                    action: 'resize',
+//                    maxWidth: 1440,
+//                    maxHeight: 900
+//                },
+//                {
+//                    action: 'save'
+//                }
+//            ]
+//        });
+//        // Upload server status check for browsers with CORS support:
+//        if ($.support.cors) {
+//            $.ajax({
+//                url: '//jquery-file-upload.appspot.com/',
+//                type: 'HEAD'
+//            }).fail(function () {
+//                $('<span class="alert alert-error"/>')
+//                    .text('Upload server currently unavailable - ' +
+//                            new Date())
+//                    .appendTo('#fileupload');
+//            });
+//        }
+//    } else {
+//        // Load existing files:
+//        $('#fileupload').each(function () {
+//            var that = this;
+//            $.getJSON(this.action, function (result) {
+//                if (result && result.length) {
+//                    $(that).fileupload('option', 'done')
+//                        .call(that, null, {result: result});
+//                }
+//            });
+//        });
+//    }
+//
+//});
     
 </script>
 

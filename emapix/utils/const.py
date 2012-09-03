@@ -32,6 +32,20 @@ REQ_STATUS_CHOICES =[
     ("f", "Completed"),
 ]
 
+PHOTO_CHOICES   = [
+    ("request", "Request Photo"),
+    ("preview", "Photo Preview"),
+    ("profile", "Profile Photo")
+]
+
+IMAGE_SIZES = [
+    ("tiny", "Tiny"),
+    ("small", "Small"),
+    ("medium", "Medium"),
+    ("large", "Large"),
+    ("jumbo", "Jumbo")
+]
+
 MONTH_CHOICES    = [
     ("JAN", "January"),
     ("FEB", "February"),
