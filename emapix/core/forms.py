@@ -147,5 +147,12 @@ class RequestForm(forms.Form):
     
 
 class UploadFileForm(forms.Form):
-    file  = forms.FileField()
+    files  = forms.FileField()
+    
+
+class CropForm(forms.Form):
+    x   = forms.CharField(widget=forms.HiddenInput())
+    y   = forms.CharField(widget=forms.HiddenInput())
+    h   = forms.CharField(widget=forms.HiddenInput())
+    w   = forms.CharField(widget=forms.HiddenInput())
     

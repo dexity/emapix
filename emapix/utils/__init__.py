@@ -1,4 +1,6 @@
 
+# XXX: Move all stuff from this file!
+
 from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
 
 from boto.s3.connection import S3Connection
