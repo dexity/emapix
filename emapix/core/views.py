@@ -498,6 +498,8 @@ TEMP_DN = """{% for (var i=0, file; file=o.files[i]; i++) { %}
     </tr>
 {% } %}"""
 
+
+# XXX: Refactor !!!
 def submit2(request):
     # Testing file uploading
     if request.user.is_authenticated():
@@ -507,13 +509,33 @@ def submit2(request):
         
     if request.method == "POST":
         fd  = request.FILES["files[]"]
+        cont_type   = fd.content_type
+        filename    = fd.name
         try:
-            # XXX: Fix file saving
-            # XXX: Check if file resizing occures!
-            open("/tmp/pic.png", "wb").write(fd);   
+            IMAGE_TYPES = {
+                "image/jpeg":   "jpg",
+                "image/png":    "png"
+            }
+            # XXX: Refactor to file handler!
+            # "/var/emapix/static/temp"         - directory
+            # "http://localhost/media/temp/"    - URL
+            loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
+            f   = open(loc, "wb+")
+            for chunk in fd.chunks():
+                f.write(chunk);
+            f.close()
         except Exception, e:
             logger.debug(str(e))
-        return HttpResponse(json.dumps({"status": "ok"}), mimetype="application/json")
+        resp    = {}
+        resp["url"] = "http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
+        resp["thumbnail_url"] = ""
+        resp["name"] = fd.name
+        resp["type"] = cont_type
+        resp["size"] = fd.size
+        resp["delete_url"] = ""
+        resp["delete_type"] = "DELETE"
+        
+        return HttpResponse(json.dumps([resp]), mimetype="application/json")
     
         #x   = request.POST.get("x", None)
         #y   = request.POST.get("y", None)

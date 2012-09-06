@@ -93,20 +93,10 @@ $(function () {
         // XXX: Set so that only 1 file can be displayed for upload
     });
 
-    // Enable iframe cross-domain access via redirect option:
-    $('#fileupload').fileupload(
-        'option',
-        'redirect',
-        window.location.href.replace(
-            /\/[^\/]*$/,
-            '/submit2?%s'
-        )
-    );
-
     if (window.location.hostname === 'localhost') {
         // Demo settings:
         $('#fileupload').fileupload('option', {
-            url: '/submit2', //'//jquery-file-upload.appspot.com/',
+            url: '/submit2',
             maxFileSize: 5000000,
             acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,
             process: [
