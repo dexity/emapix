@@ -22,7 +22,6 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
     <table role="presentation" class="table table-striped">
         <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
     </table>
-
 </form>
 
 <div class="clear_both"></div>
@@ -33,9 +32,7 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 {{ temp_dn|safe }}
 </script>
 
-{% if preview_url %}
-<img src="{{preview_url}}" id="cropbox"/>
-{% endif %}
+<!--<img src="http://localhost/media/temp/pic.png" id="cropbox">-->
 
 <div class="clear_both"></div>
 {% if crop_form %}
@@ -83,14 +80,28 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 //    }; 
 //});
 
+function updateCoords(c)
+{
+    $('#x').val(c.x);
+    $('#y').val(c.y);
+    $('#w').val(c.w);
+    $('#h').val(c.h);
+}; 
 
 $(function () {
     'use strict';
 
     // Initialize the jQuery File Upload widget:
     $('#fileupload').fileupload({
-        //autoUpload: true
+        autoUpload: true
         // XXX: Set so that only 1 file can be displayed for upload
+    })
+    .bind('fileuploaddone', function (e, data) {
+        console.debug(e, data);
+        $('#cropbox').Jcrop({
+            aspectRatio: 1,
+            onSelect: updateCoords
+        });        
     });
 
     if (window.location.hostname === 'localhost') {
