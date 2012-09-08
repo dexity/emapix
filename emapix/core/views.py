@@ -11,6 +11,7 @@ import django.contrib.auth as django_auth
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, handle_uploaded_file
 from emapix.utils.format import *
+from emapix.utils.imageproc import crop_image
 from emapix.core.forms import *
 from emapix.core.models import *
 from emapix.core.dbutils import db_remove_request
@@ -491,55 +492,70 @@ def submit2(request):
         c   = {}
         
     if request.method == "POST":
-        fd  = request.FILES["files[]"]
-        cont_type   = fd.content_type
-        filename    = fd.name
-        try:
-            IMAGE_TYPES = {
-                "image/jpeg":   "jpg",
-                "image/png":    "png"
-            }
-            # XXX: Refactor to file handler!
-            # "/var/emapix/static/temp"         - directory
-            # "http://localhost/media/temp/"    - URL
-            loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
-            f   = open(loc, "wb+")
-            for chunk in fd.chunks():
-                f.write(chunk);
-            f.close()
-        except Exception, e:
-            logger.debug(str(e))
-        resp    = {}
-        resp["url"] = "http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
-        resp["thumbnail_url"] = ""
-        resp["name"] = fd.name
-        resp["type"] = cont_type
-        resp["size"] = fd.size
-        resp["delete_url"] = ""
-        resp["delete_type"] = "DELETE"
-        
-        return HttpResponse(json.dumps([resp]), mimetype="application/json")
+        img_src = request.POST.get("img_src", None)
+        if img_src:
+            # Crop image
+            crop_form   = CropForm(request.POST)
+            if crop_form.is_valid():
+                img_src   = crop_form.cleaned_data["img_src"]
+                x   = crop_form.cleaned_data["x"]
+                y   = crop_form.cleaned_data["y"]
+                h   = crop_form.cleaned_data["h"]
+                w   = crop_form.cleaned_data["w"]
+                #if not (x and y and h and w):
+                #    return HttpResponseRedirect("/submit2") # Error
+            
+                logger.debug("x=%s; y=%s; h=%s, w=%s, src=%s" % (x, y, h, w, img_src))
+            
+                # XXX: Keep selection if something went wrong
+                
+                crop_image(img_src, (x, y, w, h))
+            
+            return HttpResponseRedirect("/submit2")            
+        else:
+            # Upload image
+            fd  = request.FILES["files[]"]
+            cont_type   = fd.content_type
+            filename    = fd.name
+            try:
+                IMAGE_TYPES = {
+                    "image/jpeg":   "jpg",
+                    "image/png":    "png"
+                }
+                # XXX: Refactor to file handler!
+                # "/var/emapix/static/temp"         - directory
+                # "http://localhost/media/temp/"    - URL
+                loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
+                f   = open(loc, "wb+")
+                for chunk in fd.chunks():
+                    f.write(chunk);
+                f.close()
+            except Exception, e:
+                logger.debug(str(e))
+            resp    = {}
+            resp["url"] = "http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
+            resp["thumbnail_url"] = ""
+            resp["name"] = fd.name
+            resp["type"] = cont_type
+            resp["size"] = fd.size
+            resp["delete_url"] = ""
+            resp["delete_type"] = "DELETE"
+            
+            
+            #form   = UploadFileForm(request.POST, request.FILES)
+            #if form.is_valid():
+            #    fd  = request.FILES['file']
+            #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
+            #        # Return error
+            #        pass
+            #    handle_uploaded_file(fd)
+            #
+            ## XXX: Set to S3 url for preview image
+            #c["preview_url"]    = ""            
+            
+            return HttpResponse(json.dumps([resp]), mimetype="application/json")
     
-        #x   = request.POST.get("x", None)
-        #y   = request.POST.get("y", None)
-        #h   = request.POST.get("h", None)
-        #w   = request.POST.get("w", None)
-        #if x and y and h and w:
-        #    logger.debug("x=%s; y=%s; h=%s, w=%s" % (x, y, h, w))
-        #form   = UploadFileForm(request.POST, request.FILES)
-        #if form.is_valid():
-        #    fd  = request.FILES['file']
-        #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
-        #        # Return error
-        #        pass
-        #    handle_uploaded_file(fd)
-        
-        # XXX: Set to S3 url for preview image
-        #c["preview_url"]    = ""
-        
-        # XXX: Keep selection if something went wrong
-        
-        return HttpResponseRedirect("/submit2")
+
     else:
         form   = UploadFileForm()
         

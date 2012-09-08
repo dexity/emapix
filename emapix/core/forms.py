@@ -17,6 +17,9 @@ def text_widget():
 def password_widget():
     return forms.PasswordInput(attrs={"class": "input-large"})
 
+def hidden_field():
+    return forms.CharField(widget=forms.HiddenInput())
+
 
 class JoinForm(forms.Form):
     username    = forms.CharField(max_length=100,
@@ -151,8 +154,9 @@ class UploadFileForm(forms.Form):
     
 
 class CropForm(forms.Form):
-    x   = forms.CharField(widget=forms.HiddenInput())
-    y   = forms.CharField(widget=forms.HiddenInput())
-    h   = forms.CharField(widget=forms.HiddenInput())
-    w   = forms.CharField(widget=forms.HiddenInput())
+    img_src = forms.CharField(widget=forms.HiddenInput())
+    x   = forms.IntegerField(widget=forms.HiddenInput())
+    y   = forms.IntegerField(widget=forms.HiddenInput())
+    h   = forms.IntegerField(widget=forms.HiddenInput())
+    w   = forms.IntegerField(widget=forms.HiddenInput())
     
