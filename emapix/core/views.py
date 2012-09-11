@@ -483,6 +483,40 @@ TEMP_DN2 = """{% for (var i=0, file; file=o.files[i]; i++) { %}
 </div>
 {% } %}"""
 
+
+def submit_select(request, res):
+    "Displays file form or uploads file to S3"
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    if request.method == "POST":
+        pass    # Finish    # Redirect to "/submit/crop/" + res
+    else:
+        form   = UploadFileForm()
+    c["form"]       = ""
+    c["resource"]   = res
+    c["temp_up"]    = TEMP_UP2
+    c["temp_dn"]    = TEMP_DN2
+    return render(request, 'submit_select.html', c)    
+    
+
+def submit_crop(request, res):
+    "Displays crop form or crops uploaded image"
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    if request.method == "POST":
+        pass    # Finish    # Redirect to "/submit/create/" + res
+    else:
+        pass
+
+
+def submit_create(request, res):
+    "Creates images of different sizes"
+
+
 # XXX: Refactor !!!
 def submit2(request):
     # Testing file uploading
@@ -504,8 +538,6 @@ def submit2(request):
                 w   = crop_form.cleaned_data["w"]
                 #if not (x and y and h and w):
                 #    return HttpResponseRedirect("/submit2") # Error
-            
-                logger.debug("x=%s; y=%s; h=%s, w=%s, src=%s" % (x, y, h, w, img_src))
             
                 # XXX: Keep selection if something went wrong
                 

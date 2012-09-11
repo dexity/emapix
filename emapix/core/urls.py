@@ -1,6 +1,6 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from emapix.utils.const import USERNAME_REGEX
+from emapix.utils.const import USERNAME_REGEX, REQ_REGEX
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
 
 urlpatterns = patterns('emapix.core.views',
@@ -14,14 +14,18 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^logout$', 'logout'),
     url(r'^password/renew/(\w{40})$', 'renew_password'),
     url(r'^request/make$', 'make_request'),
-    url(r'^request/(\w{16})$', 'get_request'),
+    url(r'^request/%s$' % REQ_REGEX, 'get_request'),
     url(r'^requests$', 'get_requests'),
-    url(r'^submit/(\w{16})$', 'submit'),
+    url(r'^submit/%s$' % REQ_REGEX, 'submit'),
     url(r'^user/(?P<username>(%s))$' % uregex, 'get_user'),
+    url(r'^submit/select/%s$' % REQ_REGEX, 'submit_select'),
+    url(r'^submit/crop/%s$' % REQ_REGEX, 'submit_crop'),
+    url(r'^submit/create/%s$' % REQ_REGEX, 'submit_create'),
+    
     # Ajax
     url(r'^request/add$', 'add_request'),
-    url(r'^request/info/(\w{16})$', 'request_info'),
-    url(r'^request/(\w{16})/remove$', 'remove_request'),
+    url(r'^request/info/%s$' % REQ_REGEX, 'request_info'),
+    url(r'^request/%s/remove$' % REQ_REGEX, 'remove_request'),
     # Json
     url(r'^request/all/json$', 'get_requests_json'),
     

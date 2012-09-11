@@ -5,6 +5,7 @@ FAIL    = "fail"
 
 PASSWORD_REGEX  = "^[A-Za-z0-9]{6,30}$" # XXX: Change password regex
 USERNAME_REGEX  = "^[A-Za-z0-9]{5,}$"
+REQ_REGEX       = "(\w{16})"
 
 IMAGE_CONTENT_TYPES = [
     "image/jpeg",

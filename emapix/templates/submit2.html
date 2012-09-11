@@ -14,14 +14,13 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 <div class="clear_both"></div>
 <form id="fileupload" action="/submit2" method="POST">
     {% csrf_token %}
-    <span class="btn btn-primary fileinput-button">
-        <span>Select File</span>
-        <input type="file" name="files[]">
-    </span>
-    <!--{{ form.files }}-->
     <table role="presentation" class="table table-striped">
         <tbody class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></tbody>
     </table>
+    <span class="btn btn-primary fileinput-button" id="select_file">
+        <span>Select File</span>
+        <input type="file" name="files[]">
+    </span>
 </form>
 
 <div class="clear_both"></div>
@@ -32,14 +31,13 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 {{ temp_dn|safe }}
 </script>
 
-<!--<img src="http://localhost/media/temp/pic.png" id="cropbox">-->
-
 <div class="clear_both"></div>
 {% if crop_form %}
-<form id="fileupload" action="/submit2" method="POST">
+<form id="cropper" action="/submit2" method="POST" style="display: none">
     {% csrf_token %}
     {{ crop_form }}
     <button type="submit" class="btn btn-primary">Crop</button>
+    <a href="" onclick="select_file(event)" style="margin-left: 50px">Select different file</a>
 </form>
 {% endif %}
 
@@ -69,8 +67,13 @@ function updateCoords(c)
     $('input[name=h]').val(c.h);
 }
 
+function select_file(e) {
+    e.preventDefault();
+    $("#select_file").click();
+}
 
 function set_cropper() {
+    $("#cropper").show();
     $('#cropbox').Jcrop({
         aspectRatio: 1,
         onSelect: updateCoords
@@ -82,9 +85,12 @@ function set_cropper() {
 $(function () {
     'use strict';
 
-    // Initialize the jQuery File Upload widget:
+    // Initialize the jQuery File Upload widget
     $('#fileupload').fileupload({
-        autoUpload: true
+        autoUpload: true,
+        //maxNumberOfFiles: 1
+        //singleFileUploads: false,
+        //limitMultiFileUploads: 1
         // XXX: Set so that only 1 file can be displayed for upload
     })
     .bind('fileuploaddone', function (e, data) {
@@ -101,7 +107,7 @@ $(function () {
                 {
                     action: 'load',
                     fileTypes: /^image\/(jpeg|png)$/,
-                    maxFileSize: 20000000 // 20MB
+                    maxFileSize: 10000000 // 20MB
                 },
                 {
                     action: 'resize',
