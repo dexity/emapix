@@ -471,17 +471,44 @@ TEMP_DN = """{% for (var i=0, file; file=o.files[i]; i++) { %}
 {% } %}"""
 
 TEMP_UP2 = """{% for (var i=0, file; file=o.files[i]; i++) { %}
-<div class="progress progress-success progress-striped active"
-    role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
-    <div class="bar" style="width:0%;"></div>
-</div>
+{% if (file.error) { %}
+    <div class="e-margin-top-10">
+        <div class="alert alert-error">{%=locale.fileupload.errors[file.error] || file.error%}</div>
+    </div>
+{% } else if (o.files.valid && !i) { %}
+    <td>
+        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
+            <div class="bar" style="width:0%;"></div>
+        </div>
+    </td>
+{% } else { %}
+    <td colspan="2"></td>
+{% } %}
+
 {% } %}"""
+
+TEMP_UP3 = """{%=file=o.files[0]%}
+{% if (file.error) { %}
+    <div class="e-margin-top-10">
+        <div class="alert alert-error">{%=locale.fileupload.errors[file.error] || file.error%}</div>
+    </div>
+{% } else if (o.files.valid && !i) { %}
+    <td>
+        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
+            <div class="bar" style="width:0%;"></div>
+        </div>
+    </td>
+{% } else { %}
+    <td colspan="2"></td>
+{% } %}
+"""
 
 TEMP_DN2 = """{% for (var i=0, file; file=o.files[i]; i++) { %}
 <div style="margin-top: 20px">
     <img src="{%=file.url%}" id="cropbox"/>
 </div>
 {% } %}"""
+
 
 
 def submit_select(request, res):
@@ -491,12 +518,52 @@ def submit_select(request, res):
     else:
         c   = {}
     if request.method == "POST":
-        pass    # Finish    # Redirect to "/submit/crop/" + res
+        # Upload image
+        fd  = request.FILES["files[]"]
+        cont_type   = fd.content_type
+        filename    = fd.name
+        try:
+            IMAGE_TYPES = {
+                "image/jpeg":   "jpg",
+                "image/png":    "png"
+            }
+            # XXX: Refactor to file handler!
+            # "/var/emapix/static/temp"         - directory
+            # "http://localhost/media/temp/"    - URL
+            loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
+            f   = open(loc, "wb+")
+            for chunk in fd.chunks():
+                f.write(chunk);
+            f.close()
+        except Exception, e:
+            logger.debug(str(e))
+        resp    = {}
+        resp["error"]   = "File is empty"
+        resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
+        resp["thumbnail_url"] = ""
+        resp["name"] = fd.name
+        resp["type"] = cont_type
+        resp["size"] = fd.size
+        resp["delete_url"] = ""
+        resp["delete_type"] = "DELETE"
+        
+        #form   = UploadFileForm(request.POST, request.FILES)
+        #if form.is_valid():
+        #    fd  = request.FILES['file']
+        #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
+        #        # Return error
+        #        pass
+        #    handle_uploaded_file(fd)
+        #
+        ## XXX: Set to S3 url for preview image
+        #c["preview_url"]    = ""            
+        
+        return HttpResponse(json.dumps([resp]), mimetype="application/json")
     else:
         form   = UploadFileForm()
-    c["form"]       = ""
+    c["form"]       = form
     c["resource"]   = res
-    c["temp_up"]    = TEMP_UP2
+    c["temp_up"]    = TEMP_UP3
     c["temp_dn"]    = TEMP_DN2
     return render(request, 'submit_select.html', c)    
     

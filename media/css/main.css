@@ -146,39 +146,42 @@ a img {
     -webkit-border-radius:5px;
 }
 .e-request-info {
-	margin-top: 10px;
-	margin-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 .e-time {
-	font-style: italic;
-	color: #999;
+    font-style: italic;
+    color: #999;
 }
 .e-control-options {
-	margin-top: 30px;
+    margin-top: 30px;
 }
 .e-control-options .e-red-option {
     float: right;
 }
 .e-photo-row {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 .e-search-query {
-	font-size: 17px;
-	margin-left: 20px;
-	padding-top: 5px;
+    font-size: 17px;
+    margin-left: 20px;
+    padding-top: 5px;
 }
 .e-padding-top-5 {
-	padding-top: 5px;
+    padding-top: 5px;
 }
 .e-margin-bottom-10 {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
+}
+.e-margin-top-10 {
+    margin-top: 10px;
 }
 .e-margin-bottom-20 {
     margin-bottom: 20px;
 }
 .e-photo-large {
-	width: 460px
-	height: 460px;
+    width: 460px
+    height: 460px;
 }
 
 /* Form */
@@ -188,14 +191,14 @@ a img {
 }
 
 .e-text-small {
-	font-size: 11px;
+    font-size: 11px;
 }
 .e-checkbox {
-	margin-top: -5px;
+    margin-top: -5px;
 }
 .e-users-stat {
-	float:left;
-	margin-left: 5px;
+    float:left;
+    margin-left: 5px;
 }
 
 #submit_body {
