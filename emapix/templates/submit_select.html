@@ -11,22 +11,19 @@
 Photo can be up to 5Mb and in JPEG or PNG formats.
 </div>
 <div class="clear_both"></div>
-<form id="fileupload" action="/submit/select/{{resource}}" method="POST">
+<form id="fileupload">
     {% csrf_token %}
     <span class="btn btn-primary fileinput-button" id="select_file">
         <span>Select File</span>
-        <input type="file" name="files[]">
+        <input type="file" name="file">
     </span>
-    <div class="clear_both"></div>
-    <div class="files" data-toggle="modal-gallery" data-target="#modal-gallery"></div>
 </form>
+<div class="clear_both"></div>
+<div id="files_container"></div>
 
 <div class="clear_both"></div>
-<script id="template-upload" type="text/x-tmpl">
+<script id="template-content" type="text/x-tmpl">
 {{ temp_up|safe }}
-</script>
-<script id="template-download" type="text/x-tmpl">
-<!--{{ temp_dn|safe }}-->
 </script>
 
 {% endblock content %}
@@ -47,19 +44,54 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 $(function () {
     'use strict';
 
-    // Initialize the jQuery File Upload widget
+    // Initialize the jQuery file upload widget
     $('#fileupload').fileupload({
         autoUpload: true,
+        uploadTemplateId: "template-content",
+        downloadTemplateId: "template-content",
+        filesContainer: $("#files_container"),
+        add:    function(e, data) {
+            var that    = $(this).data('fileupload'),
+                options = that.options,
+                files   = data.files;
+            $(this).fileupload('process', data).done(function () {
+                that._adjustMaxNumberOfFiles(-files.length);
+                data.maxNumberOfFilesAdjusted = true;
+                data.files.valid = data.isValidated = that._validate(files);
+                data.context = that._renderUpload(files).data('data', data);
+                
+                options.filesContainer.html(data.context);  // Replace files container
+
+                that._renderPreviews(files, data.context);
+                that._forceReflow(data.context);
+                that._transition(data.context).done(
+                    function () {
+                        if ((that._trigger('added', e, data) !== false) &&
+                                (options.autoUpload || data.autoUpload) &&
+                                data.autoUpload !== false && data.isValidated) {
+                            data.submit();
+                        }
+                    }
+                );
+            });
+        }
     })
-    .bind('fileuploaddone', function (e, data) {
-        console.debug(data);
-        //window.location.href = "/submit/crop/{{resource}}";
-        });
+    .bind("fileuploaddone", function(e, data){
+        var has_error = false;
+        if ($.isArray(data.result)) {
+            $.each(data.result, function (index, file) {
+                if (file.error)
+                    has_error = true;
+            });
+        }
+        if (!has_error)
+            window.location.href="/requests";
+    });
 
     $('#fileupload').fileupload('option', {
         url: '/submit/select/{{resource}}',
         maxFileSize: 5000000,
-        minFileSize: 1000,
+        minFileSize: 100,
         acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,
         process: [
             {

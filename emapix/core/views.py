@@ -1,3 +1,4 @@
+
 import time
 
 from django.http import HttpResponse, HttpResponseRedirect
@@ -470,37 +471,24 @@ TEMP_DN = """{% for (var i=0, file; file=o.files[i]; i++) { %}
     </tr>
 {% } %}"""
 
-TEMP_UP2 = """{% for (var i=0, file; file=o.files[i]; i++) { %}
+TEMP_UP3 = """{% var file=o.files[0]; %}
 {% if (file.error) { %}
     <div class="e-margin-top-10">
-        <div class="alert alert-error">{%=locale.fileupload.errors[file.error] || file.error%}</div>
-    </div>
-{% } else if (o.files.valid && !i) { %}
-    <td>
-        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
-            <div class="bar" style="width:0%;"></div>
+        <div class="alert alert-error">
+            <a href="#" class="close" data-dismiss="alert">x</a>
+            {%=locale.fileupload.errors[file.error] || file.error%}
         </div>
-    </td>
-{% } else { %}
-    <td colspan="2"></td>
-{% } %}
-
-{% } %}"""
-
-TEMP_UP3 = """{%=file=o.files[0]%}
-{% if (file.error) { %}
-    <div class="e-margin-top-10">
-        <div class="alert alert-error">{%=locale.fileupload.errors[file.error] || file.error%}</div>
     </div>
-{% } else if (o.files.valid && !i) { %}
-    <td>
-        <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
-            <div class="bar" style="width:0%;"></div>
-        </div>
-    </td>
-{% } else { %}
-    <td colspan="2"></td>
+{% } else if (o.files.valid) { %}
+    <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
+        <div class="bar" style="width:0%;"></div>
+    </div>
 {% } %}
+"""
+
+TEMP_UP4    = """
+{% var file=o.files[0]; %}
+<div>{%=file.fileName%} {%=locale.fileupload.errors[file.error]%}</div>
 """
 
 TEMP_DN2 = """{% for (var i=0, file; file=o.files[i]; i++) { %}
@@ -519,7 +507,7 @@ def submit_select(request, res):
         c   = {}
     if request.method == "POST":
         # Upload image
-        fd  = request.FILES["files[]"]
+        fd  = request.FILES["file"]
         cont_type   = fd.content_type
         filename    = fd.name
         try:
