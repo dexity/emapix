@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block header %}
+<link rel="stylesheet" href="/media/jcrop/css/jquery.Jcrop.css" type="text/css" />
+    
+{% endblock header %}
+
+{% block content %}
+
+<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
+Photo can be up to 5Mb and in JPEG or PNG formats.
+</div>
+<div class="clear_both"></div>
+<img src="{{img_src}}" id="cropbox"/>
+{% if crop_form %}
+<form id="cropper_form">
+    {% csrf_token %}
+    {{ crop_form }}
+</form>
+
+<div id="errors_container"></div>
+
+<div style="margin-top: 20px;">
+    <button class="btn btn-primary" onclick="submit_crop()">Crop</button>
+    <a href="/submit/select/{{resource}}" onclick="select_file(event)" style="margin-left: 50px;">Select different file</a>
+</div>
+{% endif %}
+
+{% endblock content %}
+
+{% block footer %}
+<script src="/media/jcrop/js/jquery.Jcrop.js"></script>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+    set_cropper();
+});
+
+function set_error(error)
+{
+    s   = '<div class="alert alert-error">';
+    s   += '<a href="#" class="close" data-dismiss="alert">×</a>';
+    s   += '<span id="error_msg">' + error + '</span>';
+    s   += '</div>';
+
+    $("#errors_container").html(s);
+}
+
+function submit_crop()
+{
+    $.post("/submit/crop/{{resource}}",
+        $("#cropper_form").serialize(),
+        function(data){
+            if (data.error)
+                set_error(data.error);
+            else if (data.resource)
+                window.location.href="/submit/create/" + data.resource;
+            else
+                set_error("Something wrong happend");
+        });    
+}
+
+function updateCoords(c)
+{
+    $('input[name=x]').val(c.x);
+    $('input[name=y]').val(c.y);
+    $('input[name=w]').val(c.w);
+    $('input[name=h]').val(c.h);
+}
+
+function select_file(e) {
+    //e.preventDefault();
+    //$("#select_file").click();
+}
+
+function set_cropper() {
+    //$("#cropper").show();
+    $('#cropbox').Jcrop({
+        aspectRatio: 1,
+        onSelect: updateCoords
+    });
+    //var img_src = $('#cropbox').attr("src");
+    //$("input[name=img_src]").val(img_src);
+}
+</script>
+
+{% endblock footer %}

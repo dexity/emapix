@@ -33,7 +33,7 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 <script src="/media/fileuploader/js/misc/tmpl.js"></script>
 <script src="/media/fileuploader/js/misc/load-image.min.js"></script>
 <script src="/media/fileuploader/js/misc/canvas-to-blob.min.js"></script>
-<script src="/media/fileuploader/js/misc/jquery.iframe-transport.js"></script>
+<!--<script src="/media/fileuploader/js/misc/jquery.iframe-transport.js"></script>-->
 <script src="/media/fileuploader/js/jquery.fileupload.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
@@ -85,7 +85,7 @@ $(function () {
             });
         }
         if (!has_error)
-            window.location.href="/requests";
+            window.location.href="/submit/crop/{{resource}}";
     });
 
     $('#fileupload').fileupload('option', {
@@ -113,8 +113,6 @@ $(function () {
 });
     
 </script>
-
-<!--[if gte IE 8]><script src="/media/fileuploader/js/cors/jquery.xdr-transport.js"></script><![endif]-->
 
 
 {% endblock footer %}

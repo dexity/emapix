@@ -461,7 +461,7 @@ def submit_select(request, res):
         except Exception, e:
             logger.debug(str(e))
         resp    = {}
-        resp["error"]   = "File is empty"
+        #resp["error"]   = "File is empty"
         resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
         resp["thumbnail_url"] = ""
         resp["name"] = fd.name
@@ -497,13 +497,50 @@ def submit_crop(request, res):
     else:
         c   = {}
     if request.method == "POST":
-        pass    # Finish    # Redirect to "/submit/create/" + res
-    else:
-        pass
+        # Crop image
+        crop_form   = CropForm(request.POST)
+        if crop_form.is_valid():
+            img_src   = "http://localhost/media/temp/pic.jpg" #crop_form.cleaned_data["img_src"]
+            x   = crop_form.cleaned_data["x"]
+            y   = crop_form.cleaned_data["y"]
+            h   = crop_form.cleaned_data["h"]
+            w   = crop_form.cleaned_data["w"]
+            #if not (x and y and h and w):
+            #    return HttpResponseRedirect("/submit2") # Error
+        
+            # XXX: Keep selection if something went wrong
+            
+            crop_image(img_src, (x, y, w, h))
+            
+            resp    = {"resource": res}
+            return HttpResponse(json.dumps(resp), mimetype="application/json")
+            #return HttpResponseRedirect("/submit/create/%s" % res)
+        
+        resp    = {"error": "Hello"}
+        # resp["resource"]  = res
+        
+        return HttpResponse(json.dumps(resp), mimetype="application/json")
+
+    # Take width and height from db record
+    # If width < 460 and height < 460
+    #   redirect to create page "/submit/create/%s" % res
+    crop_form   = CropForm()
+    c["crop_form"]  = crop_form
+    c["resource"]   = res
+    c["img_src"]    = "http://localhost/media/temp/pic.jpg"
+    return render(request, 'submit_crop.html', c)
 
 
 def submit_create(request, res):
     "Creates images of different sizes"
+    if request.user.is_authenticated():
+        c   = {"username": request.user}
+    else:
+        c   = {}
+    if request.method == "POST":
+        pass
+    c["img_src"]    = "http://localhost/media/temp/cropped_pic.jpg"
+    return render(request, 'submit_create.html', c)    
 
 
 # XXX: Refactor !!!
