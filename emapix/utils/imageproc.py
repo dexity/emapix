@@ -25,3 +25,17 @@ def crop_image(url, select_box):
         loc     = "/var/emapix/static/temp/cropped_pic." + IMAGE_TYPES[type]
         res     = im2.save(loc, im1.format)      
         
+        
+#class Thread
+
+def resize_images(url):
+    # Create 3 images in parallel:
+    "pic_small.jpg"     # 50x50
+    "pic_medium.jpg"    # 200x200
+    "pic_large.jpg"     # 460x460
+
+
+def resize_image(in_url, out_url):
+    """
+    """
+    

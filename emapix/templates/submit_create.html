@@ -5,8 +5,24 @@
 <form id="create_form">
     {% csrf_token %}
 </form>
+
+<div id="errors_container"></div>
 <div style="margin-top: 20px;">
-    <button class="btn btn-primary" onclick="submit_create()">Submit Image</button>
-    <a href="/submit/select/{{resource}}" onclick="select_file(event)" style="margin-left: 50px;">Select different file</a>
+    <button class="btn btn-primary" id="submit_image">Submit Image</button>
+    <a href="/submit/select/{{resource}}" style="margin-left: 50px;">Select different file</a>
 </div>
 {% endblock content %}
+
+{% block footer %}
+<script type="text/javascript">
+    $("#submit_image").click(function(){
+        $.post("/submit/create/{{resource}}",
+             $("#create_form").serialize(),
+             function(data) {
+                 if (data.error)
+                     set_error(data.error);
+             });
+    })
+
+</script>
+{% endblock footer%}

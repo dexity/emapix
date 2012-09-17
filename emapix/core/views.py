@@ -538,8 +538,15 @@ def submit_create(request, res):
     else:
         c   = {}
     if request.method == "POST":
-        # Create 4 images in parallel:
-        pass
+        resp    = {}
+        #try:
+        #    url = "http://localhost/media/temp/cropped_pic.jpg"
+        #    resize_images(url)
+        #except Exception, e:
+        #    resp["error"]   = str(e)
+        resp["error"]   = "Some error"
+        return HttpResponse(json.dumps(resp), mimetype="application/json")
+        
     c["resource"]   = res
     c["img_src"]    = "http://localhost/media/temp/cropped_pic.jpg"
     return render(request, 'submit_create.html', c)    

@@ -15,6 +15,20 @@ var month_days = {
     "DEC":  31,
 }
 
+function set_error(error_msg, container)
+{
+    var c   = container;
+    if (c === undefined)
+        c   = $("#errors_container");
+        
+    var s   = '<div class="alert alert-error">';
+    s   += '<a href="#" class="close" data-dismiss="alert">×</a>';
+    s   += '<span id="error_msg">' + error_msg + '</span>';
+    s   += '</div>';
+
+    c.html(s);
+}
+
 
 
 
