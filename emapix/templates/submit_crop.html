@@ -11,7 +11,7 @@
 Photo can be up to 5Mb and in JPEG or PNG formats.
 </div>
 <div class="clear_both"></div>
-<img src="{{img_src}}" id="cropbox"/>
+<img src="{{img_src}}" id="cropbox" />
 {% if crop_form %}
 <form id="cropper_form">
     {% csrf_token %}
@@ -33,13 +33,17 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 
 <script type="text/javascript">
 
-$(document).ready(function(){
+var jcrop_api;
+var MSIZE    = 460;
+
+//$(document).ready(function(){
+$(window).load(function(){
     set_cropper();
 });
 
 function set_error(error)
 {
-    s   = '<div class="alert alert-error">';
+    var s   = '<div class="alert alert-error">';
     s   += '<a href="#" class="close" data-dismiss="alert">×</a>';
     s   += '<span id="error_msg">' + error + '</span>';
     s   += '</div>';
@@ -69,19 +73,42 @@ function updateCoords(c)
     $('input[name=h]').val(c.h);
 }
 
-function select_file(e) {
-    //e.preventDefault();
-    //$("#select_file").click();
+function getAspectRatio(bounds) {
+    return bounds[0] > MSIZE && bounds[1] > MSIZE ? 1 : undefined;
+}
+function getSelect(bounds) {
+    var x2 = bounds[0] > MSIZE ? MSIZE : bounds[0],
+        y2 = bounds[1] > MSIZE ? MSIZE : bounds[1];
+    return [0, 0, x2, y2];
+}
+function getMinSize(bounds) {
+    var w = bounds[0] > MSIZE ? MSIZE : bounds[0],
+        h = bounds[1] > MSIZE ? MSIZE : bounds[1];
+    return [w, h];
+}
+function getMaxSize(bounds) {
+    var aspect  = getAspectRatio(bounds);
+    if (aspect == 1) {
+        var w = bounds[0] > MSIZE ? bounds[0] : MSIZE,
+            h = bounds[1] > MSIZE ? bounds[1] : MSIZE;
+        return [w, h];
+    } else {
+        return getMinSize(bounds);
+    }
+    
 }
 
 function set_cropper() {
-    //$("#cropper").show();
-    $('#cropbox').Jcrop({
-        aspectRatio: 1,
-        onSelect: updateCoords
+
+    jcrop_api   = $.Jcrop('#cropbox');
+    var bounds  = jcrop_api.getBounds();
+    jcrop_api.setOptions({
+        aspectRatio: getAspectRatio(bounds),
+        setSelect:  getSelect(bounds),
+        minSize:    getMinSize(bounds),
+        maxSize:    getMaxSize(bounds),
+        onSelect:   updateCoords
     });
-    //var img_src = $('#cropbox').attr("src");
-    //$("input[name=img_src]").val(img_src);
 }
 </script>
 

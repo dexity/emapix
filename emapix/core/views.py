@@ -538,7 +538,9 @@ def submit_create(request, res):
     else:
         c   = {}
     if request.method == "POST":
+        # Create 4 images in parallel:
         pass
+    c["resource"]   = res
     c["img_src"]    = "http://localhost/media/temp/cropped_pic.jpg"
     return render(request, 'submit_create.html', c)    
 

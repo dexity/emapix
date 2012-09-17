@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<img src="{{img_src}}" />
+<form id="create_form">
+    {% csrf_token %}
+</form>
+<div style="margin-top: 20px;">
+    <button class="btn btn-primary" onclick="submit_create()">Submit Image</button>
+    <a href="/submit/select/{{resource}}" onclick="select_file(event)" style="margin-left: 50px;">Select different file</a>
+</div>
+{% endblock content %}
