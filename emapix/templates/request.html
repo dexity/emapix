@@ -83,7 +83,8 @@
 <div class="row">
     <div class="span6">
 	{% if username|stringformat:"s" == req.user.username %}
-        <button class="btn btn-success" onclick="submit_photo()"><b>Submit Photo</b></button>
+	<img src="/media/temp/pic_large.jpg" width="460" height="460" />
+        <!--<button class="btn btn-success" onclick="submit_photo()"><b>Submit Photo</b></button>-->
 	<!-- Modal -->
 	<div id="submit_modal" class="modal hide fade">
 	    <div class="modal-header">
@@ -124,9 +125,12 @@
             </div>
         </div>
         <div class="row e-control-options">
-            <div class="span3 pull-left"></div>
+            <div class="span3 pull-left">
+		<a href="/submit/select/{{ req.resource }}" >Submit different photo</a>
+	    </div>
 	    {% csrf_token %}
             <div class="span3 pull-right">
+		
 		{% if username|stringformat:"s" == req.user.username %}
                 <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
 		{% endif %}

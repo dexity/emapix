@@ -17,11 +17,13 @@
 <script type="text/javascript">
     $("#submit_image").click(function(){
         $.post("/submit/create/{{resource}}",
-             $("#create_form").serialize(),
-             function(data) {
-                 if (data.error)
-                     set_error(data.error);
-             });
+            $("#create_form").serialize(),
+            function(data) {
+                if (data.error)
+                    set_error(data.error);
+                else
+                    window.location.href = "/request/{{resource}}";
+            });
     })
 
 </script>

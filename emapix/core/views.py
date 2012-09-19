@@ -14,7 +14,7 @@ import django.contrib.auth as django_auth
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, handle_uploaded_file
 from emapix.utils.format import *
-from emapix.utils.imageproc import crop_image
+from emapix.utils.imageproc import url_crop_image, proc_images
 from emapix.core.forms import *
 from emapix.core.models import *
 from emapix.core.dbutils import db_remove_request
@@ -510,7 +510,7 @@ def submit_crop(request, res):
         
             # XXX: Keep selection if something went wrong
             
-            crop_image(img_src, (x, y, w, h))
+            url_crop_image(img_src, (x, y, w, h))
             
             resp    = {"resource": res}
             return HttpResponse(json.dumps(resp), mimetype="application/json")
@@ -539,12 +539,12 @@ def submit_create(request, res):
         c   = {}
     if request.method == "POST":
         resp    = {}
-        #try:
-        #    url = "http://localhost/media/temp/cropped_pic.jpg"
-        #    resize_images(url)
-        #except Exception, e:
-        #    resp["error"]   = str(e)
-        resp["error"]   = "Some error"
+        try:
+            #url = "http://localhost/media/temp/cropped_pic.jpg"
+            proc_images()
+            resp["status"]  = "ok"
+        except Exception, e:
+            resp["error"]   = str(e)
         return HttpResponse(json.dumps(resp), mimetype="application/json")
         
     c["resource"]   = res
@@ -576,7 +576,7 @@ def submit2(request):
             
                 # XXX: Keep selection if something went wrong
                 
-                crop_image(img_src, (x, y, w, h))
+                url_crop_image(img_src, (x, y, w, h))
             
             return HttpResponseRedirect("/submit2")            
         else:
