@@ -20,6 +20,7 @@ from emapix.core.models import *
 from emapix.core.dbutils import db_remove_request
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
+from emapix.utils.amazon_s3 import s3_upload_file
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -443,29 +444,28 @@ def submit_select(request, res):
     if request.method == "POST":
         # Upload image
         fd  = request.FILES["file"]
-        cont_type   = fd.content_type
-        filename    = fd.name
+
         try:
             IMAGE_TYPES = {
                 "image/jpeg":   "jpg",
                 "image/png":    "png"
             }
-            # XXX: Refactor to file handler!
-            # "/var/emapix/static/temp"         - directory
-            # "http://localhost/media/temp/"    - URL
-            loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
-            f   = open(loc, "wb+")
-            for chunk in fd.chunks():
-                f.write(chunk);
-            f.close()
+            filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
+            s3_upload_file(fd, filename)
+            
+            #f   = open(loc, "wb+")
+            #for chunk in fd.chunks():
+            #    f.write(chunk);
+            #f.close()
         except Exception, e:
             logger.debug(str(e))
+            return HttpResponse(json.dumps([{"error": str(e)}]), mimetype="application/json")
+        
         resp    = {}
-        #resp["error"]   = "File is empty"
         resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
         resp["thumbnail_url"] = ""
         resp["name"] = fd.name
-        resp["type"] = cont_type
+        resp["type"] = fd.content_type
         resp["size"] = fd.size
         resp["delete_url"] = ""
         resp["delete_type"] = "DELETE"
@@ -500,7 +500,7 @@ def submit_crop(request, res):
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
-            img_src   = "http://localhost/media/temp/pic.jpg" #crop_form.cleaned_data["img_src"]
+            img_src   = "pic.jpg" #crop_form.cleaned_data["img_src"]
             x   = crop_form.cleaned_data["x"]
             y   = crop_form.cleaned_data["y"]
             h   = crop_form.cleaned_data["h"]
@@ -527,7 +527,7 @@ def submit_crop(request, res):
     crop_form   = CropForm()
     c["crop_form"]  = crop_form
     c["resource"]   = res
-    c["img_src"]    = "http://localhost/media/temp/pic.jpg"
+    c["img_src"]    = "https://s3.amazonaws.com/emapix_uploads_test/pic.jpg"    # XXX: Create link
     return render(request, 'submit_crop.html', c)
 
 
@@ -548,7 +548,7 @@ def submit_create(request, res):
         return HttpResponse(json.dumps(resp), mimetype="application/json")
         
     c["resource"]   = res
-    c["img_src"]    = "http://localhost/media/temp/cropped_pic.jpg"
+    c["img_src"]    = "https://s3.amazonaws.com/emapix_uploads_test/cropped_pic.jpg"
     return render(request, 'submit_create.html', c)    
 
 

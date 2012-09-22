@@ -4,7 +4,7 @@ import urllib2
 import threading
 import Queue
 import time
-
+from emapix.utils.amazon_s3 import s3_upload_file, s3_download_file
 
 IMAGE_TYPES = {
     "image/jpeg":   "jpg",
@@ -13,22 +13,27 @@ IMAGE_TYPES = {
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.imageproc")
 
-def url_crop_image(url, select_box):
+def url_crop_image(img_src, select_box):
     """
     url     - url of image
     select_box    - tuple of left upper corner coordinates, widht and height
     """
     (x, y, w, h)    = select_box
-    resp    = urllib2.urlopen(url)
-    headers = resp.info()
-    type    = headers["Content-Type"]
-    if type in IMAGE_TYPES:
-        fd      = resp.read()   # Throws exception
-        im1     = Image.open(StringIO.StringIO(fd))
-        im2     = im1.crop((x, y, x + w, y + h))
-        loc     = "/var/emapix/static/temp/cropped_pic." + IMAGE_TYPES[type]
-        res     = im2.save(loc, im1.format)      
-
+    
+    # Download image from Amazon S3
+    fd  = StringIO.StringIO()
+    content_type    = s3_download_file(fd, img_src)
+    fd.seek(0)
+    im1     = Image.open(fd)
+    im2     = im1.crop((x, y, x + w, y + h))
+    fd.close()
+    
+    # Upload cropped image to Amazon S3
+    fd      = StringIO.StringIO()
+    im2.save(fd, im1.format)
+    fd.seek(0)
+    filename    = "cropped_pic." + IMAGE_TYPES[content_type]    # XXX: Might not be a valid content type
+    s3_upload_file(fd, filename, content_type)     
 
 
 class ImageThread(threading.Thread):
