@@ -43,11 +43,17 @@ def s3_download_file(fd, s3_filename):
         k   = Key(b)
         k.key   = s3_filename
         k.get_contents_to_file(fd)
+        fd.seek(0)
         return k.content_type
     except Exception, e:
         logger.debug(str(e))
     return None
 
+
+def s3_key2url(key):
+    "Returns url for the Amazon S3 key"
+    return "https://s3.amazonaws.com/%s/%s" % (BUCKET_NAME, key)
+    
 
 def resource2key(resource):
     return resource + ".jpg"

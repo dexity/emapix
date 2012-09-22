@@ -83,7 +83,7 @@
 <div class="row">
     <div class="span6">
 	{% if username|stringformat:"s" == req.user.username %}
-	<img src="/media/temp/pic_large.jpg" width="460" height="460" />
+	<img src="{{pic_url}}" width="460" height="460" />
         <!--<button class="btn btn-success" onclick="submit_photo()"><b>Submit Photo</b></button>-->
 	<!-- Modal -->
 	<div id="submit_modal" class="modal hide fade">

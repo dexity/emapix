@@ -20,10 +20,9 @@ def url_crop_image(img_src, select_box):
     """
     (x, y, w, h)    = select_box
     
-    # Download image from Amazon S3
+    # Download selected image from Amazon S3
     fd  = StringIO.StringIO()
     content_type    = s3_download_file(fd, img_src)
-    fd.seek(0)
     im1     = Image.open(fd)
     im2     = im1.crop((x, y, x + w, y + h))
     fd.close()
@@ -32,7 +31,7 @@ def url_crop_image(img_src, select_box):
     fd      = StringIO.StringIO()
     im2.save(fd, im1.format)
     fd.seek(0)
-    filename    = "cropped_pic." + IMAGE_TYPES[content_type]    # XXX: Might not be a valid content type
+    filename    = "cropped_pic." + IMAGE_TYPES[content_type]
     s3_upload_file(fd, filename, content_type)     
 
 
@@ -50,7 +49,7 @@ class ImageThread(threading.Thread):
 
 def proc_images():
     queue = Queue.Queue()
-    params  = ((460, "pic_large.jpg"), (200, "pic_medium.jpg"), (50, "pic_small.jpg"))
+    params  = ((460, "pic_large"), (200, "pic_medium"), (50, "pic_small"))
     for param in params:
         tm  = ImageThread(queue)
         tm.setDaemon(True)
@@ -72,16 +71,18 @@ def resize_image(img, size):
     return img.resize(size)
 
 
-def proc_image(dim, filename):
+def proc_image(dim, fname_base):
     "Processes image based on dimension and image size"
-    # XXX: Load from S3
+    # Download from S3
+    fd  = StringIO.StringIO()
+    content_type    = s3_download_file(fd, "cropped_pic.jpg")
     
-    img     = Image.open("/var/emapix/static/temp/cropped_pic.jpg")
-    fmt     = img.format
+    img     = Image.open(fd)
+    fmt     = img.format    # "JPEG", "PNG"
     (iw, ih)    = img.size
     
-    # dim > iw and dim > ih: # small image
-    
+    # For small image (dim > iw and dim > ih) no image processing is needed
+    # Process image
     if dim > iw and dim < ih:       # tall image
         img = crop_image(img, (iw, dim))
     elif dim < iw and dim > ih:     # wide image
@@ -93,6 +94,10 @@ def proc_image(dim, filename):
             img = crop_image(img, (iw, iw))
         img = resize_image(img, (dim, dim))
         
-    # XXX: Store in S3
-    img.save("/var/emapix/static/temp/%s" % filename, fmt)     # save image
+    # Upload to S3
+    fd      = StringIO.StringIO()
+    img.save(fd, fmt)
+    fd.seek(0)
+    filename    = "%s.%s" % (fname_base, IMAGE_TYPES[content_type])
+    s3_upload_file(fd, filename, content_type)
     
