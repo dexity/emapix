@@ -12,6 +12,11 @@ IMAGE_CONTENT_TYPES = [
     "image/png"
 ]
 
+IMAGE_TYPES = {
+    "image/jpeg":   "jpg",
+    "image/png":    "png"
+}
+                
 GENDER_CHOICES = (
     ("m", "Male"),
     ("f", "Female"),

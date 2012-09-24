@@ -439,65 +439,72 @@ TEMP_UP = """{% var file=o.files[0]; %}
 
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
-    if request.method == "POST":
+    if not request.user.is_authenticated():
+        error_msg   = "You need to be logged in to submit photo"
+        return render(request, "ajax/error.html", {"error": error_msg})
+    
+    user    = request.user
+    
+    if request.method == "POST":    # Ajax request
         # Upload image
-        fd  = request.FILES["file"]
-
-        try:
-            IMAGE_TYPES = {
-                "image/jpeg":   "jpg",
-                "image/png":    "png"
-            }
-            filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
-            s3_upload_file(fd, filename)
+        form   = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fd  = request.FILES["file"]
+            try:
+                filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
+                s3_upload_file(fd, filename)
+                
+                #f   = open(loc, "wb+")
+                #for chunk in fd.chunks():
+                #    f.write(chunk);
+                #f.close()
+            except Exception, e:
+                logger.debug(str(e))
+                return HttpResponse(json.dumps([{"error": str(e)}]), mimetype="application/json")
             
-            #f   = open(loc, "wb+")
-            #for chunk in fd.chunks():
-            #    f.write(chunk);
-            #f.close()
-        except Exception, e:
-            logger.debug(str(e))
-            return HttpResponse(json.dumps([{"error": str(e)}]), mimetype="application/json")
+            resp    = {}
+            resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
+            resp["thumbnail_url"] = ""
+            resp["name"] = fd.name
+            resp["type"] = fd.content_type
+            resp["size"] = fd.size
+            resp["delete_url"] = ""
+            resp["delete_type"] = "DELETE"
+            
+            #form   = UploadFileForm(request.POST, request.FILES)
+            #if form.is_valid():
+            #    fd  = request.FILES['file']
+            #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
+            #        # Return error
+            #        pass
+            #    handle_uploaded_file(fd)
+            #
+            ## XXX: Set to S3 url for preview image
+            #c["preview_url"]    = ""            
+            
+            return HttpResponse(json.dumps([resp]), mimetype="application/json")
         
-        resp    = {}
-        resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
-        resp["thumbnail_url"] = ""
-        resp["name"] = fd.name
-        resp["type"] = fd.content_type
-        resp["size"] = fd.size
-        resp["delete_url"] = ""
-        resp["delete_type"] = "DELETE"
-        
-        #form   = UploadFileForm(request.POST, request.FILES)
-        #if form.is_valid():
-        #    fd  = request.FILES['file']
-        #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
-        #        # Return error
-        #        pass
-        #    handle_uploaded_file(fd)
-        #
-        ## XXX: Set to S3 url for preview image
-        #c["preview_url"]    = ""            
-        
-        return HttpResponse(json.dumps([resp]), mimetype="application/json")
+        return 
     else:
         form   = UploadFileForm()
-    c["form"]       = form
-    c["resource"]   = res
-    c["temp_up"]    = TEMP_UP
+        
+    # Display form
+    c   = {
+        "form":     form,
+        "resource": res,
+        "temp_up":  TEMP_UP
+    }
     return render(request, 'submit_select.html', c)    
     
 
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    if not request.user.is_authenticated():
+        error_msg   = "You need to be logged in to submit photo"
+        return render(request, "ajax/error.html", {"error": error_msg})
+    
+    user    = request.user
+
     if request.method == "POST":
         # Crop image
         crop_form   = CropForm(request.POST)
@@ -530,15 +537,19 @@ def submit_crop(request, res):
     c["crop_form"]  = crop_form
     c["resource"]   = res
     c["img_src"]    = s3_key2url("pic.jpg")
+    # img_width
+    # img_height
     return render(request, 'submit_crop.html', c)
 
 
 def submit_create(request, res):
     "Creates images of different sizes"
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    if not request.user.is_authenticated():
+        error_msg   = "You need to be logged in to submit photo"
+        return render(request, "ajax/error.html", {"error": error_msg})
+    
+    user    = request.user
+
     if request.method == "POST":
         resp    = {}
         try:

@@ -81,8 +81,6 @@ class RequestStatus(models.Model):
     submitted_date  = models.CharField(max_length=16)  # timestamp
 
 
-
-
 """
 Metadata related what user can do and cannot do
 """

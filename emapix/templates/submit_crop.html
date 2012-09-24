@@ -52,7 +52,7 @@ function submit_crop()
                 $("#progress").hide();
                 set_error(data.error);
             } else if (data.resource) {
-                window.location.href="/submit/create/" + data.resource;
+                show_create();
             } else {
                 $("#progress").hide();
                 set_error("Something wrong happend");
@@ -90,7 +90,6 @@ function getMaxSize(bounds) {
     } else {
         return getMinSize(bounds);
     }
-    
 }
 
 function set_cropper() {

@@ -15,6 +15,17 @@
 	$("#submit_body").load("/submit/crop/{{ req.resource }}");
     }
     
+    function show_create() {
+	$("#submit_body").load("/submit/create/{{ req.resource }}");
+    }    
+    
+    function submit_image_finished() {
+	$("#submit_modal").modal("hide");
+	// XXX: Make json request to replace image and metadata
+	//	instead of reloading the page. Save requests to Google Map
+	window.location.href = "/request/{{ req.resource }}";
+    }
+    
     function show_select_click(e) {
 	e.preventDefault();
 	show_select();

@@ -150,7 +150,7 @@ class RequestForm(forms.Form):
     
 
 class UploadFileForm(forms.Form):
-    files  = forms.FileField()
+    file  = forms.FileField()
     
 
 class CropForm(forms.Form):
