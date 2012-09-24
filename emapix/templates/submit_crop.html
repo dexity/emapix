@@ -1,15 +1,6 @@
-{% extends "base.html" %}
 
-{% block header %}
 <link rel="stylesheet" href="/media/jcrop/css/jquery.Jcrop.css" type="text/css" />
     
-{% endblock header %}
-
-{% block content %}
-
-<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
-Photo can be up to 5Mb and in JPEG or PNG formats.
-</div>
 <div class="clear_both"></div>
 <img src="{{img_src}}" id="cropbox" />
 {% if crop_form %}
@@ -19,16 +10,17 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 </form>
 
 <div id="errors_container"></div>
-
+<div id="progress" style="display: none">
+    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
+        <div class="bar" style="width:100%;"></div>
+    </div>    
+</div>
 <div style="margin-top: 20px;">
     <button class="btn btn-primary" onclick="submit_crop()">Crop</button>
-    <a href="/submit/select/{{resource}}" onclick="select_file(event)" style="margin-left: 50px;">Select different file</a>
+    <a href="#" onclick="show_select_click(event)" style="margin-left: 50px;">Select different file</a>
 </div>
 {% endif %}
 
-{% endblock content %}
-
-{% block footer %}
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 
 <script type="text/javascript">
@@ -36,8 +28,7 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 var jcrop_api;
 var MSIZE    = 460;
 
-//$(document).ready(function(){
-$(window).load(function(){
+$("#cropbox").load(function(){
     set_cropper();
 });
 
@@ -53,15 +44,19 @@ $(window).load(function(){
 
 function submit_crop()
 {
+    $("#progress").show();
     $.post("/submit/crop/{{resource}}",
         $("#cropper_form").serialize(),
         function(data){
-            if (data.error)
+            if (data.error) {
+                $("#progress").hide();
                 set_error(data.error);
-            else if (data.resource)
+            } else if (data.resource) {
                 window.location.href="/submit/create/" + data.resource;
-            else
+            } else {
+                $("#progress").hide();
                 set_error("Something wrong happend");
+            }
         });    
 }
 
@@ -111,5 +106,3 @@ function set_cropper() {
     });
 }
 </script>
-
-{% endblock footer %}

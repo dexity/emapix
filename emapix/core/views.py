@@ -430,8 +430,8 @@ TEMP_UP = """{% var file=o.files[0]; %}
         </div>
     </div>
 {% } else if (o.files.valid) { %}
-    <div class="progress progress-success progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" style="width: 100%; margin-top: 20px;">
-        <div class="bar" style="width:0%;"></div>
+    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
+        <div class="bar" style="width:100%;"></div>
     </div>
 {% } %}
 """
@@ -502,7 +502,7 @@ def submit_crop(request, res):
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
-            img_src   = "pic.jpg" #crop_form.cleaned_data["img_src"]
+            img_src   = "pic.jpg"   # crop_form.cleaned_data["img_src"]
             x   = crop_form.cleaned_data["x"]
             y   = crop_form.cleaned_data["y"]
             h   = crop_form.cleaned_data["h"]
@@ -529,7 +529,7 @@ def submit_crop(request, res):
     crop_form   = CropForm()
     c["crop_form"]  = crop_form
     c["resource"]   = res
-    c["img_src"]    = "https://s3.amazonaws.com/emapix_uploads_test/pic.jpg"    # XXX: Create link
+    c["img_src"]    = s3_key2url("pic.jpg")
     return render(request, 'submit_crop.html', c)
 
 
@@ -549,7 +549,7 @@ def submit_create(request, res):
         return HttpResponse(json.dumps(resp), mimetype="application/json")
         
     c["resource"]   = res
-    c["img_src"]    = "https://s3.amazonaws.com/emapix_uploads_test/cropped_pic.jpg"
+    c["img_src"]    = s3_key2url("cropped_pic.jpg")
     return render(request, 'submit_create.html', c)    
 
 

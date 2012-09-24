@@ -4,18 +4,22 @@
 <script type="text/javascript"
     src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
 </script>
+
 <script type="text/javascript">
 
-    function pick_image()
-    {
-	
+    function show_select() {
+	$("#submit_body").load("/submit/select/{{ req.resource }}");
+    }
+
+    function show_crop() {
+	$("#submit_body").load("/submit/crop/{{ req.resource }}");
     }
     
-    function submit_photo()
-    {
-	$("#submit_modal").modal();
+    function show_select_click(e) {
+	e.preventDefault();
+	show_select();
     }
-   
+    
     $(document).ready(function(){
 	{% if req %}
 	var lat	= {{ req.location.lat }};
@@ -64,6 +68,18 @@
 		    }
 		});
 	});
+	
+	$("#submit_photo").click(function(e) {
+	    e.preventDefault();
+	    show_select();
+	    $("#submit_modal").modal();
+	});
+	
+	//$("#diff_file").click(function(e){
+	//    e.preventDefault();
+	//    show_select();
+	//});
+    
 	{% endif %}	
     });
 </script>
@@ -78,32 +94,12 @@
 </style>
 
 <div class="pull-left"><h3>Request</h3></div>
-<div class="e-alert pull-left">You can submit photo for this location</div>
+<div class="e-alert alert-success pull-left">You can submit photo for this location</div>
 <div class="clear_both"></div>
 <div class="row">
     <div class="span6">
 	{% if username|stringformat:"s" == req.user.username %}
-	<img src="{{pic_url}}" width="460" height="460" />
-        <!--<button class="btn btn-success" onclick="submit_photo()"><b>Submit Photo</b></button>-->
-	<!-- Modal -->
-	<div id="submit_modal" class="modal hide fade">
-	    <div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3>Submit Photo</h3>
-	    </div>
-	    <div class="modal-body" id="submit_body">
-		<div id="body_errors"></div>
-		<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
-		Photo can be up to 5Mb and in JPEG or PNG formats.
-		</div>
-		<input type="file" style="margin-bottom: 10px;"/>
-		<!--<div class="clear_both"></div>
-		<img src="/media/img/photo_large.png" width="300" height="300" />
-		<div class="clear_both e-margin-bottom-10"></div>
-		<button class="btn btn-success"><b>Crop Photo</b></button> -->
-	    </div>
-	</div>
-	
+	<img src="{{pic_url}}" />	
 	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
@@ -126,7 +122,8 @@
         </div>
         <div class="row e-control-options">
             <div class="span3 pull-left">
-		<a href="/submit/select/{{ req.resource }}" >Submit different photo</a>
+		<a href="#" id="submit_photo">Submit different photo</a>
+		<!--<a href="/submit/select/{{ req.resource }}">Submit different photo</a>-->
 	    </div>
 	    {% csrf_token %}
             <div class="span3 pull-right">
@@ -167,6 +164,17 @@
     </div>    
     <div class="span6"><div id="map_canvas"></div></div>
 </div>
+
+<!--<button class="btn btn-success" id="submit_photo"><b>Submit Photo</b></button>-->
+<!-- Modal -->
+<div id="submit_modal" class="modal hide fade">
+    <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3>Submit Photo</h3>
+    </div>
+    <div class="modal-body" id="submit_body"></div>
+</div>
+
 {% else %}
     <div class="row" id="message" onclick="fadeToMain()">
         <div class="span8 alert alert-error">

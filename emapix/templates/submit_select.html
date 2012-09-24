@@ -1,14 +1,7 @@
-{% extends "base.html" %}
 
-{% block header %}
 <link rel="stylesheet" href="/media/fileuploader/css/jquery.fileupload-ui.css">
-    
-{% endblock header %}
 
-{% block content %}
-<div id="body_errors"></div>
-<div class="e-alert pull-left" style="margin-left: 0px; margin-bottom: 10px;">Please submit photo for this location!
-Photo can be up to 5Mb and in JPEG or PNG formats.
+<div class="e-alert alert-success pull-left" style="margin-left: 0px; margin-bottom: 10px;">Photo can be up to 5Mb and in JPEG or PNG formats.
 </div>
 <div class="clear_both"></div>
 <form id="fileupload">
@@ -18,6 +11,7 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
         <input type="file" name="file">
     </span>
 </form>
+
 <div class="clear_both"></div>
 <div id="files_container"></div>
 
@@ -26,14 +20,10 @@ Photo can be up to 5Mb and in JPEG or PNG formats.
 {{ temp_up|safe }}
 </script>
 
-{% endblock content %}
-
-{% block footer %}
 <script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
 <script src="/media/fileuploader/js/misc/tmpl.js"></script>
 <script src="/media/fileuploader/js/misc/load-image.min.js"></script>
 <script src="/media/fileuploader/js/misc/canvas-to-blob.min.js"></script>
-<!--<script src="/media/fileuploader/js/misc/jquery.iframe-transport.js"></script>-->
 <script src="/media/fileuploader/js/jquery.fileupload.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
@@ -84,8 +74,9 @@ $(function () {
                     has_error = true;
             });
         }
-        if (!has_error)
-            window.location.href="/submit/crop/{{resource}}";
+        if (!has_error) {
+            show_crop();    // From request.html
+        }
     });
 
     $('#fileupload').fileupload('option', {
@@ -115,4 +106,3 @@ $(function () {
 </script>
 
 
-{% endblock footer %}
