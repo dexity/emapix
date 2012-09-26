@@ -1,5 +1,8 @@
 import hashlib
 import time
+import json
+
+from django.http import HttpResponseBadRequest
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.utils")
@@ -77,9 +80,12 @@ def ts2utc(ts):
     return utc
 
 
+def bad_request_json(obj):
+    "Returns 400 error status"
+    return HttpResponseBadRequest(json.dumps(obj), mimetype="application/json")
+
+# XXX: Remove
 def handle_uploaded_file(f):
-    # Refactor emapix.utils.handle_uploaded_file()
-    
     dest    = open("/tmp/pic.jpg", "wb+")
     for chunk in f.chunks():
         dest.write(chunk)

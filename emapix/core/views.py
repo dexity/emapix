@@ -3,8 +3,9 @@
 
 import time
 
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import render_to_response, render
+from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.db import models
 from django.contrib.auth.models import User
@@ -12,7 +13,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, handle_uploaded_file
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import url_crop_image, proc_images
 from emapix.core.forms import *
@@ -440,10 +441,9 @@ TEMP_UP = """{% var file=o.files[0]; %}
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
     if not request.user.is_authenticated():
-        error_msg   = "You need to be logged in to submit photo"
-        return render(request, "ajax/error.html", {"error": error_msg})
+        return bad_request_json({"error": "You need to be logged in to submit photo"})
     
-    user    = request.user
+    username    = request.user
     
     if request.method == "POST":    # Ajax request
         # Upload image
@@ -451,46 +451,46 @@ def submit_select(request, res):
         if form.is_valid():
             fd  = request.FILES["file"]
             try:
+                # Add db record
+                user   = User.objects.get(username=username)
+                
+                ph   = Photo()
+                ph.user = user
+                ph.created_time = ""
+                ph.updated_time = ""
+                ph.type = "preview"
+                marked_delete   = True
+                ph.save()
+                
+                im  = Image()
+                im.photo    = ph
+                im.height   = ""
+                im.width    = ""
+                im.url      = ""
+                im.size     = fd.size
+                im.is_avail = ""
+                im.save()
+                
                 filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
                 s3_upload_file(fd, filename)
-                
-                #f   = open(loc, "wb+")
-                #for chunk in fd.chunks():
-                #    f.write(chunk);
-                #f.close()
+                resp    = {}
+                # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+                # Other useful params: fd.name, fd.content_type
+            except User.DoesNotExist:
+                return bad_request_json({"error": "User does not exist"})
             except Exception, e:
                 logger.debug(str(e))
-                return HttpResponse(json.dumps([{"error": str(e)}]), mimetype="application/json")
-            
-            resp    = {}
-            resp["url"] = ""    #"http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
-            resp["thumbnail_url"] = ""
-            resp["name"] = fd.name
-            resp["type"] = fd.content_type
-            resp["size"] = fd.size
-            resp["delete_url"] = ""
-            resp["delete_type"] = "DELETE"
-            
-            #form   = UploadFileForm(request.POST, request.FILES)
-            #if form.is_valid():
-            #    fd  = request.FILES['file']
-            #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
-            #        # Return error
-            #        pass
-            #    handle_uploaded_file(fd)
-            #
-            ## XXX: Set to S3 url for preview image
-            #c["preview_url"]    = ""            
-            
-            return HttpResponse(json.dumps([resp]), mimetype="application/json")
+                return bad_request_json({"error": str(e)})
         
-        return 
-    else:
-        form   = UploadFileForm()
-        
+        errors  = form.errors.items()
+        msg     = "Something went wrong ..."
+        if len(errors) != 0:
+            msg = errors[0]
+        return bad_request_json({"error": msg})
+
     # Display form
     c   = {
-        "form":     form,
+        "form":     UploadFileForm(),
         "resource": res,
         "temp_up":  TEMP_UP
     }
@@ -533,12 +533,14 @@ def submit_crop(request, res):
     # Take width and height from db record
     # If width < 460 and height < 460
     #   redirect to create page "/submit/create/%s" % res
-    crop_form   = CropForm()
-    c["crop_form"]  = crop_form
-    c["resource"]   = res
-    c["img_src"]    = s3_key2url("pic.jpg")
-    # img_width
-    # img_height
+
+    c   = {
+        "crop_form":    CropForm(),
+        "resource":     res,
+        "img_src":      s3_key2url("pic.jpg")
+        # img_width
+        # img_height
+    }
     return render(request, 'submit_crop.html', c)
 
 
@@ -559,8 +561,10 @@ def submit_create(request, res):
             resp["error"]   = str(e)
         return HttpResponse(json.dumps(resp), mimetype="application/json")
         
-    c["resource"]   = res
-    c["img_src"]    = s3_key2url("cropped_pic.jpg")
+    c   = {
+        "resource":     res,
+        "img_src":      s3_key2url("cropped_pic.jpg")
+    }
     return render(request, 'submit_create.html', c)    
 
 

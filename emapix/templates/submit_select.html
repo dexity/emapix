@@ -9,7 +9,6 @@
     <span class="btn btn-primary fileinput-button" id="select_file">
         <span>Select File</span>
         {{ form.file }}
-        <!--<input type="file" name="file">-->
     </span>
 </form>
 
@@ -84,7 +83,7 @@ $(function () {
         url: '/submit/select/{{resource}}',
         maxFileSize: 5000000,
         minFileSize: 100,
-        acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,
+        acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,    // .jpg and .png images are allowed
         process: [
             {
                 action: 'load',
