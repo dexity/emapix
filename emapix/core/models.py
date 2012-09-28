@@ -24,6 +24,10 @@ class UserStatus(models.Model):
     status  = models.CharField(max_length=16, choices=STATUS_CHOICES)
     updated_date = models.CharField(max_length=16)
 
+    def save(self, *args, **kwargs):
+        self.updated_date = timestamp()
+        super(UserStatus, self).save(*args, **kwargs)        
+
 
 class Photo(models.Model):
     "Photo abstraction"
@@ -72,6 +76,11 @@ class Request(models.Model):
     submitted_date  = models.CharField(max_length=16)   # timestamp
     photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True)
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.submitted_date = timestamp()
+        super(Request, self).save(*args, **kwargs)        
+
 
 class PhotoRequest(models.Model):
     photo       = models.ForeignKey(Photo)
@@ -89,6 +98,10 @@ class RequestStatus(models.Model):
     comment = models.CharField(max_length=140, null=True)
     submitted_date  = models.CharField(max_length=16)  # timestamp
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.submitted_date = timestamp()
+        super(RequestStatus, self).save(*args, **kwargs)        
 
 """
 Metadata related what user can do and cannot do
