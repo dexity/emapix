@@ -1,6 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 from emapix.utils.const import *
+from emapix.utils.utils import timestamp
+
 
 class UserProfile(models.Model):
     user        = models.OneToOneField(User)
@@ -30,6 +33,12 @@ class Photo(models.Model):
     updated_time    = models.CharField(max_length=16)
     type    = models.CharField(max_length=16, choices=PHOTO_CHOICES)
     marked_delete   = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_time = timestamp()     # Updated when object is created
+        self.updated_time = timestamp()
+        super(Photo, self).save(*args, **kwargs)
 
 
 class Image(models.Model):

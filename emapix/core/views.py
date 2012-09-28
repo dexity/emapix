@@ -13,7 +13,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, http_response_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import url_crop_image, proc_images
 from emapix.core.forms import *
@@ -456,8 +456,6 @@ def submit_select(request, res):
                 
                 ph   = Photo()
                 ph.user = user
-                ph.created_time = ""
-                ph.updated_time = ""
                 ph.type = "preview"
                 marked_delete   = True
                 ph.save()
@@ -473,9 +471,10 @@ def submit_select(request, res):
                 
                 filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
                 s3_upload_file(fd, filename)
-                resp    = {}
+                # Send email notification?
                 # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
                 # Other useful params: fd.name, fd.content_type
+                return http_response_json({"success": True})
             except User.DoesNotExist:
                 return bad_request_json({"error": "User does not exist"})
             except Exception, e:
