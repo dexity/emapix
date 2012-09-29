@@ -27,11 +27,13 @@ def s3_upload_file(fd, s3_filename=None, content_type=None):
         k = Key(b)
         k.key = s3_filename
         k.set_metadata("Content-Type", content_type)
-        k.set_contents_from_file(fd) # Performs the actual upload
+        k.set_contents_from_file(fd)    # Performs the actual upload
         k.set_acl('public-read')
         fd.close()
+        return True
     except Exception, e:    # object doesn't exist or something else
         logger.debug(str(e))    
+    return False    # Not uploaded
 
 
 def s3_download_file(fd, s3_filename):
@@ -69,36 +71,6 @@ def file_exists(resource):
     except Exception, e:
         logger.debug(str(e))
         return False
-
-
-def handle_uploaded_file(file, resource):
-    # Upload file to S3
-    #open("/tmp/pic.jpg", "wb").write(file.read())    # works
-    filename = str(file)
-    if resource:
-        filename    = "%s.jpg" % resource
-    logger.debug(filename)
-        
-    try:
-        conn = S3Connection(S3_KEY, S3_SECRET)
-        b   = conn.get_bucket(BUCKET_NAME)
-        b.set_acl('public-read')
-        
-        k = Key(b)
-        k.key = filename
-        k.set_metadata("Content-Type", 'image/jpeg')
-        k.set_contents_from_file(file) # Performs the actual upload
-        k.set_acl('public-read')
-        
-        # Record that file exists on S3
-        _resource   = filename.split(".jpg")[0]
-        prs  = PhotoRequest.objects.filter(resource=_resource)
-        if (len(prs) > 0):
-            pr  = prs[0]
-            pr.photo_exists = True
-            pr.save()
-    except Exception, e:    # object doesn't exist or something else
-        logger.debug(str(e))
         
         
         

@@ -11,6 +11,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
+from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, http_response_json
@@ -451,30 +452,38 @@ def submit_select(request, res):
         if form.is_valid():
             fd  = request.FILES["file"]
             try:
-                # Add db record
-                user   = User.objects.get(username=username)
+                format      = IMAGE_TYPES.get(fd.content_type, "txt")
+                filename    = "%spreview.%s" % (res, format)
+
+                #phreq   = PhotoRequest
+                imgs    = Image.objects.filter(name=filename)
+                if imgs.exists():
+                    im  = imgs[0]
+                else:
+                    # Add db record
+                    user   = User.objects.get(username=username)
+                    ph   = Photo(user=user, type="preview", marked_delete=True)
+                    ph.save()
+                    
+                    im  = Image()   # Create new Image
+                    im.photo    = ph
+                    im.name     = filename
+                    
+                img = ImageFile(fd)     # convert to image
                 
-                ph   = Photo()
-                ph.user = user
-                ph.type = "preview"
-                marked_delete   = True
-                ph.save()
-                
-                im  = Image()
-                im.photo    = ph
-                im.height   = ""
-                im.width    = ""
-                im.url      = ""
+                im.height   = img.height
+                im.width    = img.width
+                im.url      = s3_key2url(filename)
                 im.size     = fd.size
-                im.is_avail = ""
+                im.format   = format
+                im.is_avail = s3_upload_file(fd, filename)
                 im.save()
                 
-                filename    = "pic.%s" % IMAGE_TYPES[fd.content_type]
-                s3_upload_file(fd, filename)
                 # Send email notification?
+                
                 # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-                # Other useful params: fd.name, fd.content_type
-                return http_response_json({"success": True})
+                return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+            
             except User.DoesNotExist:
                 return bad_request_json({"error": "User does not exist"})
             except Exception, e:
@@ -565,88 +574,6 @@ def submit_create(request, res):
         "img_src":      s3_key2url("cropped_pic.jpg")
     }
     return render(request, 'submit_create.html', c)    
-
-
-## XXX: Refactor !!!
-#def submit2(request):
-#    # Testing file uploading
-#    if request.user.is_authenticated():
-#        c   = {"username": request.user}
-#    else:
-#        c   = {}
-#        
-#    if request.method == "POST":
-#        img_src = request.POST.get("img_src", None)
-#        if img_src:
-#            # Crop image
-#            crop_form   = CropForm(request.POST)
-#            if crop_form.is_valid():
-#                img_src   = crop_form.cleaned_data["img_src"]
-#                x   = crop_form.cleaned_data["x"]
-#                y   = crop_form.cleaned_data["y"]
-#                h   = crop_form.cleaned_data["h"]
-#                w   = crop_form.cleaned_data["w"]
-#                #if not (x and y and h and w):
-#                #    return HttpResponseRedirect("/submit2") # Error
-#            
-#                # XXX: Keep selection if something went wrong
-#                
-#                url_crop_image(img_src, (x, y, w, h))
-#            
-#            return HttpResponseRedirect("/submit2")            
-#        else:
-#            # Upload image
-#            fd  = request.FILES["files[]"]
-#            cont_type   = fd.content_type
-#            filename    = fd.name
-#            try:
-#                IMAGE_TYPES = {
-#                    "image/jpeg":   "jpg",
-#                    "image/png":    "png"
-#                }
-#                # XXX: Refactor to file handler!
-#                # "/var/emapix/static/temp"         - directory
-#                # "http://localhost/media/temp/"    - URL
-#                loc = "/var/emapix/static/temp/pic." + IMAGE_TYPES[cont_type]
-#                f   = open(loc, "wb+")
-#                for chunk in fd.chunks():
-#                    f.write(chunk);
-#                f.close()
-#            except Exception, e:
-#                logger.debug(str(e))
-#            resp    = {}
-#            resp["url"] = "http://localhost/media/temp/pic." + IMAGE_TYPES[cont_type]
-#            resp["thumbnail_url"] = ""
-#            resp["name"] = fd.name
-#            resp["type"] = cont_type
-#            resp["size"] = fd.size
-#            resp["delete_url"] = ""
-#            resp["delete_type"] = "DELETE"
-#            
-#            
-#            #form   = UploadFileForm(request.POST, request.FILES)
-#            #if form.is_valid():
-#            #    fd  = request.FILES['file']
-#            #    if not fd.content_type in IMAGE_CONTENT_TYPES:  # Not supported types
-#            #        # Return error
-#            #        pass
-#            #    handle_uploaded_file(fd)
-#            #
-#            ## XXX: Set to S3 url for preview image
-#            #c["preview_url"]    = ""            
-#            
-#            return HttpResponse(json.dumps([resp]), mimetype="application/json")
-#    
-#
-#    else:
-#        form   = UploadFileForm()
-#        
-#    crop_form   = CropForm()
-#    c["crop_form"]  = crop_form        
-#    c["form"]       = form
-#    c["temp_up"]    = TEMP_UP2
-#    c["temp_dn"]    = TEMP_DN2
-#    return render(request, 'submit2.html', c)
 
 
 def submit3(request):

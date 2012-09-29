@@ -24,7 +24,7 @@
 	$.ajax({
 	    url:    "/submit/select/{{ req.resource }}",
             type:   "GET",
-            cache:  true,
+            cache:  false,
             success:    function(data) {
                 $("#submit_body").html(data);
             },
@@ -34,12 +34,34 @@
 	});
     }
 
-    function show_crop() {
-	$("#submit_body").load("/submit/crop/{{ req.resource }}");
+    function show_crop(img_url) {
+        $.ajax({
+            url:    "/submit/crop/{{ req.resource }}",
+            type:   "GET",
+            cache:  false,
+            success: function(data) {
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            
+            }
+        });
+	//$("#submit_body").load("/submit/crop/{{ req.resource }}");
     }
     
     function show_create() {
-	$("#submit_body").load("/submit/create/{{ req.resource }}");
+        $.ajax({
+            url:    "/submit/create/{{ req.resource }}",
+            type:   "GET",
+            cache:  false,
+            success: function(data) {
+                
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+            
+            }
+        });        
+	//$("#submit_body").load("/submit/create/{{ req.resource }}");
     }    
     
     function submit_image_finished() {

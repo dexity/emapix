@@ -48,11 +48,13 @@ class Photo(models.Model):
 class Image(models.Model):
     "Photo representation"
     photo   = models.ForeignKey(Photo)
+    name    = models.CharField(max_length=50, default="")   # unique?
     height  = models.IntegerField(default=0)
     width   = models.IntegerField(default=0)
-    url     = models.CharField(max_length=64)   # URL of the photo
+    url     = models.CharField(max_length=256)   # URL of the photo
     size    = models.IntegerField(default=0)    # Size of image in bytes
     size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES)
+    format  = models.CharField(max_length=8, default="")    # jpg, png
     is_avail    = models.BooleanField(default=False)
 
 

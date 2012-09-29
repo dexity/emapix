@@ -90,15 +90,3 @@ def http_response_json(obj):
     return HttpResponse(json.dumps(obj), mimetype="application/json")
 
 
-# XXX: Remove
-def handle_uploaded_file(f):
-    dest    = open("/tmp/pic.jpg", "wb+")
-    for chunk in f.chunks():
-        dest.write(chunk)
-    dest.close() 
-    #destination = open('some/file/name.txt', 'wb+')
-    #for chunk in f.chunks():
-    #    destination.write(chunk)
-    #destination.close() 
-    logger.debug(str(f.content_type))
-
