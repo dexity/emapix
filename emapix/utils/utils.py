@@ -2,7 +2,7 @@ import hashlib
 import time
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.utils")
@@ -85,8 +85,14 @@ def bad_request_json(obj):
     return HttpResponseBadRequest(json.dumps(obj), mimetype="application/json")
 
 
+def forbidden_json(obj):
+    "Returns json response with 403 error status"
+    return HttpResponseForbidden(json.dumps(obj), mimetype="application/json")
+
+    
 def http_response_json(obj):
     "Returns json response with 200 error status"
     return HttpResponse(json.dumps(obj), mimetype="application/json")
+
 
 

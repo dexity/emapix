@@ -13,7 +13,7 @@ IMAGE_TYPES = {
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.imageproc")
 
-def url_crop_image(img_src, select_box):
+def crop_s3_image(img_name, crop_name, select_box):
     """
     url     - url of image
     select_box    - tuple of left upper corner coordinates, widht and height
@@ -22,7 +22,7 @@ def url_crop_image(img_src, select_box):
     
     # Download selected image from Amazon S3
     fd  = StringIO.StringIO()
-    content_type    = s3_download_file(fd, img_src)
+    content_type    = s3_download_file(fd, img_name)
     im1     = Image.open(fd)
     im2     = im1.crop((x, y, x + w, y + h))
     fd.close()
@@ -31,8 +31,7 @@ def url_crop_image(img_src, select_box):
     fd      = StringIO.StringIO()
     im2.save(fd, im1.format)
     fd.seek(0)
-    filename    = "cropped_pic." + IMAGE_TYPES[content_type]
-    s3_upload_file(fd, filename, content_type)     
+    s3_upload_file(fd, crop_name, content_type)     
 
 
 class ImageThread(threading.Thread):

@@ -7,20 +7,6 @@
 
 <script type="text/javascript">
 
-    function format_error(error_msg, error_default)
-    {
-        var msg;
-        try {
-            msg = JSON.parse(error_msg).error;
-        } catch(err) {
-            msg = error_default;
-        }
-        var s   = '<div class="alert alert-error" style="margin-top: 10px;">';
-        s   += msg;
-        s   += '</div>';
-        return s;
-    }
-
     function show_select()
     {
         // Load select file modal page (doesn't handle file upload)
@@ -37,9 +23,9 @@
 	});
     }
 
-    function show_crop(img_url)
+    function show_crop()
     {
-        // Load crop image modal page
+        // Load crop image modal page (doesn't handle image crop)
         $.ajax({
             url:    "/submit/crop/{{ req.resource }}",
             type:   "GET",
@@ -48,19 +34,19 @@
                 $("#submit_body").html(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-            
+                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
             }
         });
-	//$("#submit_body").load("/submit/crop/{{ req.resource }}");
     }
     
-    function show_create() {
+    function show_create()
+    {
         $.ajax({
             url:    "/submit/create/{{ req.resource }}",
             type:   "GET",
             cache:  false,
             success: function(data) {
-                
+                $("#submit_body").html(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
             

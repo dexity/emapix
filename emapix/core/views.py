@@ -3,7 +3,7 @@
 
 import time
 
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest  # remove
 from django.shortcuts import render_to_response, render
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
@@ -14,15 +14,16 @@ import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, http_response_json
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, http_response_json, forbidden_json
 from emapix.utils.format import *
-from emapix.utils.imageproc import url_crop_image, proc_images
+from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
 from emapix.core.models import *
 from emapix.core.dbutils import db_remove_request
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
+from emapix.core.db.image import WImage
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -442,13 +443,13 @@ TEMP_UP = """{% var file=o.files[0]; %}
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
     if not request.user.is_authenticated():
-        return bad_request_json({"error": "You need to be logged in to submit photo"})
+        return forbidden_json({"error": "You need to be logged in to submit photo"})
     try:
         req = Request.objects.get(resource=res)
     except Request.DoesNotExist:
         return bad_request_json({"error": "Request doesn't exist"})
     
-    user    = request.user
+    user    = request.user  # User object
     
     if request.method == "POST":    # Ajax request
         # Upload image
@@ -461,29 +462,10 @@ def submit_select(request, res):
                 
                 format      = IMAGE_TYPES.get(fd.content_type, "err")
                 filename    = "%spreview.%s" % (res, format)
+                img         = ImageFile(fd)     # convert to image
                 
                 # DB handling
-                # XXX: Refactor to a separate method
-                phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
-                
-                logger.debug(str(phreqs.exists()))
-                if phreqs.exists():  # Use existing photo request
-                    ph      = phreqs[0].photo
-                else:   # Create a new photo request
-                    ph      = Photo(user=user, type="preview", marked_delete=True)
-                    ph.save()
-                    
-                    phreq   = PhotoRequest(photo=ph, request=req)
-                    phreq.save()
-                
-                imgs    = Image.objects.filter(photo=ph)
-                if imgs.exists():
-                    im  = imgs[0]
-                else:
-                    im  = Image(photo=ph, name=filename)   # Create new Image
-                    
-                img = ImageFile(fd)     # convert to image
-                
+                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename)
                 im.height   = img.height
                 im.width    = img.width
                 im.url      = s3_key2url(filename)
@@ -521,16 +503,26 @@ def submit_select(request, res):
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
     if not request.user.is_authenticated():
-        error_msg   = "You need to be logged in to submit photo"
-        return render(request, "ajax/error.html", {"error": error_msg})
+        return forbidden_json({"error": "You need to be logged in to submit photo"})
+    try:
+        req = Request.objects.get(resource=res)
+    except Request.DoesNotExist:
+        return bad_request_json({"error": "Request doesn't exist"})
     
     user    = request.user
 
+    phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
+    if not phreqs.exists(): # No photo request, should exist by the time
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    try:
+        im  = Image.objects.get(photo=phreqs[0].photo)
+    except Image.DoesNotExist:
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    
     if request.method == "POST":
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
-            img_src   = "pic.jpg"   # crop_form.cleaned_data["img_src"]
             x   = crop_form.cleaned_data["x"]
             y   = crop_form.cleaned_data["y"]
             h   = crop_form.cleaned_data["h"]
@@ -538,29 +530,31 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
         
+            # Hook up db
+            crop_name   = "%scrop.%s" % (res, im.format)
+            
+            
             # XXX: Keep selection if something went wrong
             
-            url_crop_image(img_src, (x, y, w, h))
+            crop_s3_image(im.name, crop_name, (x, y, w, h))
             
-            resp    = {"resource": res}
-            return HttpResponse(json.dumps(resp), mimetype="application/json")
-            #return HttpResponseRedirect("/submit/create/%s" % res)
+            return http_response_json({"success": True})
         
-        resp    = {"error": "Hello"}
-        # resp["resource"]  = res
-        
-        return HttpResponse(json.dumps(resp), mimetype="application/json")
+        errors  = crop_form.errors.items()
+        msg     = "Something went wrong ..."
+        if len(errors) != 0:
+            msg = errors[0]
+        return bad_request_json({"error": msg})
 
-    # Take width and height from db record
-    # If width < 460 and height < 460
-    #   redirect to create page "/submit/create/%s" % res
+    if im.width <= 460 and im.height <= 460:    # No need to crop
+        return HttpResponseRedirect("/submit/create/%s" % res)
 
     c   = {
         "crop_form":    CropForm(),
         "resource":     res,
-        "img_src":      s3_key2url("pic.jpg")
-        # img_width
-        # img_height
+        "img_src":      im.url,
+        "img_width":    im.width,
+        "img_height":   im.height
     }
     return render(request, 'submit_crop.html', c)
 

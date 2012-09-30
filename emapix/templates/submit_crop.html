@@ -32,32 +32,23 @@ $("#cropbox").load(function(){
     set_cropper();
 });
 
-//function set_error(error)
-//{
-//    var s   = '<div class="alert alert-error">';
-//    s   += '<a href="#" class="close" data-dismiss="alert">×</a>';
-//    s   += '<span id="error_msg">' + error + '</span>';
-//    s   += '</div>';
-//
-//    $("#errors_container").html(s);
-//}
 
 function submit_crop()
 {
     $("#progress").show();
-    $.post("/submit/crop/{{resource}}",
-        $("#cropper_form").serialize(),
-        function(data){
-            if (data.error) {
-                $("#progress").hide();
-                set_error(data.error);
-            } else if (data.resource) {
-                show_create();
-            } else {
-                $("#progress").hide();
-                set_error("Something wrong happend");
-            }
-        });    
+    $.ajax({
+        url:    "/submit/crop/{{resource}}",
+        type:   "POST",
+        data:   $("#cropper_form").serialize(),
+        cache:  false,
+        success:    function(data) {
+            show_create();  // From request.html
+        },
+        error:  function(jqXHR, textStatus, errorThrown) {
+            $("#progress").hide();
+            $("#error_container").html(format_error(jqXHR.responseText, errorThrown));
+        }
+    }); 
 }
 
 function updateCoords(c)
