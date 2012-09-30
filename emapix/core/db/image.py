@@ -18,7 +18,9 @@ class WImage(object):
         imgs    = Image.objects.filter(photo=ph)
         if imgs.exists():
             return imgs[0]
-        return Image(photo=ph, name=filename)   # Create new Image
+        img = Image(photo=ph, name=filename)
+        img.save()
+        return img   # Create new Image
 
 
     @classmethod

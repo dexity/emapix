@@ -14,16 +14,17 @@ import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, http_response_json, forbidden_json
+from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
+http_response_json, forbidden_json, validate_user_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
 from emapix.core.models import *
-from emapix.core.dbutils import db_remove_request
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
 from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
 from emapix.core.db.image import WImage
+from emapix.core.db.request import WRequest
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -333,7 +334,7 @@ def remove_request(request, res):
     if request.method != "POST":
         return render(request, 'ajax/error.html', {"error":  "Invalid request" })
     try:
-        db_remove_request(res)
+        WRequest.remove_request(res)
         return to_status(OK)
     except Exception, e:
         return render(request, 'ajax/error.html', {"error":  "Request does not exist"})
@@ -442,12 +443,9 @@ TEMP_UP = """{% var file=o.files[0]; %}
 
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
-    if not request.user.is_authenticated():
-        return forbidden_json({"error": "You need to be logged in to submit photo"})
-    try:
-        req = Request.objects.get(resource=res)
-    except Request.DoesNotExist:
-        return bad_request_json({"error": "Request doesn't exist"})
+    req = validate_user_request_json(request, res)
+    if not isinstance(req, Request):
+        return req
     
     user    = request.user  # User object
     
@@ -530,13 +528,15 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
         
-            # Hook up db
-            crop_name   = "%scrop.%s" % (res, im.format)
-            
-            
-            # XXX: Keep selection if something went wrong
-            
-            crop_s3_image(im.name, crop_name, (x, y, w, h))
+            # DB handling
+            filename    = "%scrop.%s" % (res, im.format)
+            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename)
+            imc.height   = h
+            imc.width    = w
+            imc.url      = s3_key2url(filename)            
+            (imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
+            imc.format   = im.format
+            imc.save()
             
             return http_response_json({"success": True})
         

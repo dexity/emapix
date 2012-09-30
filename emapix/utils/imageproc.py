@@ -15,23 +15,28 @@ logger = Logger.get("emapix.utils.imageproc")
 
 def crop_s3_image(img_name, crop_name, select_box):
     """
-    url     - url of image
-    select_box    - tuple of left upper corner coordinates, widht and height
+    img_name    - S3 key of the preview image
+    crop_name   - S3 key of the crop image
+    select_box  - tuple of left upper corner coordinates, widht and height
+    Returns tuple (status, file_size)
     """
     (x, y, w, h)    = select_box
-    
-    # Download selected image from Amazon S3
-    fd  = StringIO.StringIO()
-    content_type    = s3_download_file(fd, img_name)
-    im1     = Image.open(fd)
-    im2     = im1.crop((x, y, x + w, y + h))
-    fd.close()
-    
-    # Upload cropped image to Amazon S3
-    fd      = StringIO.StringIO()
-    im2.save(fd, im1.format)
-    fd.seek(0)
-    s3_upload_file(fd, crop_name, content_type)     
+    try:
+        # Download selected image from Amazon S3
+        fd  = StringIO.StringIO()
+        content_type    = s3_download_file(fd, img_name)
+        im1     = Image.open(fd)
+        im2     = im1.crop((x, y, x + w, y + h))
+        fd.close()
+        
+        # Upload cropped image to Amazon S3
+        fd      = StringIO.StringIO()
+        im2.save(fd, im1.format)
+        fd.seek(0)
+        status  = s3_upload_file(fd, crop_name, content_type)
+        return (status, fd.size)
+    except Exception, e:
+        return (False, 0)
 
 
 class ImageThread(threading.Thread):
