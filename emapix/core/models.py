@@ -56,6 +56,14 @@ class Image(models.Model):
     size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES)
     format  = models.CharField(max_length=8, default="")    # jpg, png
     is_avail    = models.BooleanField(default=False)
+    created_time    = models.CharField(max_length=16)  
+    updated_time    = models.CharField(max_length=16)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.created_time = timestamp()     # Updated when object is created
+        self.updated_time = timestamp()
+        super(Image, self).save(*args, **kwargs)
 
 
 class Location(models.Model):

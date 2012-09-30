@@ -30,5 +30,19 @@ function set_error(error_msg, container)
 }
 
 
+function format_error(error_msg, error_default)
+{
+    var msg;
+    try {
+        msg = JSON.parse(error_msg).error;
+    } catch(err) {
+        msg = error_default;
+    }
+    var s   = '<div class="alert alert-error" style="margin-top: 10px;">';
+    s   += msg;
+    s   += '</div>';
+    return s;
+}
+
 
 
