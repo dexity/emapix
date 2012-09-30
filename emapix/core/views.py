@@ -443,8 +443,12 @@ def submit_select(request, res):
     "Displays file form or uploads file to S3"
     if not request.user.is_authenticated():
         return bad_request_json({"error": "You need to be logged in to submit photo"})
+    try:
+        req = Request.objects.get(resource=res)
+    except Request.DoesNotExist:
+        return bad_request_json({"error": "Request doesn't exist"})
     
-    username    = request.user
+    user    = request.user
     
     if request.method == "POST":    # Ajax request
         # Upload image
@@ -452,22 +456,31 @@ def submit_select(request, res):
         if form.is_valid():
             fd  = request.FILES["file"]
             try:
-                format      = IMAGE_TYPES.get(fd.content_type, "txt")
+                # Note: Error messages are not really used here bacause of weird error handling in
+                #       jQueryFileUpload widget
+                
+                format      = IMAGE_TYPES.get(fd.content_type, "err")
                 filename    = "%spreview.%s" % (res, format)
-
-                #phreq   = PhotoRequest
-                imgs    = Image.objects.filter(name=filename)
+                
+                # DB handling
+                # XXX: Refactor to a separate method
+                phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
+                
+                logger.debug(str(phreqs.exists()))
+                if phreqs.exists():  # Use existing photo request
+                    ph      = phreqs[0].photo
+                else:   # Create a new photo request
+                    ph      = Photo(user=user, type="preview", marked_delete=True)
+                    ph.save()
+                    
+                    phreq   = PhotoRequest(photo=ph, request=req)
+                    phreq.save()
+                
+                imgs    = Image.objects.filter(photo=ph)
                 if imgs.exists():
                     im  = imgs[0]
                 else:
-                    # Add db record
-                    user   = User.objects.get(username=username)
-                    ph   = Photo(user=user, type="preview", marked_delete=True)
-                    ph.save()
-                    
-                    im  = Image()   # Create new Image
-                    im.photo    = ph
-                    im.name     = filename
+                    im  = Image(photo=ph, name=filename)   # Create new Image
                     
                 img = ImageFile(fd)     # convert to image
                 
@@ -488,13 +501,13 @@ def submit_select(request, res):
                 return bad_request_json({"error": "User does not exist"})
             except Exception, e:
                 logger.debug(str(e))
-                return bad_request_json({"error": str(e)})
+                return bad_request_json([{"error": str(e)}])
         
         errors  = form.errors.items()
         msg     = "Something went wrong ..."
         if len(errors) != 0:
             msg = errors[0]
-        return bad_request_json({"error": msg})
+        return bad_request_json([{"error": msg}])
 
     # Display form
     c   = {

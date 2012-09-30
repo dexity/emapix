@@ -67,17 +67,10 @@ $(function () {
         }
     })
     .bind("fileuploaddone", function(e, data){
-        var has_error = false;
-        if ($.isArray(data.result)) {
-            $.each(data.result, function (index, file) {
-                if (file.error)
-                    has_error = true;
-            });
+        if (data.result[0].success) {
+            show_crop();    // From request.html
         }
-        if (!has_error) {
-            show_crop(data.result[0].url);    // From request.html
-        }
-    });
+    })
 
     $('#fileupload').fileupload('option', {
         url: '/submit/select/{{resource}}',
