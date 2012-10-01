@@ -32,10 +32,15 @@ def crop_s3_image(img_name, crop_name, select_box):
         # Upload cropped image to Amazon S3
         fd      = StringIO.StringIO()
         im2.save(fd, im1.format)
-        fd.seek(0)
+        # Get file size
+        fd.seek(0, 2)   # End of file
+        size    = fd.tell()
+        
+        fd.seek(0)  # Beginning of file
         status  = s3_upload_file(fd, crop_name, content_type)
-        return (status, fd.size)
+        return (status, size)
     except Exception, e:
+        logger.debug(str(e))
         return (False, 0)
 
 

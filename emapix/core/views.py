@@ -15,7 +15,8 @@ from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, validate_user_request_json
+http_response_json, forbidden_json
+from emapix.core.validators import validate_user_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
@@ -500,12 +501,9 @@ def submit_select(request, res):
 
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
-    if not request.user.is_authenticated():
-        return forbidden_json({"error": "You need to be logged in to submit photo"})
-    try:
-        req = Request.objects.get(resource=res)
-    except Request.DoesNotExist:
-        return bad_request_json({"error": "Request doesn't exist"})
+    req = validate_user_request_json(request, res)
+    if not isinstance(req, Request):
+        return req
     
     user    = request.user
 
@@ -561,9 +559,9 @@ def submit_crop(request, res):
 
 def submit_create(request, res):
     "Creates images of different sizes"
-    if not request.user.is_authenticated():
-        error_msg   = "You need to be logged in to submit photo"
-        return render(request, "ajax/error.html", {"error": error_msg})
+    req = validate_user_request_json(request, res)
+    if not isinstance(req, Request):
+        return req
     
     user    = request.user
 

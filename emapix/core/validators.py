@@ -1,7 +1,8 @@
 from django.db import models
 from django import forms
-from emapix.exceptions import ServiceException
 
+from emapix.exceptions import ServiceException
+from emapix.core.models import *
 
 class ObjectExists(object):
     
@@ -32,3 +33,14 @@ class EmailExists(ObjectExists):
     
     def _get_items(self, value):
         return self.objects.filter(email = value)
+    
+
+def validate_user_request_json(request, res):
+    "Validates user and request. Returns json response if error or request"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": "You need to be logged in to submit photo"})
+    try:
+        return Request.objects.get(resource=res)
+    except Request.DoesNotExist:
+        return bad_request_json({"error": "Request doesn't exist"})
+

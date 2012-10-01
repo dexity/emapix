@@ -4,8 +4,6 @@ import json
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
 
-from emapix.core.models import Request
-
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.utils")
 
@@ -80,16 +78,6 @@ def ts2utc(ts):
     except Exception, e:    # Common exceptions: TypeError
         utc = ""
     return utc
-
-
-def validate_user_request_json(request, res):
-    "Validates user and request. Returns json response if error or request"
-    if not request.user.is_authenticated():
-        return forbidden_json({"error": "You need to be logged in to submit photo"})
-    try:
-        return Request.objects.get(resource=res)
-    except Request.DoesNotExist:
-        return bad_request_json({"error": "Request doesn't exist"})
 
 
 def bad_request_json(obj):
