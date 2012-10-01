@@ -19,16 +19,29 @@
     
 $("#submit_image").click(function(){
     $("#progress").show();
-    $.post("/submit/create/{{resource}}",
-        $("#create_form").serialize(),
-        function(data) {
-            if (data.error) {
-                $("#progress").hide();
-                set_error(data.error);
-            } else {
-                submit_image_finished();
-            }
-        });
+    $.ajax({
+        url:    "/submit/create/{{resource}}",
+        type:   "POST",
+        data:   $("#create_form").serialize(),
+        cache:  false,
+        success:    function(data) {
+            submit_image_finished();
+        },
+        error:  function(jqXHR, textStatus, errorThrown) {
+            $("#progress").hide();
+            $("#error_container").html(format_error(jqXHR.responseText, errorThrown));
+        }
+    })
+    //$.post("/submit/create/{{resource}}",
+    //    $("#create_form").serialize(),
+    //    function(data) {
+    //        if (data.error) {
+    //            $("#progress").hide();
+    //            set_error(data.error);
+    //        } else {
+    //            submit_image_finished();
+    //        }
+    //    });
 })
 
 </script>

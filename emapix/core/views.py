@@ -15,7 +15,7 @@ from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json
+http_response_json, forbidden_json, s3key
 from emapix.core.validators import validate_user_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -460,18 +460,18 @@ def submit_select(request, res):
                 #       jQueryFileUpload widget
                 
                 format      = IMAGE_TYPES.get(fd.content_type, "err")
-                filename    = "%spreview.%s" % (res, format)
+                filename    = s3key(res, "preview", format)
                 img         = ImageFile(fd)     # convert to image
                 
-                # DB handling
-                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename)
-                im.height   = img.height
-                im.width    = img.width
-                im.url      = s3_key2url(filename)
-                im.size     = fd.size
-                im.format   = format
-                im.is_avail = s3_upload_file(fd, filename)
-                im.save()
+                ## DB handling
+                #im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, True)
+                #im.height   = img.height
+                #im.width    = img.width
+                #im.url      = s3_key2url(filename)
+                #im.size     = fd.size
+                #im.format   = format
+                #im.is_avail = s3_upload_file(fd, filename)
+                #im.save()
                 
                 # Send email notification?
                 
@@ -526,15 +526,15 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
         
-            # DB handling
-            filename    = "%scrop.%s" % (res, im.format)
-            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename)
-            imc.height   = h
-            imc.width    = w
-            imc.url      = s3_key2url(filename)            
-            (imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
-            imc.format   = im.format
-            imc.save()
+            ## DB handling
+            #filename    = s3key(res, "crop", im.format)
+            #imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, True)
+            #imc.height   = h
+            #imc.width    = w
+            #imc.url      = s3_key2url(filename)            
+            #(imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
+            #imc.format   = im.format
+            #imc.save()
             
             return http_response_json({"success": True})
         
@@ -565,18 +565,25 @@ def submit_create(request, res):
     
     user    = request.user
 
+    phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="crop")
+    if not phreqs.exists(): # No photo request, should exist by the time
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    try:
+        imc  = Image.objects.get(photo=phreqs[0].photo)  # Crop image
+    except Image.DoesNotExist:
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    
     if request.method == "POST":
-        resp    = {}
         try:
-            proc_images()
-            resp["status"]  = "ok"
+            proc_images(user, req, imc.format)
+            return http_response_json({"success": True})
         except Exception, e:
-            resp["error"]   = str(e)
-        return HttpResponse(json.dumps(resp), mimetype="application/json")
+            logger.debug(str(e))
+            return bad_request_json({"error": str(e)})
         
     c   = {
         "resource":     res,
-        "img_src":      s3_key2url("cropped_pic.jpg")
+        "img_src":      imc.url
     }
     return render(request, 'submit_create.html', c)    
 

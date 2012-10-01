@@ -4,7 +4,10 @@ import urllib2
 import threading
 import Queue
 import time
+
 from emapix.utils.amazon_s3 import s3_upload_file, s3_download_file
+from emapix.core.db.image import WImage
+from emapix.utils.utils import normalize_format, s3key
 
 IMAGE_TYPES = {
     "image/jpeg":   "jpg",
@@ -21,6 +24,7 @@ def crop_s3_image(img_name, crop_name, select_box):
     Returns tuple (status, file_size)
     """
     (x, y, w, h)    = select_box
+    #logger.debug(str(select_box))
     try:
         # Download selected image from Amazon S3
         fd  = StringIO.StringIO()
@@ -46,21 +50,24 @@ def crop_s3_image(img_name, crop_name, select_box):
 
 class ImageThread(threading.Thread):
     
-    def __init__(self, queue):
+    def __init__(self, queue, user, req, format):
         threading.Thread.__init__(self)
-        self._queue = queue
-    
+        self._queue     = queue
+        self._user      = user
+        self._request   = req
+        self._format    = format
     
     def run(self):
-        proc_image(*self._queue.get())
+        (dim, type) = self._queue.get()
+        proc_image(dim, type, self._user, self._request, self._format)
         self._queue.task_done()
 
 
-def proc_images():
+def proc_images(user, req, format):
     queue = Queue.Queue()
-    params  = ((460, "pic_large"), (200, "pic_medium"), (50, "pic_small"))
+    params  = ((460, "large"), (200, "medium"), (50, "small"))
     for param in params:
-        tm  = ImageThread(queue)
+        tm  = ImageThread(queue, user, req, format)
         tm.setDaemon(True)
         tm.start()
     
@@ -80,11 +87,13 @@ def resize_image(img, size):
     return img.resize(size)
 
 
-def proc_image(dim, fname_base):
+def proc_image(dim, type, user, req, format):
     "Processes image based on dimension and image size"
-    # Download from S3
+    res = req.resource
+    # Download cropped file from S3
+    filename    = s3key(res, "crop", format)
     fd  = StringIO.StringIO()
-    content_type    = s3_download_file(fd, "cropped_pic.jpg")
+    content_type    = s3_download_file(fd, filename)
     
     img     = Image.open(fd)
     fmt     = img.format    # "JPEG", "PNG"
@@ -106,7 +115,20 @@ def proc_image(dim, fname_base):
     # Upload to S3
     fd      = StringIO.StringIO()
     img.save(fd, fmt)
+    # Get file size
+    fd.seek(0, 2)   # End of file
+    size    = fd.tell()
+        
     fd.seek(0)
-    filename    = "%s.%s" % (fname_base, IMAGE_TYPES[content_type])
-    s3_upload_file(fd, filename, content_type)
+    filename    = s3key(res, type, format)
+    
+    # DB handling
+    im  = WImage.get_or_create_image_by_request(user, req, type, filename)
+    (im.width, im.height)   = img.size
+    im.url      = s3_key2url(filename)
+    im.is_avail = s3_upload_file(fd, filename, content_type)
+    im.size     = size
+    im.format   = format
+    im.save()
+
     

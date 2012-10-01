@@ -3,6 +3,7 @@ import time
 import json
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from emapix.utils.const import *
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.utils")
@@ -78,6 +79,23 @@ def ts2utc(ts):
     except Exception, e:    # Common exceptions: TypeError
         utc = ""
     return utc
+
+
+def normalize_format(fmt):
+    "Takes non-normalized format and returns normalized"
+    if fmt in ["jpg", "png"]:
+        return fmt
+    if fmt in IMAGE_TYPES.keys():
+        return IMAGE_TYPES[fmt]
+    upper   = {"JPEG": "jpg", "JPG": "jpg", "PNG": "png"}
+    if fmt in upper.keys():
+        return upper[fmt]
+    return None
+
+
+def s3key(res, type, format):
+    "Contructs S3 key from type and format"
+    return "%s%s.%s" % (res, type, format)
 
 
 def bad_request_json(obj):

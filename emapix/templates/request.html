@@ -41,6 +41,7 @@
     
     function show_create()
     {
+        // Loads create image modal page (doesn't handle images creation)
         $.ajax({
             url:    "/submit/create/{{ req.resource }}",
             type:   "GET",
@@ -49,10 +50,9 @@
                 $("#submit_body").html(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-            
+                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
             }
-        });        
-	//$("#submit_body").load("/submit/create/{{ req.resource }}");
+        });
     }    
     
     function submit_image_finished() {
