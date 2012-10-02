@@ -22,10 +22,10 @@
     {% else %}
         <div class="e-request-item e-first-item span8">
     {% endif %}
-        <a href=""><img src="{{thumb_url}}"/></a>
+        <a href="/request/{{req.resource}}"><img src="{{thumb_url}}"/></a>
         <div>
             <div class="e-request-description" title="{{ req.description }}">
-                <a href="/request/{{ req.resource }}">
+                <a href="/request/{{req.resource}}">
                     {{ req.description|slice:":60" }}{% if req.description|length > 60 %}...{% endif %}
                 </a>
             </div>

@@ -380,24 +380,22 @@ def get_requests(request):
     try:
         items = paginator.page(page)
     except PageNotAnInteger:
-        # If page is not an integer, deliver first page.
-        items = paginator.page(1)
+        items = paginator.page(1)   # First page
     except EmptyPage:
-        # If page is out of range (e.g. 9999), deliver last page of results.
-        items = paginator.page(paginator.num_pages)    
+        items = paginator.page(paginator.num_pages)    # Out of range
     
     ct  = int(time.time())  # current time
     ht  = []
-    for item in items:
-        sd  = int(item.submitted_date)
+    for req in items:
+        sd  = int(req.submitted_date)
         t   = HumanTime(ts2h(sd, ct), ts2utc(sd))
         ht.append(t)
-        item.location.lat   = item.location.lat/1e6
-        item.location.lon   = item.location.lon/1e6
+        req.location.lat   = req.location.lat/1e6
+        req.location.lon   = req.location.lon/1e6
     
     c["items"]  = zip(items, ht)
     c["paginator"]  = paginator
-    c["thumb_url"]    = s3_key2url(s3key("2c883122e46d67f4", "small", "jpg"))
+    #c["thumb_url"]    = s3_key2url(s3key("2c883122e46d67f4", "small", "jpg"))
     return render(request, 'requests.html', c)
 
 
