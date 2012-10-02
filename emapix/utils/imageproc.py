@@ -5,7 +5,7 @@ import threading
 import Queue
 import time
 
-from emapix.utils.amazon_s3 import s3_upload_file, s3_download_file
+from emapix.utils.amazon_s3 import s3_upload_file, s3_download_file, s3_key2url
 from emapix.core.db.image import WImage
 from emapix.utils.utils import normalize_format, s3key
 

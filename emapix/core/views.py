@@ -321,7 +321,7 @@ def get_request(request, res):
         c["req"]    = req
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
-        c["pic_url"]    = s3_key2url("pic_large.jpg")
+        c["pic_url"]    = s3_key2url(s3key(res, "large", "jpg"))
     except Exception, e:
         pass
     return render(request, 'request.html', c)
@@ -397,7 +397,7 @@ def get_requests(request):
     
     c["items"]  = zip(items, ht)
     c["paginator"]  = paginator
-    c["thumb_url"]    = s3_key2url("pic_small.jpg")
+    c["thumb_url"]    = s3_key2url(s3key("2c883122e46d67f4", "small", "jpg"))
     return render(request, 'requests.html', c)
 
 
@@ -463,15 +463,15 @@ def submit_select(request, res):
                 filename    = s3key(res, "preview", format)
                 img         = ImageFile(fd)     # convert to image
                 
-                ## DB handling
-                #im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, True)
-                #im.height   = img.height
-                #im.width    = img.width
-                #im.url      = s3_key2url(filename)
-                #im.size     = fd.size
-                #im.format   = format
-                #im.is_avail = s3_upload_file(fd, filename)
-                #im.save()
+                # DB handling
+                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, True)
+                im.height   = img.height
+                im.width    = img.width
+                im.url      = s3_key2url(filename)
+                im.size     = fd.size
+                im.format   = format
+                im.is_avail = s3_upload_file(fd, filename)
+                im.save()
                 
                 # Send email notification?
                 
@@ -526,15 +526,15 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
         
-            ## DB handling
-            #filename    = s3key(res, "crop", im.format)
-            #imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, True)
-            #imc.height   = h
-            #imc.width    = w
-            #imc.url      = s3_key2url(filename)            
-            #(imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
-            #imc.format   = im.format
-            #imc.save()
+            # DB handling
+            filename    = s3key(res, "crop", im.format)
+            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, True)
+            imc.height   = h
+            imc.width    = w
+            imc.url      = s3_key2url(filename)            
+            (imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
+            imc.format   = im.format
+            imc.save()
             
             return http_response_json({"success": True})
         
