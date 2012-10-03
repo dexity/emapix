@@ -58,8 +58,8 @@ class ImageThread(threading.Thread):
         self._format    = format
     
     def run(self):
-        (dim, type) = self._queue.get()
-        proc_image(dim, type, self._user, self._request, self._format)
+        (dim, size_type) = self._queue.get()
+        proc_image(dim, size_type, self._user, self._request, self._format)
         self._queue.task_done()
 
 
@@ -87,7 +87,7 @@ def resize_image(img, size):
     return img.resize(size)
 
 
-def proc_image(dim, type, user, req, format):
+def proc_image(dim, size_type, user, req, format):
     "Processes image based on dimension and image size"
     res = req.resource
     # Download cropped file from S3
@@ -120,14 +120,15 @@ def proc_image(dim, type, user, req, format):
     size    = fd.tell()
         
     fd.seek(0)
-    filename    = s3key(res, type, format)
+    filename    = s3key(res, size_type, format)
     
     # DB handling
-    im  = WImage.get_or_create_image_by_request(user, req, type, filename)
+    im  = WImage.get_or_create_image_by_request(user, req, "request", filename, size_type)
     (im.width, im.height)   = img.size
     im.url      = s3_key2url(filename)
     im.is_avail = s3_upload_file(fd, filename, content_type)
     im.size     = size
+    im.size_type    = size_type
     im.format   = format
     im.save()
 

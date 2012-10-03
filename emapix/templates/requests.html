@@ -16,30 +16,32 @@
 
 <div id="e-requests-list">
     
-{% for req, ht in items %}
-    {% if req != items|slice:":1"|first|first %}
+{% for item in req_items %}
+    {% with req=item.request %}
+    {% if item != req_items|first %}
         <div class="e-request-item span8">
     {% else %}
         <div class="e-request-item e-first-item span8">
     {% endif %}
-        <a href="/request/{{req.resource}}"><img src="{{thumb_url}}"/></a>
+        <a href="/request/{{req.resource}}"><img src="{{item.thumb_url}}"/></a>
         <div>
-            <div class="e-request-description" title="{{ req.description }}">
+            <div class="e-request-description" title="{{req.description}}">
                 <a href="/request/{{req.resource}}">
-                    {{ req.description|slice:":60" }}{% if req.description|length > 60 %}...{% endif %}
+                    {{req.description|slice:":60"}}{% if req.description|length > 60 %}...{% endif %}
                 </a>
             </div>
             <div>
-                <div title="latitude={{ req.location.lat }}, longitude={{ req.location.lon }}" class="pull-left">
+                <div title="latitude={{ item.lat }}, longitude={{ item.lon }}" class="pull-left">
                     {% include "misc/address.html" %}
                 </div>
                 <div class="pull-right">
-                    <div class="e-request-time" title="{{ ht.utc_time }}" >{{ ht.human_time }}</div>
+                    <div class="e-request-time" title="{{ item.htime.utc_time }}" >{{ item.htime.human_time }}</div>
                     <div class="pull-right"><a href="">{{req.user.username}}</a></div>
                 </div>
             </div>
         </div>
     </div>
+    {% endwith %}
 {% endfor %}               
 </div>
 <div class="clear_both"></div>

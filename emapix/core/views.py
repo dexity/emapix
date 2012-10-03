@@ -368,6 +368,14 @@ def help(request):
     return render_to_response('help.html')
 
 
+class RequestItem(object):
+    request = None
+    lat     = None
+    lon     = None
+    htime   = None
+    thumb_url   = None
+    
+    
 def get_requests(request):
     if request.user.is_authenticated():
         c   = {"username": request.user}
@@ -385,17 +393,27 @@ def get_requests(request):
         items = paginator.page(paginator.num_pages)    # Out of range
     
     ct  = int(time.time())  # current time
-    ht  = []
+    req_items  = []
     for req in items:
+        image   = WImage.get_image_by_request(req, size_type="small")
+        thumb_url   = "/media/img/default.png"
+        logger.debug(str(image))
+        if image:
+            thumb_url = image.url
         sd  = int(req.submitted_date)
-        t   = HumanTime(ts2h(sd, ct), ts2utc(sd))
-        ht.append(t)
-        req.location.lat   = req.location.lat/1e6
-        req.location.lon   = req.location.lon/1e6
+        htime   = HumanTime(ts2h(sd, ct), ts2utc(sd))
+        
+        # Populate RequestItem
+        ri  = RequestItem()
+        ri.request  = req
+        ri.lat  = req.location.lat/1e6
+        ri.lon  = req.location.lon/1e6
+        ri.htime    = htime
+        ri.thumb_url    = thumb_url
+        req_items.append(ri)
     
-    c["items"]  = zip(items, ht)
+    c["req_items"]  = req_items
     c["paginator"]  = paginator
-    #c["thumb_url"]    = s3_key2url(s3key("2c883122e46d67f4", "small", "jpg"))
     return render(request, 'requests.html', c)
 
 
