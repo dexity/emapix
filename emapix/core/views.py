@@ -480,7 +480,7 @@ def submit_select(request, res):
                 img         = ImageFile(fd)     # convert to image
                 
                 # DB handling
-                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, True)
+                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, marked_delete=True)
                 im.height   = img.height
                 im.width    = img.width
                 im.url      = s3_key2url(filename)
@@ -544,7 +544,7 @@ def submit_crop(request, res):
         
             # DB handling
             filename    = s3key(res, "crop", im.format)
-            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, True)
+            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, marked_delete=True)
             imc.height   = h
             imc.width    = w
             imc.url      = s3_key2url(filename)            

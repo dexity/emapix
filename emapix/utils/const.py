@@ -16,7 +16,14 @@ IMAGE_TYPES = {
     "image/jpeg":   "jpg",
     "image/png":    "png"
 }
-                
+
+IMAGE_FORMATS   = {
+    "jpg":  ("image/jpeg", "JPEG"),
+    "png":  ("image/png", "PNG")
+}
+
+
+    
 GENDER_CHOICES = (
     ("m", "Male"),
     ("f", "Female"),
