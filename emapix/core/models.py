@@ -13,8 +13,8 @@ class UserProfile(models.Model):
     b_month     = models.CharField(max_length=12)   # Full month
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1)
-    activ_token = models.CharField(max_length=64, null=True)
-    forgot_token = models.CharField(max_length=64, null=True)
+    activ_token = models.CharField(max_length=64, null=True, blank=True)
+    forgot_token = models.CharField(max_length=64, null=True, blank=True)
     
     req_limit   = models.IntegerField(default=10)   # Temp
 
@@ -53,7 +53,7 @@ class Image(models.Model):
     width   = models.IntegerField(default=0)
     url     = models.CharField(max_length=256)   # URL of the photo
     size    = models.IntegerField(default=0)    # Size of image in bytes
-    size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES)
+    size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES, null=True, blank=True)
     format  = models.CharField(max_length=8, default="")    # jpg, png
     is_avail    = models.BooleanField(default=False)
     created_time    = models.CharField(max_length=16)  
@@ -69,13 +69,13 @@ class Image(models.Model):
 class Location(models.Model):
     lat     = models.IntegerField(default=0)
     lon     = models.IntegerField(default=0)
-    street  = models.CharField(max_length=64, null=True)
-    city    = models.CharField(max_length=64, null=True)
-    country = models.CharField(max_length=64, null=True)
-    zipcode = models.CharField(max_length=16, null=True)
+    street  = models.CharField(max_length=64, null=True, blank=True)
+    city    = models.CharField(max_length=64, null=True, blank=True)
+    country = models.CharField(max_length=64, null=True, blank=True)
+    zipcode = models.CharField(max_length=16, null=True, blank=True)
     res_lat = models.IntegerField(default=0)
     res_lon = models.IntegerField(default=0)
-    res_type    = models.CharField(max_length=64, null=True)
+    res_type    = models.CharField(max_length=64, null=True, blank=True)
     
 
 class Request(models.Model):
@@ -84,7 +84,7 @@ class Request(models.Model):
     description  = models.CharField(max_length=140)
     resource    = models.CharField(max_length=16)       # the photo request identification
     submitted_date  = models.CharField(max_length=16)   # timestamp
-    photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True)
+    photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.id:
