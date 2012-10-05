@@ -322,23 +322,24 @@ def get_request(request, res):
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
         c["pic_url"]    = s3_key2url(s3key(res, "large", "jpg"))
-    except Exception, e:
-        pass
+    except Request.DoesNotExist:
+        return render(request, "misc/error_view.html", {"error": "Request does not exist"})
+    
     return render(request, 'request.html', c)
 
 
 def remove_request(request, res):
     "Removes request"
     if not request.user.is_authenticated():
-        return render(request, 'ajax/error.html', {"error": AUTH_ERROR})
+        return render(request, 'misc/error.html', {"error": AUTH_ERROR})
     
     if request.method != "POST":
-        return render(request, 'ajax/error.html', {"error":  "Invalid request" })
+        return render(request, 'misc/error.html', {"error":  "Invalid request" })
     try:
         WRequest.remove_request(res)
         return to_status(OK)
     except Exception, e:
-        return render(request, 'ajax/error.html', {"error":  "Request does not exist"})
+        return render(request, 'misc/error.html', {"error":  "Request does not exist"})
 
 
 

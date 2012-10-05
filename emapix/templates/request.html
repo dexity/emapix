@@ -68,7 +68,6 @@
     }
     
     $(document).ready(function(){
-	{% if req %}
 	var lat	= {{ req.location.lat }};
 	var lon	= {{ req.location.lon }};
 	var location = new google.maps.LatLng(lat, lon);
@@ -126,8 +125,7 @@
 	//    e.preventDefault();
 	//    show_select();
 	//});
-    
-	{% endif %}	
+	
     });
 </script>
 
@@ -135,7 +133,6 @@
 
 {% block content %}
 
-{% if req %}
 <style type="text/css">
   #map_canvas { width:460px; height:460px; }
 </style>
@@ -222,13 +219,5 @@
     <div class="modal-body" id="submit_body"></div>
 </div>
 
-{% else %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-error">
-            Request is not found
-            <br/>
-        </div>
-    </div>   
-{% endif %}
 
 {% endblock content %}
