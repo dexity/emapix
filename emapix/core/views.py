@@ -310,18 +310,19 @@ def request_info(request, res):
 
 
 def get_request(request, res):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    "Returns request"
     try:
         req = Request.objects.get(resource=res)
         req.location.lat    = req.location.lat/1e6
         req.location.lon    = req.location.lon/1e6
+        img = WImage.get_image_by_request(req, size_type="large")
+        
+        c   = {}
         c["req"]    = req
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
-        c["pic_url"]    = s3_key2url(s3key(res, "large", "jpg"))
+        if isinstance(img, Image):
+            c["pic_url"]    = img.url
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})
     

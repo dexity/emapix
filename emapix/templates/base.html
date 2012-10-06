@@ -19,9 +19,9 @@
   </head>
 <body data-spy="scroll" data-target=".subnav" data-offset="50">
     <div class="container">
-        {% if username %}
+        {% if user.username %}
         <div class="pull-right e-nav-user">
-            <a href="/profile"><b>{{ username }}</b></a> 
+            <a href="/profile"><b>{{ user.username }}</b></a> 
             <a href="/set_profile">Settings</a> 
             <a href="/requests" class="brown">Requests</a> <span class="badge badge-important">34</span>
             <a href="/photos" class="green">Photos</a> <span class="badge badge-success">12</span>
@@ -53,7 +53,7 @@
                <a href="/request/make" class="btn btn-success"><b>Make Request</b></a>
            </div>
         </div>
-        {% if not username %}
+        {% if not user.username %}
         <button class="btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
         <div class="clear_both"></div>
         {% endif %}
