@@ -15,7 +15,8 @@
             type:   "GET",
             cache:  false,
             success:    function(data) {
-                $("#submit_body").html(data);
+                $("#submit_container").html(data);
+                $("#submit_modal").modal({backdrop: "static"});
             },
             error:  function(jqXHR, textStatus, errorThrown) {
                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
@@ -50,7 +51,7 @@
                 $("#submit_body").html(data);
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
             }
         });
     }    
@@ -68,8 +69,8 @@
     }
     
     $(document).ready(function(){
-	var lat	= {{ req.location.lat }};
-	var lon	= {{ req.location.lon }};
+	var lat	= "{{ req.location.lat }}";
+	var lon	= "{{ req.location.lon }}";
 	var location = new google.maps.LatLng(lat, lon);
 	var myOptions = {
 	    center: location,
@@ -118,7 +119,6 @@
 	$("#submit_photo").click(function(e) {
 	    e.preventDefault();
 	    show_select();
-	    $("#submit_modal").modal();
 	});
 	
 	//$("#diff_file").click(function(e){
@@ -212,13 +212,7 @@
 </div>
 
 <!-- Modal -->
-<div id="submit_modal" class="modal hide fade">
-    <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-	<h3>Submit Photo</h3>
-    </div>
-    <div class="modal-body" id="submit_body"></div>
-</div>
+<div id="submit_container"></div>
 
 
 {% endblock content %}

@@ -220,6 +220,11 @@ a img {
     white-space:nowrap;
 }
 
-
+#files_container .alert {
+    margin-bottom: 0px;
+}
+#files_container .progress {
+    margin-bottom: 0px;
+}
 
 

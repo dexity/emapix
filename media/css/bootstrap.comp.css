@@ -1,0 +1,21 @@
+
+/* Adjustments for bootstrap */
+
+/*.modal-open {
+  opacity: 0.8;
+  filter: alpha(opacity=80);    
+}
+
+.modal-body {
+  max-height: 400px;
+  overflow-y: none;    
+}*/
+
+.modal-footer .btn {
+    float: none;
+    margin-right: 10px;
+}
+.modal-footer form {
+    margin: 0px;
+}
+
