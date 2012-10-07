@@ -482,7 +482,8 @@ def submit_select(request, res):
                 img         = ImageFile(fd)     # convert to image
                 
                 # DB handling
-                im  = WImage.get_or_create_image_by_request(user, req, "preview", filename, marked_delete=True)
+                im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+                im.name     = filename
                 im.height   = img.height
                 im.width    = img.width
                 im.url      = s3_key2url(filename)
@@ -544,17 +545,7 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
             
-            # DB handling
-            filename    = s3key(res, "crop", im.format)
-            imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, marked_delete=True)
-            imc.height   = h
-            imc.width    = w
-            imc.url      = s3_key2url(filename)            
-            (imc.is_avail, imc.size)    = crop_s3_image(im.name, filename, (x, y, w, h))
-            imc.format   = im.format
-            imc.save()
-            
-            return http_response_json({"success": True})
+            return handle_crop_file(req, user, im, (x, y, w, h))
         
         errors  = crop_form.errors.items()
         msg     = "Something went wrong ..."
@@ -562,7 +553,12 @@ def submit_crop(request, res):
             msg = errors[0]
         return bad_request_json({"error": msg})
 
-    if im.width <= 460 and im.height <= 460:    # No need to crop
+    if im.width <= 460 and im.height <= 460:
+        # No need to crop - upload directly
+        result  = handle_crop_file(req, user, im, (0, 0, im.width, im.height))
+        if isinstance(result, HttpResponseBadRequest):
+            return result
+        
         return HttpResponseRedirect("/submit/create/%s" % res)
 
     c   = {
@@ -573,6 +569,25 @@ def submit_crop(request, res):
         "img_height":   im.height
     }
     return render(request, 'submit_crop.html', c)
+
+
+def handle_crop_file(req, user, image, (x, y, w, h)):
+    "Handles uploading crop file and manages db"
+    try:
+        res         = req.resource
+        filename    = s3key(res, "crop", image.format)
+        imc  = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
+        imc.name     = filename
+        imc.height   = h
+        imc.width    = w
+        imc.url      = s3_key2url(filename)            
+        (imc.is_avail, imc.size)    = crop_s3_image(image.name, filename, (x, y, w, h))
+        imc.format   = image.format
+        imc.save()
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
+    
+    return http_response_json({"success": True})    
 
 
 def submit_create(request, res):

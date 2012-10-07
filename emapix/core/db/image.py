@@ -3,7 +3,7 @@ from emapix.core.models import *
 class WImage(object):
     
     @classmethod
-    def get_or_create_image_by_request(cls, user, req, photo_type, filename, size_type=None, marked_delete=False):
+    def get_or_create_image_by_request(cls, user, req, photo_type, size_type=None, marked_delete=False, save=False):
         "Returns Image or creates Image object by request object"
         phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type=photo_type)
         
@@ -20,8 +20,9 @@ class WImage(object):
             imgs    = imgs.filter(size_type=size_type)
         if imgs.exists():
             return imgs[0]
-        img = Image(photo=ph, name=filename, size_type=size_type)
-        img.save()
+        img = Image(photo=ph, size_type=size_type)
+        if save:
+            img.save()
         return img   # Create new Image
 
 

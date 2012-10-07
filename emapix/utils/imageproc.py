@@ -18,6 +18,7 @@ def crop_s3_image(img_name, crop_name, select_box):
     img_name    - S3 key of the preview image
     crop_name   - S3 key of the crop image
     select_box  - tuple of left upper corner coordinates, widht and height
+    
     Returns tuple (status, file_size)
     """
     (x, y, w, h)    = select_box
@@ -26,7 +27,7 @@ def crop_s3_image(img_name, crop_name, select_box):
         fd  = StringIO.StringIO()
         content_type    = s3_download_file(fd, img_name)
         im1     = Image.open(fd)
-        im2     = im1.crop((x, y, x + w, y + h))
+        im2     = im1.crop((x, y, x + w, y + h))    # lazy operation
         fd.close()
         
         # Upload cropped image to Amazon S3
@@ -132,7 +133,9 @@ def proc_image(lock, dim, size_type, user, req, limg, format):
     
     # DB handling
     lock.acquire()
-    im  = WImage.get_or_create_image_by_request(user, req, "request", filename, size_type)
+    im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
+    im.name = filename
+    im.save()
     lock.release()
     
     (im.width, im.height)   = img.size
