@@ -11,9 +11,24 @@
   overflow-y: none;    
 }*/
 
+#submit_container .modal {
+    width: 800px;
+    position: fixed;
+    margin: 0px;
+}
+#submit_container .modal.fade.in {
+    top: 0px;
+    left: 40px;
+}
+#submit_container .modal-body {
+    max-height: 460px;
+}
 .modal-footer .btn {
     float: none;
     margin-right: 10px;
+}
+.modal-footer a {
+    margin-left: 10px;
 }
 .modal-footer form {
     margin: 0px;

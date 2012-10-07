@@ -7,7 +7,7 @@
 	<h3>Submit Photo</h3>
     </div>
     <div class="modal-body" id="submit_body">
-        <div class="e-alert alert-success pull-left clearfix" style="margin: 0px;">Photo can be up to 5Mb and in JPEG or PNG formats.</div>
+        <div class="e-alert alert-success pull-left" style="margin: 0px;">Photo can be up to 5Mb and in JPEG or PNG formats.</div>
         <div class="clear_both"></div>
         <div id="files_container"></div>        
     </div>
@@ -92,8 +92,8 @@ $(function () {
             },
             {
                 action: 'resize',
-                maxWidth: 920,
-                maxHeight: 920
+                maxWidth: 780,  // 920
+                maxHeight: 780
             },
             {
                 action: 'save'

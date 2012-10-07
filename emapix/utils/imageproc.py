@@ -21,7 +21,6 @@ def crop_s3_image(img_name, crop_name, select_box):
     Returns tuple (status, file_size)
     """
     (x, y, w, h)    = select_box
-    #logger.debug(str(select_box))
     try:
         # Download selected image from Amazon S3
         fd  = StringIO.StringIO()

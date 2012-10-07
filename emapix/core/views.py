@@ -543,7 +543,7 @@ def submit_crop(request, res):
             w   = crop_form.cleaned_data["w"]
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
-        
+            
             # DB handling
             filename    = s3key(res, "crop", im.format)
             imc  = WImage.get_or_create_image_by_request(user, req, "crop", filename, marked_delete=True)

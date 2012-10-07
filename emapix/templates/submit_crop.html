@@ -1,25 +1,31 @@
 
 <link rel="stylesheet" href="/media/jcrop/css/jquery.Jcrop.css" type="text/css" />
     
-<div class="clear_both"></div>
-<img src="{{img_src}}" id="cropbox" />
-{% if crop_form %}
-<form id="cropper_form">
-    {% csrf_token %}
-    {{ crop_form }}
-</form>
-
-<div id="errors_container"></div>
-<div id="progress" style="display: none">
-    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
-        <div class="bar" style="width:100%;"></div>
-    </div>    
+<div id="submit_modal" class="submit_modal modal hide fade">
+    <div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	<h3>Submit Photo</h3>
+    </div>
+    <div class="modal-body" id="submit_body">
+        <img src="{{img_src}}" id="cropbox" />
+        <form id="cropper_form">
+            {% csrf_token %}
+            {{ crop_form }}
+        </form>
+        
+        <div id="errors_container"></div>
+        <div id="progress" style="display: none">
+            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
+                <div class="bar" style="width:100%;"></div>
+            </div>    
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="submit_crop()">Crop</button>
+        <a href="#" onclick="show_select_click(event)">Select different file</a>
+        <a href="#" data-dismiss="modal">Close</a>
+    </div>
 </div>
-<div style="margin-top: 20px;">
-    <button class="btn btn-primary" onclick="submit_crop()">Crop</button>
-    <a href="#" onclick="show_select_click(event)" style="margin-left: 50px;">Select different file</a>
-</div>
-{% endif %}
 
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 
@@ -46,7 +52,7 @@ function submit_crop()
         },
         error:  function(jqXHR, textStatus, errorThrown) {
             $("#progress").hide();
-            $("#error_container").html(format_error(jqXHR.responseText, errorThrown));
+            $("#errors_container").html(format_error(jqXHR.responseText, errorThrown));
         }
     }); 
 }

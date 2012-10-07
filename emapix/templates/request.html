@@ -11,15 +11,17 @@
     {
         // Load select file modal page (doesn't handle file upload)
 	$.ajax({
-	    url:    "/submit/select/{{ req.resource }}",
+	    url:    "/submit/select/{{req.resource}}",
             type:   "GET",
             cache:  false,
             success:    function(data) {
+                $(".modal-backdrop").remove();
                 $("#submit_container").html(data);
                 $("#submit_modal").modal({backdrop: "static"});
             },
             error:  function(jqXHR, textStatus, errorThrown) {
                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#submit_modal").modal({backdrop: "static"});
             }
 	});
     }
@@ -28,14 +30,17 @@
     {
         // Load crop image modal page (doesn't handle image crop)
         $.ajax({
-            url:    "/submit/crop/{{ req.resource }}",
+            url:    "/submit/crop/{{req.resource}}",
             type:   "GET",
             cache:  false,
             success: function(data) {
-                $("#submit_body").html(data);
+                $(".modal-backdrop").remove();
+                $("#submit_container").html(data);
+                $("#submit_modal").modal({backdrop: "static"});
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#submit_modal").modal({backdrop: "static"});
             }
         });
     }
@@ -44,14 +49,17 @@
     {
         // Loads create image modal page (doesn't handle images creation)
         $.ajax({
-            url:    "/submit/create/{{ req.resource }}",
+            url:    "/submit/create/{{req.resource}}",
             type:   "GET",
             cache:  false,
             success: function(data) {
-                $("#submit_body").html(data);
+                $(".modal-backdrop").remove();
+                $("#submit_container").html(data);
+                $("#submit_modal").modal({backdrop: "static"});
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#submit_modal").modal({backdrop: "static"});
             }
         });
     }    
@@ -166,30 +174,33 @@
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
             </div>
         </div>
+        {% if pic_url or user.username == req.user.username %}
         <div class="row e-control-options">
             <div class="span3 pull-left">
+                {% if pic_url %}
 		<a href="#" id="submit_photo">Submit different photo</a>
-		<!--<a href="/submit/select/{{ req.resource }}">Submit different photo</a>-->
+                {% endif %}
 	    </div>
 	    {% csrf_token %}
             <div class="span3 pull-right">
-		
 		{% if user.username == req.user.username %}
                 <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
+                <!-- Modal for delete request -->
+                <div id="remove_modal" class="modal hide fade">
+                    <div class="modal-header"><h3>Delete Request</h3></div>
+                    <div class="modal-body">
+                        <div id="body_errors"></div>
+                        Are you sure you want to delete the request?
+                    </div>
+                    <div class="modal-footer">
+                      <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
+                      <a href="#" class="btn" data-dismiss="modal" >Close</a>
+                    </div>
+                </div>
 		{% endif %}
             </div>
-	    <div id="remove_modal" class="modal hide fade">
-		<div class="modal-header"><h3>Delete Request</h3></div>
-		<div class="modal-body">
-		    <div id="body_errors"></div>
-		    Are you sure you want to delete the request?
-		</div>
-		<div class="modal-footer">
-		  <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
-		  <a href="#" class="btn" data-dismiss="modal" >Close</a>
-		</div>
-	    </div>	    
         </div>
+        {% endif %}
 	<hr />
 	<!-- XXX: Finish -->
         <div class="e-request-info">
@@ -212,7 +223,15 @@
 </div>
 
 <!-- Modal -->
-<div id="submit_container"></div>
+<div id="submit_container">
+    <div id="submit_modal" class="submit_modal modal hide fade">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Submit Photo</h3>
+        </div>
+        <div class="modal-body" id="submit_body"></div>
+    </div>
+</div>
 
 
 {% endblock content %}
