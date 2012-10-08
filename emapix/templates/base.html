@@ -55,8 +55,10 @@
            </div>
         </div>
         {% if not user.username %}
-        <button class="btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
+        {% if not hide_join %}
+        <button class="btn btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
         <div class="clear_both"></div>
+        {% endif %}
         {% endif %}
         
         {% block content %}{% endblock content %}

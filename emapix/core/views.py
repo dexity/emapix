@@ -30,8 +30,8 @@ from emapix.core.db.request import WRequest
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
 
-def index(request):
-    return render_to_response("index.html")
+#def index(request):
+#    return render_to_response("index.html")
 
 
 def generate_token(value):
@@ -47,7 +47,7 @@ class HumanTime(object):
 
 @csrf_protect
 def join(request):
-    
+    "Submits registration form and sends activation email"
     if request.method == "POST":
         form    = JoinForm(request.POST)
         if form.is_valid():
@@ -57,13 +57,15 @@ def join(request):
             
             # Creates user
             try:
-                user        = User(username=username, email=email)    #.objects.create_user(username, email, password)
+                user        = User(username=username, email=email)
                 user.set_password(password)
                 user.is_active  = False
                 user.save()
-            except:
+            except Exception, e:
+                logger.error(str(e))
                 c   = {
-                    "form":     form
+                    "form":     form,
+                    "hide_join":    True
                 }
                 return render(request, "join.html", c)                
 
@@ -92,7 +94,8 @@ def join(request):
         form    = JoinForm()
 
     c   = {
-        "form":     form
+        "form":     form,
+        "hide_join":    True
     }
     return render(request, "join.html", c)
 
@@ -130,7 +133,8 @@ def login(request):
     else:
         form    = LoginForm()
     c   = {
-        "form": form
+        "form": form,
+        "hide_join":    True
     }
     return render(request, 'login.html', c)
 
@@ -157,7 +161,7 @@ def forgot(request):
                 return render(request, "message.html", {"type": "forgot"})
             
             except Exception, e:
-                logger.debug(str(e))
+                logger.error(str(e))
     else:
         form    = ForgotForm()
     c   = {
@@ -199,23 +203,18 @@ def renew_password(request, token):
 
 
 def make_request(request):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
-    return render_to_response('make.html', c)
+    c   = {}
+    return render(request, 'make.html')
 
 
 @csrf_protect
 def add_request(request):
     "Displays and handles photo request form"
     if not request.user.is_authenticated():
-        return render_to_response('forms/request_form.html')
+        return render(request, 'forms/request_form.html')
     
     _user   = request.user
-    c   = {
-        "username": _user
-    }
+    c   = {}
         
     if request.method == "POST":
         # POST request
@@ -291,7 +290,7 @@ def request_info(request, res):
     if not request.user.is_authenticated():
         return render(request, 'ajax/request_info.html')
     
-    c   = {"username": request.user}    
+    c   = {}
     reqs = Request.objects.filter(resource=res)
     if len(reqs) > 0:
         req = reqs[0]
@@ -345,29 +344,26 @@ def remove_request(request, res):
 
 
 def set_profile(request):
-    return render_to_response('set_profile.html')
+    return render(request, 'set_profile.html')
 
 def set_password(request):
-    return render_to_response('set_password.html')
+    return render(request, 'set_password.html')
 
 def get_user(request, username):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    c   = {}
     try:
-        user    = User.objects.get(username)
+        user    = User.objects.get(username=username)
         c["user"]   = user
-    except:
+    except User.DoesNotExist:
         pass
     return render(request, 'profile.html', c)
 
 
 def users(request):
-    return render_to_response('users.html')
+    return render(request, 'users.html')
 
 def help(request):
-    return render_to_response('help.html')
+    return render(request, 'help.html')
 
 
 class RequestItem(object):
@@ -379,10 +375,8 @@ class RequestItem(object):
     
     
 def get_requests(request):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    "Returns list of requests"
+    c   = {}
     reqs    = Request.objects.all().order_by("-submitted_date")
     paginator   = Paginator(reqs, 30)   # 30 items per page
     page    = request.GET.get("page")
@@ -420,22 +414,19 @@ def get_requests(request):
 
 
 def request2(request):
-    return render_to_response('request2.html')
+    return render(request, 'request2.html')
 
 def photos(request):
-    return render_to_response('photos.html')
+    return render(request, 'photos.html')
 
 def search(request):
-    return render_to_response('search.html')
+    return render(request, 'search.html')
 
 def search2(request):
-    return render_to_response('search2.html')
+    return render(request, 'search2.html')
 
 def submit(request, res):
-    if request.user.is_authenticated():
-        c   = {"username": request.user}
-    else:
-        c   = {}
+    c   = {}
     try:
         req = Request.objects.get(resource=res)
         c["req"]    = req
@@ -622,7 +613,7 @@ def submit_create(request, res):
 
 
 def submit3(request):
-    return render_to_response('submit3.html')
+    return render(request, 'submit3.html')
 
 
 
