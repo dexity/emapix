@@ -24,8 +24,8 @@
         <div class="pull-right e-nav-user">
             <a href="/profile"><b>{{ user.username }}</b></a> 
             <a href="/set_profile">Settings</a> 
-            <a href="/requests" class="brown">Requests</a> <span class="badge badge-important">34</span>
-            <a href="/photos" class="green">Photos</a> <span class="badge badge-success">12</span>
+            <a href="/requests" class="brown">Requests</a> <span class="badge badge-important">{{userprof.num_requests}}</span>
+            <a href="/photos" class="green">Photos</a> <span class="badge badge-success">{{userprof.num_photos}}</span>
             <a href="/help">Help</a> 
             <a href="/logout">Logout</a>
         </div>

@@ -366,6 +366,7 @@ def users(request):
     paginator   = Paginator(usps, 35)   # 35 items per page
     page    = request.GET.get("page")
     
+    from django.contrib.auth.context_processors import auth
     try:
         items = paginator.page(page)
     except PageNotAnInteger:
