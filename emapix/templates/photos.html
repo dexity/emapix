@@ -19,7 +19,9 @@
 <div class="row e-photo-row">
     {% endif %}
     <div class="span2">
-        <a href="/request/{{req.resource}}"><img src="{{image.url}}"/></a>
+        <a href="/request/{{req.resource}}" title="{{req.description|slice:":40"}}{% if req.description|length > 40 %}...{% endif %}">
+            <img src="{{image.url}}"/>
+        </a>
         {% if req.location.city %}
             <a href="#" class="label label-success">{{req.location.city}}</a>
         {% elif req.location.country %}

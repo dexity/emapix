@@ -361,7 +361,22 @@ def get_user(request, username):
 
 
 def users(request):
-    return render(request, 'users.html')
+    "Returns list of users"
+    usps   = UserProfile.objects.all()  # Filter by num of photos
+    paginator   = Paginator(usps, 35)   # 35 items per page
+    page    = request.GET.get("page")
+    
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)   # First page
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)    # Out of range
+    c   = {
+        "items":        usps,
+        "paginator":    paginator
+    }
+    return render(request, 'users.html', c)
 
 def help(request):
     return render(request, 'help.html')

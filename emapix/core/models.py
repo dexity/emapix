@@ -15,6 +15,8 @@ class UserProfile(models.Model):
     gender      = models.CharField(max_length=1)
     activ_token = models.CharField(max_length=64, null=True, blank=True)
     forgot_token = models.CharField(max_length=64, null=True, blank=True)
+    num_requests = models.IntegerField(default=0)
+    num_photos  = models.IntegerField(default=0)
     
     req_limit   = models.IntegerField(default=10)   # Temp
 
