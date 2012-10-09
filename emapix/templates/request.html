@@ -169,6 +169,16 @@
 		<div class="span2">Requested by:</div>
 		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
 	    </div>
+            <!--<div class="e-request-info">
+                <div class="row">
+                    <div class="span2">Submitted by:</div>
+                    <div><a href="">lunatix</a></div>
+                </div>
+                <div class="row">
+                    <div class="span2">Date:</div>
+                    <div class="e-time">May 30 2012 4:13pm</div>
+                </div>
+            </div>-->
             <div class="row">
                 <div class="span2">Date:</div>
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
@@ -184,6 +194,7 @@
 	    {% csrf_token %}
             <div class="span3 pull-right">
 		{% if user.username == req.user.username %}
+                <!--<a href="" class="red e-red-option" >Remove Photo</a><br />-->
                 <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
                 <!-- Modal for delete request -->
                 <div id="remove_modal" class="modal hide fade">

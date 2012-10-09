@@ -162,6 +162,10 @@ a img {
 .e-photo-row {
     margin-bottom: 10px;
 }
+.e-photo-row img {
+    margin-bottom: 3px;
+    border: 0px;
+}
 .e-search-query {
     font-size: 17px;
     margin-left: 20px;

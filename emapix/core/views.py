@@ -416,8 +416,25 @@ def get_requests(request):
 def request2(request):
     return render(request, 'request2.html')
 
-def photos(request):
-    return render(request, 'photos.html')
+def recent_photos(request):
+    "Returns list of photos"
+    images  = Image.objects.filter(size_type="medium").filter(is_avail=True).order_by("-updated_time")
+    phreqs  = PhotoRequest.objects.filter(photo__image__in=images).order_by("-photo__image__updated_time") # Same number as images length
+    paginator   = Paginator(phreqs, 12)   # 12 items per page
+    page    = request.GET.get("page")
+    
+    try:
+        items = paginator.page(page)
+    except PageNotAnInteger:
+        items = paginator.page(1)   # First page
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)    # Out of range
+    c   = {
+        "items":    zip(images, phreqs),
+        "paginator":    paginator
+    }
+    return render(request, 'photos.html', c)
+
 
 def search(request):
     return render(request, 'search.html')
