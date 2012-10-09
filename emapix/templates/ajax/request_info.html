@@ -1,31 +1,20 @@
-{% if username %}
-    {% if req_exists %}
 
-    <div style="margin-bottom: -10px;">
-        <div style="margin-bottom: 10px; width: 300px"><i>{{ description }}</i></div>
-        <b>Approximate Address</b>:
-        <div title="latitude={{ lat }}, longitude={{ lon }}">
-            {% if street%}
-                {{ street }}
-            {% endif %}
-            {% if city %}
-                <span class="label label-success">{{ city }}</span>
-            {% endif %}
-            {% if country %}
-                <span class="label label-info">{{ country }}</span>
-            {% endif %}        
-        </div>
-        <div style="margin-top: 10px;"><a href="/request/{{ resource }}" class="pull-left">Request Details</a>
-        {% csrf_token %}
-        <a href="/request/{{ resource }}/remove" class="red pull-right" id="remove_link">Remove</a><div>
+<div style="margin-bottom: -10px;">
+    <div style="margin-bottom: 10px; width: 300px"><i>{{ description }}</i></div>
+    <b>Approximate Address</b>:
+    <div title="latitude={{ lat }}, longitude={{ lon }}">
+        {% if street%}
+            {{ street }}
+        {% endif %}
+        {% if city %}
+            <span class="label label-success">{{ city }}</span>
+        {% endif %}
+        {% if country %}
+            <span class="label label-info">{{ country }}</span>
+        {% endif %}        
     </div>
-    {% else %}
-    <div class="alert alert-error" style="margin-top: 10px;">
-        Request does not exist
-    </div>
-    {% endif %}
-{% else %}
-<div class="alert alert-error" style="margin-top: 10px;">
-    Please <a href="/login">login</a> or <a href="/join">sign up</a> to see the request details
+    <div style="margin-top: 10px;"><a href="/request/{{ resource }}" class="pull-left">Request Details</a>
+    {% csrf_token %}
+    <a href="/request/{{ resource }}/remove" class="red pull-right" id="remove_link">Remove</a><div>
 </div>
-{% endif %}
+

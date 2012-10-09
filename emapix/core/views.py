@@ -211,7 +211,8 @@ def make_request(request):
 def add_request(request):
     "Displays and handles photo request form"
     if not request.user.is_authenticated():
-        return render(request, 'forms/request_form.html')
+        logger.debug(str(request.user))
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
     _user   = request.user
     c   = {}
@@ -288,13 +289,11 @@ def get_requests_json(request):
 def request_info(request, res):
     "Displays the request info"
     if not request.user.is_authenticated():
-        return render(request, 'ajax/request_info.html')
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
-    c   = {}
-    reqs = Request.objects.filter(resource=res)
-    if len(reqs) > 0:
-        req = reqs[0]
-        c["req_exists"]  = True
+    try:
+        req = Request.objects.get(resource=res)
+        c   = {}
         c["id"]     = req.id
         if req.location:
             c["lat"]    = req.location.lat/1e6
@@ -304,7 +303,9 @@ def request_info(request, res):
             c["country"]    = req.location.country
         c["description"]    = req.description
         c["resource"]   = req.resource
-
+    except Request.DoesNotExist:
+        return render(request, 'misc/error_view.html', {"error": "Request does not exist"})
+    
     return render(request, 'ajax/request_info.html', c)
 
 
@@ -412,9 +413,6 @@ def get_requests(request):
     c["paginator"]  = paginator
     return render(request, 'requests.html', c)
 
-
-def request2(request):
-    return render(request, 'request2.html')
 
 def recent_photos(request):
     "Returns list of photos"
