@@ -11,13 +11,14 @@ def auth(request):
     aparams = cp.auth(request)
     user    = aparams["user"]
     if isinstance(user, AnonymousUser):
-        userprof    = ""    # Empty UserProfile  # XXX: Finish!!!
+        userprof    = ""    # Empty UserProfile?
     else:
         try:
             userprof  = UserProfile.objects.get(user=user)
         except UserProfile.DoesNotExist:
             logger.error("User profile does not exist")
+            userprof    = ""
     
-    aparams["userprof"] = userprof
+    aparams["userprof"] = userprof  # Update dictionary
     return aparams
     

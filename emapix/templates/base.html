@@ -20,7 +20,7 @@
   </head>
 <body data-spy="scroll" data-target=".subnav" data-offset="50">
     <div class="container">
-        {% if user.username %}
+        {% if userprof %}
         <div class="pull-right e-nav-user">
             <a href="/profile"><b>{{ user.username }}</b></a> 
             <a href="/set_profile">Settings</a> 
@@ -54,7 +54,7 @@
                <a href="/request/make" class="btn btn-success"><b>Make Request</b></a>
            </div>
         </div>
-        {% if not user.username %}
+        {% if not userprof %}
         {% if not hide_join %}
         <button class="btn btn-large btn-success" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
         <div class="clear_both"></div>
