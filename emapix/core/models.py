@@ -8,6 +8,7 @@ from emapix.utils.utils import timestamp
 class UserProfile(models.Model):
     user        = models.OneToOneField(User)
     location    = models.CharField(max_length=128)
+    description = models.CharField(max_length=1000, default="")
     country_alpha2     = models.CharField(max_length=2)
     b_day       = models.SmallIntegerField(null=True)
     b_month     = models.CharField(max_length=12)   # Full month

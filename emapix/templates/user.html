@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% load get_range %}
+{% block content %}
+
+<div class="row">
+    <div class="span2">
+        <img src="/media/img/user.png" />
+    </div>
+    <div class="span8">
+        <h2>{{name}}</h2>
+        {{user2.location}}
+        <div class="full-description">{{user2.description}}</div>
+		<div class="tabbable">
+		  <ul class="nav nav-tabs">
+		    <li class="active"><a href="#tab1" data-toggle="tab">Requests <span class="badge badge-important">34</span></a></li>
+		    <li><a href="#tab2" data-toggle="tab">Photos <span class="badge badge-success">12</span></a></li>
+		  </ul>
+		  <div class="tab-content">
+		    <!-- Tab1 -->
+		    <div class="tab-pane active" id="tab1">
+                        <div>				    
+                        {% for i in 10|get_range %}   
+                            <div class="e-request-item">
+                                <a href=""><img src="/media/img/request.png"/></a>
+                                <div>
+                                    <div class="e-request-description"><a href="">Planning to hike in this place ...</a><button class="close">&times;</button></div>
+                                    <div> 6983 Navajo Rd. <span class="label">San Diego, CA</span> 
+                                        <div class="pull-right">
+                                            <div class="e-request-time">10 hr 1 min ago</div>
+                                            <div class="pull-right">Requested by <a href="">dexity</a></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}               
+                        </div>
+                        <div class="clear_both"></div>    
+                        <div class="pagination">
+                          <ul>
+                            <li><a href="#">Prev</a></li>
+                            <li class="active">
+                              <a href="#">1</a>
+                            </li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">Next</a></li>
+                          </ul>
+                        </div>
+
+		    </div>
+		    <!-- Tab2 -->
+		    <div class="tab-pane" id="tab2">
+                        <div class="row e-photo-row">
+                            <div class="span2">
+                                <a href=""><img src="/media/img/photo_medium.png"/></a>
+                                <a href="">San Diego, CA</a>
+                            </div>
+                            <div class="span2">
+                                <a href=""><img src="/media/img/photo_medium.png"/></a>
+                                <a href="">La Jolla, CA</a>
+                            </div>
+                            <div class="span2">
+                                <a href=""><img src="/media/img/photo_medium.png"/></a>
+                                <a href="">Pasadena, CA</a>
+                            </div>
+                            <div class="span2">
+                                <a href=""><img src="/media/img/photo_medium.png"/></a>
+                                <a href="">Bloomington, IN</a>
+                            </div>
+                        </div>
+
+		    </div>
+		  </div>
+		</div>        
+    </div>
+</div>
+
+{% endblock content %}

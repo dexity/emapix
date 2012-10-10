@@ -21,6 +21,7 @@ urlpatterns = patterns('emapix.core.views',
     url(r'^submit/select/%s$' % REQ_REGEX, 'submit_select'),
     url(r'^submit/crop/%s$' % REQ_REGEX, 'submit_crop'),
     url(r'^submit/create/%s$' % REQ_REGEX, 'submit_create'),
+    url(r'^profile/(?P<username>(%s))$' % uregex, 'get_profile'),
     
     # Ajax
     url(r'^request/add$', 'add_request'),
@@ -31,9 +32,8 @@ urlpatterns = patterns('emapix.core.views',
     
     # Layouts
     url(r'^forgot$', 'forgot'),
-    url(r'^set_profile$', 'set_profile'),
+    #url(r'^settings$', 'set_profile'),
     url(r'^set_password$', 'set_password'),
-    url(r'^profile$', 'get_user'),
     url(r'^users$', 'users'),
     url(r'^help$', 'help'),
     url(r'^photos$', 'recent_photos'),

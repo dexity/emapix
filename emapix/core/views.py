@@ -344,20 +344,32 @@ def remove_request(request, res):
 
 
 
-def set_profile(request):
+def get_profile(request, username):
     return render(request, 'set_profile.html')
 
 def set_password(request):
     return render(request, 'set_password.html')
 
 def get_user(request, username):
-    c   = {}
+    "Displays user profile"
     try:
-        user    = User.objects.get(username=username)
-        c["user"]   = user
-    except User.DoesNotExist:
-        pass
-    return render(request, 'profile.html', c)
+        userprof2   = UserProfile.objects.get(user__username=username)
+        user2       = userprof2.user
+        
+        c   = {
+            "userprof2": userprof2
+        }
+    except UserProfile.DoesNotExist:
+        logger.error("User does not exist: %s" % username)
+        return render(request, 'misc/error_view.html', {"error": "User does not exist"})
+    
+    if user2.first_name or user2.last_name:
+        name   = "%s %s" % (user2.first_name, user2.last_name)
+    else:
+        name    = user2.username
+    c["name"]   = name
+    
+    return render(request, 'user.html', c)
 
 
 def users(request):
