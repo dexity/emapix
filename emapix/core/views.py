@@ -357,7 +357,8 @@ def get_user(request, username):
         user2       = userprof2.user
         
         c   = {
-            "userprof2": userprof2
+            "userprof2": userprof2,
+            "is_you":    True if user2 == request.user else False
         }
     except UserProfile.DoesNotExist:
         logger.error("User does not exist: %s" % username)
