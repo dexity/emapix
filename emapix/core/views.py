@@ -26,6 +26,7 @@ from emapix.core.emails import send_activation_email, send_forgot_email, send_ne
 from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
+from emapix.core.tmpl.request import TmplRequest
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -38,12 +39,6 @@ def generate_token(value):
     "Generates 40 character token"
     return sha1(value + str(time.time()))
     
-
-class HumanTime(object):
-    def __init__(self, ht, utc):
-        self.human_time = ht
-        self.utc_time   = utc
-        
 
 @csrf_protect
 def join(request):
@@ -360,9 +355,9 @@ def get_user(request, username):
             "userprof2": userprof2,
             "is_you":    True if user2 == request.user else False
         }
-    except UserProfile.DoesNotExist:
-        logger.error("User does not exist: %s" % username)
-        return render(request, 'misc/error_view.html', {"error": "User does not exist"})
+    except UserProfile.DoesNotExist, e:
+        logger.error("%s: %s" % (e, username))
+        return render(request, 'misc/error_view.html', {"error": str(e)})
     
     if user2.first_name or user2.last_name:
         name   = "%s %s" % (user2.first_name, user2.last_name)
@@ -396,14 +391,6 @@ def help(request):
     return render(request, 'help.html')
 
 
-class RequestItem(object):
-    request = None
-    lat     = None
-    lon     = None
-    htime   = None
-    thumb_url   = None
-    
-    
 def get_requests(request):
     "Returns list of requests"
     c   = {}
@@ -418,27 +405,7 @@ def get_requests(request):
     except EmptyPage:
         items = paginator.page(paginator.num_pages)    # Out of range
     
-    ct  = int(time.time())  # current time
-    req_items  = []
-    for req in items:
-        image   = WImage.get_image_by_request(req, size_type="small")
-        thumb_url   = "/media/img/default.png"
-        logger.debug(str(image))
-        if image:
-            thumb_url = image.url
-        sd  = int(req.submitted_date)
-        htime   = HumanTime(ts2h(sd, ct), ts2utc(sd))
-        
-        # Populate RequestItem
-        ri  = RequestItem()
-        ri.request  = req
-        ri.lat  = req.location.lat/1e6
-        ri.lon  = req.location.lon/1e6
-        ri.htime    = htime
-        ri.thumb_url    = thumb_url
-        req_items.append(ri)
-    
-    c["req_items"]  = req_items
+    c["req_items"]  = TmplRequest.request_items(items)
     c["paginator"]  = paginator
     return render(request, 'requests.html', c)
 
