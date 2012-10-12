@@ -15,7 +15,7 @@ from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key
+http_response_json, forbidden_json, s3key, paginated_items
 from emapix.core.validators import validate_user_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -398,14 +398,7 @@ def get_requests(request):
     paginator   = Paginator(reqs, 30)   # 30 items per page
     page    = request.GET.get("page")
     
-    try:
-        items = paginator.page(page)
-    except PageNotAnInteger:
-        items = paginator.page(1)   # First page
-    except EmptyPage:
-        items = paginator.page(paginator.num_pages)    # Out of range
-    
-    c["req_items"]  = TmplRequest.request_items(items)
+    c["req_items"]  = TmplRequest.request_items(paginated_items(paginator, page))
     c["paginator"]  = paginator
     return render(request, 'requests.html', c)
 

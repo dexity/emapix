@@ -3,6 +3,7 @@ import time
 import json
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from emapix.utils.const import *
 
 from emapix.utils.logger import Logger
@@ -96,6 +97,17 @@ def normalize_format(fmt):
 def s3key(res, type, format):
     "Contructs S3 key from type and format"
     return "%s%s.%s" % (res, type, format)
+
+
+def paginated_items(paginator, page_num):
+    "Returns paginated items"
+    try:
+        items = paginator.page(page_num)
+    except PageNotAnInteger:
+        items = paginator.page(1)   # First page
+    except EmptyPage:
+        items = paginator.page(paginator.num_pages)    # Out of range
+    return items
 
 
 def bad_request_json(obj):
