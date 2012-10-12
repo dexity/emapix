@@ -6,7 +6,9 @@
 <div class="row">
     <div class="span2">
         <img src="/media/img/user.png" style="margin-bottom: 10px;" /><br />
+        {% if is_you %} <!-- and no photo -->
         <a href="/profile/{{user.username}}" >Add photo?</a>
+        {% endif %}
     </div>
     <div class="span8">
         {% if is_you and not user2.location %}

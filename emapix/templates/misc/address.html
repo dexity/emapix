@@ -3,8 +3,7 @@
     {{ req.location.street }}
 {% endif %}
 {% if req.location.city %}
-    <span class="label label-success">{{ req.location.city }}</span>
-{% endif %}
-{% if req.location.country %}
-    <span class="label label-info">{{ req.location.country }}</span>
+    <span class="label label-success" title="{{req.location.city}}, {{req.location.country}}">{{ req.location.city }}</span>
+{% elif req.location.country %}
+    <span class="label label-info" title="{{req.location.country}}">{{ req.location.country }}</span>
 {% endif %}
