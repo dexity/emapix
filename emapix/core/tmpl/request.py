@@ -1,6 +1,5 @@
 
 # Wrap classes for templates
-import time
 
 from emapix.core.db.image import WImage
 from emapix.utils.utils import *
@@ -18,13 +17,14 @@ class RequestItem(object):
     htime   = None
     thumb_url   = None
     
+
     
 class TmplRequest(object):
     
     @classmethod
     def request_items(cls, requests):
         "Returns request items for request list template"
-        ct  = int(time.time())  # current time
+        ct  = timestamp()  # current time
         req_items  = []
         
         for req in requests:

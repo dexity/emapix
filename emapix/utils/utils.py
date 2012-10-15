@@ -100,14 +100,13 @@ def s3key(res, type, format):
 
 
 def paginated_items(paginator, page_num):
-    "Returns paginated items"
+    "Returns tuple of paginated items and page number"
     try:
-        items = paginator.page(page_num)
+        return (paginator.page(page_num), page_num)
     except PageNotAnInteger:
-        items = paginator.page(1)   # First page
+        return (paginator.page(1), 1)   # First page
     except EmptyPage:
-        items = paginator.page(paginator.num_pages)    # Out of range
-    return items
+        return (paginator.page(paginator.num_pages), paginator.num_pages)   # Out of range
 
 
 def bad_request_json(obj):

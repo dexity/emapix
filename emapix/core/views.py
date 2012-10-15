@@ -374,7 +374,7 @@ def users(request):
     paginator   = Paginator(usps, 35)   # 35 items per page
     page    = request.GET.get("page")
     
-    from django.contrib.auth.context_processors import auth
+    # XXX: Refactor
     try:
         items = paginator.page(page)
     except PageNotAnInteger:
@@ -398,9 +398,50 @@ def get_requests(request):
     paginator   = Paginator(reqs, 30)   # 30 items per page
     page    = request.GET.get("page")
     
-    c["req_items"]  = TmplRequest.request_items(paginated_items(paginator, page))
+    c["req_items"]  = TmplRequest.request_items(paginated_items(paginator, page)[0])
     c["paginator"]  = paginator
     return render(request, 'requests.html', c)
+
+
+def get_user_requests_json(request, username):
+    "Returns user requests"
+    try:
+        userprof2   = UserProfile.objects.get(user__username=username)
+    except UserProfile.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+    
+    reqs    = Request.objects.filter(user=userprof2.user).order_by("-submitted_date")
+    paginator   = Paginator(reqs, 10)   # 10 items per page
+    page    = request.GET.get("page")
+    
+    items   = paginated_items(paginator, page)
+    data    = []
+    ct      = timestamp()
+    for req in items[0]:
+        sd  = int(req.submitted_date)
+        image   = WImage.get_image_by_request(req, size_type="small")
+        thumb_url   = "/media/img/default.png" if not image else image.url
+        data_item   = {
+            "id":       req.id,
+            "resource": req.resource,
+            "title":    req.description if len(req.description) < 60 else "%s..." % req.description[:60],
+            "description":  req.description,
+            "thumb_url":    thumb_url,
+            "street":   req.location.street,
+            "city":     req.location.city,
+            "username": username,
+            "time_display": ts2h(sd, ct)
+        }
+        data.append(data_item)
+    c   = {
+        "data":     data,
+        "paging":   {
+            "page":  items[1],
+            "total":    paginator.num_pages
+        },
+        "total":    paginator.count   # XXX: Performance bottleneck?
+    }
+    return http_response_json(c)
 
 
 def recent_photos(request):
@@ -410,6 +451,7 @@ def recent_photos(request):
     paginator   = Paginator(phreqs, 12)   # 12 items per page
     page    = request.GET.get("page")
     
+    # Refactor
     try:
         items = paginator.page(page)
     except PageNotAnInteger:
