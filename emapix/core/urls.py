@@ -27,6 +27,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
     url(r"^request/%s/remove$" % REQ_REGEX, "remove_request"),
+    url(r"^user/(?P<username>(%s))/requests$" % uregex, "get_user_requests"),
     # Json
     url(r"^request/all/json$", "get_requests_json"),
     url(r"^user/(?P<username>(%s))/requests/json$" % uregex, "get_user_requests_json"),

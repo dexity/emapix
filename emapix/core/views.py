@@ -403,8 +403,29 @@ def get_requests(request):
     return render(request, 'requests.html', c)
 
 
+def get_user_requests(request, username):
+    "Return user requests"
+    try:
+        userprof2   = UserProfile.objects.get(user__username=username)
+    except UserProfile.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+    
+    reqs    = Request.objects.filter(user=userprof2.user).order_by("-submitted_date")
+    paginator   = Paginator(reqs, 10)   # 10 items per page
+    page    = request.GET.get("page")
+    
+    items   = paginated_items(paginator, page)
+    data    = []
+    ct      = timestamp()
+    for req in items[0]:
+        sd  = int(req.submitted_date)
+        image   = WImage.get_image_by_request(req, size_type="small")
+        thumb_url   = "/media/img/default.png" if not image else image.url
+    return
+    
+
 def get_user_requests_json(request, username):
-    "Returns user requests"
+    "Returns user requests in json format"
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:
@@ -439,7 +460,7 @@ def get_user_requests_json(request, username):
             "page":  items[1],
             "total":    paginator.num_pages
         },
-        "total":    paginator.count   # XXX: Performance bottleneck?
+        "total":    paginator.count
     }
     return http_response_json(c)
 

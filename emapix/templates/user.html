@@ -1,6 +1,31 @@
 {% extends "base.html" %}
 
-{% load get_range %}
+{% block header %}
+<script type="text/javascript">
+    
+    //function 
+    
+    $(document).ready(function(){
+
+        $.ajax({
+            url:    "/user/{{user.username}}/requests",
+            type:   "GET",
+            cache:  false,
+            success:    function(data) {
+                console.debug(data);
+                //show_create();  // From request.html
+            },
+            error:  function(jqXHR, textStatus, errorThrown) {
+                
+            }
+        });
+    })
+</script>
+
+
+
+{% endblock header %}
+
 {% block content %}
 
 <div class="row">
@@ -33,18 +58,18 @@
         
         <div class="tabbable">
           <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
-            <li><a href="#tab2" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
-            <li><a href="#tab3" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>
+            <li class="active"><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
+            <li><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
+            <li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>
           </ul>
           <div class="tab-content">
             <!-- Requests Tab -->
-            <div class="tab-pane active" id="tab1">
+            <div class="tab-pane active" id="tab_requests">
 
 
             </div>
             <!-- Photos Tab -->
-            <div class="tab-pane" id="tab2">
+            <div class="tab-pane" id="tab_photos">
                 <div class="row e-photo-row">
                     <div class="span2">
                         <a href=""><img src="/media/img/photo_medium.png"/></a>
@@ -65,7 +90,7 @@
                 </div>
             </div>
             <!-- Areas Tab -->
-            <div class="tab-pane" id="tab3">
+            <div class="tab-pane" id="tab_areas">
                 List of areas
             </div>
           </div>
