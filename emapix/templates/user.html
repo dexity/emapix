@@ -13,6 +13,7 @@
             cache:  false,
             success:    function(data) {
                 console.debug(data);
+                $("#tab_requests").html(data.data)
                 //show_create();  // From request.html
             },
             error:  function(jqXHR, textStatus, errorThrown) {

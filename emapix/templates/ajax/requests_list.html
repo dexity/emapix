@@ -2,11 +2,7 @@
     
 {% for item in req_items %}
     {% with req=item.request %}
-    {% if item != req_items|first %}
-        <div class="e-request-item span8">
-    {% else %}
-        <div class="e-request-item e-first-item span8">
-    {% endif %}
+    <div class="e-request-item span8">
         <a href="/request/{{req.resource}}"><img src="{{item.thumb_url}}"/></a>
         <div>
             <div class="e-request-description" title="{{req.description}}">

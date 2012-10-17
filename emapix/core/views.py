@@ -393,17 +393,18 @@ def help(request):
 
 def get_requests(request):
     "Returns list of requests"
-    c   = {}
     reqs    = Request.objects.all().order_by("-submitted_date")
     paginator   = Paginator(reqs, 30)   # 30 items per page
     page    = request.GET.get("page")
-    
-    c["req_items"]  = TmplRequest.request_items(paginated_items(paginator, page)[0])
-    c["paginator"]  = paginator
+    (items, page_num)   = paginated_items(paginator, page)
+    c   = {
+        "req_items":    TmplRequest.request_items(items),
+        "paginator":    paginator
+    }
     return render(request, 'requests.html', c)
 
 
-def get_user_requests(request, username):
+def get_user_requests_ajax(request, username):
     "Return user requests"
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
@@ -414,14 +415,13 @@ def get_user_requests(request, username):
     paginator   = Paginator(reqs, 10)   # 10 items per page
     page    = request.GET.get("page")
     
-    items   = paginated_items(paginator, page)
-    data    = []
-    ct      = timestamp()
-    for req in items[0]:
-        sd  = int(req.submitted_date)
-        image   = WImage.get_image_by_request(req, size_type="small")
-        thumb_url   = "/media/img/default.png" if not image else image.url
-    return
+    (items, page_num)   = paginated_items(paginator, page)
+    c   = {
+        "req_items":    TmplRequest.request_items(items),
+        "paginator":    paginator
+    }
+
+    return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
     
 
 def get_user_requests_json(request, username):
@@ -435,29 +435,27 @@ def get_user_requests_json(request, username):
     paginator   = Paginator(reqs, 10)   # 10 items per page
     page    = request.GET.get("page")
     
-    items   = paginated_items(paginator, page)
+    (items, page_num)   = paginated_items(paginator, page)
+    req_items   = TmplRequest.request_items(items)
     data    = []
-    ct      = timestamp()
-    for req in items[0]:
-        sd  = int(req.submitted_date)
-        image   = WImage.get_image_by_request(req, size_type="small")
-        thumb_url   = "/media/img/default.png" if not image else image.url
+    for item in req_items:
+        req = item.request
         data_item   = {
             "id":       req.id,
             "resource": req.resource,
             "title":    req.description if len(req.description) < 60 else "%s..." % req.description[:60],
             "description":  req.description,
-            "thumb_url":    thumb_url,
+            "thumb_url":    item.thumb_url,
             "street":   req.location.street,
             "city":     req.location.city,
             "username": username,
-            "time_display": ts2h(sd, ct)
+            "time_display": item.htime.human_time
         }
         data.append(data_item)
     c   = {
         "data":     data,
         "paging":   {
-            "page":  items[1],
+            "page":     page_num,
             "total":    paginator.num_pages
         },
         "total":    paginator.count
@@ -472,15 +470,10 @@ def recent_photos(request):
     paginator   = Paginator(phreqs, 12)   # 12 items per page
     page    = request.GET.get("page")
     
-    # Refactor
-    try:
-        items = paginator.page(page)
-    except PageNotAnInteger:
-        items = paginator.page(1)   # First page
-    except EmptyPage:
-        items = paginator.page(paginator.num_pages)    # Out of range
+    (paged_phreqs, page_num)   = paginated_items(paginator, page)
+    paged_images    = images[:len(paged_phreqs)]
     c   = {
-        "items":    zip(images, phreqs),
+        "items":    zip(paged_images, paged_phreqs),
         "paginator":    paginator
     }
     return render(request, 'photos.html', c)
