@@ -3,23 +3,65 @@
 {% block header %}
 <script type="text/javascript">
     
-    //function 
-    
-    $(document).ready(function(){
-
+    function load_requests()
+    {
+        var sel = $("#tab_requests");
         $.ajax({
-            url:    "/user/{{user.username}}/requests",
+            url:    "/user/{{user.username}}/requests/ajax",
+            type:   "GET",
+            cache:  false,
+            beforeSend: function(jqXHR, settings) {
+                sel.html('<img src="/media/img/spinner.gif" /> Loading ...');
+            },
+            success:    function(data) {
+                sel.html(data.data)
+            },
+            error:  function(jqXHR, textStatus, errorThrown) {
+                console.debug(jqXHR);
+                sel.html(format_error(jqXHR.responseText, errorThrown));
+                
+            }
+        });        
+    }
+    
+    function load_photos() {
+        $.ajax({
+            url:    "/user/{{user.username}}/photos/ajax",
             type:   "GET",
             cache:  false,
             success:    function(data) {
-                console.debug(data);
-                $("#tab_requests").html(data.data)
-                //show_create();  // From request.html
+                $("#tab_photos").html(data.data)
             },
             error:  function(jqXHR, textStatus, errorThrown) {
-                
+                console.debug(jqXHR);
+                $("#tab_photos").html(format_error(jqXHR.responseText, errorThrown));
             }
+        });        
+    }
+    
+    function load_areas() {
+        
+    }
+    
+    $(document).ready(function(){
+        load_requests();
+        
+        // Register tabs
+        $('a[data-toggle="tab"]').on('shown', function (e) {
+            switch (e.target.hash) {
+                case "#tab_requests":
+                    load_requests();
+                    break;
+                case "#tab_photos":
+                    //console.debug(e.target.hash);
+                    break;
+                case "#tab_areas":
+                    //console.debug(e.target.hash);
+                    break;
+            }
+            
         });
+
     })
 </script>
 

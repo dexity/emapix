@@ -21,7 +21,7 @@
     left: 40px;
 }
 #submit_container .modal-body {
-    max-height: 460px;
+    max-height: 460px;  /*Change back to 400*/
 }
 .modal-footer .btn {
     float: none;
@@ -33,4 +33,6 @@
 .modal-footer form {
     margin: 0px;
 }
-
+.tab-content {
+    overflow: hidden;
+}

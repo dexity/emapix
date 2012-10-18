@@ -1,4 +1,4 @@
-{% if paginator %}
+{% if paginator and paginator.num_pages > 1 %}
 {% load i18n %}
 <div class="pagination">
     <ul>

@@ -406,6 +406,7 @@ def get_requests(request):
 
 def get_user_requests_ajax(request, username):
     "Return user requests"
+    time.sleep(10);
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:
@@ -422,6 +423,22 @@ def get_user_requests_ajax(request, username):
     }
 
     return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
+
+
+def get_user_photos_ajax(request, username):
+    "Return user photos"
+    try:
+        userprof2   = UserProfile.objects.get(user__username=username)
+    except UserProfile.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+
+
+def get_user_areas_ajax(request, username):
+    "Return user photos"
+    try:
+        userprof2   = UserProfile.objects.get(user__username=username)
+    except UserProfile.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
     
 
 def get_user_requests_json(request, username):
