@@ -406,7 +406,6 @@ def get_requests(request):
 
 def get_user_requests_ajax(request, username):
     "Return user requests"
-    time.sleep(10);
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:

@@ -11,7 +11,7 @@
             type:   "GET",
             cache:  false,
             beforeSend: function(jqXHR, settings) {
-                sel.html('<img src="/media/img/spinner.gif" /> Loading ...');
+                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
             },
             success:    function(data) {
                 sel.html(data.data)
