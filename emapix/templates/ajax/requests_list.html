@@ -9,6 +9,12 @@
                 <a href="/request/{{req.resource}}">
                     {{req.description|slice:":60"}}{% if req.description|length > 60 %}...{% endif %}
                 </a>
+                {% if is_you %}
+                <button class="close" title="Delete request">&times;</button>
+                <div>
+                    
+                </div>
+                {% endif %}
             </div>
             <div>
                 <div title="latitude={{ item.lat }}, longitude={{ item.lon }}" class="pull-left">

@@ -15,7 +15,7 @@ from django.core.files.images import ImageFile
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key, paginated_items
+http_response_json, forbidden_json, s3key, paginated_items, is_you
 from emapix.core.validators import validate_user_request_json
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -353,7 +353,7 @@ def get_user(request, username):
         
         c   = {
             "userprof2": userprof2,
-            "is_you":    True if user2 == request.user else False
+            "is_you":    is_you(request, user2)
         }
     except UserProfile.DoesNotExist, e:
         logger.error("%s: %s" % (e, username))
@@ -418,6 +418,7 @@ def get_user_requests_ajax(request, username):
     (items, page_num)   = paginated_items(paginator, page)
     c   = {
         "req_items":    TmplRequest.request_items(items),
+        "is_you":       is_you(request, userprof2.user),
         "paginator":    paginator
     }
 
@@ -426,6 +427,7 @@ def get_user_requests_ajax(request, username):
 
 def get_user_photos_ajax(request, username):
     "Return user photos"
+    # XXX: Implement
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:
@@ -434,6 +436,7 @@ def get_user_photos_ajax(request, username):
 
 def get_user_areas_ajax(request, username):
     "Return user photos"
+    # XXX: Implement
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:

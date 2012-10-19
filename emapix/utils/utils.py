@@ -109,6 +109,12 @@ def paginated_items(paginator, page_num):
         return (paginator.page(paginator.num_pages), paginator.num_pages)   # Out of range
 
 
+def is_you(request, user):
+    "Checks if authenticated user is the same user"
+    return True if user == request.user else False
+    
+
+
 def bad_request_json(obj):
     "Returns json response with 400 error status"
     return HttpResponseBadRequest(json.dumps(obj), mimetype="application/json")

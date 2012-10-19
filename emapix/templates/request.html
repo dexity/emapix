@@ -196,18 +196,7 @@
 		{% if user.username == req.user.username %}
                 <!--<a href="" class="red e-red-option" >Remove Photo</a><br />-->
                 <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
-                <!-- Modal for delete request -->
-                <div id="remove_modal" class="modal hide fade">
-                    <div class="modal-header"><h3>Delete Request</h3></div>
-                    <div class="modal-body">
-                        <div id="body_errors"></div>
-                        Are you sure you want to delete the request?
-                    </div>
-                    <div class="modal-footer">
-                      <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
-                      <a href="#" class="btn" data-dismiss="modal" >Close</a>
-                    </div>
-                </div>
+                {% include "modals/delete_request.html" %}
 		{% endif %}
             </div>
         </div>
