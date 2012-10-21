@@ -429,20 +429,29 @@ def get_user_requests_ajax(request, username):
 
 def get_user_photos_ajax(request, username):
     "Return user photos"
-    # XXX: Implement
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:
         return bad_request_json({"error": str(e)})
+
+    (items, paginator)  = _get_photo_items(request)
+    c   = {
+        "items":        items,
+        "is_you":       is_you(request, userprof2.user),
+        "paginator":    paginator    
+    }
+    
+    return http_response_json({"data": render_to_string("ajax/photos_list.html", c)})
 
 
 def get_user_areas_ajax(request, username):
-    "Return user photos"
-    # XXX: Implement
+    "Return user areas"
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
     except UserProfile.DoesNotExist, e:
         return bad_request_json({"error": str(e)})
+    
+    return bad_request_json({"error": "Areas are not implemented yet"})
     
 
 def get_user_requests_json(request, username):
@@ -486,6 +495,17 @@ def get_user_requests_json(request, username):
 
 def recent_photos(request):
     "Returns list of photos"
+    (items, paginator)  = _get_photo_items(request)
+    c   = {
+        "items":        items,
+        "paginator":    paginator
+    }
+    return render(request, 'photos.html', c)
+
+
+# XXX: Refactor to something else?
+def _get_photo_items(request):
+    "Returns photo request items and paginator"
     images  = Image.objects.filter(size_type="medium").filter(is_avail=True).order_by("-updated_time")
     phreqs  = PhotoRequest.objects.filter(photo__image__in=images).order_by("-photo__image__updated_time") # Same number as images length
     paginator   = Paginator(phreqs, 12)   # 12 items per page
@@ -493,12 +513,8 @@ def recent_photos(request):
     
     (paged_phreqs, page_num)   = paginated_items(paginator, page)
     paged_images    = images[:len(paged_phreqs)]
-    c   = {
-        "items":    zip(paged_images, paged_phreqs),
-        "paginator":    paginator
-    }
-    return render(request, 'photos.html', c)
-
+    return (zip(paged_images, paged_phreqs), paginator)    
+    
 
 def search(request):
     return render(request, 'search.html')

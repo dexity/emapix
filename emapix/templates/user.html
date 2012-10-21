@@ -5,6 +5,7 @@
     
     function load_requests()
     {
+        // Loads requests
         var sel = $("#tab_requests");
         $.ajax({
             url:    "/user/{{user.username}}/requests/ajax",
@@ -18,30 +19,50 @@
                 set_delete_requests();
             },
             error:  function(jqXHR, textStatus, errorThrown) {
-                console.debug(jqXHR);
                 sel.html(format_error(jqXHR.responseText, errorThrown));
                 
             }
         });        
     }
     
-    function load_photos() {
+    function load_photos()
+    {
+        // Loads photos
+        var sel = $("#tab_photos");
         $.ajax({
             url:    "/user/{{user.username}}/photos/ajax",
             type:   "GET",
             cache:  false,
+            beforeSend: function(jqXHR, settings) {
+                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
+            },
             success:    function(data) {
-                $("#tab_photos").html(data.data)
+                sel.html(data.data);
             },
             error:  function(jqXHR, textStatus, errorThrown) {
-                console.debug(jqXHR);
-                $("#tab_photos").html(format_error(jqXHR.responseText, errorThrown));
+                sel.html(format_error(jqXHR.responseText, errorThrown));
             }
         });        
     }
     
-    function load_areas() {
-        
+    function load_areas()
+    {
+        // Loads photos
+        var sel = $("#tab_areas");
+        $.ajax({
+            url:    "/user/{{user.username}}/areas/ajax",
+            type:   "GET",
+            cache:  false,
+            beforeSend: function(jqXHR, settings) {
+                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
+            },
+            success:    function(data) {
+                sel.html(data.data);
+            },
+            error:  function(jqXHR, textStatus, errorThrown) {
+                sel.html(format_error(jqXHR.responseText, errorThrown));
+            }
+        });   
     }
     
     function set_delete_requests()
@@ -83,10 +104,10 @@
                     load_requests();
                     break;
                 case "#tab_photos":
-                    //console.debug(e.target.hash);
+                    load_photos();
                     break;
                 case "#tab_areas":
-                    //console.debug(e.target.hash);
+                    load_areas();
                     break;
             }
             
