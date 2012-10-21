@@ -331,6 +331,7 @@ def remove_request_ajax(request, res):
         return req
     
     return bad_request_json({"error": "Not implemented yet"})
+    # XXX: Finish
     #if request.method != "POST":
     #    return bad_request_json({"error": "Invalid request method"})
     #try:
@@ -341,11 +342,21 @@ def remove_request_ajax(request, res):
 
 
 
-def get_profile(request, username):
+def set_profile(request):
+    "Set profile"
+    if not request.user.is_authenticated():
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    
     return render(request, 'set_profile.html')
 
+
 def set_password(request):
+    "Set password"
+    if not request.user.is_authenticated():
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     return render(request, 'set_password.html')
+
+
 
 def get_user(request, username):
     "Displays user profile"

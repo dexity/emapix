@@ -44,3 +44,5 @@ def validate_user_request_json(request, res):
     except Request.DoesNotExist:
         return bad_request_json({"error": "Request doesn't exist"})
 
+
+    

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Settings</h3>
+<div class="e-margin-bottom-10"></div>
+<div class="row">
+    <div class="span2">
+        <ul class="nav nav-list">
+            <li id="profile_general" ><a href="/profile">Profile</a></li>
+            <li id="profile_password" ><a href="/profile/password">Password</a></li>
+        </ul>
+    </div>
+    <div class="span8">
+        {% block profile_content %}{% endblock profile_content %}
+    </div>
+    
+</div>
+
+{% endblock content %}        
