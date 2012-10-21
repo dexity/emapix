@@ -324,18 +324,20 @@ def get_request(request, res):
     return render(request, 'request.html', c)
 
 
-def remove_request(request, res):
+def remove_request_ajax(request, res):
     "Removes request"
-    if not request.user.is_authenticated():
-        return render(request, 'misc/error.html', {"error": AUTH_ERROR})
+    req = validate_user_request_json(request, res)
+    if not isinstance(req, Request):
+        return req
     
-    if request.method != "POST":
-        return render(request, 'misc/error.html', {"error":  "Invalid request" })
-    try:
-        WRequest.remove_request(res)
-        return to_status(OK)
-    except Exception, e:
-        return render(request, 'misc/error.html', {"error":  "Request does not exist"})
+    return bad_request_json({"error": "Not implemented yet"})
+    #if request.method != "POST":
+    #    return bad_request_json({"error": "Invalid request method"})
+    #try:
+    #    result = WRequest.purge_request(res, req.user)
+    #    return http_response_json({"data": "ok"})
+    #except Exception, e:
+    #    return bad_request_json({"error": str(e)})
 
 
 

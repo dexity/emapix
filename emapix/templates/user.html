@@ -14,7 +14,8 @@
                 sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
             },
             success:    function(data) {
-                sel.html(data.data)
+                sel.html(data.data);
+                set_delete_requests();
             },
             error:  function(jqXHR, textStatus, errorThrown) {
                 console.debug(jqXHR);
@@ -43,6 +44,35 @@
         
     }
     
+    function set_delete_requests()
+    {
+        $("button.itemDelete").click(function(){
+            var del_button = this;
+            var spinner = $("#delete_spinner");
+            spinner.hide();
+            $("#body_errors").empty();
+            $("#delete_btn").click(function() {
+                $.ajax({
+                    url:    $(del_button).attr("ajaxify"),
+                    type:   "POST",
+                    data:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                    cache:  false,
+                    beforeSend: function(jqXHR, settings) {
+                        spinner.show();
+                    },
+                    success:    function(data) {
+                        load_requests();
+                    },
+                    error:  function(jqXHR, textStatus, errorThrown) {
+                        $("#body_errors").html(format_error(jqXHR.responseText, errorThrown));
+                        spinner.hide();
+                    }
+                });
+            });
+            $("#remove_modal").modal();
+        });
+    }
+    
     $(document).ready(function(){
         load_requests();
         
@@ -60,8 +90,8 @@
                     break;
             }
             
-        });
-
+        });     
+        
     })
 </script>
 
@@ -107,10 +137,7 @@
           </ul>
           <div class="tab-content">
             <!-- Requests Tab -->
-            <div class="tab-pane active" id="tab_requests">
-
-
-            </div>
+            <div class="tab-pane active" id="tab_requests"></div>
             <!-- Photos Tab -->
             <div class="tab-pane" id="tab_photos">
                 <div class="row e-photo-row">
@@ -141,4 +168,5 @@
     </div>
 </div>
 
+{% csrf_token %}
 {% endblock content %}

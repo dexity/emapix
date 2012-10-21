@@ -2,7 +2,7 @@
 
 {% for item in req_items %}
     {% with req=item.request %}
-    <div class="e-request-item span8">
+    <div class="e-request-item span8" id="{{req.resource}}">
         <a href="/request/{{req.resource}}"><img src="{{item.thumb_url}}"/></a>
         <div>
             <div class="e-request-description" title="{{req.description}}">
@@ -10,10 +10,7 @@
                     {{req.description|slice:":60"}}{% if req.description|length > 60 %}...{% endif %}
                 </a>
                 {% if is_you %}
-                <button class="close" title="Delete request">&times;</button>
-                <div>
-                    
-                </div>
+                <button class="close itemDelete" title="Delete request" ajaxify="/request/{{req.resource}}/remove/ajax">&times;</button>
                 {% endif %}
             </div>
             <div>
@@ -30,5 +27,9 @@
     {% endwith %}
 {% endfor %}               
 </div>
+{% if is_you %}
+{% include "modals/delete_request.html" %}
+{% endif %}
+
 <div class="clear_both"></div>
 {% include "misc/pagination.html" %}

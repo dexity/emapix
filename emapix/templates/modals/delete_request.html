@@ -1,11 +1,15 @@
 <div id="remove_modal" class="modal hide fade">
-    <div class="modal-header"><h3>Delete Request</h3></div>
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Delete Request</h3>
+    </div>
     <div class="modal-body">
+        Are you sure you want to delete the request? All data related to the request will be removed.
         <div id="body_errors"></div>
-        Are you sure you want to delete the request?
     </div>
     <div class="modal-footer">
-      <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
-      <a href="#" class="btn" data-dismiss="modal" >Close</a>
+        <img src="/media/img/spinner_small.gif" style="display: none" id="delete_spinner"/>
+        <a href="#" class="btn btn-danger" id="delete_btn">Delete</a>
+        <a href="#" class="btn" data-dismiss="modal" >Close</a>
     </div>
 </div>

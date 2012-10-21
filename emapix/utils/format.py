@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 import json
 
+# XXX: Refactor this module
 def to_request(r):
     s   = {"id":    r.id,
            "lat":   "",

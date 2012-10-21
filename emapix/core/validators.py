@@ -38,7 +38,7 @@ class EmailExists(ObjectExists):
 def validate_user_request_json(request, res):
     "Validates user and request. Returns json response if error or request"
     if not request.user.is_authenticated():
-        return forbidden_json({"error": "You need to be logged in to submit photo"})
+        return forbidden_json({"error": "You need to be logged in"})
     try:
         return Request.objects.get(resource=res)
     except Request.DoesNotExist:

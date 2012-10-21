@@ -26,7 +26,7 @@ urlpatterns = patterns("emapix.core.views",
     # Ajax
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
-    url(r"^request/%s/remove$" % REQ_REGEX, "remove_request"),
+    url(r"^request/%s/remove/ajax$" % REQ_REGEX, "remove_request_ajax"),
     url(r"^user/(?P<username>(%s))/requests/ajax$" % uregex, "get_user_requests_ajax"),
     url(r"^user/(?P<username>(%s))/photos/ajax$" % uregex, "get_user_photos_ajax"),
     url(r"^user/(?P<username>(%s))/areas/ajax$" % uregex, "get_user_areas_ajax"),
