@@ -1,11 +1,12 @@
 from django.conf.urls.defaults import patterns, include, url
 
-from emapix.utils.const import USERNAME_REGEX, REQ_REGEX
+from emapix.utils.const import USERNAME_REGEX, REQ_REGEX, LOC_REGEX
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
 
 urlpatterns = patterns("emapix.core.views",
     url(r"^$", "get_requests"),
     
+    # Auth methods
     url(r"^join$", "join"),
     #url(r"^verify$", "verify"),        # Don"t need for now
     #url(r"^verify/resend$", "verify"), # TODO
@@ -14,23 +15,34 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^logout$", "logout"),
     url(r"^forgot$", "forgot"),
     url(r"^password/renew/(\w{40})$", "renew_password"),
+    
+    # Request methods
     url(r"^request/make$", "make_request"),
     url(r"^request/%s$" % REQ_REGEX, "get_request"),
     url(r"^requests$", "get_requests"),
+    url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"),
     #url(r"^submit/%s$" % REQ_REGEX, "submit"),
+    
+    # User methods
+    url(r"^users$", "users"),
     url(r"^user/(?P<username>(%s))$" % uregex, "get_user"),
     url(r"^user/(?P<username>(%s))/requests$" % uregex, "get_user"),
     url(r"^user/(?P<username>(%s))/photos$" % uregex, "get_user"),
+    
+    # User profile methods
+    url(r"^profile$", "set_profile"),
+    url(r"^profile/password$", "set_password"),
+    
+    # Photo submit methods
     url(r"^submit/select/%s$" % REQ_REGEX, "submit_select"),
     url(r"^submit/crop/%s$" % REQ_REGEX, "submit_crop"),
     url(r"^submit/create/%s$" % REQ_REGEX, "submit_create"),
-    url(r"^profile$", "set_profile"),
-    url(r"^profile/password$", "set_password"),
     
     # Ajax
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
     url(r"^request/%s/remove/ajax$" % REQ_REGEX, "remove_request_ajax"),
+    
     url(r"^user/(?P<username>(%s))/requests/ajax$" % uregex, "get_user_requests_ajax"),
     url(r"^user/(?P<username>(%s))/photos/ajax$" % uregex, "get_user_photos_ajax"),
     url(r"^user/(?P<username>(%s))/areas/ajax$" % uregex, "get_user_areas_ajax"),
@@ -39,12 +51,16 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^user/(?P<username>(%s))/requests/json$" % uregex, "get_user_requests_json"),
     
     # Layouts
-    #url(r"^settings$", "set_profile"),
-    url(r"^set_password$", "set_password"),
-    url(r"^users$", "users"),
     url(r"^help$", "help"),
     url(r"^photos$", "recent_photos"),
     url(r"^search$", "search"),
     url(r"^search2$", "search2"),
     
+    # TODO
+    url(r"^about$", "about"),
+    url(r"^forum$", "forum"),
+    url(r"^feedback$", "feedback"),
+    url(r"^developer$", "developer"),
+    url(r"^privacy$", "privacy"),
+    url(r"^terms$", "terms"),
 )

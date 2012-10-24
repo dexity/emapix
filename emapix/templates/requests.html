@@ -8,8 +8,6 @@
 </script>
 {% endblock header %}
 
-{% load get_range %}
-
 {% block content %}
 
 <h3>Recent Requests</h3>
@@ -18,11 +16,7 @@
     
 {% for item in req_items %}
     {% with req=item.request %}
-    {% if item != req_items|first %}
-        <div class="e-request-item span8">
-    {% else %}
-        <div class="e-request-item e-first-item span8">
-    {% endif %}
+    <div class="e-request-item {% if item == req_items|first %}e-first-item{% endif %} span8">
         <a href="/request/{{req.resource}}"><img src="{{item.thumb_url}}"/></a>
         <div>
             <div class="e-request-description" title="{{req.description}}">
@@ -36,7 +30,7 @@
                 </div>
                 <div class="pull-right">
                     <div class="e-request-time" title="{{ item.htime.utc_time }}" >{{ item.htime.human_time }}</div>
-                    <div class="pull-right"><a href="">{{req.user.username}}</a></div>
+                    <div class="pull-right"><a href="/user/{{req.user.username}}">{{req.user.username}}</a></div>
                 </div>
             </div>
         </div>

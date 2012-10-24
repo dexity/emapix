@@ -277,6 +277,11 @@ function initialize() {
     var myOptions = {
         center: lajolla,
         zoom: 13,
+    //scrollwheel: false,
+    //navigationControl: false,
+    //mapTypeControl: false,
+    //scaleControl: false,
+    //draggable: false,        
         mapTypeId: google.maps.MapTypeId.ROADMAP,
         draggableCursor: "crosshair"
     };
@@ -306,32 +311,32 @@ function initialize() {
     });
     onShowRequests($("#show_requests"));
 
-    // Set events
-    $("#delete_btn").click(function() {
-        url = $("#remove_link").attr("href");
-        $.post(url,
-            {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-            function(data) {
-                try
-                {
-                    var res	= $.parseJSON(data);    // OK
-                    if (res["status"] == "ok")
-                    {
-                        $("#remove_modal").modal("hide");
-                        currMarker.setMap(null);
-                        currMarker  = null;
-                    }
-                    else
-                    {
-                        $("#body_errors").html("result");
-                    }
-                }
-                catch (e)
-                {
-                    $("#body_errors").html(data);
-                }
-            });
-    });
+    //// Set events
+    //$("#delete_btn").click(function() {
+    //    url = $("#remove_link").attr("href");
+    //    $.post(url,
+    //        {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+    //        function(data) {
+    //            try
+    //            {
+    //                var res	= $.parseJSON(data);    // OK
+    //                if (res["status"] == "ok")
+    //                {
+    //                    $("#remove_modal").modal("hide");
+    //                    currMarker.setMap(null);
+    //                    currMarker  = null;
+    //                }
+    //                else
+    //                {
+    //                    $("#body_errors").html("result");
+    //                }
+    //            }
+    //            catch (e)
+    //            {
+    //                $("#body_errors").html(data);
+    //            }
+    //        });
+    //});
     
     // Remove request
     $(document).on("click", "#remove_link", function(e){

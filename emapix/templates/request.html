@@ -155,7 +155,8 @@
 	{% if pic_url %}
 	<img src="{{pic_url}}" />
         {% else %}
-        <button class="btn btn-success" id="submit_photo"><b>Submit Photo</b></button>        
+        <button class="btn btn-success" id="submit_photo"><b>Submit Photo</b></button>
+        <a href="#">Accept Request</a>
 	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
@@ -171,16 +172,6 @@
 		<div class="span2">Requested by:</div>
 		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
 	    </div>
-            <!--<div class="e-request-info">
-                <div class="row">
-                    <div class="span2">Submitted by:</div>
-                    <div><a href="">lunatix</a></div>
-                </div>
-                <div class="row">
-                    <div class="span2">Date:</div>
-                    <div class="e-time">May 30 2012 4:13pm</div>
-                </div>
-            </div>-->
             <div class="row">
                 <div class="span2">Date:</div>
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
@@ -196,16 +187,16 @@
 	    {% csrf_token %}
             <div class="span3 pull-right">
 		{% if user.username == req.user.username %}
-                <!--<a href="" class="red e-red-option" >Remove Photo</a><br />-->
+                <a href="#" class="red e-red-option" >Remove Photo</a><br />
                 <a href="/request/{{ req.resource }}/remove" class="red pull-right" id="remove_link">Remove Request</a>
                 {% include "modals/delete_request.html" %}
 		{% endif %}
             </div>
         </div>
         {% endif %}
-	<hr />
-	<!-- XXX: Finish -->
         <div class="e-request-info">
+            <div class="section-title">Status</div>
+            <hr />
 	    <div class="row">
 		<div class="span2">Status:</div>
 		<span class="label label-success">Accepted</span>
@@ -218,8 +209,21 @@
                 <div class="span2">Date:</div>
                 <div class="e-time" title="">Aug 21, 2012 14:05</div>
             </div>    
+            <div class="full-description" title="Description">Here I'll leave my comment</div>
+            <div class="row">
+                <div class="span2">Submitted by:</div>
+                <div><a href="">lunatix</a></div>
+            </div>
+            <div class="row">
+                <div class="span2">Date:</div>
+                <div class="e-time">May 30 2012 4:13pm</div>
+            </div>
 	</div>
-	<div class="full-description" title="Description">Here I'll leave my comment</div>
+        <div class="e-request-info">
+            <div class="section-title">Comments</div>
+            <hr />
+            <textarea cols="40" rows="3" placeholder="Write a comment"></textarea>
+        </div>
     </div>    
     <div class="span6"><div id="map_canvas"></div></div>
 </div>

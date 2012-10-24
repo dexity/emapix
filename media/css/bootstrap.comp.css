@@ -11,6 +11,16 @@
   overflow-y: none;    
 }*/
 
+@media (max-width: 979px) {
+  body {
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+}
+hr {
+    margin-top: 10px;
+}
+
 #submit_container .modal {
     width: 800px;
     position: fixed;

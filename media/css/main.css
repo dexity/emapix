@@ -24,20 +24,20 @@ a img {
 
 /* Navigation */
 .e-nav-user {
-	margin-bottom: 3px;
+    margin-bottom: 3px;
 }
 .e-nav-user a {
-	padding-left: 10px;
+    padding-left: 10px;
 }
 .e-nav li > a {
-	background-color: #eeeeee;
+    background-color: #eeeeee;
 }
 .e-nav ul > li {
     margin-right: 10px;
 }
 .e-nav .search-query,
 .e-nav .btn {
-	margin-top: 3px;
+    margin-top: 3px;
 }
 
 /* Request */
@@ -49,38 +49,38 @@ a img {
     padding:5px 10px 5px 0px;	
 }
 .e-request-item:after {
-	clear: both;
+    clear: both;
 }
 .e-request-item a > img {
-	float:left;
-	margin-right: 10px;
-	height: 50px;
-	width: 50px;
+    float:left;
+    margin-right: 10px;
+    height: 50px;
+    width: 50px;
 }
 .e-first-item {
-	border-top: 1px solid #ccdcef;
+    border-top: 1px solid #ccdcef;
 }
 .e-last-item {
-	border-bottom:none;
+    border-bottom:none;
 }
 .e-request-description {
-	font-size: 17px;
-	height: 25px;
-	padding-top: 5px;
+    font-size: 17px;
+    height: 25px;
+    padding-top: 5px;
 }
 .e-request-time {
-	color: #999;
-	cursor: default;
-	/*font-size: 11px;
-	margin-top: 1px;*/
-	margin-left: 10px;
-	float: right;
-	display: inline;
+    color: #999;
+    cursor: default;
+    /*font-size: 11px;
+    margin-top: 1px;*/
+    margin-left: 10px;
+    float: right;
+    display: inline;
 }
 
 /* Misc */
 #join {
-	margin-bottom: 10px;
+    margin-bottom: 10px;
 }
 .footer {
   padding: 17px 20px 18px;
@@ -91,35 +91,35 @@ a img {
   *zoom: 1;	
 }
 .footer a {
-	margin-right: 10px
+    margin-right: 10px
 }
 .e-copy {
-	width: 940px;
-	align: center;
+    width: 940px;
+    align: center;
 }
 
 /* Colors */
 .brown {
-	color: #bd362f;
+    color: #bd362f;
 }
 .brown:hover {
-	color: #bf1910;
+    color: #bf1910;
 }
 .green {
-	color: #62c462;
+    color: #62c462;
 }
 .green:hover {
-	color: #51a351;
+    color: #51a351;
 }
 .red {
-	color: #ee5f5b;
+    color: #ee5f5b;
 }
 .red:hover {
-	color: #bd362f;
+    color: #bd362f;
 }
 
 .controls .e-color-grey {
-	color: #999;
+    color: #999;
 }
 
 .e-alert {
@@ -146,7 +146,7 @@ a img {
     -webkit-border-radius:5px;
 }
 .e-request-info {
-    margin-top: 10px;
+    margin-top: 15px;
     margin-bottom: 10px;
 }
 .e-time {
@@ -154,7 +154,7 @@ a img {
     color: #999;
 }
 .e-control-options {
-    margin-top: 30px;
+    margin-top: 15px;
 }
 .e-control-options .e-red-option {
     float: right;
@@ -188,6 +188,9 @@ a img {
     height: 460px;
 }
 
+.section-title {
+    font-size: 17px;
+}
 /* Form */
 .alert-error.error_spaces {
     margin-top: 5px;
@@ -205,6 +208,10 @@ a img {
     margin-left: 5px;
 }
 
+.address_label {
+    float: left;
+    margin-left: 5px;
+}
 /* Users */
 .user-info {
     height:60px;

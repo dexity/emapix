@@ -3,6 +3,16 @@ from emapix.core.models import *
 class WRequest(object):
     
     @classmethod
+    def get_recent_requests(cls):
+        "Returns all recent requests"
+        return Request.objects.all().order_by("-submitted_date")
+        
+        
+    @classmethod
+    def get_requests_by_location(cls):
+        pass
+        
+    @classmethod
     def remove_request(cls, res):
         "Removes request. Can through an exception"
         # XXX: Request can only be removed by request owner

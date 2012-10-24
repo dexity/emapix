@@ -1,9 +1,15 @@
 
+<div style="display: inline">
 {% if req.location.street%}
-    {{ req.location.street }}
+    <div class="pull-left" >{{ req.location.street }}</div>
 {% endif %}
 {% if req.location.city %}
-    <span class="label label-success" title="{{req.location.city}}, {{req.location.country}}">{{ req.location.city }}</span>
+    <div class="address_label"><a href="#" class="label label-success" title="{{req.location.city}}, {{req.location.country}}">
+        {{ req.location.city }}
+    </a></div>
 {% elif req.location.country %}
-    <span class="label label-info" title="{{req.location.country}}">{{ req.location.country }}</span>
+    <div class="address_label"><a href="#" class="label label-info" title="{{req.location.country}}">
+        {{ req.location.country }}
+    </a></div>
 {% endif %}
+</div>

@@ -23,7 +23,7 @@
             <img src="{{image.url}}"/>
         </a>
         {% if req.location.city %}
-            <a href="#" class="label label-success">{{req.location.city}}</a>
+            <a href="/requests/{{req.location.city}}" class="label label-success">{{req.location.city}}</a>
         {% elif req.location.country %}
             <a href="#" class="label label-success">{{req.location.country}}</a>
         {% endif %}

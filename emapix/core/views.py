@@ -383,39 +383,47 @@ def get_user(request, username):
 
 def users(request):
     "Returns list of users"
-    usps   = UserProfile.objects.all()  # Filter by num of photos
+    usps        = UserProfile.objects.all()  # Filter by num of photos
     paginator   = Paginator(usps, 35)   # 35 items per page
-    page    = request.GET.get("page")
+    page        = request.GET.get("page")
     
-    # XXX: Refactor
-    try:
-        items = paginator.page(page)
-    except PageNotAnInteger:
-        items = paginator.page(1)   # First page
-    except EmptyPage:
-        items = paginator.page(paginator.num_pages)    # Out of range
+    (items, page_num)   = paginated_items(paginator, page)
     c   = {
-        "items":        usps,
+        "items":        items,
         "paginator":    paginator
     }
     return render(request, 'users.html', c)
+
 
 def help(request):
     return render(request, 'help.html')
 
 
-def get_requests(request):
-    "Returns list of requests"
-    reqs    = Request.objects.all().order_by("-submitted_date")
+def _get_requests(request, reqs, c_ext = {}):
     paginator   = Paginator(reqs, 30)   # 30 items per page
-    page    = request.GET.get("page")
+    page        = request.GET.get("page")
     (items, page_num)   = paginated_items(paginator, page)
     c   = {
         "req_items":    TmplRequest.request_items(items),
+        "items":        items,
         "paginator":    paginator
     }
+    if c_ext and isinstance(c_ext, dict):
+        c.update(c_ext)
     return render(request, 'requests.html', c)
+    
 
+def get_requests(request):
+    "Returns list of requests"
+    reqs    = WRequest.get_recent_requests()
+    return _get_requests(request, reqs)
+
+
+def get_location_requests(request, loc):
+    "Returns requests for location which can be either city (City, State) or country"
+    reqs    = WRequest.get_recent_requests()
+    return _get_requests(request, reqs, {"title": "Requests For %s" % loc})
+    
 
 def get_user_requests_ajax(request, username):
     "Return user requests"
