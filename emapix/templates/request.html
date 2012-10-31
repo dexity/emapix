@@ -91,17 +91,17 @@
 			title:		"{{ req.description }}",
 			map:		map
 		    });
-	$("#remove_link").click(function(e){
+	$("#remove_request").click(function(e){
 		e.preventDefault();
 		$("#body_errors").html("");
 		$("#remove_modal").modal();
-	    });
+	});
 	
         // XXX: Show only if user is the owner
         // XXX: Refactor, see user.html
 	// Set events
 	$("#delete_btn").click(function() {
-	    url = $("#remove_link").attr("href");
+	    url = $("#remove_request").attr("href");
 	    $.post(url,
 		{"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
 		function(data) {
@@ -130,6 +130,15 @@
             e.preventDefault();
             $("#edit_modal").modal();
         });
+        $("#remove_photo").click(function(e) {
+            e.preventDefault();
+            $("#remove_photo_modal").modal();
+        });
+        $("#remove_request").click(function(e) {
+            e.preventDefault();
+            $("#remove_modal").modal();
+        });        
+        
 	$("#submit_photo").click(function(e) {
 	    e.preventDefault();
 	    show_select();
@@ -199,9 +208,8 @@
 	    {% csrf_token %}
             <div class="span3 pull-right">
 		{% if user.username == req.user.username %}
-                <a href="#" class="red" >Remove Photo</a><br />
-                <a href="/request/{{ req.resource }}/remove" class="red" id="remove_link">Remove Request</a><br />
-                {% include "modals/delete_request.html" %}
+                <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
+                <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
 		{% endif %}
             </div>
         </div>
@@ -261,5 +269,37 @@
     </div>
 </div>
 
+<!-- Remove photo modal -->
+<div id="remove_photo_modal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Remove Photo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="alert">Are you sure you want to remove the photo?</div>
+    </div>
+    <div class="modal-footer">
+        <div class="e-alert e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
+        <img src="/media/img/spinner_small.gif" id="remove_photo_spinner" style="display: none" class="e-button-spinner"/>
+        <button class="btn btn-primary">Remove Photo</button>
+        <a href="#" data-dismiss="modal">Cancel</a>
+    </div>
+</div>
 
+<!-- Remove request modal -->
+{% include "modals/delete_request.html" %}
+
+<!--<div id="remove_modal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Remove Request</h3>
+    </div>
+    <div class="modal-body">Text Area</div>
+    <div class="modal-footer">
+        <div class="e-alert e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
+        <img src="/media/img/spinner_small.gif" id="edit_spinner" style="display: none" class="e-button-spinner"/>
+        <button class="btn btn-primary">Save Changes</button>
+        <a href="#" data-dismiss="modal">Cancel</a>
+    </div>
+</div>-->
 {% endblock content %}
