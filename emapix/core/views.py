@@ -316,6 +316,13 @@ def get_request(request, res):
         c["req"]    = req
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
+        # Dynamically set new widget
+        edit_form    = RequestForm({"description": req.description})
+        widget  = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ...", "style": "width: 400px;"})
+        del widget.attrs["cols"]
+        edit_form.fields["description"].widget = widget
+        
+        c["edit_form"]  = edit_form
         if isinstance(img, Image):
             c["pic_url"]    = img.url
     except Request.DoesNotExist:
