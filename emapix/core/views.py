@@ -349,7 +349,15 @@ def remove_request_ajax(request, res):
 
 
 
-def set_profile(request):
+def get_profile(request):
+    "Set profile"
+    if not request.user.is_authenticated():
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    
+    return render(request, 'profile_general.html')  #
+
+
+def edit_profile(request):
     "Set profile"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
