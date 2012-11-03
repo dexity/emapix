@@ -137,6 +137,7 @@ a img {
     color: #bd362f;
 }
 
+.e-color-grey,
 .controls .e-color-grey {
     color: #999;
 }
@@ -229,6 +230,13 @@ a img {
 .e-comment-item {
     /*margin: 2px 0px;*/
 }
+.e-username {
+    font-size: 15px;
+    font-weight: bold;
+    text-align: left;
+    display: inline;
+}
+
 .section-title {
     font-size: 17px;
 }
@@ -276,6 +284,18 @@ a img {
     
 }
 
+#profile_content .row {
+    margin-bottom: 5px;
+}
+#edit_profile .control-label {
+    font-weight: bold;
+}
+#edit_profile .control-group {
+    margin-bottom: 10px;
+}
+#edit_profile {
+    margin-top: -5px;
+}
 #files_container .alert {
     margin-bottom: 0px;
 }

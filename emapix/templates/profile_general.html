@@ -11,17 +11,59 @@
 {% endblock header %}
 
 {% block profile_content %}
-<div class="row">
-    <div class="span2 prof-left">Username</div>
-    <div class="span6 prof-right">
-        <div style="font-size: 15px; font-weight: bold;float:left;">dexity</div>
-        <span class="help-inline e-color-grey" style="margin-left: 20px">(Cannot be changed)</span>
+<div id="profile_content">
+    <div class="row">
+        <div class="span2 prof-left">Username</div>
+        <div class="span6 prof-right">
+            <div class="e-username">dexity</div>
+            <span class="e-color-grey" style="margin-left: 20px">(Cannot be changed)</span>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="span2 prof-left">Full Name</div>
-    <div class="span6">
-        Alexander Dementsov
+    <div class="row">
+        <div class="span2 prof-left">Full Name</div>
+        <div class="span6">
+            Alexander Dementsov
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2 prof-left">Email</div>
+        <div class="span6">
+            <a href="mailto:dexity@gmail.com">dexity@gmail.com</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2 prof-left">Location</div>
+        <div class="span6">
+            La Jolla, CA
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2 prof-left">Birthday</div>
+        <div class="span6">
+            June 25
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2 prof-left">Gender</div>
+        <div class="span6">
+            Male
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 20px;">
+        <div class="span2 prof-left">About Yourself</div>
+        <div class="span6">
+            Hurricane Sandy raged through the Bahamas
+            early Friday after leaving 29 people dead
+            across the Caribbean, following a path that
+            could see it blend with a winter storm to hit the
+            U.S.
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2 prof-left">&nbsp;</div>
+        <div class="span6">
+            <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+        </div>
     </div>
 </div>
 {% endblock profile_content %}

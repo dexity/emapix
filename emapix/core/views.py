@@ -362,7 +362,7 @@ def edit_profile(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
-    return render(request, 'set_profile.html')
+    return render(request, 'edit_profile.html')
 
 
 def set_password(request):
