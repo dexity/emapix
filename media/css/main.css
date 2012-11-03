@@ -18,9 +18,9 @@ a img {
 .div_inline {
     display: inline;
 }
-.red {
+/*.red {
     color: #b94a48;
-}
+}*/
 
 /* Navigation */
 .e-nav-user {
@@ -290,9 +290,9 @@ a img {
 #edit_profile .control-label {
     font-weight: bold;
 }
-#edit_profile .control-group {
+/*#edit_profile .control-group {
     margin-bottom: 10px;
-}
+}*/
 #edit_profile {
     margin-top: -5px;
 }

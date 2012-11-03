@@ -20,6 +20,9 @@
 hr {
     margin-top: 10px;
 }
+.form-horizontal .control-group {
+    margin-bottom: 10px;
+}
 
 #submit_container .modal {
     width: 800px;

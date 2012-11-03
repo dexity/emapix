@@ -5,18 +5,46 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $("#profile_photo").attr({"class": "active"});
+        $("#remove_photo").click(function(e) {
+            e.preventDefault();
+            $("#remove_photo_modal").modal();
+        });        
     })        
 </script>
 
 {% endblock header %}
 
 {% block profile_content %}
-    <div class="control-group">
+<div class="row">
+    <div class="span2"><img src="/media/img/user.png"/></div>
+    <div class="span6">
+        <button class="btn btn-primary">Submit Photo</button>
+        <a href="#" class="red" id="remove_photo" style="margin-left: 50px">Remove Photo</a>
+    </div>
+</div>
+
+<div id="remove_photo_modal" class="modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Remove Photo</h3>
+    </div>
+    <div class="modal-body">
+        <div class="alert">Are you sure you want to remove the photo?</div>
+    </div>
+    <div class="modal-footer">
+        <div class="e-alert e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
+        <img src="/media/img/spinner_small.gif" id="remove_photo_spinner" style="display: none" class="e-button-spinner"/>
+        <button class="btn btn-primary">Remove Photo</button>
+        <a href="#" data-dismiss="modal">Cancel</a>
+    </div>
+</div>
+
+<!--    <div class="control-group">
         <div class="control-label" style="margin-top: -5px"><img src="/media/img/user.png" /></div>
         <div class="controls">
             <div class="pull-left"><h4>Profile Photo</h4></div>
             <div class="e-alert pull-left" style="margin-top: -5px">Up to 5Mb in JPEG or PNG formats.</div>
             <input class="input-file" id="fileInput" type="file">
         </div>            
-    </div>
+    </div>-->
 {% endblock profile_content %}

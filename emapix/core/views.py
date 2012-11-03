@@ -372,6 +372,11 @@ def set_password(request):
     return render(request, 'set_password.html')
 
 
+def get_profile_photo(request):
+    if not request.user.is_authenticated():
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    return render(request, 'profile_photo.html')    
+    
 
 def get_user(request, username):
     "Displays user profile"
