@@ -30,7 +30,7 @@ function set_error(error_msg, container)
 }
 
 
-function format_error(error_msg, error_default)
+function format_error(error_msg, error_default, msg_only)
 {
     var msg;
     try {
@@ -38,6 +38,8 @@ function format_error(error_msg, error_default)
     } catch(err) {
         msg = error_default;
     }
+    if (msg_only === true)
+        return msg;
     var s   = '<div class="alert alert-error" style="margin-top: 10px;">';
     s   += msg;
     s   += '</div>';
