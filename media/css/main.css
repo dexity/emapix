@@ -296,6 +296,9 @@ a img {
 #edit_profile {
     margin-top: -5px;
 }
+#files_container {
+    display: inline;
+}
 #files_container .alert {
     margin-bottom: 0px;
 }

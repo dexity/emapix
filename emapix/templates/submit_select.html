@@ -10,8 +10,8 @@
         <div class="e-alert alert-success pull-left" style="margin: 0px;">Photo can be up to 5Mb and in JPEG or PNG formats.</div>     
     </div>
     <div class="modal-footer">
-        <div id="files_container"></div> 
         <form id="fileupload">
+            <div id="files_container"></div> 
             {% csrf_token %}
             <span class="btn btn-primary fileinput-button" id="select_file">
                 <span>Select File</span>

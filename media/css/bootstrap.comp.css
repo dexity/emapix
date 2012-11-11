@@ -51,9 +51,9 @@ hr {
     top: 0px;
     left: 40px;
 }
-.submit_modal .modal-body {
+/*.submit_modal .modal-body {
     max-height: 400px;
-}
+}*/
 .submit_modal .e-alert-inline {
     width: 500px;
 }

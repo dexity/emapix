@@ -15,7 +15,6 @@
             type:   "GET",
             cache:  false,
             success:    function(data) {
-                $(".modal-backdrop").remove();
                 $("#submit_container").html(data);
                 $("#submit_modal").modal({backdrop: "static"});
             },

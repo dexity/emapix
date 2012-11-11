@@ -3,6 +3,7 @@ from django import forms
 
 from emapix.exceptions import ServiceException
 from emapix.core.models import *
+from emapix.utils.utils import bad_request_json, forbidden_json
 
 class ObjectExists(object):
     
