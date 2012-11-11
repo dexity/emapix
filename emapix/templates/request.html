@@ -20,7 +20,7 @@
                 $("#submit_modal").modal({backdrop: "static"});
             },
             error:  function(jqXHR, textStatus, errorThrown) {
-                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#errors_container").html(format_error(jqXHR.responseText, errorThrown, true));
                 $("#submit_modal").modal({backdrop: "static"});
             }
 	});
@@ -92,11 +92,11 @@
 			title:		"{{ req.description }}",
 			map:		map
 		    });
-	$("#remove_request").click(function(e){
-		e.preventDefault();
-		$("#body_errors").html("");
-		$("#remove_modal").modal();
-	});
+	//$("#remove_request").click(function(e){
+	//	e.preventDefault();
+	//	$("#body_errors").html("");
+	//	$("#remove_modal").modal();
+	//});
 	
         // XXX: Show only if user is the owner
         // XXX: Refactor, see user.html
@@ -251,7 +251,14 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Submit Photo</h3>
         </div>
-        <div class="modal-body" id="submit_body"></div>
+        <div class="modal-body" id="submit_body">
+            <div class="e-alert alert-success pull-left" style="margin: 0px;">Photo can be up to 5Mb and in JPEG or PNG formats.</div>      
+        </div>
+        <div class="modal-footer">
+            <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container"></div>
+            <div class="btn btn-primary disabled" disabled="disabled">Select File</div>
+            <a href="#" data-dismiss="modal">Close</a>
+        </div>
     </div>
 </div>
 

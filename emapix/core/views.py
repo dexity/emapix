@@ -573,16 +573,11 @@ def submit(request, res):
 
 TEMP_UP = """{% var file=o.files[0]; %}
 {% if (file.error) { %}
-    <div class="e-margin-top-10">
-        <div class="alert alert-error">
-            <a href="#" class="close" data-dismiss="alert">×</a>
-            {%=locale.fileupload.errors[file.error] || file.error%}
-        </div>
+    <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container">
+        {%=locale.fileupload.errors[file.error] || file.error%}
     </div>
 {% } else if (o.files.valid) { %}
-    <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
-        <div class="bar" style="width:100%;"></div>
-    </div>
+    <img src="/media/img/spinner_small.gif" class="e-button-spinner"/>
 {% } %}
 """
 
@@ -631,7 +626,7 @@ def submit_select(request, res):
                 return bad_request_json([{"error": str(e)}])
         
         errors  = form.errors.items()
-        msg     = "Something went wrong ..."
+        msg     = "Something is wrong ..."
         if len(errors) != 0:
             msg = errors[0]
         return bad_request_json([{"error": msg}])
@@ -675,7 +670,7 @@ def submit_crop(request, res):
             return handle_crop_file(req, user, im, (x, y, w, h))
         
         errors  = crop_form.errors.items()
-        msg     = "Something went wrong ..."
+        msg     = "Something is wrong ..."
         if len(errors) != 0:
             msg = errors[0]
         return bad_request_json({"error": msg})
