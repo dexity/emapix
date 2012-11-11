@@ -10,21 +10,23 @@
             {% csrf_token %}
         </form>
         
-        <div id="errors_container"></div>
-        <div id="progress" style="display: none">
-            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" style="width: 50%; margin-top: 20px;">
-                <div class="bar" style="width:100%;"></div>
-            </div>    
-        </div>
     </div>
     <div class="modal-footer">
+        <div id="errors_container" class="modal-error"></div>
+        <div id="progress" style="display: none">
+            <img src="/media/img/spinner_small.gif" class="e-button-spinner"/>
+        </div>
         <button class="btn btn-primary" id="submit_image">Submit Image</button>
-        <a href="#" onclick="show_select_click(event)">Select different file</a>
+        <a href="#" id="select_file">Select different file</a>
         <a href="#" data-dismiss="modal">Close</a>
     </div>
 </div>
 
 <script type="text/javascript">
+    
+$("#select_file").click(function(e){
+    show_select_click(e);
+});
     
 $("#submit_image").click(function(){
     $("#progress").show();
@@ -38,7 +40,11 @@ $("#submit_image").click(function(){
         },
         error:  function(jqXHR, textStatus, errorThrown) {
             $("#progress").hide();
-            $("#errors_container").html(format_error(jqXHR.responseText, errorThrown));
+            
+            var msg = '<div class="e-alert e-alert-inline alert-error">';
+            msg += format_error(jqXHR.responseText, errorThrown, true);
+            msg += '</div>';
+            $("#errors_container").html(msg);
         }
     });
 })
