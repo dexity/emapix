@@ -657,6 +657,7 @@ def submit_crop(request, res):
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
+        
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
