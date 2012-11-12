@@ -91,18 +91,7 @@
 <!-- Modals -->
 <!-- Submit photo modal -->
 <div id="submit_container">
-    <div id="submit_modal" class="submit_modal modal hide fade">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            <h3>Submit Photo</h3>
-        </div>
-        <div class="modal-body" id="submit_body"></div>
-        <div class="modal-footer">
-            <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container"></div>
-            <div class="btn btn-primary disabled" disabled="disabled">Select File</div>
-            <a href="#" data-dismiss="modal">Close</a>
-        </div>
-    </div>
+    {% include "modals/submit.html" %}
 </div>
 
 <!-- Edit request modal -->
@@ -145,6 +134,7 @@
 {% endblock content %}
 
 {% block footer %}
+    
 {% if is_you %}
 <script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
 <script src="/media/fileuploader/js/misc/tmpl.js"></script>
@@ -194,12 +184,6 @@
                 window.location.href = "/request/{{ req.resource }}";
             }
         });
-        
-	//$("#remove_request").click(function(e){
-	//	e.preventDefault();
-	//	$("#body_errors").html("");
-	//	$("#remove_modal").modal();
-	//});
 	
         // XXX: Show only if user is the owner
         // XXX: Refactor, see user.html
@@ -240,6 +224,7 @@
         });
         $("#remove_request").click(function(e) {
             e.preventDefault();
+            //$("#body_errors").html("");
             $("#remove_modal").modal();
         });        
         

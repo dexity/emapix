@@ -1,0 +1,21 @@
+{% extends "modals/submit.html" %}
+
+{% block modal_body %}
+    <img src="{{img_src}}" />
+    <form id="create_form">
+        {% csrf_token %}
+    </form>
+{% endblock %}
+
+{% block modal_footer %}
+    <div id="errors_container" class="modal-error"></div>
+    <div id="progress" style="display: none">
+        <img src="/media/img/spinner_small.gif" class="e-button-spinner"/>
+    </div>
+    <button class="btn btn-primary" id="submit_image">Submit Image</button>
+    <a href="#" id="select_file">Select different file</a>
+    <a href="#" data-dismiss="modal">Close</a>
+{% endblock %}
+
+
+

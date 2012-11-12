@@ -1,0 +1,29 @@
+{% extends "modals/submit.html" %}
+
+{% block modal_top %}
+<link rel="stylesheet" href="/media/fileuploader/css/jquery.fileupload-ui.css">
+{% endblock %}
+
+{% block modal_body %}
+<div class="e-alert alert-success pull-left" style="margin: 0px;">
+    Photo can be up to 5Mb and in JPEG or PNG formats.
+</div>
+{% endblock %}
+
+{% block modal_footer %}
+    <form id="fileupload">
+        <div id="files_container"></div> 
+        {% csrf_token %}
+        <span class="btn btn-primary fileinput-button" id="select_file">
+            <span>Select File</span>
+            {{ form.file }}
+        </span>
+        <a href="#" data-dismiss="modal">Close</a>
+    </form>
+{% endblock %}
+
+{% block modal_bottom %}
+    <script id="template-content" type="text/x-tmpl">
+    {{ temp_up|safe }}
+    </script>
+{% endblock %}

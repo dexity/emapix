@@ -6,10 +6,9 @@ var PHOTOSUB = (function(options){
     // Private objects
     var utils = {
         conv2selector: function(sel) {
-            if (typeof sel === "object"){
-                return sel;         // Already a selector
-            } else if (typeof sel === "string") {
-                return $("#"+sel);  // Convert to selector
+            // Appends # to sel string
+            if (typeof sel === "string") {
+                return "#"+sel;
             }
             return null;
         },
@@ -17,18 +16,19 @@ var PHOTOSUB = (function(options){
             return this.conv2selector(options[sel] || def);
         }
     },
-    modal    = utils.select_option("modal", "submit_modal"),
-    //modal_body  = options.modal_body || "submit_container",
-    modal_error = utils.select_option("modal_error", "errors_container"),
+    modal           = utils.select_option("modal", "submit_modal"),
+    modal_body      = utils.select_option("modal_body", "submit_body"), //"submit_container",
+    modal_error     = utils.select_option("modal_error", "errors_container"),
     modal_progress  = utils.select_option("modal_progress", "progress"),
+    fileupload      = utils.select_option("fileupload", "fileupload"),
+    cropper_form    = utils.select_option("cropper_form", "cropper_form"),
+    create_form     = utils.select_option("create_form", "create_form"),
 
     // Private functions    
-    init_fileupload = function(fopts) {
-        // Required:
-        var _fileupload  = fopts.fileupload || $('#fileupload');
+    init_fileupload = function() {
         
         // Initialize the jQuery file upload widget
-        _fileupload.fileupload({
+        $(fileupload).fileupload({
             autoUpload:         true,
             uploadTemplateId:   "template-content",
             downloadTemplateId: "template-content",
@@ -67,7 +67,7 @@ var PHOTOSUB = (function(options){
             }
         })
     
-        _fileupload.fileupload('option', {
+        $(fileupload).fileupload('option', {
             url:        options.select_url,
             maxFileSize: 5000000,
             minFileSize: 100,
@@ -93,22 +93,22 @@ var PHOTOSUB = (function(options){
         var jcrop_api = {
             size:   options.crop_size,
             submit_crop:    function(){
-                modal_progress.show();
+                $(modal_progress).show();
                 $.ajax({
                     url:    options.crop_url,
                     type:   "POST",
-                    data:   $("#cropper_form").serialize(),
+                    data:   $(cropper_form).serialize(),
                     cache:  false,
                     success:    function(data) {
                         that.show_create();  // From request.html
                     },
                     error:  function(jqXHR, textStatus, errorThrown) {
-                        $("#progress").hide();
+                        $(modal_progress).hide();
                         
                         var msg = '<div class="e-alert e-alert-inline alert-error">';
                         msg += format_error(jqXHR.responseText, errorThrown, true);
                         msg += '</div>';
-                        $("#errors_container").html(msg);
+                        $(modal_error).html(msg);
                     }
                 });
             },
@@ -173,22 +173,22 @@ var PHOTOSUB = (function(options){
         });
         
         $("#submit_image").click(function(){
-            modal_progress.show();
+            $(modal_progress).show();
             $.ajax({
                 url:    options.create_url,
                 type:   "POST",
-                data:   $("#create_form").serialize(),
+                data:   $(create_form).serialize(),
                 cache:  false,
                 success:    function(data) {
                     options.finished_callback();
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
-                    modal_progress.hide();
+                    $(modal_progress).hide();
                     
                     var msg = '<div class="e-alert e-alert-inline alert-error">';
                     msg += format_error(jqXHR.responseText, errorThrown, true);
                     msg += '</div>';
-                    $("#errors_container").html(msg);
+                    $(modal_error).html(msg);
                 }
             });
         })        
@@ -208,13 +208,13 @@ var PHOTOSUB = (function(options){
                 success:    function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    modal.modal({backdrop: "static"});
+                    $(modal).modal({backdrop: "static"});
                     
                     init_fileupload({});
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
-                    $("#errors_container").html(format_error(jqXHR.responseText, errorThrown, true));
-                    modal.modal({backdrop: "static"});
+                    $(modal_error).html(format_error(jqXHR.responseText, errorThrown, true));
+                    $(modal).modal({backdrop: "static"});
                 }
             });        
         },
@@ -227,15 +227,15 @@ var PHOTOSUB = (function(options){
                 success: function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    modal.modal({backdrop: "static"});
+                    $(modal).modal({backdrop: "static"});
                     
                     init_cropper();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                    modal.modal({backdrop: "static"});
+                    $(modal_body).html(format_error(jqXHR.responseText, errorThrown));
+                    $(modal).modal({backdrop: "static"});
                 }
-            });            
+            });
         },
         show_create: function(){
             // Loads create image modal page (doesn't handle images creation)
@@ -246,13 +246,13 @@ var PHOTOSUB = (function(options){
                 success: function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    modal.modal({backdrop: "static"});
+                    $(modal).modal({backdrop: "static"});
                     
                     init_create();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                    modal.modal({backdrop: "static"});
+                    $(modal_body).html(format_error(jqXHR.responseText, errorThrown));
+                    $(modal).modal({backdrop: "static"});
                 }
             });
         }        

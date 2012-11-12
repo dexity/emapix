@@ -638,7 +638,7 @@ def submit_select(request, res):
         "resource": res,
         "temp_up":  TEMP_UP
     }
-    return render(request, 'submit_select.html', c)    
+    return render(request, 'modals/submit_select.html', c)    
     
 
 def submit_crop(request, res):
@@ -692,7 +692,7 @@ def submit_crop(request, res):
         "img_width":    im.width,
         "img_height":   im.height
     }
-    return render(request, 'submit_crop.html', c)
+    return render(request, 'modals/submit_crop.html', c)
 
 
 def handle_crop_file(req, user, image, (x, y, w, h)):
@@ -742,7 +742,7 @@ def submit_create(request, res):
         "resource":     res,
         "img_src":      imc.url
     }
-    return render(request, 'submit_create.html', c)    
+    return render(request, 'modals/submit_create.html', c)    
 
 
 def submit3(request):

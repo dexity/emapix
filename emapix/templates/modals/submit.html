@@ -1,0 +1,21 @@
+
+{% block modal_top %}{% endblock %}
+
+<div id="submit_modal" class="submit_modal modal hide fade">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3>Submit Photo</h3>
+    </div>
+    <div class="modal-body" id="submit_body">
+        {% block modal_body %}{% endblock %}
+    </div>
+    <div class="modal-footer">
+        {% block modal_footer %}
+        <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container"></div>
+        <div class="btn btn-primary disabled" disabled="disabled">Select File</div>
+        <a href="#" data-dismiss="modal">Close</a>
+        {% endblock %}
+    </div>
+</div>
+
+{% block modal_bottom %}{% endblock %}
