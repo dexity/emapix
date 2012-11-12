@@ -314,6 +314,7 @@ def get_request(request, res):
         
         c   = {}
         c["req"]    = req
+        c["is_you"] = is_you(request, req.user),
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
         # Dynamically set new widget

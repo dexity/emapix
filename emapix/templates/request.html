@@ -1,157 +1,6 @@
 {% extends "base.html" %}
 
 {% block header %}
-<script type="text/javascript"
-    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
-</script>
-
-<script type="text/javascript">
-
-    function show_select()
-    {
-        // Load select file modal page (doesn't handle file upload)
-	$.ajax({
-	    url:    "/submit/select/{{req.resource}}",
-            type:   "GET",
-            cache:  false,
-            success:    function(data) {
-                $(".modal-backdrop").remove();
-                $("#submit_container").html(data);
-                $("#submit_modal").modal({backdrop: "static"});
-            },
-            error:  function(jqXHR, textStatus, errorThrown) {
-                $("#errors_container").html(format_error(jqXHR.responseText, errorThrown, true));
-                $("#submit_modal").modal({backdrop: "static"});
-            }
-	});
-    }
-
-    function show_crop()
-    {
-        // Load crop image modal page (doesn't handle image crop)
-        $.ajax({
-            url:    "/submit/crop/{{req.resource}}",
-            type:   "GET",
-            cache:  false,
-            success: function(data) {
-                $(".modal-backdrop").remove();
-                $("#submit_container").html(data);
-                $("#submit_modal").modal({backdrop: "static"});
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                $("#submit_modal").modal({backdrop: "static"});
-            }
-        });
-    }
-    
-    function show_create()
-    {
-        // Loads create image modal page (doesn't handle images creation)
-        $.ajax({
-            url:    "/submit/create/{{req.resource}}",
-            type:   "GET",
-            cache:  false,
-            success: function(data) {
-                $(".modal-backdrop").remove();
-                $("#submit_container").html(data);
-                $("#submit_modal").modal({backdrop: "static"});
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                $("#submit_modal").modal({backdrop: "static"});
-            }
-        });
-    }    
-    
-    function submit_image_finished() {
-	$("#submit_modal").modal("hide");
-	// XXX: Make json request to replace image and metadata
-	//	instead of reloading the page. Save requests to Google Map
-	window.location.href = "/request/{{ req.resource }}";
-    }
-    
-    function show_select_click(e) {
-	e.preventDefault();
-	show_select();
-    }
-    
-    $(document).ready(function(){
-	var lat	= "{{ req.location.lat }}";
-	var lon	= "{{ req.location.lon }}";
-	var location = new google.maps.LatLng(lat, lon);
-	var myOptions = {
-	    center: location,
-	    zoom: 13,
-            scrollwheel: false,
-	    mapTypeId: google.maps.MapTypeId.ROADMAP,
-	};
-	map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	marker	= new google.maps.Marker({
-			position:  	new google.maps.LatLng(lat, lon),
-			title:		"{{ req.description }}",
-			map:		map
-		    });
-	//$("#remove_request").click(function(e){
-	//	e.preventDefault();
-	//	$("#body_errors").html("");
-	//	$("#remove_modal").modal();
-	//});
-	
-        // XXX: Show only if user is the owner
-        // XXX: Refactor, see user.html
-	// Set events
-	$("#delete_btn").click(function() {
-	    url = $("#remove_request").attr("href");
-	    $.post(url,
-		{"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-		function(data) {
-		    try
-		    {
-			var res	= $.parseJSON(data);    // OK
-			if (res["status"] == "ok")
-			{
-			    $("#remove_modal").modal("hide");
-			    // Go to requests list
-			    window.location.href = "/requests"
-			}
-			else
-			{
-			    $("#body_errors").html("result");
-			}
-		    }
-		    catch (e)
-		    {
-			$("#body_errors").html(data);
-		    }
-		});
-	});
-	
-        $("#edit_request").click(function(e) {
-            e.preventDefault();
-            $("#edit_modal").modal();
-        });
-        $("#remove_photo").click(function(e) {
-            e.preventDefault();
-            $("#remove_photo_modal").modal();
-        });
-        $("#remove_request").click(function(e) {
-            e.preventDefault();
-            $("#remove_modal").modal();
-        });        
-        
-	$("#submit_photo").click(function(e) {
-	    e.preventDefault();
-	    show_select();
-	});
-	
-	//$("#diff_file").click(function(e){
-	//    e.preventDefault();
-	//    show_select();
-	//});
-	
-    });
-</script>
 
 {% endblock header %}
 
@@ -300,3 +149,143 @@
 {% include "modals/delete_request.html" %}
 
 {% endblock content %}
+
+{% block footer %}
+{% if is_you %}
+<script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
+<script src="/media/fileuploader/js/misc/tmpl.js"></script>
+<script src="/media/fileuploader/js/misc/load-image.min.js"></script>
+<script src="/media/fileuploader/js/misc/canvas-to-blob.min.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
+<script src="/media/fileuploader/js/locale.js"></script>
+<script src="/media/js/submit_photo.js"></script>
+
+{% endif %}
+
+
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
+</script>
+
+<script type="text/javascript">
+
+    function show_create()
+    {
+        // Loads create image modal page (doesn't handle images creation)
+        $.ajax({
+            url:    "/submit/create/{{req.resource}}",
+            type:   "GET",
+            cache:  false,
+            success: function(data) {
+                $(".modal-backdrop").remove();
+                $("#submit_container").html(data);
+                $("#submit_modal").modal({backdrop: "static"});
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                $("#submit_modal").modal({backdrop: "static"});
+            }
+        });
+    }    
+    
+    function submit_image_finished() {
+	$("#submit_modal").modal("hide");
+	// XXX: Make json request to replace image and metadata
+	//	instead of reloading the page. Save requests to Google Map
+	window.location.href = "/request/{{ req.resource }}";
+    }
+    
+    function show_select_click(e) {
+	e.preventDefault();
+	show_select();
+    }
+    
+    $(document).ready(function(){
+	var lat	= "{{ req.location.lat }}";
+	var lon	= "{{ req.location.lon }}";
+	var location = new google.maps.LatLng(lat, lon);
+	var myOptions = {
+	    center: location,
+	    zoom: 13,
+            scrollwheel: false,
+	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+	var marker	= new google.maps.Marker({
+			position:  	new google.maps.LatLng(lat, lon),
+			title:		"{{ req.description }}",
+			map:		map
+		    });
+        
+        var sub    = PHOTOSUB({
+            select_url: "/submit/select/{{req.resource}}",
+            crop_url:   "/submit/crop/{{req.resource}}",
+            create_url: "/submit/create/{{req.resource}}"
+        });
+        
+	//$("#remove_request").click(function(e){
+	//	e.preventDefault();
+	//	$("#body_errors").html("");
+	//	$("#remove_modal").modal();
+	//});
+	
+        // XXX: Show only if user is the owner
+        // XXX: Refactor, see user.html
+	// Set events
+	$("#delete_btn").click(function() {
+	    var url = $("#remove_request").attr("href");
+	    $.post(url,
+		{"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+		function(data) {
+		    try
+		    {
+			var res	= $.parseJSON(data);    // OK
+			if (res["status"] == "ok")
+			{
+			    $("#remove_modal").modal("hide");
+			    // Go to requests list
+			    window.location.href = "/requests"
+			}
+			else
+			{
+			    $("#body_errors").html("result");
+			}
+		    }
+		    catch (e)
+		    {
+			$("#body_errors").html(data);
+		    }
+		});
+	});
+	
+        $("#edit_request").click(function(e) {
+            e.preventDefault();
+            $("#edit_modal").modal();
+        });
+        $("#remove_photo").click(function(e) {
+            e.preventDefault();
+            $("#remove_photo_modal").modal();
+        });
+        $("#remove_request").click(function(e) {
+            e.preventDefault();
+            $("#remove_modal").modal();
+        });        
+        
+	$("#submit_photo").click(function(e) {
+	    e.preventDefault();
+	    sub.show_select("/submit/select/{{req.resource}}");
+            //show_select();
+	});
+	
+	//$("#diff_file").click(function(e){
+	//    e.preventDefault();
+	//    show_select();
+	//});
+	
+    });
+</script>
+    
+
+{% endblock %}
