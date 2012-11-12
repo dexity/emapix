@@ -60,8 +60,7 @@ var PHOTOSUB = (function(options){
             maxFileSize: 5000000,
             minFileSize: 100,
             acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,    // .jpg and .png images are allowed
-            process: [
-                {
+            process: [{
                     action: 'load',
                     fileTypes: /^image\/(jpeg|png)$/,
                     maxFileSize: 10000000 // 20MB
@@ -73,15 +72,121 @@ var PHOTOSUB = (function(options){
                 },
                 {
                     action: 'save'
-                }
-            ]
+                }]
         });
     
+    },
+    init_cropper    = function(){
+        
+        var jcrop_api = {
+            size:   options.crop_size,
+            submit_crop:    function(){
+                $("#progress").show();
+                $.ajax({
+                    url:    options.crop_url,
+                    type:   "POST",
+                    data:   $("#cropper_form").serialize(),
+                    cache:  false,
+                    success:    function(data) {
+                        that.show_create();  // From request.html
+                    },
+                    error:  function(jqXHR, textStatus, errorThrown) {
+                        $("#progress").hide();
+                        
+                        var msg = '<div class="e-alert e-alert-inline alert-error">';
+                        msg += format_error(jqXHR.responseText, errorThrown, true);
+                        msg += '</div>';
+                        $("#errors_container").html(msg);
+                    }
+                });
+            },
+            updateCoords:   function(c){
+                $('input[name=x]').val(c.x);
+                $('input[name=y]').val(c.y);
+                $('input[name=w]').val(c.w);
+                $('input[name=h]').val(c.h);
+            },
+            getAspectRatio: function(bounds) {
+                return bounds[0] > this.size && bounds[1] > this.size ? 1 : undefined;
+            },
+            getSelect:  function(bounds) {
+                var x2 = bounds[0] > this.size ? this.size : bounds[0],
+                    y2 = bounds[1] > this.size ? this.size : bounds[1];
+                return [0, 0, x2, y2];
+            },
+            getMinSize: function(bounds) {
+                var w = bounds[0] > this.size ? this.size : bounds[0],
+                    h = bounds[1] > this.size ? this.size : bounds[1];
+                return [w, h];
+            },
+            getMaxSize: function(bounds) {
+                var aspect  = this.getAspectRatio(bounds);
+                if (aspect == 1) {
+                    var w = bounds[0] > this.size ? bounds[0] : this.size,
+                        h = bounds[1] > this.size ? bounds[1] : this.size;
+                    return [w, h];
+                } else {
+                    return this.getMinSize(bounds);
+                }
+            },
+            set_cropper:    function() {
+                var jcrop   = $.Jcrop('#cropbox');
+                var bounds  = jcrop.getBounds();
+                jcrop.setOptions({
+                    aspectRatio: this.getAspectRatio(bounds),
+                    setSelect:  this.getSelect(bounds),
+                    minSize:    this.getMinSize(bounds),
+                    maxSize:    this.getMaxSize(bounds),
+                    onSelect:   this.updateCoords
+                });
+            }
+        };
+        
+        $("#cropbox").load(function(){
+            jcrop_api.set_cropper();
+        });
+        
+        $("#crop_image").click(function(){
+            jcrop_api.submit_crop();
+        });
+        $("#select_file").click(function(e){
+            e.preventDefault();
+            that.show_select();
+        });    
+    },
+    init_create     = function(){
+        $("#select_file").click(function(e){
+            e.preventDefault();
+            that.show_select();
+        });
+        
+        $("#submit_image").click(function(){
+            $("#progress").show();
+            $.ajax({
+                url:    options.create_url,
+                type:   "POST",
+                data:   $("#create_form").serialize(),
+                cache:  false,
+                success:    function(data) {
+                    options.finished_callback();
+                },
+                error:  function(jqXHR, textStatus, errorThrown) {
+                    $("#progress").hide();
+                    
+                    var msg = '<div class="e-alert e-alert-inline alert-error">';
+                    msg += format_error(jqXHR.responseText, errorThrown, true);
+                    msg += '</div>';
+                    $("#errors_container").html(msg);
+                }
+            });
+        })        
     };
     
     
     // Public object
     var that = {
+        // Properties
+        
         // Functions
         show_select: function(){
             $.ajax({
@@ -111,6 +216,8 @@ var PHOTOSUB = (function(options){
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
                     $("#submit_modal").modal({backdrop: "static"});
+                    
+                    init_cropper();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
@@ -119,7 +226,23 @@ var PHOTOSUB = (function(options){
             });            
         },
         show_create: function(){
-            
+            // Loads create image modal page (doesn't handle images creation)
+            $.ajax({
+                url:    options.create_url,
+                type:   "GET",
+                cache:  false,
+                success: function(data) {
+                    $(".modal-backdrop").remove();
+                    $("#submit_container").html(data);
+                    $("#submit_modal").modal({backdrop: "static"});
+                    
+                    init_create();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
+                    $("#submit_modal").modal({backdrop: "static"});
+                }
+            });
         }        
     }
 

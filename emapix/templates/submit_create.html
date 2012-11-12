@@ -22,31 +22,3 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    
-$("#select_file").click(function(e){
-    show_select_click(e);
-});
-    
-$("#submit_image").click(function(){
-    $("#progress").show();
-    $.ajax({
-        url:    "/submit/create/{{resource}}",
-        type:   "POST",
-        data:   $("#create_form").serialize(),
-        cache:  false,
-        success:    function(data) {
-            submit_image_finished();
-        },
-        error:  function(jqXHR, textStatus, errorThrown) {
-            $("#progress").hide();
-            
-            var msg = '<div class="e-alert e-alert-inline alert-error">';
-            msg += format_error(jqXHR.responseText, errorThrown, true);
-            msg += '</div>';
-            $("#errors_container").html(msg);
-        }
-    });
-})
-
-</script>

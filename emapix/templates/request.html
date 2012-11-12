@@ -160,6 +160,7 @@
 <script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
 <script src="/media/fileuploader/js/locale.js"></script>
+<script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 <script src="/media/js/submit_photo.js"></script>
 
 {% endif %}
@@ -170,37 +171,6 @@
 </script>
 
 <script type="text/javascript">
-
-    function show_create()
-    {
-        // Loads create image modal page (doesn't handle images creation)
-        $.ajax({
-            url:    "/submit/create/{{req.resource}}",
-            type:   "GET",
-            cache:  false,
-            success: function(data) {
-                $(".modal-backdrop").remove();
-                $("#submit_container").html(data);
-                $("#submit_modal").modal({backdrop: "static"});
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                $("#submit_modal").modal({backdrop: "static"});
-            }
-        });
-    }    
-    
-    function submit_image_finished() {
-	$("#submit_modal").modal("hide");
-	// XXX: Make json request to replace image and metadata
-	//	instead of reloading the page. Save requests to Google Map
-	window.location.href = "/request/{{ req.resource }}";
-    }
-    
-    function show_select_click(e) {
-	e.preventDefault();
-	show_select();
-    }
     
     $(document).ready(function(){
 	var lat	= "{{ req.location.lat }}";
@@ -222,7 +192,14 @@
         var sub    = PHOTOSUB({
             select_url: "/submit/select/{{req.resource}}",
             crop_url:   "/submit/crop/{{req.resource}}",
-            create_url: "/submit/create/{{req.resource}}"
+            create_url: "/submit/create/{{req.resource}}",
+            crop_size:  460,
+            finished_callback:  function(){
+                $("#submit_modal").modal("hide");
+                // XXX: Make json request to replace image and metadata
+                //	instead of reloading the page. Save requests to Google Map
+                window.location.href = "/request/{{ req.resource }}";
+            }
         });
         
 	//$("#remove_request").click(function(e){
@@ -275,8 +252,7 @@
         
 	$("#submit_photo").click(function(e) {
 	    e.preventDefault();
-	    sub.show_select("/submit/select/{{req.resource}}");
-            //show_select();
+	    sub.show_select();
 	});
 	
 	//$("#diff_file").click(function(e){
