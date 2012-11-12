@@ -3,14 +3,26 @@
 var PHOTOSUB = (function(options){
     "use strict"
     
-    // modal_id:    #submit_modal
-    // modal_body:  #submit_container
-    // modal_error: #errors_container
-    
-    // Private variables
-    var a,
-    
-    // Private functions
+    // Private objects
+    var utils = {
+        conv2selector: function(sel) {
+            if (typeof sel === "object"){
+                return sel;         // Already a selector
+            } else if (typeof sel === "string") {
+                return $("#"+sel);  // Convert to selector
+            }
+            return null;
+        },
+        select_option: function(sel, def) {
+            return this.conv2selector(options[sel] || def);
+        }
+    },
+    modal    = utils.select_option("modal", "submit_modal"),
+    //modal_body  = options.modal_body || "submit_container",
+    modal_error = utils.select_option("modal_error", "errors_container"),
+    modal_progress  = utils.select_option("modal_progress", "progress"),
+
+    // Private functions    
     init_fileupload = function(fopts) {
         // Required:
         var _fileupload  = fopts.fileupload || $('#fileupload');
@@ -81,7 +93,7 @@ var PHOTOSUB = (function(options){
         var jcrop_api = {
             size:   options.crop_size,
             submit_crop:    function(){
-                $("#progress").show();
+                modal_progress.show();
                 $.ajax({
                     url:    options.crop_url,
                     type:   "POST",
@@ -161,7 +173,7 @@ var PHOTOSUB = (function(options){
         });
         
         $("#submit_image").click(function(){
-            $("#progress").show();
+            modal_progress.show();
             $.ajax({
                 url:    options.create_url,
                 type:   "POST",
@@ -171,7 +183,7 @@ var PHOTOSUB = (function(options){
                     options.finished_callback();
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
-                    $("#progress").hide();
+                    modal_progress.hide();
                     
                     var msg = '<div class="e-alert e-alert-inline alert-error">';
                     msg += format_error(jqXHR.responseText, errorThrown, true);
@@ -196,13 +208,13 @@ var PHOTOSUB = (function(options){
                 success:    function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                     
                     init_fileupload({});
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
                     $("#errors_container").html(format_error(jqXHR.responseText, errorThrown, true));
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                 }
             });        
         },
@@ -215,13 +227,13 @@ var PHOTOSUB = (function(options){
                 success: function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                     
                     init_cropper();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                 }
             });            
         },
@@ -234,13 +246,13 @@ var PHOTOSUB = (function(options){
                 success: function(data) {
                     $(".modal-backdrop").remove();
                     $("#submit_container").html(data);
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                     
                     init_create();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     $("#submit_body").html(format_error(jqXHR.responseText, errorThrown));
-                    $("#submit_modal").modal({backdrop: "static"});
+                    modal.modal({backdrop: "static"});
                 }
             });
         }        

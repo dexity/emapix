@@ -1,9 +1,5 @@
 {% extends "base.html" %}
 
-{% block header %}
-
-{% endblock header %}
-
 {% block content %}
 
 <style type="text/css">
@@ -46,7 +42,7 @@
                 <div class="e-time" title="2012-10-09 06:44:16Z">Oct 09, 2012 06:44</div>
 	    </div>
         </div>
-        {% if pic_url or user.username == req.user.username %}
+        {% if pic_url or is_you %}
         <div class="row e-control-options">
             <div class="span3 pull-left">
                 <a href="#" id="edit_request">Edit Request</a><br />
@@ -57,7 +53,7 @@
             </div>
 	    {% csrf_token %}
             <div class="span3 pull-right">
-		{% if user.username == req.user.username %}
+		{% if is_you %}
                 <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
                 <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
 		{% endif %}
@@ -100,9 +96,7 @@
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Submit Photo</h3>
         </div>
-        <div class="modal-body" id="submit_body">
-            <div class="e-alert alert-success pull-left" style="margin: 0px;">Photo can be up to 5Mb and in JPEG or PNG formats.</div>      
-        </div>
+        <div class="modal-body" id="submit_body"></div>
         <div class="modal-footer">
             <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container"></div>
             <div class="btn btn-primary disabled" disabled="disabled">Select File</div>
@@ -164,7 +158,6 @@
 <script src="/media/js/submit_photo.js"></script>
 
 {% endif %}
-
 
 <script type="text/javascript"
     src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
