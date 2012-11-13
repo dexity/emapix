@@ -1,24 +1,11 @@
 {% extends "profile_base.html" %}
 
-{% block header %}
-    
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#profile_photo").attr({"class": "active"});
-        $("#remove_photo").click(function(e) {
-            e.preventDefault();
-            $("#remove_photo_modal").modal();
-        });        
-    })        
-</script>
-
-{% endblock header %}
-
 {% block profile_content %}
+
 <div class="row">
     <div class="span2"><img src="/media/img/user.png"/></div>
     <div class="span6">
-        <button class="btn btn-primary">Submit Photo</button>
+        <button class="btn btn-primary" id="submit_photo">Submit Photo</button>
         <a href="#" class="red" id="remove_photo" style="margin-left: 50px">Remove Photo</a>
     </div>
 </div>
@@ -39,4 +26,53 @@
     </div>
 </div>
 
-{% endblock profile_content %}
+<div id="submit_container">
+    {% include "modals/submit.html" %}
+</div>
+
+{% endblock %}
+
+{% block footer %}
+    
+<script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
+<script src="/media/fileuploader/js/misc/tmpl.js"></script>
+<script src="/media/fileuploader/js/misc/load-image.min.js"></script>
+<script src="/media/fileuploader/js/misc/canvas-to-blob.min.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload-fp.js"></script>
+<script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
+<script src="/media/fileuploader/js/locale.js"></script>
+<script src="/media/jcrop/js/jquery.Jcrop.js"></script>
+<script src="/media/js/submit_photo.js"></script>
+
+<script type="text/javascript">
+    
+    $(document).ready(function(){
+        
+        var sub    = PHOTOSUB({
+            select_url: "/profile/photo/select",
+            crop_url:   "/profile/photo/crop",
+            create_url: "/profile/photo/create",
+            crop_size:  140,
+            finished_callback:  function(){
+                $("#submit_modal").modal("hide");
+                // XXX: Make json request to replace image and metadata
+                //	instead of reloading the page. Save requests to Google Map
+                window.location.href = "/profile/photo";
+            }
+        });
+        
+        $("#profile_photo").attr({"class": "active"});
+	$("#submit_photo").click(function(e) {
+	    e.preventDefault();
+	    sub.show_select();
+	});        
+        
+        $("#remove_photo").click(function(e) {
+            e.preventDefault();
+            $("#remove_photo_modal").modal();
+        });        
+    })        
+</script>
+
+{% endblock %}

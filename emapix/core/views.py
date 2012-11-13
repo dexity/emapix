@@ -376,6 +376,8 @@ def set_password(request):
 def get_profile_photo(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    
+    
     return render(request, 'profile_photo.html')    
     
 
@@ -562,15 +564,6 @@ def search(request):
 def search2(request):
     return render(request, 'search2.html')
 
-def submit(request, res):
-    c   = {}
-    try:
-        req = Request.objects.get(resource=res)
-        c["req"]    = req
-    except Exception, e:
-        pass
-    return render(request, 'submit.html', c)
-
 
 TEMP_UP = """{% var file=o.files[0]; %}
 {% if (file.error) { %}
@@ -745,8 +738,116 @@ def submit_create(request, res):
     return render(request, 'modals/submit_create.html', c)    
 
 
-def submit3(request):
-    return render(request, 'submit3.html')
+def profile_photo_select(request):
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR_TXT})   
+    
+    user    = request.user
+    
+    if request.method == "POST":    # Ajax request
+        # Upload image
+        form   = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            fd  = request.FILES["file"]
+            try:
+                # Note: Error messages are not really used here bacause of weird error handling in
+                #       jQueryFileUpload widget
+                
+                format      = IMAGE_TYPES.get(fd.content_type, "err")
+                filename    = s3key(user.username, "preview", format)
+                img         = ImageFile(fd)     # convert to image
+                
+                # DB handling
+                im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+                im.name     = filename
+                im.height   = img.height
+                im.width    = img.width
+                im.url      = s3_key2url(filename)
+                im.size     = fd.size
+                im.format   = format
+                im.is_avail = s3_upload_file(fd, filename)
+                im.save()
+                
+                # Send email notification?
+                
+                # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+                return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+            
+            except User.DoesNotExist:
+                return bad_request_json({"error": "User does not exist"})
+            except Exception, e:
+                logger.debug(str(e))
+                return bad_request_json([{"error": str(e)}])
+        
+        errors  = form.errors.items()
+        msg     = "Something is wrong ..."
+        if len(errors) != 0:
+            msg = errors[0]
+        return bad_request_json([{"error": msg}])
+
+    # Display form
+    c   = {
+        "form":     UploadFileForm(),
+        "temp_up":  TEMP_UP
+    }
+    return render(request, 'modals/submit_select.html', c)    
+
+
+def profile_photo_crop(request):
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR_TXT})
+    
+    user    = request.user
+
+    #phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
+    #if not phreqs.exists(): # No photo request, should exist by the time
+    #    return bad_request_json({"error": "Photo request doesn't exist"})
+    #try:
+    #    im  = Image.objects.get(photo=phreqs[0].photo)
+    #except Image.DoesNotExist:
+    #    return bad_request_json({"error": "Photo request doesn't exist"})
+    #
+    #if request.method == "POST":
+    #    
+    #    # Crop image
+    #    crop_form   = CropForm(request.POST)
+    #    if crop_form.is_valid():
+    #        x   = crop_form.cleaned_data["x"]
+    #        y   = crop_form.cleaned_data["y"]
+    #        h   = crop_form.cleaned_data["h"]
+    #        w   = crop_form.cleaned_data["w"]
+    #        #if not (x and y and h and w):
+    #        #    return HttpResponseRedirect("/submit2") # Error
+    #        
+    #        return handle_crop_file(req, user, im, (x, y, w, h))
+    #    
+    #    errors  = crop_form.errors.items()
+    #    msg     = "Something is wrong ..."
+    #    if len(errors) != 0:
+    #        msg = errors[0]
+    #    return bad_request_json({"error": msg})
+    #
+    #if im.width <= 460 and im.height <= 460:
+    #    # No need to crop - upload directly
+    #    result  = handle_crop_file(req, user, im, (0, 0, im.width, im.height))
+    #    if isinstance(result, HttpResponseBadRequest):
+    #        return result
+    #    
+    #    return HttpResponseRedirect("/submit/create/%s" % res)
+    
+    c   = {
+        "crop_form":    CropForm(),
+        "img_src":      im.url,
+        "img_width":    im.width,
+        "img_height":   im.height
+    }
+    return render(request, 'modals/submit_crop.html', c)    
+
+
+def profile_photo_create(request):
+    pass
+
+
 
 
 

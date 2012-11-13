@@ -20,6 +20,9 @@ class UserProfile(models.Model):
     num_photos  = models.IntegerField(default=0)
     
     req_limit   = models.IntegerField(default=10)   # Temp
+    
+    def __unicode__(self):
+        return ""
 
 
 class UserStatus(models.Model):
@@ -30,6 +33,9 @@ class UserStatus(models.Model):
     def save(self, *args, **kwargs):
         self.updated_date = timestamp()
         super(UserStatus, self).save(*args, **kwargs)        
+    
+    def __unicode__(self):
+        return ""
 
 
 class Photo(models.Model):
@@ -46,6 +52,9 @@ class Photo(models.Model):
             self.created_time = timestamp()     # Updated when object is created
         self.updated_time = timestamp()
         super(Photo, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return ""
 
 
 class Image(models.Model):
@@ -67,6 +76,9 @@ class Image(models.Model):
             self.created_time = timestamp()     # Updated when object is created
         self.updated_time = timestamp()
         super(Image, self).save(*args, **kwargs)
+    
+    def __unicode__(self):
+        return ""
 
 
 class Location(models.Model):
@@ -79,6 +91,9 @@ class Location(models.Model):
     res_lat = models.IntegerField(default=0)
     res_lon = models.IntegerField(default=0)
     res_type    = models.CharField(max_length=64, null=True, blank=True)
+    
+    def __unicode__(self):
+        return ""
     
 
 class Request(models.Model):
@@ -93,12 +108,23 @@ class Request(models.Model):
         if not self.id:
             self.submitted_date = timestamp()
         super(Request, self).save(*args, **kwargs)        
+    
+    def __unicode__(self):
+        return ""
 
 
 class PhotoRequest(models.Model):
     photo       = models.ForeignKey(Photo)
     request     = models.ForeignKey(Request)
     # Some access control (?)
+    
+    def __unicode__(self):
+        return ""
+
+
+class ProfilePhoto(models.Model):
+    photo       = models.ForeignKey(Photo)
+    user        = models.ForeignKey(User)
     
     def __unicode__(self):
         return ""
@@ -115,7 +141,8 @@ class RequestStatus(models.Model):
         if not self.id:
             self.submitted_date = timestamp()
         super(RequestStatus, self).save(*args, **kwargs)        
+    
+    def __unicode__(self):
+        return ""
 
-"""
-Metadata related what user can do and cannot do
-"""
+

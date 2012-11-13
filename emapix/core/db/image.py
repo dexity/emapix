@@ -15,15 +15,7 @@ class WImage(object):
             phreq   = PhotoRequest(photo=ph, request=req)
             phreq.save()
         
-        imgs    = Image.objects.filter(photo=ph)
-        if photo_type == "request":
-            imgs    = imgs.filter(size_type=size_type)
-        if imgs.exists():
-            return imgs[0]
-        img = Image(photo=ph, size_type=size_type)
-        if save:
-            img.save()
-        return img   # Create new Image
+        return cls.get_or_create_image_by_photo(ph, photo_type, size_type, marked_delete, save)
 
 
     @classmethod
@@ -33,10 +25,44 @@ class WImage(object):
         if not phreqs.exists():
             return None
         
-        imgs    = Image.objects.filter(photo=phreqs[0].photo)
-        # Note: photo_size == None for photo_type in ["preview", "crop"]
-        if photo_type == "request":
+        return cls.get_image_by_photo(phreqs[0].photo, photo_type, size_type)
+
+
+    @classmethod
+    def get_or_create_profile_image(cls, user, photo_type, size_type=None, marked_delete=False, save=False):
+        "Returns Image profile or creates Image profile object"
+        profph   = ProfilePhoto.objects.filter(user=user).filter(photo__type=photo_type)
+        
+        if profph.exists():  # Use existing photo request
+            ph      = profph[0].photo
+        else:   # Create a new photo request
+            ph      = Photo(user=user, type=photo_type, marked_delete=marked_delete)
+            ph.save()
+            phreq   = ProfilePhoto(photo=ph, user=user)
+            phreq.save()
+        
+        return cls.get_or_create_image_by_photo(ph, photo_type, size_type, marked_delete, save)
+    
+    
+    @classmethod
+    def get_image_by_photo(cls, photo, photo_type, size_type=None):
+        "Returns image by photo"
+        imgs    = Image.objects.filter(photo=photo)
+        if photo_type in ["request", "profile"]:
             imgs    = imgs.filter(size_type=size_type)
         if not imgs.exists():
             return None
         return imgs[0]
+    
+    
+    @classmethod
+    def get_or_create_image_by_photo(cls, photo, photo_type, size_type=None, marked_delete=False, save=False):
+        "Returns or creates image by photo"
+        img = cls.get_image_by_photo(photo, photo_type, size_type)
+        if img:
+            return img
+
+        img = Image(photo=ph, size_type=size_type)
+        if save:
+            img.save()
+        return img   # Create new Image        

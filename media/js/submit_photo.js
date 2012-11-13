@@ -1,4 +1,5 @@
 
+// XXX: Disable button when in progress
 
 var PHOTOSUB = (function(options){
     "use strict"
@@ -79,7 +80,7 @@ var PHOTOSUB = (function(options){
                 },
                 {
                     action: 'resize',
-                    maxWidth: 780,  // 920
+                    maxWidth: 780,
                     maxHeight: 780
                 },
                 {
