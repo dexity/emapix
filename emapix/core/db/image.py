@@ -33,7 +33,7 @@ class WImage(object):
         "Returns Image profile or creates Image profile object"
         profph   = ProfilePhoto.objects.filter(user=user).filter(photo__type=photo_type)
         
-        if profph.exists():  # Use existing photo request
+        if profph.exists():  # Use existing profile photo
             ph      = profph[0].photo
         else:   # Create a new photo request
             ph      = Photo(user=user, type=photo_type, marked_delete=marked_delete)
@@ -42,6 +42,15 @@ class WImage(object):
             phreq.save()
         
         return cls.get_or_create_image_by_photo(ph, photo_type, size_type, marked_delete, save)
+    
+    
+    @classmethod
+    def get_profile_image(cls, user, photo_type, size_type=None):
+        profph   = ProfilePhoto.objects.filter(user=user).filter(photo__type=photo_type)
+        if not profph.exists():
+            return None
+        
+        return cls.get_image_by_photo(profph[0].photo, photo_type, size_type)
     
     
     @classmethod
@@ -62,7 +71,7 @@ class WImage(object):
         if img:
             return img
 
-        img = Image(photo=ph, size_type=size_type)
+        img = Image(photo=photo, size_type=size_type)
         if save:
             img.save()
         return img   # Create new Image        

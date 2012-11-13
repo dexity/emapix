@@ -642,12 +642,8 @@ def submit_crop(request, res):
     
     user    = request.user
 
-    phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
-    if not phreqs.exists(): # No photo request, should exist by the time
-        return bad_request_json({"error": "Photo request doesn't exist"})
-    try:
-        im  = Image.objects.get(photo=phreqs[0].photo)
-    except Image.DoesNotExist:
+    im  = WImage.get_image_by_request(req, "preview")
+    if not im:
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
@@ -737,6 +733,7 @@ def submit_create(request, res):
     }
     return render(request, 'modals/submit_create.html', c)    
 
+# XXX: Refactor profile_photo_select() and submit_select()
 
 def profile_photo_select(request):
     if not request.user.is_authenticated():
@@ -758,7 +755,7 @@ def profile_photo_select(request):
                 img         = ImageFile(fd)     # convert to image
                 
                 # DB handling
-                im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+                im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
                 im.name     = filename
                 im.height   = img.height
                 im.width    = img.width
@@ -799,14 +796,10 @@ def profile_photo_crop(request):
     
     user    = request.user
 
-    #phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="preview")
-    #if not phreqs.exists(): # No photo request, should exist by the time
-    #    return bad_request_json({"error": "Photo request doesn't exist"})
-    #try:
-    #    im  = Image.objects.get(photo=phreqs[0].photo)
-    #except Image.DoesNotExist:
-    #    return bad_request_json({"error": "Photo request doesn't exist"})
-    #
+    im  = WImage.get_profile_image(user, "preview")
+    if not im:
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    
     #if request.method == "POST":
     #    
     #    # Crop image
