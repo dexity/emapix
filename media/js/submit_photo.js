@@ -17,19 +17,22 @@ var PHOTOSUB = (function(options){
             return this.conv2selector(options[sel] || def);
         }
     },
-    modal           = utils.select_option("modal", "submit_modal"),
-    modal_body      = utils.select_option("modal_body", "submit_body"), //"submit_container",
-    modal_error     = utils.select_option("modal_error", "errors_container"),
-    modal_progress  = utils.select_option("modal_progress", "progress"),
-    fileupload      = utils.select_option("fileupload", "fileupload"),
-    cropper_form    = utils.select_option("cropper_form", "cropper_form"),
-    create_form     = utils.select_option("create_form", "create_form"),
-
+    params = {
+        modal_container:  utils.select_option("modal_container", "submit_container"),
+        modal:            utils.select_option("modal", "submit_modal"),
+        modal_body:       utils.select_option("modal_body", "submit_body"),
+        modal_error:      utils.select_option("modal_error", "errors_container"),
+        modal_progress:   utils.select_option("modal_progress", "progress"),
+        fileupload:       utils.select_option("fileupload", "fileupload"),
+        cropper_form:     utils.select_option("cropper_form", "cropper_form"),
+        create_form:      utils.select_option("create_form", "create_form"),
+        max_size:         options.max_size || 400
+    },
     // Private functions    
     init_fileupload = function() {
         
         // Initialize the jQuery file upload widget
-        $(fileupload).fileupload({
+        $(params.fileupload).fileupload({
             autoUpload:         true,
             uploadTemplateId:   "template-content",
             downloadTemplateId: "template-content",
@@ -68,7 +71,7 @@ var PHOTOSUB = (function(options){
             }
         })
     
-        $(fileupload).fileupload('option', {
+        $(params.fileupload).fileupload('option', {
             url:        options.select_url,
             maxFileSize: 5000000,
             minFileSize: 100,
@@ -79,9 +82,9 @@ var PHOTOSUB = (function(options){
                     maxFileSize: 10000000 // 20MB
                 },
                 {
-                    action: 'resize',
-                    maxWidth: 780,
-                    maxHeight: 780
+                    action:     'resize',
+                    maxWidth:   params.max_size,
+                    maxHeight:  params.max_size
                 },
                 {
                     action: 'save'
@@ -92,24 +95,24 @@ var PHOTOSUB = (function(options){
     init_cropper    = function(){
         
         var jcrop_api = {
-            size:   options.crop_size,
+            size:           options.crop_size,
             submit_crop:    function(){
-                $(modal_progress).show();
+                $(params.modal_progress).show();
                 $.ajax({
                     url:    options.crop_url,
                     type:   "POST",
-                    data:   $(cropper_form).serialize(),
+                    data:   $(params.cropper_form).serialize(),
                     cache:  false,
                     success:    function(data) {
                         that.show_create();  // From request.html
                     },
                     error:  function(jqXHR, textStatus, errorThrown) {
-                        $(modal_progress).hide();
+                        $(params.modal_progress).hide();
                         
                         var msg = '<div class="e-alert e-alert-inline alert-error">';
                         msg += format_error(jqXHR.responseText, errorThrown, true);
                         msg += '</div>';
-                        $(modal_error).html(msg);
+                        $(params.modal_error).html(msg);
                     }
                 });
             },
@@ -174,22 +177,22 @@ var PHOTOSUB = (function(options){
         });
         
         $("#submit_image").click(function(){
-            $(modal_progress).show();
+            $(params.modal_progress).show();
             $.ajax({
                 url:    options.create_url,
                 type:   "POST",
-                data:   $(create_form).serialize(),
+                data:   $(params.create_form).serialize(),
                 cache:  false,
                 success:    function(data) {
                     options.finished_callback();
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
-                    $(modal_progress).hide();
+                    $(params.modal_progress).hide();
                     
                     var msg = '<div class="e-alert e-alert-inline alert-error">';
                     msg += format_error(jqXHR.responseText, errorThrown, true);
                     msg += '</div>';
-                    $(modal_error).html(msg);
+                    $(params.modal_error).html(msg);
                 }
             });
         })        
@@ -208,14 +211,14 @@ var PHOTOSUB = (function(options){
                 cache:  false,
                 success:    function(data) {
                     $(".modal-backdrop").remove();
-                    $("#submit_container").html(data);
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_container).html(data);
+                    $(params.modal).modal({backdrop: "static"});
                     
                     init_fileupload({});
                 },
                 error:  function(jqXHR, textStatus, errorThrown) {
-                    $(modal_error).html(format_error(jqXHR.responseText, errorThrown, true));
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_error).html(format_error(jqXHR.responseText, errorThrown, true));
+                    $(params.modal).modal({backdrop: "static"});
                 }
             });        
         },
@@ -227,14 +230,14 @@ var PHOTOSUB = (function(options){
                 cache:  false,
                 success: function(data) {
                     $(".modal-backdrop").remove();
-                    $("#submit_container").html(data);
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_container).html(data);
+                    $(params.modal).modal({backdrop: "static"});
                     
                     init_cropper();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $(modal_body).html(format_error(jqXHR.responseText, errorThrown));
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_body).html(format_error(jqXHR.responseText, errorThrown));
+                    $(params.modal).modal({backdrop: "static"});
                 }
             });
         },
@@ -246,14 +249,14 @@ var PHOTOSUB = (function(options){
                 cache:  false,
                 success: function(data) {
                     $(".modal-backdrop").remove();
-                    $("#submit_container").html(data);
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_container).html(data);
+                    $(params.modal).modal({backdrop: "static"});
                     
                     init_create();
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
-                    $(modal_body).html(format_error(jqXHR.responseText, errorThrown));
-                    $(modal).modal({backdrop: "static"});
+                    $(params.modal_body).html(format_error(jqXHR.responseText, errorThrown));
+                    $(params.modal).modal({backdrop: "static"});
                 }
             });
         }        

@@ -38,21 +38,5 @@ hr {
     overflow: hidden;
 }
 
-.submit_modal.modal {
-    width: 800px;
-    position: fixed;
-    margin: 0px;
-}
-.submit_modal.modal.fade {
-    top: -25%;
-    left: 40px;
-}
-.submit_modal.modal.fade.in {
-    top: 0px;
-    left: 40px;
-}
-/*.submit_modal .modal-body {
-    max-height: 400px;
-}*/
 
 

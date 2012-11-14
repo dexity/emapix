@@ -177,6 +177,7 @@
             crop_url:   "/submit/crop/{{req.resource}}",
             create_url: "/submit/create/{{req.resource}}",
             crop_size:  460,
+            max_size:   780,
             finished_callback:  function(){
                 $("#submit_modal").modal("hide");
                 // XXX: Make json request to replace image and metadata

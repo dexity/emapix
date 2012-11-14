@@ -26,7 +26,7 @@
     </div>
 </div>
 
-<div id="submit_container">
+<div id="photo_container">
     {% include "modals/submit.html" %}
 </div>
 
@@ -53,7 +53,9 @@
             select_url: "/profile/photo/select",
             crop_url:   "/profile/photo/crop",
             create_url: "/profile/photo/create",
+	    modal_container: "photo_container",
             crop_size:  140,
+	    max_size:	400,
             finished_callback:  function(){
                 $("#submit_modal").modal("hide");
                 // XXX: Make json request to replace image and metadata
@@ -61,7 +63,6 @@
                 window.location.href = "/profile/photo";
             }
         });
-        
         $("#profile_photo").attr({"class": "active"});
 	$("#submit_photo").click(function(e) {
 	    e.preventDefault();

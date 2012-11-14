@@ -658,7 +658,7 @@ def submit_crop(request, res):
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
             
-            return handle_crop_file(req, user, im, (x, y, w, h))
+            return handle_request_crop_file(req, user, im, (x, y, w, h))
         
         errors  = crop_form.errors.items()
         msg     = "Something is wrong ..."
@@ -668,7 +668,7 @@ def submit_crop(request, res):
 
     if im.width <= 460 and im.height <= 460:
         # No need to crop - upload directly
-        result  = handle_crop_file(req, user, im, (0, 0, im.width, im.height))
+        result  = handle_request_crop_file(req, user, im, (0, 0, im.width, im.height))
         if isinstance(result, HttpResponseBadRequest):
             return result
         
@@ -684,12 +684,24 @@ def submit_crop(request, res):
     return render(request, 'modals/submit_crop.html', c)
 
 
-def handle_crop_file(req, user, image, (x, y, w, h)):
+def handle_request_crop_file(req, user, image, (x, y, w, h)):
+    "Handles request crop file"
+    res         = req.resource
+    filename    = s3key(res, "crop", image.format)
+    imc  = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
+    return handle_crop_file(imc, filename, image, (x, y, w, h))
+    
+
+def handle_profile_crop_file(user, image, (x, y, w, h)):
+    "Handles profile crop file"
+    filename    = s3key(user.username, "crop", image.format)
+    imc  = WImage.get_or_create_profile_image(user, "crop", marked_delete=True)
+    return handle_crop_file(imc, filename, image, (x, y, w, h))
+
+
+def handle_crop_file(imc, filename, image, (x, y, w, h)):
     "Handles uploading crop file and manages db"
     try:
-        res         = req.resource
-        filename    = s3key(res, "crop", image.format)
-        imc  = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
         imc.name     = filename
         imc.height   = h
         imc.width    = w
@@ -711,12 +723,8 @@ def submit_create(request, res):
     
     user    = request.user
 
-    phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type="crop")
-    if not phreqs.exists(): # No photo request, should exist by the time
-        return bad_request_json({"error": "Photo request doesn't exist"})
-    try:
-        imc  = Image.objects.get(photo=phreqs[0].photo)  # Crop image
-    except Image.DoesNotExist:
+    imc  = WImage.get_image_by_request(req, "crop")
+    if not imc:
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
@@ -790,43 +798,43 @@ def profile_photo_select(request):
     return render(request, 'modals/submit_select.html', c)    
 
 
+# XXX: Refactor profile_photo_crop() and submit_crop()
+
 def profile_photo_crop(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})
-    
     user    = request.user
 
     im  = WImage.get_profile_image(user, "preview")
     if not im:
         return bad_request_json({"error": "Photo request doesn't exist"})
     
-    #if request.method == "POST":
-    #    
-    #    # Crop image
-    #    crop_form   = CropForm(request.POST)
-    #    if crop_form.is_valid():
-    #        x   = crop_form.cleaned_data["x"]
-    #        y   = crop_form.cleaned_data["y"]
-    #        h   = crop_form.cleaned_data["h"]
-    #        w   = crop_form.cleaned_data["w"]
-    #        #if not (x and y and h and w):
-    #        #    return HttpResponseRedirect("/submit2") # Error
-    #        
-    #        return handle_crop_file(req, user, im, (x, y, w, h))
-    #    
-    #    errors  = crop_form.errors.items()
-    #    msg     = "Something is wrong ..."
-    #    if len(errors) != 0:
-    #        msg = errors[0]
-    #    return bad_request_json({"error": msg})
-    #
-    #if im.width <= 460 and im.height <= 460:
-    #    # No need to crop - upload directly
-    #    result  = handle_crop_file(req, user, im, (0, 0, im.width, im.height))
-    #    if isinstance(result, HttpResponseBadRequest):
-    #        return result
-    #    
-    #    return HttpResponseRedirect("/submit/create/%s" % res)
+    if request.method == "POST":
+        # Crop image
+        crop_form   = CropForm(request.POST)
+        if crop_form.is_valid():
+            x   = crop_form.cleaned_data["x"]
+            y   = crop_form.cleaned_data["y"]
+            h   = crop_form.cleaned_data["h"]
+            w   = crop_form.cleaned_data["w"]
+            #if not (x and y and h and w):
+            #    return HttpResponseRedirect("/submit2") # Error
+            
+            return handle_profile_crop_file(user, im, (x, y, w, h))
+        
+        errors  = crop_form.errors.items()
+        msg     = "Something is wrong ..."
+        if len(errors) != 0:
+            msg = errors[0]
+        return bad_request_json({"error": msg})
+    
+    if im.width <= 140 and im.height <= 140:
+        # No need to crop - upload directly
+        result  = handle_profile_crop_file(user, im, (0, 0, im.width, im.height))
+        if isinstance(result, HttpResponseBadRequest):
+            return result
+        
+        return HttpResponseRedirect("/profile/photo/create/%s" % res)
     
     c   = {
         "crop_form":    CropForm(),
@@ -836,9 +844,29 @@ def profile_photo_crop(request):
     }
     return render(request, 'modals/submit_crop.html', c)    
 
+# XXX: Refactor profile_photo_create() and submit_create()
 
 def profile_photo_create(request):
-    pass
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR_TXT})    
+    user    = request.user
+
+    imc     = WImage.get_profile_image(user, "crop")
+    if not imc:
+        return bad_request_json({"error": "Photo request doesn't exist"})
+    
+    if request.method == "POST":
+        try:
+            proc_images(user, req, imc.format)
+            return http_response_json({"success": True})
+        except Exception, e:
+            logger.debug(str(e))
+            return bad_request_json({"error": str(e)})
+        
+    c   = {
+        "img_src":      imc.url
+    }
+    return render(request, 'modals/submit_create.html', c)  
 
 
 
