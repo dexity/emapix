@@ -154,8 +154,8 @@ class UploadFileForm(forms.Form):
     
 
 class CropForm(forms.Form):
-    x   = forms.IntegerField(widget=forms.HiddenInput())
-    y   = forms.IntegerField(widget=forms.HiddenInput())
-    h   = forms.IntegerField(widget=forms.HiddenInput())
-    w   = forms.IntegerField(widget=forms.HiddenInput())
+    x   = forms.FloatField(widget=forms.HiddenInput())
+    y   = forms.FloatField(widget=forms.HiddenInput())
+    h   = forms.FloatField(widget=forms.HiddenInput())
+    w   = forms.FloatField(widget=forms.HiddenInput())
     

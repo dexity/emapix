@@ -377,8 +377,16 @@ def get_profile_photo(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
+    user    = request.user
+    im  = WImage.get_profile_image(user, "profile", "medium")
+    photo_url   = im.url
+    if not photo_url:
+        photo_url   = "/media/img/user.png"
+    c   = {
+        "photo": photo_url
+    }
     
-    return render(request, 'profile_photo.html')    
+    return render(request, 'profile_photo.html', c)    
     
 
 def get_user(request, username):
@@ -651,10 +659,10 @@ def submit_crop(request, res):
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
-            x   = crop_form.cleaned_data["x"]
-            y   = crop_form.cleaned_data["y"]
-            h   = crop_form.cleaned_data["h"]
-            w   = crop_form.cleaned_data["w"]
+            x   = int(crop_form.cleaned_data["x"])
+            y   = int(crop_form.cleaned_data["y"])
+            h   = int(crop_form.cleaned_data["h"])
+            w   = int(crop_form.cleaned_data["w"])
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
             
@@ -825,10 +833,10 @@ def profile_photo_crop(request):
         # Crop image
         crop_form   = CropForm(request.POST)
         if crop_form.is_valid():
-            x   = crop_form.cleaned_data["x"]
-            y   = crop_form.cleaned_data["y"]
-            h   = crop_form.cleaned_data["h"]
-            w   = crop_form.cleaned_data["w"]
+            x   = int(crop_form.cleaned_data["x"])
+            y   = int(crop_form.cleaned_data["y"])
+            h   = int(crop_form.cleaned_data["h"])
+            w   = int(crop_form.cleaned_data["w"])
             #if not (x and y and h and w):
             #    return HttpResponseRedirect("/submit2") # Error
             
@@ -869,7 +877,21 @@ def profile_photo_create(request):
     
     if request.method == "POST":
         try:
-            proc_images(user, req, imc.format)
+            file_base   = user.username
+            fmt     = imc.format
+            # Populate image db records
+            params  = ((140, "medium"), (50, "small"), (32, "tiny"))
+            db_imgs = []
+            for param in params:
+                (size, size_type)   = param
+                # get_or_create_profile_image(cls, user, photo_type, size_type=None, marked_delete=False, save=False):
+                im  = WImage.get_or_create_profile_image(user, "profile", size_type)
+                im.name = s3key(file_base, size_type, fmt)
+                im.save()
+                db_imgs.append((size, im))
+            
+            proc_images(file_base, db_imgs, fmt)
+            
             return http_response_json({"success": True})
         except Exception, e:
             logger.debug(str(e))
