@@ -729,7 +729,19 @@ def submit_create(request, res):
     
     if request.method == "POST":
         try:
-            proc_images(user, req, imc.format)
+            file_base   = req.resource
+            fmt     = imc.format
+            # Populate image db records
+            params  = ((460, "large"), (200, "medium"), (50, "small"))
+            db_imgs = []
+            for param in params:
+                (size, size_type)   = param
+                im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
+                im.name = s3key(file_base, size_type, fmt)
+                im.save()
+                db_imgs.append((size, im))
+            
+            proc_images(file_base, db_imgs, fmt)
             return http_response_json({"success": True})
         except Exception, e:
             logger.debug(str(e))

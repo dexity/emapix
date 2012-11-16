@@ -45,49 +45,46 @@ def crop_s3_image(img_name, crop_name, select_box):
         return (False, 0)
 
 
-def load_image(req, format):
-    "Returns Image object from S3 file"
-    # Download cropped file from S3
-    filename    = s3key(req.resource, "crop", format)
+def load_s3image(file_base, format):
+    "Download cropped file from S3 and return Image object of the file"
+    filename    = s3key(file_base, "crop", format)
     fd  = StringIO.StringIO()
     content_type    = s3_download_file(fd, filename)
     return Image.open(fd)
 
 
-def proc_images(user, req, format):
+#def proc_images(user, req, format):
+def proc_images(file_base, db_imgs, format):
     "Processes images in parallel"
     if not format in IMAGE_FORMATS.keys():
         raise   # Wrong format
-    img = load_image(req, format)
+    img = load_s3image(file_base, format)
     
     queue   = Queue.Queue()
-    lock    = threading.Lock()
-    params  = ((460, "large"), (200, "medium"), (50, "small"))
-    for param in params:
-        tm  = ImageThread(queue, lock, user, req, img, format)
+    # Populate hungry threads
+    for item in db_imgs:
+        tm  = ImageThread(queue, file_base, img, format)
         tm.setDaemon(True)
         tm.start()
     
-    for param in params:
-        queue.put(param)
+    for item in db_imgs:
+        queue.put(item)
         
     queue.join()
 
 
 class ImageThread(threading.Thread):
     
-    def __init__(self, queue, lock, user, req, img, format):
+    def __init__(self, queue, file_base, img, format):  # lock, 
         threading.Thread.__init__(self)
         self._queue     = queue
-        self._lock      = lock
-        self._user      = user
-        self._request   = req
+        self._file_base = file_base
         self._format    = format
         self._img       = img.copy()
     
     def run(self):
-        (dim, size_type)    = self._queue.get()
-        proc_image(self._lock, dim, size_type, self._user, self._request, self._img, self._format)
+        (dim, dbimg)    = self._queue.get()
+        proc_image(dim, dbimg, self._file_base, self._img, self._format)
         self._queue.task_done()
 
 
@@ -100,10 +97,9 @@ def resize_image(img, size):
     "Resizes image"
     return img.resize(size)
 
-# XXX: Specific for threads. Need more general implementation
-def proc_image(lock, dim, size_type, user, req, limg, format):
+# XXX: Specific for threads. Need a more general implementation
+def proc_image(dim, dbimg, file_base, limg, format):
     "Processes image based on dimension and image size"
-    res     = req.resource
     img     = limg
     fmt     = IMAGE_FORMATS[format][1]    # "JPEG", "PNG"
     (iw, ih)    = img.size
@@ -129,21 +125,13 @@ def proc_image(lock, dim, size_type, user, req, limg, format):
     size    = fd.tell()
         
     fd.seek(0)
-    filename    = s3key(res, size_type, format)
+    filename    = s3key(file_base, dbimg.size_type, format)
     
-    # DB handling
-    lock.acquire()
-    im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
-    im.name = filename
-    im.save()
-    lock.release()
-    
-    (im.width, im.height)   = img.size
-    im.url      = s3_key2url(filename)
-    im.is_avail = s3_upload_file(fd, filename, IMAGE_FORMATS[format][0])
-    im.size     = size
-    im.size_type    = size_type
-    im.format   = format
-    im.save()
+    (dbimg.width, dbimg.height)   = img.size
+    dbimg.url      = s3_key2url(filename)
+    dbimg.is_avail = s3_upload_file(fd, filename, IMAGE_FORMATS[format][0])
+    dbimg.size     = size
+    dbimg.format   = format
+    dbimg.save()
 
     
