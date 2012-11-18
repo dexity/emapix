@@ -16,7 +16,7 @@ from django.core.files.images import ImageFile
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
 http_response_json, forbidden_json, s3key, paginated_items, is_you
-from emapix.core.validators import validate_user_request_json
+from emapix.core.validators import validate_user_request
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
@@ -317,13 +317,7 @@ def get_request(request, res):
         c["is_you"] = is_you(request, req.user),
         c["hdate"]  = ts2hd(req.submitted_date)
         c["utcdate"]    = ts2utc(req.submitted_date)
-        # Dynamically set new widget
-        edit_form    = RequestForm({"description": req.description})
-        widget  = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ...", "style": "width: 400px;"})
-        del widget.attrs["cols"]
-        edit_form.fields["description"].widget = widget
-        
-        c["edit_form"]  = edit_form
+
         if isinstance(img, Image):
             c["pic_url"]    = img.url
     except Request.DoesNotExist:
@@ -331,10 +325,36 @@ def get_request(request, res):
     
     return render(request, 'request.html', c)
 
+@csrf_protect
+def edit_request_ajax(request, res):
+    "Edits request"
+    req = validate_user_request(request, res)
+    if not isinstance(req, Request):
+        return req
+    
+    if request.method == "POST":
+        pass
+    # Dynamically set new widget
+    edit_form    = RequestForm({"description": req.description})
+    widget  = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ...", "style": "width: 400px;"})
+    del widget.attrs["cols"]
+    edit_form.fields["description"].widget = widget
+    
+    c   = {
+        "req":  req,
+        "form": edit_form
+    }
+    c.update(csrf_token)
+    
+    resp    = {
+        "data": render_to_string("forms/edit_request.html", c)
+    }
+    return http_response_json(resp)    
+    
 
 def remove_request_ajax(request, res):
     "Removes request"
-    req = validate_user_request_json(request, res)
+    req = validate_user_request(request, res, True)
     if not isinstance(req, Request):
         return req
     
@@ -359,7 +379,7 @@ def get_profile(request):
 
 
 def edit_profile(request):
-    "Set profile"
+    "Edit profile"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
@@ -586,7 +606,7 @@ TEMP_UP = """{% var file=o.files[0]; %}
 
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
-    req = validate_user_request_json(request, res)
+    req = validate_user_request(request, res, False)
     if not isinstance(req, Request):
         return req
     
@@ -644,7 +664,7 @@ def submit_select(request, res):
 
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
-    req = validate_user_request_json(request, res)
+    req = validate_user_request(request, res, False)
     if not isinstance(req, Request):
         return req
     
@@ -725,7 +745,7 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
 
 def submit_create(request, res):
     "Creates images of different sizes"
-    req = validate_user_request_json(request, res)
+    req = validate_user_request(request, res, False)
     if not isinstance(req, Request):
         return req
     

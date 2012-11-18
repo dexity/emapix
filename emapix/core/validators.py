@@ -36,14 +36,18 @@ class EmailExists(ObjectExists):
         return self.objects.filter(email = value)
     
 
-def validate_user_request_json(request, res):
+def validate_user_request(request, res, is_you=True):
     "Validates user and request. Returns json response if error or request"
     if not request.user.is_authenticated():
         return forbidden_json({"error": "You need to be logged in"})
     try:
-        return Request.objects.get(resource=res)
+        req = Request.objects.get(resource=res)
     except Request.DoesNotExist:
         return bad_request_json({"error": "Request doesn't exist"})
 
+    if is_you and request.user != req.user:
+        return bad_request_json({"error": "You don't have permission"})
+    
+    return req
 
     
