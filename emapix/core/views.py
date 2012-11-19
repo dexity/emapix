@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
+from django.conf import settings
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
@@ -27,6 +28,7 @@ from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
 from emapix.core.tmpl.request import TmplRequest
+from emapix.core.forms import RecaptchaForm
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
@@ -923,6 +925,19 @@ def profile_photo_create(request):
     return render(request, 'modals/submit_create.html', c)  
 
 
-
+@csrf_protect
+def test_recaptcha(request):
+    "Handles recaptcha"
+    form    = RecaptchaForm()
+    
+    if request.method == "POST":
+        form    = RecaptchaForm(request.POST)
+        if form.is_valid():
+            return HttpResponse("Ok")
+    
+    c   = {
+        "form":  form
+    }
+    return render(request, "recaptcha.html", c)
 
 

@@ -70,4 +70,6 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^developer$", "developer"),
     url(r"^privacy$", "privacy"),
     url(r"^terms$", "terms"),
+    
+    url(r"^recaptcha$", "test_recaptcha"),
 )

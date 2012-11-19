@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login
 
 from emapix.core.validators import *
 from emapix.utils.const import *
+from emapix.core.fields import ReCaptchaField
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.forms")
@@ -63,6 +64,10 @@ class JoinForm(forms.Form):
                                     widget=forms.RadioSelect(),
                                     initial='n')
 
+
+class RecaptchaForm(forms.Form):
+    recaptcha   = ReCaptchaField()  #forms.CharField() # 
+    
 
 class LoginForm(forms.Form):
     username    = forms.CharField(max_length=100,

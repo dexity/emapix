@@ -32,6 +32,9 @@ S3_SECRET   = emapixconf.S3_SECRET
 BUCKET_NAME = emapixconf.BUCKET_NAME
 API_KEY     = emapixconf.API_KEY    # test key for api
 
+RECAPTCHA_PUBLIC_KEY    = emapixconf.RECAPTCHA_PUBLIC_KEY
+RECAPTCHA_PRIVATE_KEY   = emapixconf.RECAPTCHA_PRIVATE_KEY
+
 
 MANAGERS    = ADMINS
 

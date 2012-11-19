@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block header %}
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+
+<script type="text/javascript">
+   var RecaptchaOptions = {
+        theme : 'clean'
+    };
+</script>
+{% endblock %}
+
+{% block content %}
+<form action="/recaptcha" method="post">
+    {% csrf_token %}
+    {{form.recaptcha}}
+    {% if form.recaptcha.errors %}
+    <div class="alert alert-error error_spaces" style="">
+        <button class="close" data-dismiss="alert">×</button>
+        {{ form.recaptcha.errors|first }}
+    </div>
+    {% endif %}    
+    <input type="submit" class="btn btn-primary" value="Create Account" />
+</form>
+{% endblock %}
