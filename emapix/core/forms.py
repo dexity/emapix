@@ -66,7 +66,7 @@ class JoinForm(forms.Form):
 
 
 class RecaptchaForm(forms.Form):
-    recaptcha   = ReCaptchaField()  #forms.CharField() # 
+    recaptcha   = ReCaptchaField()
     
 
 class LoginForm(forms.Form):
