@@ -48,45 +48,22 @@ def join(request):
     if request.method == "POST":
         form    = JoinForm(request.POST)
         if form.is_valid():
-            username    = form.cleaned_data["username"]
-            email       = form.cleaned_data["email"]
-            password    = form.cleaned_data["password"]
-            
-            # Creates user
-            try:
-                user        = User(username=username, email=email)
-                user.set_password(password)
-                user.is_active  = False
-                user.save()
-            except Exception, e:
-                logger.error(str(e))
-                c   = {
-                    "form":     form,
-                    "hide_join":    True
-                }
-                return render(request, "join.html", c)                
+            request.session.set_expiry(3600)    # 1 hour
+            join_session    = {
+                "username":     form.cleaned_data["username"],
+                "email":        form.cleaned_data["email"],
+                "password":     form.cleaned_data["password"],
+                "location":     form.cleaned_data["location"],
+                "country":      form.cleaned_data["country"],
+                "b_day":        form.cleaned_data["b_day"],
+                "b_month":      form.cleaned_data["b_month"],
+                "b_year":       form.cleaned_data["b_year"],
+                "gender":       form.cleaned_data["gender"],
+                "token":        generate_token(form.cleaned_data["username"])  # token for confirmation    
+            }
 
-            profile     = UserProfile()
-            profile.user    = user
-            
-            profile.location    = form.cleaned_data["location"]
-            profile.country     = form.cleaned_data["country"]
-            b_day   = form.cleaned_data["b_day"]
-            if b_day:
-                profile.b_day   = b_day
-            profile.b_month     = form.cleaned_data["b_month"]
-            profile.b_year      = form.cleaned_data["b_year"]
-            profile.gender      = form.cleaned_data["gender"]
-            
-            token   = generate_token(username)  # token for confirmation
-            profile.activ_token = token
-            profile.save()
-            
-            send_activation_email(request, email, username, token)
-
-            # TODO: Add reCAPTCHA verification
-            #return HttpResponseRedirect("/verify")
-            return render(request, "message.html", {"type": "verify"})
+            request.session["join"] = join_session
+            return HttpResponseRedirect("/recaptcha")
     else:
         form    = JoinForm()
 
@@ -95,6 +72,75 @@ def join(request):
         "hide_join":    True
     }
     return render(request, "join.html", c)
+
+
+@csrf_protect
+def handle_recaptcha(request):
+    "Handles recaptcha"
+    # Recaptcha is only available if it is redirected from join form
+    if not "join" in request.session:
+        return render(request, "misc/error_view.html", {"error": "Long time no see. Please try again"})
+    
+    form    = RecaptchaForm()
+    
+    if request.method == "POST":
+        form    = RecaptchaForm(request.POST)
+        if form.is_valid():
+            
+            join_session    = request.session["join"]
+            username        = join_session["username"]
+            email           = join_session["email"]
+            token           = join_session["token"]
+            
+            join_form       = JoinForm()    # XXX: Bind the form
+            # Creates user
+            try:
+                user        = User()
+                user.username = username
+                user.email  = email
+                user.set_password(join_session["password"])
+                user.is_active  = False
+                user.save()
+            except Exception, e:
+                logger.error(str(e))
+                c   = {
+                    "form":     join_form,
+                    "hide_join":    True
+                }
+                return render(request, "join.html", c)
+            
+            profile     = UserProfile()
+            profile.user    = user
+            
+            profile.location    = join_session["location"]
+            profile.country     = join_session["country"]
+            b_day   = join_session["b_day"]
+            if b_day:
+                profile.b_day   = b_day
+            profile.b_month     = join_session["b_month"]
+            profile.b_year      = join_session["b_year"]
+            profile.gender      = join_session["gender"]
+            
+            profile.activ_token = token
+            profile.save()
+            
+            send_activation_email(request, email, username, token)            
+            
+            # XXX: Create user account from session data
+            # XXX: Flush the current session
+            
+            try:
+                del request.session["join"]
+            except KeyError:
+                pass
+            request.session.set_expiry(None)
+            
+            return render(request, "message.html", {"type": "verify"})
+    
+    c   = {
+        "form":  form
+    }
+    return render(request, "recaptcha.html", c)
 
 
 def verify(request):
@@ -923,21 +969,5 @@ def profile_photo_create(request):
         "img_src":      imc.url
     }
     return render(request, 'modals/submit_create.html', c)  
-
-
-@csrf_protect
-def test_recaptcha(request):
-    "Handles recaptcha"
-    form    = RecaptchaForm()
-    
-    if request.method == "POST":
-        form    = RecaptchaForm(request.POST)
-        if form.is_valid():
-            return HttpResponse("Ok")
-    
-    c   = {
-        "form":  form
-    }
-    return render(request, "recaptcha.html", c)
 
 

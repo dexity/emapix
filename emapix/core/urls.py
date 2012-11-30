@@ -10,6 +10,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^join$", "join"),
     #url(r"^verify$", "verify"),        # Don"t need for now
     #url(r"^verify/resend$", "verify"), # TODO
+    url(r"^recaptcha$", "handle_recaptcha"),
     url(r"^confirm/(\w{40})$", "confirm"),
     url(r"^login$", "login"),
     url(r"^logout$", "logout"),
@@ -70,6 +71,4 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^developer$", "developer"),
     url(r"^privacy$", "privacy"),
     url(r"^terms$", "terms"),
-    
-    url(r"^recaptcha$", "test_recaptcha"),
 )
