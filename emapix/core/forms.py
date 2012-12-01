@@ -93,7 +93,7 @@ class LoginForm(forms.Form):
             raise forms.ValidationError(msg, code=code)
         
         if not user.is_active:
-            raise forms.ValidationError("User profile is not activated", code="activ_failed")
+            raise forms.ValidationError("User profile is not activated. Please check email", code="activ_failed")
         
         cleaned_data["user"]    = user
         return cleaned_data

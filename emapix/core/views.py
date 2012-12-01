@@ -45,6 +45,8 @@ def generate_token(value):
 @csrf_protect
 def join(request):
     "Submits registration form and sends activation email"
+    clean_join_session(request)
+    
     if request.method == "POST":
         form    = JoinForm(request.POST)
         if form.is_valid():
@@ -124,30 +126,27 @@ def handle_recaptcha(request):
             profile.activ_token = token
             profile.save()
             
-            send_activation_email(request, email, username, token)            
+            send_activation_email(request, email, username, token)
             
-            # XXX: Create user account from session data
-            # XXX: Flush the current session
-            
-            try:
-                del request.session["join"]
-            except KeyError:
-                pass
+            clean_join_session(request)
             request.session.set_expiry(None)
             
-            return render(request, "message.html", {"type": "verify"})
+            return render(request, "message.html", {"type": "verify", "hide_join": True})
     
     c   = {
-        "form":  form
+        "form":  form,
+        "hide_join":    True
     }
     return render(request, "recaptcha.html", c)
 
 
-def verify(request):
-    # TODO: Add reCAPTCHA verification
-    #return render(request, "message.html", {"type": "verify"})
-    pass
-
+def clean_join_session(request):
+    "Remove join session"
+    try:
+        del request.session["join"]
+    except KeyError:
+        pass
+    
 
 def confirm(request, token):
     # Check user token
@@ -158,7 +157,10 @@ def confirm(request, token):
         profile.user.save()
         profile.activ_token = None
         profile.save()
-        c   = {"type": "confirm"}
+        c   = {
+            "type": "confirm",
+            "hide_join":    True
+        }
     except Exception, e:
         logger.debug(str(e))
         c   = {"type": "confirm_failed"}
@@ -643,7 +645,7 @@ def search2(request):
 
 TEMP_UP = """{% var file=o.files[0]; %}
 {% if (file.error) { %}
-    <div class="e-alert e-alert-inline alert-error pull-left" id="errors_container">
+    <div class="e-alert-head e-alert-inline alert-error pull-left" id="errors_container">
         {%=locale.fileupload.errors[file.error] || file.error%}
     </div>
 {% } else if (o.files.valid) { %}
