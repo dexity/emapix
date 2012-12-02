@@ -375,6 +375,7 @@ def get_request(request, res):
     
     return render(request, 'request.html', c)
 
+
 @csrf_protect
 def edit_request_ajax(request, res):
     "Edits request"
@@ -419,6 +420,40 @@ def remove_request_ajax(request, res):
     #    return bad_request_json({"error": str(e)})
 
 
+def request_comments_json(request):
+    "Returns list of requests"
+    res     = request.GET.get("request")
+    if not res:
+        return bad_request_json({"error": "Request parameter is not set"})
+    
+    try:
+        req     = Request.objects.get(resource=res)
+        coms    = RequestComment.objects.filter(request=req)
+        paginator   = Paginator(coms, 20)   # 20 items per page
+        page        = request.GET.get("page")        
+        (items, page_num)   = paginated_items(paginator, page)
+        
+        comments    = []
+        for com in items:
+            comments.append({
+                "text":     com.text,
+                "username": com.user.username,
+                "hdate":    ts2hd(com.submitted_date),
+                "utcdate":  ts2utc(com.submitted_date)
+            })
+        data    = {
+            "data": {
+                "request":  res,
+                "comments": comments
+            }
+        }
+        
+        return http_response_json(data)
+    except Request.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+    
+    
+    
 
 def get_profile(request):
     "Set profile"
@@ -573,6 +608,10 @@ def get_user_areas_ajax(request, username):
     
     return bad_request_json({"error": "Areas are not implemented yet"})
     
+    
+def get_user_comments_json(request, username):
+    pass
+
 
 def get_user_requests_json(request, username):
     "Returns user requests in json format"

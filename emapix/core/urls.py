@@ -56,7 +56,9 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^user/(?P<username>(%s))/areas/ajax$" % uregex, "get_user_areas_ajax"),
     # Json
     url(r"^request/all/json$", "get_requests_json"),
+    url(r"^user/(?P<username>(%s))/comments/json$" % uregex, "get_user_comments_json"),
     url(r"^user/(?P<username>(%s))/requests/json$" % uregex, "get_user_requests_json"),
+    url(r"^comments/json", "request_comments_json"),
     
     # Layouts
     url(r"^help$", "help"),

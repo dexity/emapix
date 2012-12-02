@@ -63,7 +63,8 @@
         <div class="e-request-info">
             <div class="section-title">Comments <span class="badge badge-success e-section-badge">23</span></div>
             <hr />
-            <div class="full-description e-comment-first clearfix">
+            <div id="comments"></div>
+<!--            <div class="full-description e-comment-first clearfix">
                 <div>Here's a slightly more complex example using Paginator in a
                 view to paginate a queryset. We give both the view and the
                 accompanying template to show how you can display the results. </div>
@@ -83,7 +84,7 @@
             <div class="e-alert-head e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
             <button class="btn btn-primary pull-right">Submit Comment</button>
             <img src="/media/img/spinner_small.gif" id="comment_spinner" style="display: none" class="e-button-spinner pull-right"/>
-        </div>
+-->        </div>
     </div>    
     <div class="span6"><div id="map_canvas"></div></div>
 </div>
@@ -146,6 +147,9 @@
 <script src="/media/js/submit_photo.js"></script>
 
 {% endif %}
+
+<!-- XXX: If is logged in -->
+<script src="/media/js/comments.js"></script>
 
 <script type="text/javascript"
     src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
@@ -232,6 +236,13 @@
 	    sub.show_select();
 	});
 	
+        var comments = COMM({
+            "can_submit":   True,
+            "container":    "comments",
+            "type":         "request"
+        });
+        comments.load_comments();
+        
 	//$("#diff_file").click(function(e){
 	//    e.preventDefault();
 	//    show_select();

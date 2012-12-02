@@ -146,3 +146,24 @@ class RequestStatus(models.Model):
         return ""
 
 
+class Comment(models.Model):
+    request = models.ForeignKey(Request)
+    user    = models.ForeignKey(User)
+    text    = models.CharField(max_length=3072, default="")
+    submitted_date  = models.CharField(max_length=16)  # timestamp
+    
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.submitted_date = timestamp()
+        super(Comment, self).save(*args, **kwargs)        
+    
+    def __unicode__(self):
+        return ""
+
+
+class RequestComment(models.Model):
+    request = models.ForeignKey(Request)
+    comment = models.ForeignKey(Comment)
+    
+    def __unicode__(self):
+        return ""
