@@ -149,7 +149,6 @@ class RequestStatus(models.Model):
 
 
 class Comment(models.Model):
-    request = models.ForeignKey(Request)
     user    = models.ForeignKey(User)
     text    = models.CharField(max_length=3072, default="")
     submitted_date  = models.CharField(max_length=16)  # timestamp

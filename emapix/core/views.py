@@ -28,6 +28,7 @@ from emapix.core.emails import send_activation_email, send_forgot_email, send_ne
 from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
+from emapix.core.db.comment import WComment
 from emapix.core.tmpl.request import TmplRequest
 from emapix.core.forms import RecaptchaForm
 
@@ -436,7 +437,8 @@ def get_request_comments_json(request):
         (items, page_num)   = paginated_items(paginator, page)
         
         comments    = []
-        for com in items:
+        for rc in items:
+            com = rc.comment
             comments.append({
                 "text":     com.text,
                 "username": com.user.username,
@@ -458,9 +460,19 @@ def get_request_comments_json(request):
 @csrf_protect
 def add_comment_json(request):
     "Adds comment"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR_TXT})
     if request.method != "POST":
         return bad_request_json({"error": "Method is not supported"})
     
+    try:
+        res     = request.GET.get("request", None)
+        req     = Request.objects.get(resource=res)
+        user    = request.user
+        
+    except Request.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+            
     c   = {
         "comment":  request.POST.get("comment", None)
     }
@@ -469,7 +481,11 @@ def add_comment_json(request):
         return bad_form_json(form)
 
     # Create comment    
+    text    = form.cleaned_data["comment"]
     
+    # Can raise an exception
+    WComment.add_comment(user, req, text)
+    return http_response_json({"data": "ok"})
     
 
 def get_profile(request):
@@ -785,6 +801,7 @@ def submit_crop(request, res):
         # Crop image
         crop_form   = CropForm(request.POST)
         if not crop_form.is_valid():
+            # XXX: Test again, might be broken!
             return bad_form_json(crop_form)
         
         x   = int(crop_form.cleaned_data["x"])
