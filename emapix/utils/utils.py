@@ -130,4 +130,11 @@ def http_response_json(obj):
     return HttpResponse(json.dumps(obj), mimetype="application/json")
 
 
+def bad_form_json(form):
+    "Returns json response for invalid form"
+    errors  = form.errors.items()
+    msg     = "Something is wrong ..."
+    if len(errors) != 0:
+        msg = errors[0]
+    return bad_request_json({"error": msg})    
 

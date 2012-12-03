@@ -51,7 +51,6 @@
                 {% endif %}
                 <a href="#">Close Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
             </div>
-	    {% csrf_token %}
             <div class="span3 pull-right">
 		{% if is_you %}
                 <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
@@ -61,30 +60,12 @@
         </div>
         {% endif %}
         <div class="e-request-info">
-            <div class="section-title">Comments <span class="badge badge-success e-section-badge">23</span></div>
+            <div class="section-title">Comments <span class="badge badge-success e-section-badge">{{req.num_comments}}</span></div>
             <hr />
             <div id="comments"></div>
-<!--            <div class="full-description e-comment-first clearfix">
-                <div>Here's a slightly more complex example using Paginator in a
-                view to paginate a queryset. We give both the view and the
-                accompanying template to show how you can display the results. </div>
-                <div class="pull-right">
-                    <div class="e-request-time" title="2012-10-09 06:44:16Z">Oct 09, 2012 06:44</div>
-                    <div class="pull-right"><a href="/user/dexity">dexity</a></div>
-                </div>
-            </div>
-            <div class="full-description e-comment-item clearfix">
-                <div>Making some comments about this place ...</div>
-                <div class="pull-right">
-                    <div class="e-request-time" title="2012-10-09 06:44:16Z">Oct 09, 2012 06:44</div>
-                    <div class="pull-right"><a href="/user/dexity">dexity</a></div>
-                </div>
-            </div>
-            <textarea rows="2" placeholder="Write a comment" class="span6"></textarea>
-            <div class="e-alert-head e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
-            <button class="btn btn-primary pull-right">Submit Comment</button>
-            <img src="/media/img/spinner_small.gif" id="comment_spinner" style="display: none" class="e-button-spinner pull-right"/>
--->        </div>
+        </div>
+        <div class="clear_both"></div>
+        {% include "misc/pagination.html" %}
     </div>    
     <div class="span6"><div id="map_canvas"></div></div>
 </div>
@@ -127,6 +108,9 @@
     </div>
 </div>
 
+<!-- General csrf token -->
+{% csrf_token %}
+
 <!-- Remove request modal -->
 {% include "modals/delete_request.html" %}
 
@@ -158,6 +142,16 @@
 <script type="text/javascript">
     
     $(document).ready(function(){
+	
+        // Load comments
+        var comments = COMM({
+            "can_submit":   true,
+            "container":    "comments",
+            "type":         "request"
+        });
+        comments.load_comments("{{req.resource}}");        
+        
+        // Load map
 	var lat	= "{{ req.location.lat }}";
 	var lon	= "{{ req.location.lon }}";
 	var location = new google.maps.LatLng(lat, lon);
@@ -174,6 +168,7 @@
 			map:		map
 		    });
         
+        // Load photo submitter
         var sub    = PHOTOSUB({
             select_url: "/submit/select/{{req.resource}}",
             crop_url:   "/submit/crop/{{req.resource}}",
@@ -235,13 +230,7 @@
 	    e.preventDefault();
 	    sub.show_select();
 	});
-	
-        var comments = COMM({
-            "can_submit":   True,
-            "container":    "comments",
-            "type":         "request"
-        });
-        comments.load_comments();
+
         
 	//$("#diff_file").click(function(e){
 	//    e.preventDefault();

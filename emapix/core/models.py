@@ -18,6 +18,7 @@ class UserProfile(models.Model):
     forgot_token = models.CharField(max_length=64, null=True, blank=True)
     num_requests = models.IntegerField(default=0)
     num_photos  = models.IntegerField(default=0)
+    num_comments = models.IntegerField(default=0)
     
     req_limit   = models.IntegerField(default=10)   # Temp
     
@@ -103,6 +104,7 @@ class Request(models.Model):
     resource    = models.CharField(max_length=16)       # the photo request identification
     submitted_date  = models.CharField(max_length=16)   # timestamp
     photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True, blank=True)
+    num_comments = models.IntegerField(default=0)
 
     def save(self, *args, **kwargs):
         if not self.id:

@@ -7,6 +7,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadReque
 from django.shortcuts import render_to_response, render
 from django.template.loader import render_to_string
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.core.context_processors import csrf
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -16,7 +17,7 @@ from django.conf import settings
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key, paginated_items, is_you
+http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json
 from emapix.core.validators import validate_user_request
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -362,11 +363,12 @@ def get_request(request, res):
         req.location.lon    = req.location.lon/1e6
         img = WImage.get_image_by_request(req, size_type="large")
         
-        c   = {}
-        c["req"]    = req
-        c["is_you"] = is_you(request, req.user),
-        c["hdate"]  = ts2hd(req.submitted_date)
-        c["utcdate"]    = ts2utc(req.submitted_date)
+        c   = {
+            "req":      req,
+            "is_you":   is_you(request, req.user),
+            "hdate":    ts2hd(req.submitted_date),
+            "utcdate":  ts2utc(req.submitted_date),
+        }
 
         if isinstance(img, Image):
             c["pic_url"]    = img.url
@@ -420,8 +422,8 @@ def remove_request_ajax(request, res):
     #    return bad_request_json({"error": str(e)})
 
 
-def request_comments_json(request):
-    "Returns list of requests"
+def get_request_comments_json(request):
+    "Returns paginated list of requests"
     res     = request.GET.get("request")
     if not res:
         return bad_request_json({"error": "Request parameter is not set"})
@@ -452,6 +454,21 @@ def request_comments_json(request):
     except Request.DoesNotExist, e:
         return bad_request_json({"error": str(e)})
     
+
+@csrf_protect
+def add_comment_json(request):
+    "Adds comment"
+    if request.method != "POST":
+        return bad_request_json({"error": "Method is not supported"})
+    
+    c   = {
+        "comment":  request.POST.get("comment", None)
+    }
+    form    = CommentForm(c)
+    if not form.is_valid():
+        return bad_form_json(form)
+
+    # Create comment    
     
     
 
@@ -767,21 +784,17 @@ def submit_crop(request, res):
         
         # Crop image
         crop_form   = CropForm(request.POST)
-        if crop_form.is_valid():
-            x   = int(crop_form.cleaned_data["x"])
-            y   = int(crop_form.cleaned_data["y"])
-            h   = int(crop_form.cleaned_data["h"])
-            w   = int(crop_form.cleaned_data["w"])
-            #if not (x and y and h and w):
-            #    return HttpResponseRedirect("/submit2") # Error
-            
-            return handle_request_crop_file(req, user, im, (x, y, w, h))
+        if not crop_form.is_valid():
+            return bad_form_json(crop_form)
         
-        errors  = crop_form.errors.items()
-        msg     = "Something is wrong ..."
-        if len(errors) != 0:
-            msg = errors[0]
-        return bad_request_json({"error": msg})
+        x   = int(crop_form.cleaned_data["x"])
+        y   = int(crop_form.cleaned_data["y"])
+        h   = int(crop_form.cleaned_data["h"])
+        w   = int(crop_form.cleaned_data["w"])
+        #if not (x and y and h and w):
+        #    return HttpResponseRedirect("/submit2") # Error
+        
+        return handle_request_crop_file(req, user, im, (x, y, w, h))
 
     if im.width <= 460 and im.height <= 460:
         # No need to crop - upload directly

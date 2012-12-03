@@ -164,3 +164,6 @@ class CropForm(forms.Form):
     h   = forms.FloatField(widget=forms.HiddenInput())
     w   = forms.FloatField(widget=forms.HiddenInput())
     
+
+class CommentForm(forms.Form):
+    comment = forms.CharField(max_length=3072)
