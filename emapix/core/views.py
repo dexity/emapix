@@ -432,10 +432,14 @@ def get_request_comments_json(request):
     try:
         req     = Request.objects.get(resource=res)
         coms    = RequestComment.objects.filter(request=req)
-        paginator   = Paginator(coms, 20)   # 20 items per page
+        paginator   = Paginator(coms, 2)   # 20 items per page
         page        = request.GET.get("page")        
         (items, page_num)   = paginated_items(paginator, page)
         
+        paging  = {
+            "page":     page_num,
+            "total":    paginator.num_pages
+        }
         comments    = []
         for rc in items:
             com = rc.comment
@@ -448,6 +452,7 @@ def get_request_comments_json(request):
         data    = {
             "data": {
                 "request":  res,
+                "paging":   paging,
                 "comments": comments
             }
         }
@@ -484,8 +489,15 @@ def add_comment_json(request):
     text    = form.cleaned_data["comment"]
     
     # Can raise an exception
-    WComment.add_comment(user, req, text)
-    return http_response_json({"data": "ok"})
+    com = WComment.add_comment(user, req, text)
+    data    = {
+        "text":     com.text,
+        "username": com.user.username,
+        "hdate":    ts2hd(com.submitted_date),
+        "utcdate":  ts2utc(com.submitted_date),
+        "request":  req.resource
+    }
+    return http_response_json({"data": data})
     
 
 def get_profile(request):

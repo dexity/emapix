@@ -10,3 +10,5 @@ class WComment(object):
         
         reqcom  = RequestComment(request=req, comment=com)
         reqcom.save()
+        
+        return com
