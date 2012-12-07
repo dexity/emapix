@@ -21,51 +21,45 @@ var COMM = (function(options){
     },
     utils   = {
         "has_prev":     function(page, total) {
-            if (total > params.max_pages && page > params.half+1){
+            if (total > params.max_pages && page > 1){
                 return true;
             }
             return false;
         },
         "prev_page":    function(page, total) {
-            if (!utils.has_prev){
+            if (!utils.has_prev(page, total)){
                 return null;
             }
-            return utils.start(page, total) - 1;
-        },
-        "next_page":    function(page, total) {
-            if (!utils.has_next) {
-                return null;
-            }
-            return utils.end(page, total) + 1;
+            return page - 1;
         },
         "has_next":     function(page, total) {
-            if (total > params.max_pages && total- page > params.half){
+            if (total > params.max_pages && total > page){
                 return true;
             }
             return false;
         },
+        "next_page":    function(page, total) {
+            if (!utils.has_next(page, total)) {
+                return null;
+            }
+            return page + 1;
+        },
         "start":        function(page, total) {
-            var has_prev    = utils.has_prev(page, total),
-            has_next    = utils.has_next(page, total),
-            half        = params.half;
-            if (!has_prev){
+            if (!(total > params.max_pages && page > params.half+1)){   // left
                 return 1;
-            } else if (!has_next){
+            } else if (!(total > params.max_pages && total- page > params.half)){   // right
                 return total - params.max_pages + 1;
             } else {
-                return page - half;
+                return page - params.half;
             }
         },
         "end":          function(page, total) {
-            var has_prev    = utils.has_prev(page, total),
-            has_next    = utils.has_next(page, total),
-            half        = params.half;
-            if (!has_next) {
+            if (!(total > params.max_pages && total- page > params.half)) {  // right
                 return total;
-            } else if (! has_prev){
+            } else if (!(total > params.max_pages && page > params.half+1)){  // left
                 return params.max_pages;
             } else {
-                return page - half;
+                return page + params.half;
             }
         },
     },
@@ -107,11 +101,9 @@ var COMM = (function(options){
             s   += '    <ul>';
             if (pi.has_prev) {
                 s   += '<li><a href="?page=' + pi.prev_page + '" class="prev">Previous</a></li>'
-            } else {
-                s   += '<li class="disabled prev"><a>Previous</a></li>';
             }
             var p;
-            for (p = pi.start; p < pi.end; p++) {
+            for (p = pi.start; p <= pi.end; p++) {
                 if (p === pi.page){
                     s   += '<li class="current page active"><a>' + p + '</a></li>';
                 } else {
@@ -120,8 +112,6 @@ var COMM = (function(options){
             }
             if (pi.has_next) {
                 s   += '<li><a href="?page=' + pi.next_page + '" class="next">Next</a></li>'
-            } else {
-                s   += '<li class="disabled next"><a>Next</a></li>';
             }
             s   += '</ul>';
             s   += '</div>';
@@ -131,8 +121,9 @@ var COMM = (function(options){
         error:  function(msg) {
             return '<div class="e-alert alert-error">' + msg + '</div>';
         }
-    }
+    };
     
+
     // Public object
     var that = {
         load_error:   function(jqXHR, textStatus, errorThrown) {
