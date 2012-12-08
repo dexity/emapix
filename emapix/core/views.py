@@ -433,7 +433,7 @@ def get_request_comments_json(request):
         req     = Request.objects.get(resource=res)
         coms    = RequestComment.objects.filter(request=req)
         paginator   = Paginator(coms, 2)   # 20 items per page
-        page        = request.GET.get("page")        
+        page        = request.GET.get("page", 1)        
         (items, page_num)   = paginated_items(paginator, page)
         
         paging  = {

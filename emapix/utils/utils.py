@@ -102,7 +102,7 @@ def s3key(res, type, format):
 def paginated_items(paginator, page_num):
     "Returns tuple of paginated items and page number"
     try:
-        return (paginator.page(page_num), page_num)
+        return (paginator.page(page_num), int(page_num))
     except PageNotAnInteger:
         return (paginator.page(1), 1)   # First page
     except EmptyPage:

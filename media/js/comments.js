@@ -97,24 +97,29 @@ var COMM = (function(options){
         },
         paginator:      function(pi) {
             // Returns paginator
-            var s   = '<div class="pagination e-comments-paging">';
+            var s   = '<div class="pagination e-comments-paging">',
+            page_base_url   = function(pi, p){
+                return pi.base_url + '&page=' + p;
+            };
             s   += '    <ul>';
             if (pi.has_prev) {
-                s   += '<li><a href="?page=' + pi.prev_page + '" class="prev">Previous</a></li>'
+                s   += '<li><a href="' + page_base_url(pi, pi.prev_page) + '" class="prev">Previous</a></li>'
             }
             var p;
             for (p = pi.start; p <= pi.end; p++) {
                 if (p === pi.page){
                     s   += '<li class="current page active"><a>' + p + '</a></li>';
                 } else {
-                    s   += '<li><a href="?page=' + p + '" class="page">' + p + '</a></li>';
+                    s   += '<li><a href="' + page_base_url(pi, p) + '" class="page">' + p + '</a></li>';
                 }
             }
             if (pi.has_next) {
-                s   += '<li><a href="?page=' + pi.next_page + '" class="next">Next</a></li>'
+                s   += '<li><a href="' + page_base_url(pi, pi.next_page) + '" class="next">Next</a></li>'
             }
             s   += '</ul>';
             s   += '</div>';
+            
+            
             return s;
         },
         wait:   '<img src="/media/img/spinner_small.gif" class="wait"/>',
@@ -145,12 +150,16 @@ var COMM = (function(options){
             } catch(err) {}
             return msg;
         },
-        load_comments:  function(res){
+        load_comments:  function(res, url){
             
             params.resource = res;
+            var _url    = url;
+            if (url === undefined){
+                _url    = params.request_comments_url(res);
+            }
             
             $.ajax({
-                url:    params.request_comments_url(res),
+                url:    _url,
                 type:   "GET",
                 cache:  false,
                 beforeSend: function() {
@@ -162,10 +171,11 @@ var COMM = (function(options){
                     
                     var comments    = data.data.comments;
                     if ( comments === undefined){
-                        return; // XXX: Handle properly!
+                        return;     // XXX: Handle properly!
                     }
                     var i;
                     var s   = "";
+                    // Create paginator and set it in container
                     for (i = 0; i < comments.length; i++){
                         var com = comments[i];
                         var is_first    = false;
@@ -180,6 +190,17 @@ var COMM = (function(options){
                     }
                     $(params.container).html(s);
                     
+                    // Set click event for pages
+                    $(".pagination li").click(function(e){
+                        e.preventDefault();
+                        var aa   = $(this).find("a");
+                        if (!(aa.length > 0 && $(aa[0]).attr("href"))) {
+                            return;
+                        }
+                        that.load_comments(res, $(aa[0]).attr("href"));
+                    });
+                    
+                    
                     $("#submit_comment").unbind()
                         .click(that.submit_form);
                 },
@@ -193,14 +214,15 @@ var COMM = (function(options){
             var page    = data.data.paging.page;
             var total   = data.data.paging.total;
             var page_info   = {
-                "page":    page,
-                "total":   total,
+                "page":         page,
+                "total":        total,
                 "has_prev":     utils.has_prev(page, total),
                 "prev_page":    utils.prev_page(page, total),
                 "next_page":    utils.next_page(page, total),
                 "has_next":     utils.has_next(page, total),
                 "start":        utils.start(page, total),
                 "end":          utils.end(page, total),
+                "base_url":     params.request_comments_url(data.data.request)
             }
             return dom.paginator(page_info);
         },
@@ -220,7 +242,6 @@ var COMM = (function(options){
                 },
                 success:    function(data) {
                     aux.stop_process();
-                    //that.append_comment(data)
                     that.load_comments(params.resource);
                 },
                 error:  that.submit_error
