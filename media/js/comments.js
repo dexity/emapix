@@ -1,5 +1,4 @@
 
-// XXX: Handle pagination
 
 var COMM = (function(options){
     "use strict"
@@ -13,8 +12,12 @@ var COMM = (function(options){
         user_comments_url:  function(username) {
             return "/user/" + username + "/comments";
         },
-        request_comments_url:   function(res) {
-            return "/comments/json?request=" + res;
+        request_comments_url:   function(res, page) {
+            var s   = "/comments/json?request=" + res;
+            if (page !== undefined) {
+                s   += "&page=" + page;
+            }
+            return s;
         },
         max_pages:  5,
         half:       Math.floor(5/2)
@@ -92,7 +95,6 @@ var COMM = (function(options){
             s   += '<textarea rows="2" placeholder="Write a comment" class="span6" id="id_comment" name="comment">'+ t +'</textarea>';
             s   += '<div class="e-alert e-alert-inline alert-error pull-left" style="display: none" id="submit_error"></div>';
             s   += '<button id="submit_comment" class="btn btn-primary pull-right">Submit Comment</button>';
-            s   += '<img src="/media/img/spinner_small.gif" id="comment_spinner" style="display: none" class="wait e-button-spinner pull-right"/>';
             return s;
         },
         paginator:      function(pi) {
@@ -153,9 +155,9 @@ var COMM = (function(options){
         load_comments:  function(res, url){
             
             params.resource = res;
-            var _url    = url;
-            if (url === undefined){
-                _url    = params.request_comments_url(res);
+            var _url    = params.request_comments_url(res);
+            if (url !== undefined){
+                _url    = url;
             }
             
             $.ajax({
@@ -164,7 +166,7 @@ var COMM = (function(options){
                 cache:  false,
                 beforeSend: function() {
                     aux.init_process();
-                    $(params.container).html(dom.wait);
+                    $("#comment_spinner").show();
                 },
                 success:    function(data) {
                     aux.stop_process();
@@ -242,18 +244,12 @@ var COMM = (function(options){
                 },
                 success:    function(data) {
                     aux.stop_process();
-                    that.load_comments(params.resource);
+                    that.load_comments(params.resource,
+                                       params.request_comments_url(params.resource, "last"));    // Move to last page
                 },
                 error:  that.submit_error
             })
         }
-        //append_comment: function(data){
-        //    // Not a very good idea!
-        //    if (data.data === undefined){
-        //        return;
-        //    }
-        //    $("#comment_holder").html(dom.item(com.text, com.username, com.hdate, com.utcdate, false));
-        //}
     }
     
     return that;
