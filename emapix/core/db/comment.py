@@ -1,5 +1,8 @@
 from emapix.core.models import *
 
+from emapix.utils.logger import Logger
+logger = Logger.get("emapix.core.db")
+
 class WComment(object):
     
     @classmethod

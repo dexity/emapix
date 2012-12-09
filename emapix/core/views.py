@@ -453,6 +453,7 @@ def get_request_comments_json(request):
             "data": {
                 "request":  res,
                 "paging":   paging,
+                "comments_total": req.num_comments,
                 "comments": comments
             }
         }
@@ -490,12 +491,16 @@ def add_comment_json(request):
     
     # Can raise an exception
     com = WComment.add_comment(user, req, text)
-    data    = {
+    comment    = {
         "text":     com.text,
         "username": com.user.username,
         "hdate":    ts2hd(com.submitted_date),
         "utcdate":  ts2utc(com.submitted_date),
         "request":  req.resource
+    }
+    data    = {
+        "comments_total":   req.num_comments,
+        "comment":  comment
     }
     return http_response_json({"data": data})
     

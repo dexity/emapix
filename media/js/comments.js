@@ -244,6 +244,9 @@ var COMM = (function(options){
                 },
                 success:    function(data) {
                     aux.stop_process();
+                    if (data !== undefined && data.data !== undefined && data.data.comments_total !== undefined){
+                        $("#comments_badge").html(data.data.comments_total);
+                    }
                     that.load_comments(params.resource,
                                        params.request_comments_url(params.resource, "last"));    // Move to last page
                 },

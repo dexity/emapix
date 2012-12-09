@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from emapix.utils.const import *
 from emapix.utils.utils import timestamp
 
+from emapix.utils.logger import Logger
+logger = Logger.get("emapix.core.models")
 
 class UserProfile(models.Model):
     user        = models.OneToOneField(User)
@@ -156,6 +158,12 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.submitted_date = timestamp()
+        try:
+            userprof    = UserProfile.objects.get(user=self.user)
+            userprof.num_comments    += 1
+            userprof.save()
+        except Exception, e:
+            return
         super(Comment, self).save(*args, **kwargs)        
     
     def __unicode__(self):
@@ -165,6 +173,20 @@ class Comment(models.Model):
 class RequestComment(models.Model):
     request = models.ForeignKey(Request)
     comment = models.ForeignKey(Comment)
+    
+    def save(self, *args, **kwargs):
+        "Increment number of comments in request"
+        if not self.comment or not self.request:
+            return
+        try:
+            self.request.num_comments    += 1
+            self.request.save()
+        except Exception, e:
+            return
+        
+        logger.debug(str(self.comment))
+        super(RequestComment, self).save(*args, **kwargs)      
+    
     
     def __unicode__(self):
         return ""
