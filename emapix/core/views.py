@@ -29,6 +29,8 @@ from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
 from emapix.core.db.comment import WComment
+from emapix.core.db.user import WUser
+from emapix.core.db.photo import WPhoto
 from emapix.core.tmpl.request import TmplRequest
 from emapix.core.forms import RecaptchaForm
 
@@ -294,7 +296,6 @@ def add_request(request):
             r.user  = _user
             r.location  = l
             r.description   = form.cleaned_data["description"]
-            r.submitted_date    = timestamp()
             r.resource  = random16()
             r.save()
             
@@ -363,7 +364,7 @@ def get_request(request, res):
         req.location.lat    = req.location.lat/1e6
         req.location.lon    = req.location.lon/1e6
         img = WImage.get_image_by_request(req, size_type="large")
-        
+        photo   = WPhoto.request_photo(res)
         
         c   = {
             "req":      req,
@@ -374,6 +375,10 @@ def get_request(request, res):
 
         if isinstance(img, Image):
             c["pic_url"]    = img.url
+        if isinstance(photo, Photo):
+            c["submitter"]  = photo.user
+            c["pic_hdate"]  = ts2hd(photo.created_time)
+            c["pic_utcdate"]    = ts2utc(photo.created_time)
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})
     

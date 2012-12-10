@@ -56,7 +56,7 @@ var PAGES   = (function(options){
     },
     dom =    {
         paginator:      function(p, t) {
-            if (!params.base_url) {
+            if (!params.base_url || t === 1) {
                 return "";
             }
             // Returns paginator
