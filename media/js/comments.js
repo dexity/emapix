@@ -4,67 +4,13 @@ var COMM = (function(options){
     "use strict"
     
     var params = {
-        can_submit: options.can_submit || false,
         container:  "#" + (options.container || "comments"),
+        submit_btn: (options.submit_btn ? "#" + options.submit_btn : null),
         type:       options.type,
         resource:   null,
-        // XXX: Fix urls 
-        user_comments_url:  function(username) {
-            return "/user/" + username + "/comments";
-        },
-        request_comments_url:   function(res, page) {
-            var s   = "/comments/json?request=" + res;
-            if (page !== undefined) {
-                s   += "&page=" + page;
-            }
-            return s;
-        },
-        max_pages:  5,
-        half:       Math.floor(5/2)
-    },
-    utils   = {
-        "has_prev":     function(page, total) {
-            if (total > params.max_pages && page > 1){
-                return true;
-            }
-            return false;
-        },
-        "prev_page":    function(page, total) {
-            if (!utils.has_prev(page, total)){
-                return null;
-            }
-            return page - 1;
-        },
-        "has_next":     function(page, total) {
-            if (total > params.max_pages && total > page){
-                return true;
-            }
-            return false;
-        },
-        "next_page":    function(page, total) {
-            if (!utils.has_next(page, total)) {
-                return null;
-            }
-            return page + 1;
-        },
-        "start":        function(page, total) {
-            if (!(total > params.max_pages && page > params.half+1)){   // left
-                return 1;
-            } else if (!(total > params.max_pages && total- page > params.half)){   // right
-                return total - params.max_pages + 1;
-            } else {
-                return page - params.half;
-            }
-        },
-        "end":          function(page, total) {
-            if (!(total > params.max_pages && total- page > params.half)) {  // right
-                return total;
-            } else if (!(total > params.max_pages && page > params.half+1)){  // left
-                return params.max_pages;
-            } else {
-                return page + params.half;
-            }
-        },
+        submit_base_url:    options.submit_base_url || "",
+        base_url:   options.base_url || "",
+        paginator:  PAGES({})
     },
     aux     = {
         init_process:   function(){
@@ -77,9 +23,6 @@ var COMM = (function(options){
     dom = {
         item:   function(text, username, date, date_label, is_first) {
             var c   = 'e-comment-first';
-            //if (is_first === undefined || is_first === false){
-            //    c   = 'e-comment-item';
-            //}
             var s   = '<div class="full-description ' + c + ' clearfix">';
             s   += '    <div>' + text + '</div>';
             s   += '    <div class="pull-right">';
@@ -95,33 +38,6 @@ var COMM = (function(options){
             s   += '<textarea rows="2" placeholder="Write a comment" class="span6" id="id_comment" name="comment">'+ t +'</textarea>';
             s   += '<div class="e-alert e-alert-inline alert-error pull-left" style="display: none" id="submit_error"></div>';
             s   += '<button id="submit_comment" class="btn btn-primary pull-right">Submit Comment</button>';
-            return s;
-        },
-        paginator:      function(pi) {
-            // Returns paginator
-            var s   = '<div class="pagination e-comments-paging">',
-            page_base_url   = function(pi, p){
-                return pi.base_url + '&page=' + p;
-            };
-            s   += '    <ul>';
-            if (pi.has_prev) {
-                s   += '<li><a href="' + page_base_url(pi, pi.prev_page) + '" class="prev">Previous</a></li>'
-            }
-            var p;
-            for (p = pi.start; p <= pi.end; p++) {
-                if (p === pi.page){
-                    s   += '<li class="current page active"><a>' + p + '</a></li>';
-                } else {
-                    s   += '<li><a href="' + page_base_url(pi, p) + '" class="page">' + p + '</a></li>';
-                }
-            }
-            if (pi.has_next) {
-                s   += '<li><a href="' + page_base_url(pi, pi.next_page) + '" class="next">Next</a></li>'
-            }
-            s   += '</ul>';
-            s   += '</div>';
-            
-            
             return s;
         },
         wait:   '<img src="/media/img/spinner_small.gif" class="wait"/>',
@@ -152,18 +68,17 @@ var COMM = (function(options){
             } catch(err) {}
             return msg;
         },
-        load_comments:  function(res, url){
+        load_comments:  function(url){
             
-            params.resource = res;
-            var _url    = params.request_comments_url(res);
+            var _url    = params.base_url;
             if (url !== undefined){
                 _url    = url;
             }
             
             $.ajax({
-                url:    _url,
-                type:   "GET",
-                cache:  false,
+                url:        _url,
+                type:       "GET",
+                cache:      false,
                 beforeSend: function() {
                     aux.init_process();
                     $("#comment_spinner").show();
@@ -173,12 +88,11 @@ var COMM = (function(options){
                     
                     var comments    = data.data.comments;
                     if ( comments === undefined){
-                        return;     // XXX: Handle properly!
+                        return;     // No comments available
                     }
-                    var i;
                     var s   = "";
                     // Create paginator and set it in container
-                    for (i = 0; i < comments.length; i++){
+                    for (var i = 0; i < comments.length; i++){
                         var com = comments[i];
                         var is_first    = false;
                         if (i === 0){
@@ -186,52 +100,38 @@ var COMM = (function(options){
                         }
                         s   += dom.item(com.text, com.username, com.hdate, com.utcdate, is_first);
                     }
-                    s   += that.show_pages(data);
-                    if (params.can_submit){
+                    if (data.data.paging !== undefined && params.paginator !== undefined){
+                        s   += params.paginator.show_pages(params.base_url,
+                                                           data.data.paging.page,
+                                                           data.data.paging.total);
+                    }
+                    if (params.submit_base_url !== undefined){
                         s   += dom.submit_form();
                     }
                     $(params.container).html(s);
                     
-                    // Set click event for pages
+                    // Register click events for pages
                     $(".pagination li").click(function(e){
                         e.preventDefault();
                         var aa   = $(this).find("a");
                         if (!(aa.length > 0 && $(aa[0]).attr("href"))) {
                             return;
                         }
-                        that.load_comments(res, $(aa[0]).attr("href"));
+                        that.load_comments($(aa[0]).attr("href"));
                     });
-                    
-                    
-                    $("#submit_comment").unbind()
-                        .click(that.submit_form);
+                    // Register click event for comment submission
+                    if (!params.submit_btn) {
+                        $(params.submit_btn).unbind()
+                            .click(that.submit_form);
+                    }
                 },
                 error:  that.load_error
             });
         },
-        show_pages:     function(data){
-            if (data.data.paging === undefined){
-                return "";
-            }
-            var page    = data.data.paging.page;
-            var total   = data.data.paging.total;
-            var page_info   = {
-                "page":         page,
-                "total":        total,
-                "has_prev":     utils.has_prev(page, total),
-                "prev_page":    utils.prev_page(page, total),
-                "next_page":    utils.next_page(page, total),
-                "has_next":     utils.has_next(page, total),
-                "start":        utils.start(page, total),
-                "end":          utils.end(page, total),
-                "base_url":     params.request_comments_url(data.data.request)
-            }
-            return dom.paginator(page_info);
-        },
         submit_form:    function(){
             
             $.ajax({
-                url:    "/comments/add/json?request=" + params.resource,
+                url:    params.submit_base_url, 
                 type:   "POST",
                 data:   {
                     "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val(),

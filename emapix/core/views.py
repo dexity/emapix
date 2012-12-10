@@ -558,6 +558,10 @@ def get_user(request, username):
         logger.error("%s: %s" % (e, username))
         return render(request, 'misc/error_view.html', {"error": str(e)})
     
+    tab   = request.GET.get("tab", None)
+    if tab in ["requests", "photos", "comments"]:
+        c["active"]  = tab
+    
     if user2.first_name or user2.last_name:
         name   = "%s %s" % (user2.first_name, user2.last_name)
     else:

@@ -18,9 +18,9 @@ class UserProfile(models.Model):
     gender      = models.CharField(max_length=1)
     activ_token = models.CharField(max_length=64, null=True, blank=True)
     forgot_token = models.CharField(max_length=64, null=True, blank=True)
-    num_requests = models.IntegerField(default=0)
-    num_photos  = models.IntegerField(default=0)
-    num_comments = models.IntegerField(default=0)
+    num_requests = models.IntegerField(default=0)   # Number of requests
+    num_photos  = models.IntegerField(default=0)    # Request photos
+    num_comments = models.IntegerField(default=0)   # Request comments
     
     req_limit   = models.IntegerField(default=10)   # Temp
     
@@ -54,6 +54,13 @@ class Photo(models.Model):
         if not self.id:
             self.created_time = timestamp()     # Updated when object is created
         self.updated_time = timestamp()
+        if self.type == "request":
+            try:
+                userprof    = UserProfile.objects.get(user=self.user)
+                userprof.num_photos    += 1
+                userprof.save()
+            except Exception, e:
+                return        
         super(Photo, self).save(*args, **kwargs)
     
     def __unicode__(self):

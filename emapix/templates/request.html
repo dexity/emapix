@@ -133,7 +133,7 @@
 
 {% endif %}
 
-<!-- XXX: If is logged in -->
+<script src="/media/js/paginator.js"></script>
 <script src="/media/js/comments.js"></script>
 
 <script type="text/javascript"
@@ -146,11 +146,13 @@
 	
         // Load comments
         var comments = COMM({
-            "can_submit":   true,
             "container":    "comments",
-            "type":         "request"
+            "type":         "request",
+            "base_url":     "/comments/json?request={{req.resource}}",
+            "submit_btn":   "submit_comment",
+            "submit_base_url":  "/comments/add/json?request={{req.resource}}"
         });
-        comments.load_comments("{{req.resource}}");        
+        comments.load_comments();
         
         // Load map
 	var lat	= "{{ req.location.lat }}";

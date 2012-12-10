@@ -65,6 +65,11 @@
         });   
     }
     
+    function load_comments()
+    {
+        
+    }
+    
     function set_delete_requests()
     {
         $("button.itemDelete").click(function(){
@@ -106,9 +111,11 @@
                 case "#tab_photos":
                     load_photos();
                     break;
-                case "#tab_areas":
-                    load_areas();
-                    break;
+                case "#tab_comments":
+                    load_comments();
+                //case "#tab_areas":
+                //    load_areas();
+                //    break;
             }
             
         });     
@@ -152,10 +159,10 @@
         
         <div class="tabbable">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
-                <li><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
+                <li {% if not active or active == "requests" %}class="active"{% endif %}><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
+                <li {% if active == "photos" %}class="active"{% endif %}><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
                 <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
-                <li><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">7</span></a></li>
+                <li {% if active == "comments" %}class="active"{% endif %}><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">7</span></a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_requests"></div>
