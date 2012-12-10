@@ -2,7 +2,7 @@ import hashlib
 import time
 import json
 
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseServerError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from emapix.utils.const import *
 
@@ -132,8 +132,13 @@ def forbidden_json(obj):
 
     
 def http_response_json(obj):
-    "Returns json response with 200 error status"
+    "Returns json response with 200 status"
     return HttpResponse(json.dumps(obj), mimetype="application/json")
+
+
+def server_error_json(obj):
+    "Returns json response with 500 error status"
+    return HttpResponseServerError(json.dumps(obj), mimetype="application/json")
 
 
 # XXX: Needs to be improved in case of multiple errors

@@ -191,7 +191,6 @@ class RequestComment(models.Model):
         except Exception, e:
             return
         
-        logger.debug(str(self.comment))
         super(RequestComment, self).save(*args, **kwargs)      
     
     

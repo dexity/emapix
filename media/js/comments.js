@@ -21,6 +21,7 @@ var COMM = (function(options){
     aux     = {
         init_process:   function(){
             $(".alert-error").empty().hide();
+            $("#comment_spinner").show();
         },
         stop_process:   function(){
             $(".wait").hide();
@@ -87,7 +88,6 @@ var COMM = (function(options){
                 cache:      false,
                 beforeSend: function() {
                     aux.init_process();
-                    $("#comment_spinner").show();
                 },
                 success:    function(data) {
                     aux.stop_process();
@@ -146,7 +146,6 @@ var COMM = (function(options){
                 cache:  false,
                 beforeSend: function() {
                     aux.init_process();
-                    $("#comment_spinner").show();
                 },
                 success:    function(data) {
                     aux.stop_process();

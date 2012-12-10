@@ -47,4 +47,13 @@ function format_error(error_msg, error_default, msg_only)
 }
 
 
-
+var error_msg   = function(jqXHR, textStatus, errorThrown) {
+    var msg = errorThrown;
+    try {
+        var error  = JSON.parse(jqXHR.responseText).error;
+        if ( error !== undefined) {
+            msg = error;
+        };
+    } catch(err) {}
+    return msg;
+}

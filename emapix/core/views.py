@@ -17,7 +17,7 @@ from django.conf import settings
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json
+http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
 from emapix.core.validators import validate_user_request
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -393,18 +393,35 @@ def edit_request_ajax(request, res):
         return req
     
     if request.method == "POST":
-        pass
+        form    = RequestForm(request.POST)
+        form.fields["lat"].required = False
+        form.fields["lon"].required = False
+        if not form.is_valid():
+            errors  = form.errors.items()
+            msg     = "Something is wrong ..."
+            if len(errors) != 0:
+                msg = errors[0][1][0]
+            return bad_request_json({"error": msg})
+
+        # XXX: Finish
+        try:
+            req.description = form.cleaned_data["description"]
+            req.save()
+        except Exception, e:
+            return server_error_json({"error": str(e)})
+        return to_status(OK)
+    
     # Dynamically set new widget
-    edit_form    = RequestForm({"description": req.description})
+    form    = RequestForm({"description": req.description})
     widget  = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ...", "style": "width: 400px;"})
     del widget.attrs["cols"]
-    edit_form.fields["description"].widget = widget
+    form.fields["description"].widget = widget
     
     c   = {
         "req":  req,
-        "form": edit_form
+        "form": form
     }
-    c.update(csrf_token)
+    c.update(csrf(request))
     
     resp    = {
         "data": render_to_string("forms/edit_request.html", c)

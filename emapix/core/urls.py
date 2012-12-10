@@ -20,7 +20,7 @@ urlpatterns = patterns("emapix.core.views",
     # Request methods
     url(r"^request/make$", "make_request"),
     url(r"^request/%s$" % REQ_REGEX, "get_request"),
-    url(r"^request/%s/edit$" % REQ_REGEX, "edit_request_ajax"),
+    url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
     url(r"^requests$", "get_requests"),
     url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"),
     #url(r"^submit/%s$" % REQ_REGEX, "submit"),

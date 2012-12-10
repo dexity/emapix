@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from emapix.utils.utils import http_response_json
 import json
 
 # XXX: Refactor this module
@@ -27,4 +27,9 @@ def to_json(obj):
 
 
 def to_status(status, result=None):
-    return HttpResponse(to_json({"status": status, "result": result}))
+    resp    = {
+        "status": status
+    }
+    if result is not None:
+        resp["result"]  = result
+    return http_response_json(resp)

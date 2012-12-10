@@ -248,8 +248,10 @@ a img {
     line-height: 14px;
 }
 .e-paging {
-    text-align: left;
-    
+    text-align: left;    
+}
+.e-modal-form {
+    margin-bottom: 0px;
 }
 
 .section-title {
