@@ -364,6 +364,7 @@ def get_request(request, res):
         req.location.lon    = req.location.lon/1e6
         img = WImage.get_image_by_request(req, size_type="large")
         
+        
         c   = {
             "req":      req,
             "is_you":   is_you(request, req.user),
@@ -443,10 +444,11 @@ def get_request_comments_json(request):
         comments    = []
         for rc in items:
             com = rc.comment
+            (sd, ct)  = (int(com.submitted_date), timestamp())
             comments.append({
                 "text":     com.text,
                 "username": com.user.username,
-                "hdate":    ts2hd(com.submitted_date),
+                "hdate":    ts2h(sd, ct),
                 "utcdate":  ts2utc(com.submitted_date)
             })
         data    = {

@@ -5,12 +5,18 @@ var COMM = (function(options){
     
     var params = {
         container:  "#" + (options.container || "comments"),
-        submit_btn: (options.submit_btn ? "#" + options.submit_btn : null),
+        submit_id: (options.submit_id ? "#" + options.submit_id : null),
         type:       options.type,
         resource:   null,
         submit_base_url:    options.submit_base_url || "",
         base_url:   options.base_url || "",
         paginator:  PAGES({})
+    };
+    
+    var utils   = {
+        page_url:   function(page){
+            return params.base_url + '&page=' + page;
+        }
     },
     aux     = {
         init_process:   function(){
@@ -120,8 +126,8 @@ var COMM = (function(options){
                         that.load_comments($(aa[0]).attr("href"));
                     });
                     // Register click event for comment submission
-                    if (!params.submit_btn) {
-                        $(params.submit_btn).unbind()
+                    if (params.submit_id) {
+                        $(params.submit_id).unbind()
                             .click(that.submit_form);
                     }
                 },
@@ -147,8 +153,7 @@ var COMM = (function(options){
                     if (data !== undefined && data.data !== undefined && data.data.comments_total !== undefined){
                         $("#comments_badge").html(data.data.comments_total);
                     }
-                    that.load_comments(params.resource,
-                                       params.request_comments_url(params.resource, "last"));    // Move to last page
+                    that.load_comments(utils.page_url("last"));    // Move to last page
                 },
                 error:  that.submit_error
             })
