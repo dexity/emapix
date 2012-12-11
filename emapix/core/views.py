@@ -402,8 +402,7 @@ def edit_request_ajax(request, res):
             if len(errors) != 0:
                 msg = errors[0][1][0]
             return bad_request_json({"error": msg})
-
-        # XXX: Finish
+        
         try:
             req.description = form.cleaned_data["description"]
             req.save()

@@ -133,6 +133,7 @@
 <script src="/media/fileuploader/js/locale.js"></script>
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 <script src="/media/js/submit_photo.js"></script>
+<script src="/media/js/utils.js"></script>
 
 {% endif %}
 
@@ -219,18 +220,23 @@
             e.preventDefault();
             var url = "/request/{{req.resource}}/edit/json";
             var submit_form = function(e){
-                console.debug("Hello");
                 $.ajax({
                     url:    url,
                     type:   "POST",
                     data:   $("#edit_modal form").serialize(),
                     cache:  false,
+                    beforeSend: function(){
+                        $("#edit_modal .alert-error").hide();
+                        $("#edit_spinner").show();
+                    },
                     success:    function(data){
                         $("#edit_modal").modal("hide");
-                        // XXX: Finish
+                        window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
                     },
                     error:  function(jqXHR, textStatus, errorThrown){
+                        $("#edit_spinner").hide();
                         $("#edit_modal .alert-error").html(error_msg(jqXHR, textStatus, errorThrown));
+                        $("#edit_modal .alert-error").show();
                     }
                 });
             }
