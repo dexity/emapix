@@ -44,6 +44,11 @@ REQ_STATUS_CHOICES =[
     ("c", "Closed"),
 ]
 
+SHORT_REQ_STATUS    = {
+    "open":     "o",
+    "close":    "c"
+}
+
 PHOTO_CHOICES   = [
     ("request", "Request Photo"),
     ("preview", "Photo Preview"),

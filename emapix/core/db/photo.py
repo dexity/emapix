@@ -9,4 +9,16 @@ class WPhoto(object):
         prs = PhotoRequest.objects.filter(request__resource=res).filter(photo__type="request")
         if not prs.exists():
             return None
-        return prs[0].photo        
+        return prs[0].photo
+    
+    
+    @classmethod
+    def remove_photo(cls, res):
+        pass
+        #try:
+        #
+        
+        
+    @classmethod
+    def remove_photo_throw(cls, res):
+        pass

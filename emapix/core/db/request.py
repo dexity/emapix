@@ -12,6 +12,7 @@ class WRequest(object):
     def get_requests_by_location(cls):
         pass
         
+        
     @classmethod
     def remove_request(cls, res):
         "Removes request. Can through an exception"
@@ -20,6 +21,7 @@ class WRequest(object):
         req.location.delete()   # Remove location
         req.delete()
         return True
+    
     
     @classmethod
     def purge_request(cls, res, user):

@@ -11,7 +11,11 @@
         <h3>{{req.description|slice:":35"}}{% if req.description|length > 35 %}...{% endif %}</h3>
     </div>
     <div class="span1">
+        {% if is_open %}
         <div class="e-status-open pull-right">Open</div>
+        {% else %}
+        <div class="e-status-closed pull-right">Closed</div>
+        {% endif %}
     </div>
 </div>
 <div class="clear_both"></div>
@@ -48,19 +52,27 @@
         {% if pic_url or is_you %}
         <div class="row e-control-options">
             <div class="span3 pull-left">
-                <a href="#" id="edit_request">Edit Request</a><br />
-                {% if pic_url %}
-		<a href="#" id="submit_photo">Submit Different Photo</a><br />
+                {% if is_open %}
+                    <a href="#" id="edit_request">Edit Request</a><br />
+                    {% if pic_url %}
+                    <a href="#" id="submit_photo">Submit Different Photo</a><br />
+                    {% endif %}
+                    <a href="/request/{{req.resource}}/status/close/json" id="request_status">Close Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+                {% else %}
+                    <a href="/request/{{req.resource}}/status/open/json" id="request_status">Open Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
                 {% endif %}
-                <a href="#">Close Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
             </div>
             <div class="span3 pull-right">
 		{% if is_you %}
-                <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
+                {% if is_open %}
+                    <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
+                {% endif %}
                 <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
 		{% endif %}
             </div>
         </div>
+        <div class="e-alert alert-error pull-left" style="display: none;" id="controls_error"></div>
+        <div class="clearfix"></div>
         {% endif %}
         <div class="e-request-info">
             <div class="section-title">Comments
@@ -189,7 +201,39 @@
                 window.location.href = "/request/{{ req.resource }}";
             }
         });
+        
+        var update_status   = function(){
+            // - Update status label
+            // - Update link "Close request" <-> "Open request"
+            // - Disable some of the links
+            // > Need to reload the page?
+            window.location.href = "/request/{{ req.resource }}";
+        }
 	
+        $("#request_status").click(function(e){
+            e.preventDefault();
+            var url = $("#request_status").attr("href");    //"/request/{{req.resource}}/status/close/json";
+            $.ajax({
+                url:    url,
+                type:   "POST",
+                data:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                beforeSend: function(){
+                    $(".alert-error").hide();
+                    $("#close_spinner").show();
+                },
+                success:    function(){
+                    $("#close_spinner").hide();
+                    update_status();
+                },
+                error:      function(jqXHR, textStatus, errorThrown){
+                    $("#close_spinner").hide();
+                    $("#controls_error").html(error_msg(jqXHR, textStatus, errorThrown));
+                    $("#controls_error").show();    // XXX: Error needs to be displayed in the modal
+                }
+            });
+            
+        });
+        
         // XXX: Show only if user is the owner
         // XXX: Refactor, see user.html
 	// Set events
@@ -259,10 +303,33 @@
         $("#remove_photo").click(function(e) {
             e.preventDefault();
             $("#remove_photo_modal").modal();
+            $("#remove_photo_modal .submit_form").unbind()
+                .click(function(e){
+                    var url = "";
+                    $.ajax({
+                        url:    url,
+                        type:   "POST",
+                        data:   $("#edit_modal form").serialize(),
+                        cache:  false,
+                        beforeSend: function(){
+                            $("#edit_modal .alert-error").hide();
+                            $("#edit_spinner").show();
+                        },
+                        success:    function(data){
+                            $("#edit_modal").modal("hide");
+                            window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
+                        },
+                        error:  function(jqXHR, textStatus, errorThrown){
+                            $("#edit_spinner").hide();
+                            $("#edit_modal .alert-error").html(error_msg(jqXHR, textStatus, errorThrown));
+                            $("#edit_modal .alert-error").show();
+                        }
+                    });                    
+                });
         });
+        
         $("#remove_request").click(function(e) {
             e.preventDefault();
-            //$("#body_errors").html("");
             $("#remove_modal").modal();
         });        
         
@@ -271,12 +338,6 @@
 	    sub.show_select();
 	});
 
-        
-	//$("#diff_file").click(function(e){
-	//    e.preventDefault();
-	//    show_select();
-	//});
-	
     });
 </script>
     

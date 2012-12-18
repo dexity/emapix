@@ -20,7 +20,6 @@ urlpatterns = patterns("emapix.core.views",
     # Request methods
     url(r"^request/make$", "make_request"),
     url(r"^request/%s$" % REQ_REGEX, "get_request"),
-    url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
     url(r"^requests$", "get_requests"),
     url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"),
     #url(r"^submit/%s$" % REQ_REGEX, "submit"),
@@ -49,7 +48,10 @@ urlpatterns = patterns("emapix.core.views",
     # Ajax
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
-    url(r"^request/%s/remove/ajax$" % REQ_REGEX, "remove_request_ajax"),
+    url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
+    url(r"^request/%s/photo/remove/json$" % REQ_REGEX, "remove_request_photo_ajax"),
+    url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax"),
+    url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax"),   # (?P<status>(\w+))
     
     url(r"^user/(?P<username>(%s))/requests/ajax$" % uregex, "get_user_requests_ajax"),
     url(r"^user/(?P<username>(%s))/photos/ajax$" % uregex, "get_user_photos_ajax"),

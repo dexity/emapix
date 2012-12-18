@@ -368,6 +368,7 @@ def get_request(request, res):
         
         c   = {
             "req":      req,
+            "is_open":  req.status == "o",
             "is_you":   is_you(request, req.user),
             "hdate":    ts2hd(req.submitted_date),
             "utcdate":  ts2utc(req.submitted_date),
@@ -427,6 +428,24 @@ def edit_request_ajax(request, res):
     }
     return http_response_json(resp)    
     
+    
+def request_status_ajax(request, res, status):
+    "Change status of the request"
+    req = validate_user_request(request, res)
+    if not isinstance(req, Request):
+        return req
+    
+    status  = SHORT_REQ_STATUS.get(status, None)
+    if status not in [x[0] for x in REQ_STATUS_CHOICES]:
+        return bad_request_json({"error": "Parameter status is not valid"})    
+    
+    try:
+        req.status  = status
+        req.save()
+        return http_response_json({"status": "ok"})
+    except Exception, e:
+        return server_error_json({"error": str(e)})
+    
 
 def remove_request_ajax(request, res):
     "Removes request"
@@ -443,6 +462,15 @@ def remove_request_ajax(request, res):
     #    return http_response_json({"data": "ok"})
     #except Exception, e:
     #    return bad_request_json({"error": str(e)})
+
+
+def remove_request_ajax(request, res):
+    "Removes request"
+    req = validate_user_request(request, res, True)
+    if not isinstance(req, Request):
+        return req
+    
+    
 
 
 def get_request_comments_json(request):

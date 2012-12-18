@@ -111,6 +111,7 @@ class Request(models.Model):
     location    = models.ForeignKey(Location)
     description  = models.CharField(max_length=140)
     resource    = models.CharField(max_length=16)       # the photo request identification
+    status  = models.CharField(max_length=1, choices=REQ_STATUS_CHOICES, default="o")
     submitted_date  = models.CharField(max_length=16)   # timestamp
     photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True, blank=True)
     num_comments = models.IntegerField(default=0)
@@ -141,6 +142,7 @@ class ProfilePhoto(models.Model):
         return ""
 
 
+# XXX: Do I need the model?
 class RequestStatus(models.Model):
     request = models.ForeignKey(Request)
     user    = models.ForeignKey(User, null=True)   # user who changes the status
