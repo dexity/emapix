@@ -1,3 +1,0 @@
-
-
-// Form handler for modals

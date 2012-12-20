@@ -144,6 +144,7 @@
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
 <script src="/media/fileuploader/js/locale.js"></script>
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
+<script src="/media/js/modal.js"></script>
 <script src="/media/js/submit_photo.js"></script>
 <script src="/media/js/utils.js"></script>
 
@@ -260,6 +261,15 @@
 		});
 	});
 	
+        var m   = MODAL({
+            link:       "edit_request",
+            url:        "/request/{{req.resource}}/edit/json",  // For GET and POST requests
+            callback:   function(){
+                window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
+            }
+        });
+        
+        
         $("#edit_request").click(function(e) {
             e.preventDefault();
             var url = "/request/{{req.resource}}/edit/json";
@@ -300,6 +310,8 @@
                 }
             })
         });
+        
+        
         $("#remove_photo").click(function(e) {
             e.preventDefault();
             $("#remove_photo_modal").modal();
