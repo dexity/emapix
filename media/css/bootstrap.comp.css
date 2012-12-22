@@ -37,6 +37,8 @@ hr {
 .tab-content {
     overflow: hidden;
 }
-
+.alert {
+    padding: 4px 35px 4px 14px;
+}
 
 

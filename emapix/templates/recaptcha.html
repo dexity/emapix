@@ -37,7 +37,7 @@
                     <abbr title="This is a standard security test that we use to prevent spammers from creating fake accounts and spamming users.">What's this?</abbr>
                 </span>
             {% if form.recaptcha.errors %}
-            <div class="alert alert-error error_spaces" style="">
+            <div class="alert alert-error error_spaces">
                 <button class="close" data-dismiss="alert">×</button>
                 {{ form.recaptcha.errors|first }}
             </div>

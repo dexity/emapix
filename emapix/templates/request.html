@@ -92,8 +92,10 @@
     {% include "modals/submit.html" %}
 </div>
 
+<div id="modal_container"></div>
+
 <!-- Edit request modal -->
-<div id="edit_modal" class="modal hide fade">
+<!--<div id="edit_modal" class="modal hide fade">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
         <h3>Edit Request</h3>
@@ -105,7 +107,7 @@
         <button class="btn btn-primary submit_form">Save Changes</button>
         <a href="#" data-dismiss="modal">Cancel</a>
     </div>
-</div>
+</div>-->
 
 <!-- Remove photo modal -->
 <div id="remove_photo_modal" class="modal hide fade">
@@ -262,54 +264,14 @@
 	});
 	
         var m   = MODAL({
+            container:  "modal_container",
             link:       "edit_request",
             url:        "/request/{{req.resource}}/edit/json",  // For GET and POST requests
+            header:     "Edit Request",
             callback:   function(){
                 window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
             }
-        });
-        
-        
-        $("#edit_request").click(function(e) {
-            e.preventDefault();
-            var url = "/request/{{req.resource}}/edit/json";
-            var submit_form = function(e){
-                $.ajax({
-                    url:    url,
-                    type:   "POST",
-                    data:   $("#edit_modal form").serialize(),
-                    cache:  false,
-                    beforeSend: function(){
-                        $("#edit_modal .alert-error").hide();
-                        $("#edit_spinner").show();
-                    },
-                    success:    function(data){
-                        $("#edit_modal").modal("hide");
-                        window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
-                    },
-                    error:  function(jqXHR, textStatus, errorThrown){
-                        $("#edit_spinner").hide();
-                        $("#edit_modal .alert-error").html(error_msg(jqXHR, textStatus, errorThrown));
-                        $("#edit_modal .alert-error").show();
-                    }
-                });
-            }
-            
-            $.ajax({
-                url:    url,
-                type:   "GET",
-                cache:  false,
-                success:    function(data){
-                    $("#edit_modal .modal-body").html(data.data);
-                    $("#edit_modal").modal();
-                    $("#edit_modal .submit_form").unbind()
-                        .click(submit_form);
-                },
-                error:  function(jqXHR, textStatus, errorThrown){
-                    $("#edit_modal .alert-error").html(error_msg(jqXHR, textStatus, errorThrown));
-                }
-            })
-        });
+        }).init();
         
         
         $("#remove_photo").click(function(e) {

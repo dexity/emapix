@@ -259,9 +259,12 @@ a img {
 }
 /* Form */
 .alert-error.error_spaces {
+    margin: 0px;
+}
+/*.alert-error.error_spaces {
     margin-top: 5px;
     margin-bottom: 0px;
-}
+}*/
 
 .e-text-small {
     font-size: 11px;
@@ -346,3 +349,6 @@ a img {
     left: 40px;
 }
 
+#modal_status {
+    display: inline;
+}
