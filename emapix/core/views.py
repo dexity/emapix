@@ -373,13 +373,13 @@ def get_request(request, res):
             "hdate":    ts2hd(req.submitted_date),
             "utcdate":  ts2utc(req.submitted_date),
         }
-
-        if isinstance(img, Image):
-            c["pic_url"]    = img.url
-        if isinstance(photo, Photo):
+        if isinstance(photo, Photo) and not photo.marked_delete:
             c["submitter"]  = photo.user
             c["pic_hdate"]  = ts2hd(photo.created_time)
             c["pic_utcdate"]    = ts2utc(photo.created_time)
+            if isinstance(img, Image): #and img.is_avail:
+                c["pic_url"]    = img.url
+
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})
     
@@ -443,6 +443,23 @@ def request_status_ajax(request, res, status):
         return server_error_json({"error": str(e)})
     
 
+@csrf_protect
+def remove_request_photo_ajax(request, res):
+    "Marks request photo for removal"
+    if request.method != "POST":
+        return bad_request_json({"error": "Invalid request method"})
+    req = validate_user_request(request, res, True)
+    if not isinstance(req, Request):
+        return req
+    try:
+        photo   = WPhoto.request_photo(res)
+        photo.marked_delete = True
+        photo.save()
+        return http_response_json({"status": "ok"})
+    except Exception, e:
+        return server_error_json({"error": "Photo cannot be removed at this time"})
+
+
 def remove_request_ajax(request, res):
     "Removes request"
     req = validate_user_request(request, res, True)
@@ -458,13 +475,6 @@ def remove_request_ajax(request, res):
     #    return http_response_json({"data": "ok"})
     #except Exception, e:
     #    return bad_request_json({"error": str(e)})
-
-
-def remove_request_ajax(request, res):
-    "Removes request"
-    req = validate_user_request(request, res, True)
-    if not isinstance(req, Request):
-        return req
     
     
 

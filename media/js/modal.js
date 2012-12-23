@@ -10,8 +10,10 @@ var MODAL = (function(options){
         link:       "#" + options.link,
         modal:      "#modal",
         modal_status:   "#modal_status",
+        body:       options.body,
         url:        options.url,
         header:     options.header,
+        extra_fields:   options.extra_fields,
         callback:   options.callback,
         btn_label:  (options.btn_label ? options.btn_label : "Save Changes"),
         error_base:     "#error_",
@@ -52,19 +54,27 @@ var MODAL = (function(options){
             $(params.link).click(function(e) {
                 e.preventDefault();
                 $(params.container).html(dom.modal());
-                var ajaxopts   = {
-                    url:        params.url,
-                    type:       "GET",
-                    cache:      false,
-                    success:    function(data){
-                        $(params.modal + " .modal-body").html(data.data);
-                        $(params.modal).modal();
-                        $(params.modal + " .submit_form").unbind().click(that.submit_form);
-                    },
-                    error:  that.error_modal
+                if (params.body !== undefined){
+                    // Set modal body if it is set
+                    that.set_modal(params.body);
+                } else {
+                    // Load modal body
+                    $.ajax({
+                        url:        params.url,
+                        type:       "GET",
+                        cache:      false,
+                        success:    function(data){
+                            that.set_modal(data.data);
+                        },
+                        error:  that.error_modal
+                    });
                 }
-                $.ajax(ajaxopts);
             });
+        },
+        set_modal:  function(content){
+            $(params.modal + " .modal-body").html(content);
+            $(params.modal).modal();
+            $(params.modal + " .submit_form").unbind().click(that.submit_form);            
         },
         error_data:     function(jqXHR, textStatus, errorThrown){
             // Structures error response
@@ -110,11 +120,21 @@ var MODAL = (function(options){
             $(".modal-footer button").removeClass("disabled").removeAttr("disabled");
         },
         submit_form:    function(){
+            
+            var fields  = $(params.modal + " form").serialize() || {};
+            console.debug(fields);
+            if (typeof params.extra_fields === "object"){
+                for (var key in params.extra_fields){
+                    if (params.extra_fields.hasOwnProperty(key)){
+                        fields[key] = params.extra_fields[key]; // Update fields
+                    }
+                }
+            }
             // Submits form
             var ajaxopts    = {
                 url:        params.url,
                 type:       "POST",
-                data:       $(params.modal + " form").serialize(),  // XXX: Make more general
+                data:       fields,
                 cache:      false,
                 beforeSend: function(){
                     that.init_process();

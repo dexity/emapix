@@ -94,38 +94,6 @@
 
 <div id="modal_container"></div>
 
-<!-- Edit request modal -->
-<!--<div id="edit_modal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Edit Request</h3>
-    </div>
-    <div class="modal-body"></div>
-    <div class="modal-footer">
-        <div class="e-alert e-alert-inline alert-error pull-left" style="display: none"></div>
-        <img src="/media/img/spinner_small.gif" id="edit_spinner" style="display: none" class="e-button-spinner"/>
-        <button class="btn btn-primary submit_form">Save Changes</button>
-        <a href="#" data-dismiss="modal">Cancel</a>
-    </div>
-</div>-->
-
-<!-- Remove photo modal -->
-<div id="remove_photo_modal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Remove Photo</h3>
-    </div>
-    <div class="modal-body">
-        <div class="alert">Are you sure you want to remove the photo?</div>
-    </div>
-    <div class="modal-footer">
-        <div class="e-alert-head e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
-        <img src="/media/img/spinner_small.gif" id="remove_photo_spinner" style="display: none" class="e-button-spinner"/>
-        <button class="btn btn-primary" class="submit_form">Remove Photo</button>
-        <a href="#" data-dismiss="modal">Cancel</a>
-    </div>
-</div>
-
 <!-- General csrf token -->
 {% csrf_token %}
 
@@ -148,7 +116,6 @@
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
 <script src="/media/js/modal.js"></script>
 <script src="/media/js/submit_photo.js"></script>
-<script src="/media/js/utils.js"></script>
 
 {% endif %}
 
@@ -263,7 +230,7 @@
 		});
 	});
 	
-        var m   = MODAL({
+        MODAL({
             container:  "modal_container",
             link:       "edit_request",
             url:        "/request/{{req.resource}}/edit/json",  // For GET and POST requests
@@ -273,34 +240,19 @@
             }
         }).init();
         
-        
-        $("#remove_photo").click(function(e) {
-            e.preventDefault();
-            $("#remove_photo_modal").modal();
-            $("#remove_photo_modal .submit_form").unbind()
-                .click(function(e){
-                    var url = "";
-                    $.ajax({
-                        url:    url,
-                        type:   "POST",
-                        data:   $("#edit_modal form").serialize(),
-                        cache:  false,
-                        beforeSend: function(){
-                            $("#edit_modal .alert-error").hide();
-                            $("#edit_spinner").show();
-                        },
-                        success:    function(data){
-                            $("#edit_modal").modal("hide");
-                            window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
-                        },
-                        error:  function(jqXHR, textStatus, errorThrown){
-                            $("#edit_spinner").hide();
-                            $("#edit_modal .alert-error").html(error_msg(jqXHR, textStatus, errorThrown));
-                            $("#edit_modal .alert-error").show();
-                        }
-                    });                    
-                });
-        });
+        MODAL({
+            container:  "modal_container",
+            link:       "remove_photo",
+            url:        "/request/{{req.resource}}/photo/remove/json",
+            body:       '<div class="alert alert-error error_spaces">Are you sure you want to remove the photo?</div>',
+            header:     "Remove Request",
+            btn_label:  "Remove Photo",
+            extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+            callback:   function(){
+                window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
+            }
+        }).init();
+
         
         $("#remove_request").click(function(e) {
             e.preventDefault();
