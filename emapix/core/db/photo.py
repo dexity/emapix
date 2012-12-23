@@ -20,5 +20,9 @@ class WPhoto(object):
         
         
     @classmethod
-    def remove_photo_throw(cls, res):
-        pass
+    def remove_photo_or_raise(cls, res):
+        "Removes request photo"
+        photo   = cls.request_photo(res)
+        if photo:
+            photo.marked_delete = True
+            photo.save()

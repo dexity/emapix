@@ -15,3 +15,18 @@ class WComment(object):
         reqcom.save()
         
         return com
+    
+    
+    @classmethod
+    def remove_comments(cls, res):
+        "Removes all request comments"
+        try:
+            reqcoms = RequestComment.objects.filter(request__resource=res)
+            for rq in reqcoms:  # Need more efficient?
+                rq.comment.delete()
+            #coms    = Comment.objects.filter(id__in = reqcoms.values_list("id", flat=True))
+            #coms.delete()
+            reqcoms.delete()
+            return True
+        except Exception, e:
+            return False

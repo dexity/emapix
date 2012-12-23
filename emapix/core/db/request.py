@@ -1,4 +1,6 @@
 from emapix.core.models import *
+from emapix.core.db.photo import WPhoto
+from emapix.core.db.comment import WComment
 
 class WRequest(object):
     
@@ -24,19 +26,10 @@ class WRequest(object):
     
     
     @classmethod
-    def purge_request(cls, res, user):
+    def purge_request_or_raise(cls, res, user):
         "Removes request and all related data"
+        WPhoto.remove_photo_or_raise(res)
+        WComment.remove_comments(res)
         cls.remove_request(res)
-        # Remove PhotoRequest
-        
-        # Remove Photo
-        
-        # Remove Image(s)
-        
-        # Remove files from S3 service
-        
-        # Remove RequestComment(s) (in the future)
-        
-        # Remove Comment(s) (in the future)
 
         

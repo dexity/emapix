@@ -258,13 +258,10 @@ a img {
     font-size: 17px;
 }
 /* Form */
-.alert-error.error_spaces {
+.alert-error.error_spaces,
+.alert-danger.error_spaces {
     margin: 0px;
 }
-/*.alert-error.error_spaces {
-    margin-top: 5px;
-    margin-bottom: 0px;
-}*/
 
 .e-text-small {
     font-size: 11px;

@@ -438,7 +438,7 @@ def request_status_ajax(request, res, status):
     try:
         req.status  = status
         req.save()
-        return http_response_json({"status": "ok"})
+        return http_response_json({"data": "ok"})
     except Exception, e:
         return server_error_json({"error": str(e)})
     
@@ -452,31 +452,25 @@ def remove_request_photo_ajax(request, res):
     if not isinstance(req, Request):
         return req
     try:
-        photo   = WPhoto.request_photo(res)
-        photo.marked_delete = True
-        photo.save()
-        return http_response_json({"status": "ok"})
+        WPhoto.remove_photo_or_raise(res)
+        return http_response_json({"data": "ok"})
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
 
 
 def remove_request_ajax(request, res):
     "Removes request"
+    if request.method != "POST":
+        return bad_request_json({"error": "Invalid request method"})
     req = validate_user_request(request, res, True)
     if not isinstance(req, Request):
         return req
-    
-    return bad_request_json({"error": "Not implemented yet"})
-    # XXX: Finish
-    #if request.method != "POST":
-    #    return bad_request_json({"error": "Invalid request method"})
-    #try:
-    #    result = WRequest.purge_request(res, req.user)
-    #    return http_response_json({"data": "ok"})
-    #except Exception, e:
-    #    return bad_request_json({"error": str(e)})
-    
-    
+
+    try:
+        result = WRequest.purge_request_or_raise(res, req.user)
+        return http_response_json({"data": "ok"})
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
 
 
 def get_request_comments_json(request):
