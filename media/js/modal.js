@@ -42,10 +42,7 @@ var MODAL = (function(options){
         field_error:    function(msg) {
             return '<div class="alert alert-error error_spaces">' + msg + '</div>';
         },
-        spinner:    function() {
-            return '<img src="/media/img/spinner_small.gif" class="e-button-spinner"/>';
-        }
-        
+        spinner:    '<img src="/media/img/spinner_small.gif" class="e-button-spinner"/>'
     };
     
     // Public object
@@ -111,7 +108,7 @@ var MODAL = (function(options){
         },
         init_process:   function(){
             $(".alert-error").hide();   // Hide errors
-            $(params.modal_status).html(dom.spinner());     // Show spinner
+            $(params.modal_status).html(dom.spinner);     // Show spinner
             $(".modal-footer button").attr({"disabled": "disabled"})    // Disable button
                 .removeClass("disabled").addClass("disabled");
         },

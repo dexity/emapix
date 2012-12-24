@@ -77,7 +77,7 @@
         <div class="e-request-info">
             <div class="section-title">Comments
                 <span class="badge badge-success e-section-badge" id="comments_badge">{{req.num_comments}}</span>
-                <img src="/media/img/spinner_small.gif" id="comment_spinner" style="display: none" class="wait e-button-spinner pull-right"/>
+                <div id="comment_load_spinner"></div>
             </div>
             <hr />
             <div id="comments"></div>
@@ -132,11 +132,12 @@
 	
         // Load comments
         var comments = COMM({
-            "container":    "comments",
-            "type":         "request",
-            "base_url":     "/comments/json?request={{req.resource}}",
-            "submit_id":    "submit_comment",
-            "submit_base_url":  "/comments/add/json?request={{req.resource}}"
+            container:    "comments",
+            type:         "request",
+            base_url:     "/comments/json?request={{req.resource}}",
+            submit_id:    "submit_comment",
+            submit_base_url:  "/comments/add/json?request={{req.resource}}",
+            load_spinner:   "comment_load_spinner"
         });
         comments.load_comments();
         
@@ -205,30 +206,6 @@
         });
         
         // XXX: Show only if user is the owner
-        // XXX: Refactor, see user.html
-	// Set events
-	$("#delete_btn").click(function() {
-	    var url = $("#remove_request").attr("href");
-	    $.post(url,
-		{"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-		function(data) {
-		    try
-		    {
-			var res	= $.parseJSON(data);    // OK
-			if (res["status"] == "ok") {
-			    $("#remove_modal").modal("hide");
-			    // Go to requests list
-			    window.location.href = "/requests"
-			} else {
-			    $("#body_errors").html("result");
-			}
-		    }
-		    catch (e)
-		    {
-			$("#body_errors").html(data);
-		    }
-		});
-	});
 	
         MODAL({
             container:  "modal_container",

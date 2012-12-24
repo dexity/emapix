@@ -349,3 +349,14 @@ a img {
 #modal_status {
     display: inline;
 }
+
+/* Comments */
+#comment_load_spinner {
+    display: inline;
+}
+#comments_container {
+    text-align: right;
+}
+#comment_status {
+    display: inline;
+}
