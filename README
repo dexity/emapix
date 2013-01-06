@@ -2,6 +2,8 @@ Emapix - distributed photo request service
 
 Software packages:
 
-Django - 1.4
-
+Python  - 2.7.x
+Django  - 1.4
+South   - 0.7.6
+recaptcha-client    - 1.0.x
 

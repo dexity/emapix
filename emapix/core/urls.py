@@ -27,8 +27,8 @@ urlpatterns = patterns("emapix.core.views",
     # User methods
     url(r"^users$", "users"),
     url(r"^user/(?P<username>(%s))$" % uregex, "get_user"),
-    url(r"^user/(?P<username>(%s))/requests$" % uregex, "get_user"),
-    url(r"^user/(?P<username>(%s))/photos$" % uregex, "get_user"),
+    url(r"^user/(?P<username>(%s))/requests$" % uregex, "get_user"),    # XXX: Finish
+    url(r"^user/(?P<username>(%s))/photos$" % uregex, "get_user"),      # XXX: Finish
     
     # User profile methods
     url(r"^profile$", "get_profile"),
