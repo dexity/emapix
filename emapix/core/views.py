@@ -717,7 +717,8 @@ def get_user_areas_ajax(request, username):
     
     
 def get_user_comments_json(request, username):
-    pass
+    "Returns user comments"
+    
 
 
 def get_user_requests_json(request, username):
@@ -789,17 +790,6 @@ def search2(request):
     return render(request, 'search2.html')
 
 
-TEMP_UP = """{% var file=o.files[0]; %}
-{% if (file.error) { %}
-    <div class="e-alert-head e-alert-inline alert-error pull-left" id="errors_container">
-        {%=locale.fileupload.errors[file.error] || file.error%}
-    </div>
-{% } else if (o.files.valid) { %}
-    <img src="/media/img/spinner_small.gif" class="e-button-spinner"/>
-{% } %}
-"""
-
-
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
     req = validate_user_request(request, res, False)
@@ -852,8 +842,7 @@ def submit_select(request, res):
     # Display form
     c   = {
         "form":     UploadFileForm(),
-        "resource": res,
-        "temp_up":  TEMP_UP
+        "resource": res
     }
     return render(request, 'modals/submit_select.html', c)    
     
@@ -1025,8 +1014,7 @@ def profile_photo_select(request):
 
     # Display form
     c   = {
-        "form":     UploadFileForm(),
-        "temp_up":  TEMP_UP
+        "form":     UploadFileForm()
     }
     return render(request, 'modals/submit_select.html', c)    
 

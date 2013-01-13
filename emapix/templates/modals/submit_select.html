@@ -1,4 +1,5 @@
 {% extends "modals/submit.html" %}
+{% load jstmpl %}
 
 {% block modal_top %}
 <link rel="stylesheet" href="/media/fileuploader/css/jquery.fileupload-ui.css">
@@ -23,7 +24,7 @@
 {% endblock %}
 
 {% block modal_bottom %}
-    <script id="template-content" type="text/x-tmpl">
-    {{ temp_up|safe }}
-    </script>
+<script id="template-content" type="text/x-tmpl">
+    {% jstmpl "js/fileupload.html" %}
+</script>
 {% endblock %}
