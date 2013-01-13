@@ -1,5 +1,28 @@
-<textarea rows="2" placeholder="Write a comment" class="span6" id="id_comment" name="comment">{{comment}}</textarea>
-<div id="comments_container">
-   <div id="comment_status"></div>
-   <button id="submit_comment" class="btn btn-primary pull-right">Submit Comment</button>
-</div>
+
+<tmpl>
+    <div id="com_item">
+        <div class="full-description e-comment-first clearfix">
+            <div>{{text}}</div>
+            <div class="pull-right">
+                <div class="e-request-time" title="{{date_label}}">{{date}}</div>
+                <div class="pull-right"><a href="/user/{{username}}">{{username}}</a></div>
+            </div>
+        </div>
+    </div>
+    <div id="com_form">
+        <textarea rows="2" placeholder="Write a comment" class="span6" id="id_comment" name="comment">{{comment}}</textarea>
+        <div id="comments_container">
+           <div id="comment_status"></div>
+           <button id="submit_comment" class="btn btn-primary pull-right">Submit Comment</button>
+        </div>
+    </div>
+    <div id="com_spinner">
+        <img src="/media/img/spinner_small.gif" class="wait e-button-spinner"/>
+    </div>
+    <div id="com_load_spinner">
+        <img src="/media/img/spinner_small.gif" class="wait e-button-spinner pull-right"/>
+    </div>
+    <div id="com_error">
+        <div class="e-alert e-alert-inline alert-error pull-left">{{error}}</div>
+    </div>
+</tmpl>
