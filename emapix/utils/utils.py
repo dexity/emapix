@@ -4,6 +4,8 @@ import json
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseServerError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template.loaders.filesystem import Loader
+
 from emapix.utils.const import *
 
 from emapix.utils.logger import Logger
@@ -118,6 +120,16 @@ def paginated_items(paginator, page_num):
 def is_you(request, user):
     "Checks if authenticated user is the same user"
     return True if user == request.user else False
+    
+
+def template_str(name):
+    "Returns not rendered template string from template path"
+    try:
+        loader  = Loader()
+        return loader.load_template_source(name)[0]
+    except TemplateDoesNotExist:
+        pass
+    return ""
     
 
 def bad_form_json(form):

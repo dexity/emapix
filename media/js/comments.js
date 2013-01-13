@@ -1,4 +1,5 @@
 
+// Requires mustache.js
 
 var COMM = (function(options){
     "use strict"
@@ -37,8 +38,7 @@ var COMM = (function(options){
     },
     dom = {
         item:   function(text, username, date, date_label, is_first) {
-            var c   = 'e-comment-first';
-            var s   = '<div class="full-description ' + c + ' clearfix">' +
+            var s   = '<div class="full-description e-comment-first clearfix">' +
                 '    <div>' + text + '</div>' +
                 '    <div class="pull-right">' +
                 '        <div class="e-request-time" title="' + date_label + '">' + date + '</div>' +

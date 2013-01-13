@@ -18,6 +18,7 @@ from django.conf import settings
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
 http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
+
 from emapix.core.validators import validate_user_request
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
@@ -371,7 +372,7 @@ def get_request(request, res):
             "is_open":  req.status == "o",
             "is_you":   is_you(request, req.user),
             "hdate":    ts2hd(req.submitted_date),
-            "utcdate":  ts2utc(req.submitted_date),
+            "utcdate":  ts2utc(req.submitted_date)
         }
         if isinstance(photo, Photo) and not photo.marked_delete:
             c["submitter"]  = photo.user
@@ -379,6 +380,7 @@ def get_request(request, res):
             c["pic_utcdate"]    = ts2utc(photo.created_time)
             if isinstance(img, Image): #and img.is_avail:
                 c["pic_url"]    = img.url
+    
 
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})

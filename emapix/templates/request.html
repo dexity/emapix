@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load jstmpl %}
 
 {% block content %}
 
@@ -94,6 +95,10 @@
 
 <div id="modal_container"></div>
 
+<script type="text/x-tmpl" id="comments_tmpl">
+    {% jstmpl "js/comments.html" %}
+</script>
+
 <!-- General csrf token -->
 {% csrf_token %}
 
@@ -140,6 +145,7 @@
             load_spinner:   "comment_load_spinner"
         });
         comments.load_comments();
+        
         
         // Load map
 	var lat	= "{{ req.location.lat }}";
