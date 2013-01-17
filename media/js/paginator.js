@@ -62,7 +62,12 @@ var PAGES   = (function(options){
             // Returns paginator
             var s   = '<div class="pagination e-paging">',
             page_url   = function(page){
-                return params.base_url + '&page=' + page;
+                var url = params.base_url,
+                sep = "?";
+                if (/\?/g.test(url)){   // Already has "?"
+                    sep = "&";
+                }
+                return  url + sep + 'page=' + page;
             };
             s   += '    <ul>';
             if (utils.has_prev(p, t)) {

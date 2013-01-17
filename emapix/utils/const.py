@@ -86,6 +86,8 @@ YEAR_CHOICES    = [(str(x), str(x)) for x in range(2006, 1899, -1)]
 
 AUTH_ERROR      = 'Please <a href="/login">login</a> or <a href="/join">sign up</a>'
 AUTH_ERROR_TXT  = 'You need to be logged in'
+AUTHOR_ERROR    = "You don't have permission"
+METHOD_ERROR    = "Method is not supported"
 
 COUNTRY_CHOICES = [
     ("AF", "Afghanistan"),

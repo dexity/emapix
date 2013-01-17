@@ -7,7 +7,7 @@ var MODAL = (function(options){
     
     var params = {
         container:  "#" + options.container,
-        link:       "#" + options.link,
+        $link:      (typeof options.link === "string") ? $("#" + options.link) : options.link,
         modal:      "#modal",
         modal_status:   "#modal_status",
         body:       options.body,
@@ -48,7 +48,7 @@ var MODAL = (function(options){
     // Public object
     var that = {
         init:   function(){
-            $(params.link).click(function(e) {
+            params.$link.click(function(e) {
                 e.preventDefault();
                 $(params.container).html(dom.modal());
                 if (params.body !== undefined){
@@ -138,6 +138,7 @@ var MODAL = (function(options){
                 },
                 success:    function(data){
                     that.end_process();
+                    $(params.modal).modal("hide");
                     if (typeof params.callback == "function"){
                         params.callback();
                     }

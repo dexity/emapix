@@ -1,6 +1,71 @@
 {% extends "base.html" %}
+{% load jstmpl %}
 
-{% block header %}
+{% block content %}
+
+<div class="row">
+    <div class="span2">
+        <img src="/media/img/user.png" style="margin-bottom: 10px;" /><br />
+        {% if is_you %} <!-- and no photo -->
+        <a href="/profile/{{user.username}}" >Add photo?</a>
+        {% endif %}
+    </div>
+    <div class="span8">
+        {% if is_you and not user2.location %}
+        <div class="row">
+            <div class="span6"><h2>{{name}}</h2></div>
+            <div class="span2"><a href="/profile/{{user.username}}" style="float: right; padding-top: 10px;">Set location?</a></div>
+        </div>
+        {% else %}
+        <h2>{{name}}</h2>
+        {{user2.location}}
+        {% endif %}
+        <div class="clear_both"></div>
+        
+        {% if user2.description%}
+        <div class="full-description">{{user2.description}}</div>
+        {% else %}
+        <div class="full-description" style="text-align: right">
+            <a href="/profile/{{user.username}}">More about youself?</a>
+        </div>
+        {% endif %}
+        <div class="clear_both"></div>
+        
+        <div class="tabbable">
+            <ul class="nav nav-tabs" id="user_tabs">
+                <li {% if not active or active == "requests" %}class="active"{% endif %}><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
+                <li {% if active == "photos" %}class="active"{% endif %}><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
+                <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
+                <li {% if active == "comments" %}class="active"{% endif %}><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">{{userprof2.num_comments}}</span></a></li>
+                <div id="comment_load_spinner"></div>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab_requests"></div>
+                <div class="tab-pane" id="tab_photos"></div>
+                <div class="tab-pane" id="tab_areas"></div>
+                <div class="tab-pane" id="tab_comments">
+                    <div id="comments"></div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<script type="text/x-tmpl" id="comments_tmpl">
+    {% jstmpl "js/comments.html" %}
+</script>
+
+<div id="modal_container"></div>
+
+{% csrf_token %}
+{% endblock content %}
+
+{% block footer %}
+<script src="/media/js/mustache.js"></script>
+<script src="/media/js/paginator.js"></script>
+<script src="/media/js/comments.js"></script>
+<script src="/media/js/modal.js"></script>
+    
 <script type="text/javascript">
     
     function load_requests()
@@ -45,30 +110,6 @@
         });        
     }
     
-    function load_areas()
-    {
-        // Loads photos
-        var sel = $("#tab_areas");
-        $.ajax({
-            url:    "/user/{{user.username}}/areas/ajax",
-            type:   "GET",
-            cache:  false,
-            beforeSend: function(jqXHR, settings) {
-                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
-            },
-            success:    function(data) {
-                sel.html(data.data);
-            },
-            error:  function(jqXHR, textStatus, errorThrown) {
-                sel.html(format_error(jqXHR.responseText, errorThrown));
-            }
-        });   
-    }
-    
-    function load_comments()
-    {
-        
-    }
     
     function set_delete_requests()
     {
@@ -100,10 +141,45 @@
     }
     
     $(document).ready(function(){
-        load_requests();
+        
+        // Load comments
+        var comments = COMM({
+            container:      "comments",
+            type:           "request",
+            base_url:       "/user/{{user.username}}/comments/json",
+            tmpl_id:        "comments_tmpl",
+            load_spinner:   "comment_load_spinner",
+            loaded_callback:    function(){
+                $("#comments").delegate(".delete_comment", "click", function(){
+                    MODAL({
+                        container:  "modal_container",
+                        link:       $(this),
+                        url:        $(this).attr("ajaxify"),
+                        body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
+                        header:     "Remove Comment",
+                        btn_label:  "Remove",
+                        extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                        callback:   function(){
+                            comments.load_comments();
+                        }
+                    }).init();
+                });
+            }
+        });
+
         
         // Register tabs
         $('a[data-toggle="tab"]').on('shown', function (e) {
+            // XXX: Fix issue with reloading the tab
+            //$(this).unbind("click");
+            //console.debug(e.target.hash);
+            //$(e.target).click(function(){
+            //    console.debug($(e.target.hash));
+            //    $(this).unbind("click");
+            //    //$(e.target).tab("show");
+            //});
+
+            
             switch (e.target.hash) {
                 case "#tab_requests":
                     load_requests();
@@ -112,7 +188,7 @@
                     load_photos();
                     break;
                 case "#tab_comments":
-                    load_comments();
+                    comments.load_comments();
                 //case "#tab_areas":
                 //    load_areas();
                 //    break;
@@ -120,59 +196,13 @@
             
         });     
         
+        load_requests();
+        //$('a[data-toggle="tab"]').on('show', function (e) {
+        //    console.debug(e.target.hash)
+        //})
+        
+        //$('a[href="#tab_requestss"]').tab("show");
     })
 </script>
 
-
-
-{% endblock header %}
-
-{% block content %}
-
-<div class="row">
-    <div class="span2">
-        <img src="/media/img/user.png" style="margin-bottom: 10px;" /><br />
-        {% if is_you %} <!-- and no photo -->
-        <a href="/profile/{{user.username}}" >Add photo?</a>
-        {% endif %}
-    </div>
-    <div class="span8">
-        {% if is_you and not user2.location %}
-        <div class="row">
-            <div class="span6"><h2>{{name}}</h2></div>
-            <div class="span2"><a href="/profile/{{user.username}}" style="float: right; padding-top: 10px;">Set location?</a></div>
-        </div>
-        {% else %}
-        <h2>{{name}}</h2>
-        {{user2.location}}
-        {% endif %}
-        <div class="clear_both"></div>
-        
-        {% if user2.description%}
-        <div class="full-description">{{user2.description}}</div>
-        {% else %}
-        <div class="full-description" style="text-align: right">
-            <a href="/profile/{{user.username}}">More about youself?</a>
-        </div>
-        {% endif %}
-        <div class="clear_both"></div>
-        
-        <div class="tabbable">
-            <ul class="nav nav-tabs">
-                <li {% if not active or active == "requests" %}class="active"{% endif %}><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
-                <li {% if active == "photos" %}class="active"{% endif %}><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
-                <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
-                <li {% if active == "comments" %}class="active"{% endif %}><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">7</span></a></li>
-            </ul>
-            <div class="tab-content">
-                <div class="tab-pane active" id="tab_requests"></div>
-                <div class="tab-pane" id="tab_photos"></div>
-                <div class="tab-pane" id="tab_areas"></div>
-                <div class="tab-pane" id="tab_comments"><div class="alert alert-error">Not implemented yet</div></div>
-            </div>
-        </div>        
-    </div>
-</div>
-
-{% csrf_token %}
-{% endblock content %}
+{% endblock %}

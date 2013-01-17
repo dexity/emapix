@@ -230,12 +230,11 @@ a img {
 .e-comment {
     width: 450px;
 }
-.e-comment-first {
-    margin-top: -8px;
-    /*margin-bottom: 2px;*/
-}
 .e-comment-item {
-    /*margin: 2px 0px;*/
+    margin-bottom: -8px;
+}
+#tab_comments #comments {
+    margin-top: -5px;
 }
 .e-username {
     font-size: 15px;
@@ -359,4 +358,9 @@ a img {
 }
 #comment_status {
     display: inline;
+}
+.comment-text {
+    display: inline-block;
+    text-align: left;
+    width: 95%;
 }

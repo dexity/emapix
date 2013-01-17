@@ -5,6 +5,8 @@ from emapix.exceptions import ServiceException
 from emapix.core.models import *
 from emapix.utils.utils import bad_request_json, forbidden_json
 
+from emapix.utils.const import *
+
 class ObjectExists(object):
     
     def __init__(self, message, code, objects):
@@ -36,18 +38,34 @@ class EmailExists(ObjectExists):
         return self.objects.filter(email = value)
     
 
+#def validate_user(request):
+#    "Validates user and request. Returns json response if error or request"
+#    if not request.user.is_authenticated():
+#        return forbidden_json({"error": "You need to be logged in"})
+#    return True
+
+
 def validate_user_request(request, res, is_you=True):
     "Validates user and request. Returns json response if error or request"
     if not request.user.is_authenticated():
-        return forbidden_json({"error": "You need to be logged in"})
+        return forbidden_json({"error": AUTH_ERROR_TXT})
     try:
         req = Request.objects.get(resource=res)
     except Request.DoesNotExist:
         return bad_request_json({"error": "Request doesn't exist"})
-
     if is_you and request.user != req.user:
-        return bad_request_json({"error": "You don't have permission"})
-    
+        return bad_request_json({"error": AUTHOR_ERROR})
     return req
 
     
+def validate_user_comment(request, comment_id, is_you=True):
+    "Validates user and request. Returns json response if error or request"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR_TXT})
+    try:
+        com = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return bad_request_json({"error": "Comment doesn't exist"})
+    if is_you and request.user != com.user:
+        return bad_request_json({"error": AUTHOR_ERROR})
+    return com

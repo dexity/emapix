@@ -19,7 +19,7 @@ from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
 http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
 
-from emapix.core.validators import validate_user_request
+from emapix.core.validators import validate_user_request, validate_user_comment    #, validate_user
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
@@ -475,6 +475,67 @@ def remove_request_ajax(request, res):
         return bad_request_json({"error": str(e)})
 
 
+
+def to_request(req):
+    "Returns request dictionary"
+    return {"resource":     req.resource,
+            "description":  req.description 
+            }
+
+
+def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=False):
+    "Util that returns comments in json format"
+    coms    = RequestComment.objects
+    if req:
+        coms    = coms.filter(request=req)
+    elif userprof:
+        coms    = coms.filter(comment__user=userprof.user)
+    else:
+        raise Exception("Either Request or User objects has to be set")
+    if recent_first:
+        coms    = coms.order_by("-comment__submitted_date")
+    else:
+        coms    = coms.order_by("comment__submitted_date")
+    paginator   = Paginator(coms, num_pages)
+    page        = request.GET.get("page", 1)        
+    (items, page_num)   = paginated_items(paginator, page)
+    
+    paging  = {
+        "page":     page_num,
+        "total":    paginator.num_pages
+    }
+    comments    = []
+    for rc in items:
+        com = rc.comment
+        (sd, ct)  = (int(com.submitted_date), timestamp())
+        comdict = {
+            "id":       com.id,
+            "text":     com.text,
+            "username": com.user.username,
+            "hdate":    ts2h(sd, ct),
+            "utcdate":  ts2utc(com.submitted_date)
+        }
+        if userprof:
+            comdict["remove_url"]   = "/comment/%s/remove/json" % com.id
+            comdict["request"]  = to_request(rc.request)
+        comments.append(comdict)
+    if req:
+        com_total   = req.num_comments
+    else:
+        com_total   = userprof.num_comments
+    data    = {
+        "data": {
+            "paging":   paging,
+            "comments_total": com_total,
+            "comments": comments
+        }
+    }
+    if req:
+        data["data"]["request"] =  to_request(req)
+    
+    return http_response_json(data)    
+
+
 def get_request_comments_json(request):
     "Returns paginated list of requests"
     res     = request.GET.get("request")
@@ -483,36 +544,8 @@ def get_request_comments_json(request):
     
     try:
         req     = Request.objects.get(resource=res)
-        coms    = RequestComment.objects.filter(request=req)
-        paginator   = Paginator(coms, 2)   # 20 items per page
-        page        = request.GET.get("page", 1)        
-        (items, page_num)   = paginated_items(paginator, page)
-        
-        paging  = {
-            "page":     page_num,
-            "total":    paginator.num_pages
-        }
-        comments    = []
-        for rc in items:
-            com = rc.comment
-            (sd, ct)  = (int(com.submitted_date), timestamp())
-            comments.append({
-                "text":     com.text,
-                "username": com.user.username,
-                "hdate":    ts2h(sd, ct),
-                "utcdate":  ts2utc(com.submitted_date)
-            })
-        data    = {
-            "data": {
-                "request":  res,
-                "paging":   paging,
-                "comments_total": req.num_comments,
-                "comments": comments
-            }
-        }
-        
-        return http_response_json(data)
-    except Request.DoesNotExist, e:
+        return get_comments(request, req=req, num_pages=2)
+    except Exception, e:    # Request.DoesNotExist
         return bad_request_json({"error": str(e)})
     
 
@@ -522,7 +555,7 @@ def add_comment_json(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})
     if request.method != "POST":
-        return bad_request_json({"error": "Method is not supported"})
+        return bad_request_json({"error": METHOD_ERROR})
     
     try:
         res     = request.GET.get("request", None)
@@ -556,12 +589,34 @@ def add_comment_json(request):
         "comment":  comment
     }
     return http_response_json({"data": data})
+
+
+def remove_comment_json(request, comment_id):
+    "Removes comment"
+    com     = validate_user_comment(request, comment_id, True)
+    if not isinstance(com, Comment):
+        return com
+    if request.method != "POST":
+        return bad_request_json({"error": METHOD_ERROR})
+    
+    #com.delete()
+    logger.debug("Deleted")
+    return to_status(OK)
     
 
 def get_profile(request):
     "Set profile"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    
+    """
+    TODO:
+        Add tab "Privacy" with the parameters:
+        - "View profile"
+            - "View requests"
+            - "View photos"
+            - "View comments"
+    """
     
     return render(request, 'profile_general.html')  #
 
@@ -608,7 +663,6 @@ def get_user(request, username):
             "is_you":    is_you(request, user2)
         }
     except UserProfile.DoesNotExist, e:
-        logger.error("%s: %s" % (e, username))
         return render(request, 'misc/error_view.html', {"error": str(e)})
     
     tab   = request.GET.get("tab", None)
@@ -718,7 +772,15 @@ def get_user_areas_ajax(request, username):
     
 def get_user_comments_json(request, username):
     "Returns user comments"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR})
     
+    try:
+        userprof    = UserProfile.objects.get(user=request.user)
+        return get_comments(request, userprof=userprof, num_pages=10, recent_first=True)
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
+
 
 
 def get_user_requests_json(request, username):

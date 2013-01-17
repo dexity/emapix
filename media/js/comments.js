@@ -13,9 +13,10 @@ var COMM = (function(options){
         comment_status: "#comment_status",
         submit_btn:     "#submit_comment",
         load_spinner:   "#" + (options.load_spinner || "load_spinner"),
+        loaded_callback:    options.loaded_callback,
         type:           options.type,
         resource:       null,
-        submit_base_url:    options.submit_base_url || "",
+        submit_base_url:    options.submit_base_url,
         base_url:       options.base_url || "",
         default_error:  "Service error. Please try again.",
         paginator:      PAGES({})
@@ -109,7 +110,8 @@ var COMM = (function(options){
                             "text":         com.text,
                             "username":     com.username,
                             "date":         com.hdate,
-                            "date_label":   com.utcdate
+                            "date_label":   com.utcdate,
+                            "remove_url":   com.remove_url
                         };
                         s   += dom.item(d);
                     }
@@ -136,6 +138,9 @@ var COMM = (function(options){
                     if (params.submit_id) {
                         $(params.submit_id).unbind()
                             .click(that.submit_form);
+                    }
+                    if (typeof params.loaded_callback === "function"){
+                        params.loaded_callback();
                     }
                 },
                 error:  that.load_error
