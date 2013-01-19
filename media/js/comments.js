@@ -13,12 +13,12 @@ var COMM = (function(options){
         comment_status: "#comment_status",
         submit_btn:     "#submit_comment",
         load_spinner:   "#" + (options.load_spinner || "load_spinner"),
-        loaded_callback:    options.loaded_callback,
         type:           options.type,
         resource:       null,
         submit_base_url:    options.submit_base_url,
         base_url:       options.base_url || "",
         default_error:  "Service error. Please try again.",
+        fn_comment_created:   options.fn_comment_created,
         paginator:      PAGES({})
     };
     
@@ -87,7 +87,6 @@ var COMM = (function(options){
             if (url !== undefined){
                 _url    = url;
             }
-            
             $.ajax({
                 url:        _url,
                 type:       "GET",
@@ -96,13 +95,13 @@ var COMM = (function(options){
                     $(params.load_spinner).html(dom.load_spinner());
                 },
                 success:    function(data) {
+                    $(params.container).empty();
                     aux.stop_process();
                     
                     var comments    = data.data.comments;
                     if ( comments === undefined){
                         return;     // No comments available
                     }
-                    var s   = "";
                     // Create paginator and set it in container
                     for (var i = 0; i < comments.length; i++){
                         var com = comments[i];
@@ -113,17 +112,20 @@ var COMM = (function(options){
                             "date_label":   com.utcdate,
                             "remove_url":   com.remove_url
                         };
-                        s   += dom.item(d);
+                        var o   = $(dom.item(d));
+                        $(params.container).append(o);
+                        if (typeof params.fn_comment_created === "function"){
+                            params.fn_comment_created(o);
+                        }
                     }
                     if (data.data.paging !== undefined && params.paginator !== undefined){
-                        s   += params.paginator.show_pages(params.base_url,
+                        $(params.container).append(params.paginator.show_pages(params.base_url,
                                                            data.data.paging.page,
-                                                           data.data.paging.total);
+                                                           data.data.paging.total));
                     }
                     if (params.submit_base_url !== undefined){
-                        s   += dom.submit_form({});
+                        $(params.container).append(dom.submit_form({}));
                     }
-                    $(params.container).html(s);
                     
                     // Register click events for pages
                     $(".pagination li").click(function(e){
@@ -138,9 +140,6 @@ var COMM = (function(options){
                     if (params.submit_id) {
                         $(params.submit_id).unbind()
                             .click(that.submit_form);
-                    }
-                    if (typeof params.loaded_callback === "function"){
-                        params.loaded_callback();
                     }
                 },
                 error:  that.load_error
