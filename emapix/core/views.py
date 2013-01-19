@@ -599,8 +599,10 @@ def remove_comment_json(request, comment_id):
     if request.method != "POST":
         return bad_request_json({"error": METHOD_ERROR})
     
-    #com.delete()
-    logger.debug("Deleted")
+    try:
+        com.delete()
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
     return to_status(OK)
     
 
