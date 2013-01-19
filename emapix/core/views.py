@@ -364,7 +364,7 @@ def get_request(request, res):
         req = Request.objects.get(resource=res)
         req.location.lat    = req.location.lat/1e6
         req.location.lon    = req.location.lon/1e6
-        img = WImage.get_image_by_request(req, size_type="large")
+        img     = WImage.get_image_by_request(req, size_type="large")
         photo   = WPhoto.request_photo(res)
         
         c   = {
@@ -642,13 +642,8 @@ def get_profile_photo(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
-    user    = request.user
-    im  = WImage.get_profile_image(user, "profile", "medium")
-    photo_url   = im.url
-    if not photo_url:
-        photo_url   = "/media/img/user.png"
     c   = {
-        "photo": photo_url
+        "photo": WImage.get_profile_image_url(request.user)
     }
     
     return render(request, 'profile_photo.html', c)    
@@ -661,8 +656,9 @@ def get_user(request, username):
         user2       = userprof2.user
         
         c   = {
-            "userprof2": userprof2,
-            "is_you":    is_you(request, user2)
+            "userprof2":    userprof2,
+            "photo_url":    WImage.get_profile_image_url(user2),
+            "is_you":       is_you(request, user2)
         }
     except UserProfile.DoesNotExist, e:
         return render(request, 'misc/error_view.html', {"error": str(e)})
