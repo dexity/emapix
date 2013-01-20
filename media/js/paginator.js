@@ -63,10 +63,7 @@ var PAGES   = (function(options){
             var s   = '<div class="pagination e-paging">',
             page_url   = function(page){
                 var url = params.base_url,
-                sep = "?";
-                if (/\?/g.test(url)){   // Already has "?"
-                    sep = "&";
-                }
+                    sep = /\?/g.test(url) ? "&" : "?";
                 return  url + sep + 'page=' + page;
             };
             s   += '    <ul>';

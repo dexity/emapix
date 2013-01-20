@@ -37,7 +37,7 @@
                 <li {% if active == "photos" %}class="active"{% endif %}><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
                 <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
                 <li {% if active == "comments" %}class="active"{% endif %}><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">{{userprof2.num_comments}}</span></a></li>
-                <div id="comment_load_spinner"></div>
+                <div id="tab_load_spinner"></div>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_requests"></div>
@@ -51,9 +51,10 @@
     </div>
 </div>
 
-<script type="text/x-tmpl" id="comments_tmpl">
-    {% jstmpl "js/comments.html" %}
-</script>
+<script type="text/x-tmpl" id="comment_tmpl">{% jstmpl "js/comment.html" %}</script>
+<script type="text/x-tmpl" id="spinner_tmpl">{% jstmpl "js/spinner.html" %}</script>
+<script type="text/x-tmpl" id="load_spinner_tmpl">{% jstmpl "js/load_spinner.html" %}</script>
+<script type="text/x-tmpl" id="error_tmpl">{% jstmpl "js/error.html" %}</script>
 
 <div id="modal_container"></div>
 
@@ -63,7 +64,8 @@
 {% block footer %}
 <script src="/media/js/mustache.js"></script>
 <script src="/media/js/paginator.js"></script>
-<script src="/media/js/comments.js"></script>
+<script src="/media/js/list.js"></script>
+<!--<script src="/media/js/comments.js"></script>-->
 <script src="/media/js/modal.js"></script>
     
 <script type="text/javascript">
@@ -142,15 +144,24 @@
     
     $(document).ready(function(){
         
-        
-        // Load comments
-        var comments = COMM({
-            container:      "comments",
-            type:           "request",
-            base_url:       "/user/{{user.username}}/comments/json",
-            tmpl_id:        "comments_tmpl",
-            load_spinner:   "comment_load_spinner",
-            fn_comment_created: function(o){
+        var comments    = LIST({
+            container:      $("#comments"),
+            spinner:        $("#tab_load_spinner"),
+            baseUrl:        "/user/{{user.username}}/comments/json",
+            dataProp:       "comments",
+            itemProps:      {   
+                "text":         "text",
+                "username":     "username",
+                "date":         "hdate",
+                "date_label":   "utcdate",
+                "remove_url":   "remove_url"
+            },           
+            templates:      {
+                item:       $("#comment_tmpl"),
+                error:      $("#error_tmpl"),
+                spinner:    $("#load_spinner_tmpl")
+            },
+            fnItemCreated: function(o){
                 var com = o.find(".delete_comment");
                 MODAL({
                     container:  "modal_container",
@@ -161,12 +172,11 @@
                     btn_label:  "Remove",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                     callback:   function(){
-                        comments.load_comments();
+                        comments.load();
                     }
                 }).init();                
             }
         });
-
         
         // Register tabs
         $('a[data-toggle="tab"]').on('shown', function (e) {
@@ -188,7 +198,7 @@
                     load_photos();
                     break;
                 case "#tab_comments":
-                    comments.load_comments();
+                    comments.load();
                 //case "#tab_areas":
                 //    load_areas();
                 //    break;
