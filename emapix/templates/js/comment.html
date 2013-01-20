@@ -1,0 +1,12 @@
+<div class="full-description e-comment-item clearfix">
+    <div>
+        <div class="comment-text">{{text}}</div>
+        {{#remove_url}}
+        <button class="close delete_comment" title="Delete comment" ajaxify="{{remove_url}}">×</button>
+        {{/remove_url}}
+    </div>
+    <div class="pull-right">
+        <div class="e-request-time" title="{{date_label}}">{{date}}</div>
+        <div class="pull-right"><a href="/user/{{username}}">{{username}}</a></div>
+    </div>
+</div>
