@@ -364,3 +364,9 @@ a img {
     text-align: left;
     width: 95%;
 }
+.comment-block {
+    margin-bottom: 5px;
+}
+.comment-meta-label {
+    color: #999;
+}

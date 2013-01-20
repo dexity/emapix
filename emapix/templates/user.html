@@ -148,13 +148,15 @@
             container:      $("#comments"),
             spinner:        $("#tab_load_spinner"),
             baseUrl:        "/user/{{user.username}}/comments/json",
-            dataProp:       "comments",
+            dataProp:       "data.comments",
             itemProps:      {   
                 "text":         "text",
                 "username":     "username",
                 "date":         "hdate",
                 "date_label":   "utcdate",
-                "remove_url":   "remove_url"
+                "remove_url":   "remove_url",
+                "request_resource":     "request.resource",
+                "request_description":  "request.description"
             },           
             templates:      {
                 item:       $("#comment_tmpl"),

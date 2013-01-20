@@ -19,9 +19,21 @@ var LIST    = (function(options){
     };
     
     var utils   = {
-        compTmpl:      function($tmpl){
+        compTmpl:   function($tmpl){
             // Compiles template with mustache
             return Mustache.compile($tmpl.html());
+        },
+        getData:    function(o, path){
+            // Tries to traverse the object by path
+            try {
+                var parts   = path.split(".");
+                var val     = o[parts[0]];
+                for (var i = 1; i < parts.length; i++){
+                    val = val[parts[i]];
+                }
+                return val;
+            } catch(err){}
+            return null;
         }
     },
     dom = {
@@ -72,7 +84,7 @@ var LIST    = (function(options){
                     $(params.$container).empty();
                     that.stopProcess();
                     
-                    var items    = data.data[params.dataProp];
+                    var items    = utils.getData(data, params.dataProp);
                     if ( items === undefined){
                         return;     // No items available
                     }
@@ -82,7 +94,7 @@ var LIST    = (function(options){
                             d   = {};
                         for (var key in params.itemProps){
                             if (params.itemProps.hasOwnProperty(key)){
-                                d[key]  = item[params.itemProps[key]];
+                                d[key]  = utils.getData(item, params.itemProps[key]);
                             }
                         }
                         var o   = $(dom.item(d));

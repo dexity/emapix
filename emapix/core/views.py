@@ -476,8 +476,11 @@ def remove_request_ajax(request, res):
 
 
 
-def to_request(req):
+def to_request(req, desc_size=None):
     "Returns request dictionary"
+    desc    = req.description
+    if isinstance(desc_size, int):
+        desc    = desc[:desc_size]
     return {"resource":     req.resource,
             "description":  req.description 
             }
@@ -517,7 +520,7 @@ def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=Fa
         }
         if userprof:
             comdict["remove_url"]   = "/comment/%s/remove/json" % com.id
-            comdict["request"]  = to_request(rc.request)
+            comdict["request"]  = to_request(rc.request, desc_size=50)
         comments.append(comdict)
     if req:
         com_total   = req.num_comments

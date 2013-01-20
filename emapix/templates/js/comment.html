@@ -1,10 +1,16 @@
 <div class="full-description e-comment-item clearfix">
-    <div>
+    <div class="comment-block">
         <div class="comment-text">{{text}}</div>
         {{#remove_url}}
         <button class="close delete_comment" title="Delete comment" ajaxify="{{remove_url}}">×</button>
         {{/remove_url}}
     </div>
+    {{#request_description}}
+    <div class="pull-left">
+        <span class="comment-meta-label">Request:</span>
+        <a href="/request/{{request_resource}}" target="_blank">{{request_description}}</a>
+    </div>
+    {{/request_description}}
     <div class="pull-right">
         <div class="e-request-time" title="{{date_label}}">{{date}}</div>
         <div class="pull-right"><a href="/user/{{username}}">{{username}}</a></div>
