@@ -95,9 +95,11 @@
 
 <div id="modal_container"></div>
 
-<script type="text/x-tmpl" id="comments_tmpl">
-    {% jstmpl "js/comments.html" %}
-</script>
+<script type="text/x-tmpl" id="comment_tmpl">{% jstmpl "js/comment.html" %}</script>
+<script type="text/x-tmpl" id="spinner_tmpl">{% jstmpl "js/spinner.html" %}</script>
+<script type="text/x-tmpl" id="load_spinner_tmpl">{% jstmpl "js/load_spinner.html" %}</script>
+<script type="text/x-tmpl" id="error_tmpl">{% jstmpl "js/error.html" %}</script>
+<script type="text/x-tmpl" id="submit_form_tmpl">{% jstmpl "js/submit_comment.html" %}</script>
 
 <!-- General csrf token -->
 {% csrf_token %}
@@ -125,6 +127,7 @@
 {% endif %}
 <script src="/media/js/mustache.js"></script>
 <script src="/media/js/paginator.js"></script>
+<script src="/media/js/list.js"></script>
 <script src="/media/js/comments.js"></script>
 
 <script type="text/javascript"
@@ -136,16 +139,39 @@
     $(document).ready(function(){
 	
         // Load comments
-        var comments = COMM({
-            container:      "comments",
-            type:           "request",
-            base_url:       "/comments/json?request={{req.resource}}",
-            submit_id:      "submit_comment",
-            tmpl_id:        "comments_tmpl",
-            submit_base_url:  "/comment/add/json?request={{req.resource}}",
-            load_spinner:   "comment_load_spinner"
+        var comments    = COMM({
+            container:      $("#comments"),
+            spinner:        $("#tab_load_spinner"),
+            baseUrl:        "/comments/json?request={{req.resource}}",
+            submitBaseUrl:  "/comment/add/json?request={{req.resource}}",
+            dataProp:       "data.comments",
+            itemProps:      {   
+                "text":         "text",
+                "username":     "username",
+                "date":         "hdate",
+                "date_label":   "utcdate",
+            },           
+            templates:      {
+                item:       $("#comment_tmpl"),
+                error:      $("#error_tmpl"),
+                spinner:    $("#load_spinner_tmpl"),
+                submit_spinner: $("#spinner_tmpl"),
+                submit_form:    $("#submit_form_tmpl")
+            }
+            
         });
-        comments.load_comments();
+        comments.load();
+        
+        //var comments = COMM({
+        //    container:      "comments",
+        //    type:           "request",
+        //    base_url:       "/comments/json?request={{req.resource}}",
+        //    submit_id:      "submit_comment",
+        //    tmpl_id:        "comments_tmpl",
+        //    submit_base_url:  "/comment/add/json?request={{req.resource}}",
+        //    load_spinner:   "comment_load_spinner"
+        //});
+        //comments.load_comments();
         
         
         // Load map

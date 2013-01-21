@@ -15,14 +15,15 @@ var LIST    = (function(options){
         baseUrl:        options.baseUrl,
         defaultError:   "Service error. Please try again.",
         fnItemCreated:  options.fnItemCreated,
+        fnInitComplete: options.fnInitComplete,
         paginator:      PAGES({})
     };
     
-    var utils   = {
+    var aux   = {
         compTmpl:   function($tmpl){
             // Compiles template with mustache
             return Mustache.compile($tmpl.html());
-        },
+        },        
         getData:    function(o, path){
             // Tries to traverse the object by path
             try {
@@ -35,26 +36,30 @@ var LIST    = (function(options){
             } catch(err){}
             return null;
         }
-    },
-    dom = {
-        item:           utils.compTmpl(params.templates.item),
-        spinner:        utils.compTmpl(params.templates.spinner),
-        error:          utils.compTmpl(params.templates.error)
     };
     
 
     // Public object
     var that = {
+        utils:  {
+            compTmpl:   aux.compTmpl,
+        },
+        dom:    {
+            item:           aux.compTmpl(params.templates.item),
+            spinner:        aux.compTmpl(params.templates.spinner),
+            error:          aux.compTmpl(params.templates.error)
+        },
         initProcess:   function(){
+            console.debug(that.utils.compTmpl(params.templates.spinner)());
             $(".alert-error").hide();   // Hide errors
         },
         stopProcess:   function(){
             $(params.$spinner).empty();
-        },        
+        },
         loadError:   function(jqXHR, textStatus, errorThrown) {
             // Error when comments are loaded
             var msg = that.error_msg(jqXHR, textStatus, errorThrown);
-            $(params.container).html(dom.error({"error": msg}));
+            $(params.container).html(that.dom.error({"error": msg}));
         },
         error_msg:  function(jqXHR, textStatus, errorThrown) {
             that.stopProcess();
@@ -78,13 +83,13 @@ var LIST    = (function(options){
                 type:       "GET",
                 cache:      false,
                 beforeSend: function() {
-                    $(params.$spinner).html(dom.spinner());
+                    $(params.$spinner).html(that.dom.spinner());
                 },
                 success:    function(data) {
-                    $(params.$container).empty();
+                    params.$container.empty();
                     that.stopProcess();
                     
-                    var items    = utils.getData(data, params.dataProp);
+                    var items    = aux.getData(data, params.dataProp);
                     if ( items === undefined){
                         return;     // No items available
                     }
@@ -94,24 +99,20 @@ var LIST    = (function(options){
                             d   = {};
                         for (var key in params.itemProps){
                             if (params.itemProps.hasOwnProperty(key)){
-                                d[key]  = utils.getData(item, params.itemProps[key]);
+                                d[key]  = aux.getData(item, params.itemProps[key]);
                             }
                         }
-                        var o   = $(dom.item(d));
-                        $(params.$container).append(o);
+                        var o   = $(that.dom.item(d));
+                        params.$container.append(o);
                         if (typeof params.fnItemCreated === "function"){
                             params.fnItemCreated(o);
                         }
                     }
                     if (data.data.paging !== undefined && params.paginator !== undefined){
-                        $(params.$container).append(params.paginator.show_pages(params.baseUrl,
+                        params.$container.append(params.paginator.show_pages(params.baseUrl,
                                                            data.data.paging.page,
                                                            data.data.paging.total));
                     }
-                    //if (params.submit_base_url !== undefined){
-                    //    $(params.container).append(dom.submit_form({}));
-                    //}
-                    //
                     // Register click events for pages
                     $(".pagination li").click(function(e){
                         e.preventDefault();
@@ -121,11 +122,9 @@ var LIST    = (function(options){
                         }
                         that.load($(aa[0]).attr("href"));
                     });
-                    //// Register click event for comment submission
-                    //if (params.submit_id) {
-                    //    $(params.submit_id).unbind()
-                    //        .click(that.submit_form);
-                    //}
+                    if (typeof params.fnInitComplete === "function"){
+                        params.fnInitComplete();
+                    }
                 },
                 error:  that.loadError
             });
