@@ -14,8 +14,8 @@ var LIST    = (function(options){
         $spinner:       options.spinner,
         baseUrl:        options.baseUrl,
         defaultError:   "Service error. Please try again.",
-        fnItemCreated:  options.fnItemCreated,
-        fnInitComplete: options.fnInitComplete,
+        //fnItemCreated:  options.fnItemCreated,
+        //fnInitComplete: options.fnInitComplete,
         paginator:      PAGES({})
     };
     
@@ -49,19 +49,21 @@ var LIST    = (function(options){
             spinner:        aux.compTmpl(params.templates.spinner),
             error:          aux.compTmpl(params.templates.error)
         },
+        getParams:  function(){
+            return params;
+        },
         initProcess:   function(){
-            console.debug(that.utils.compTmpl(params.templates.spinner)());
             $(".alert-error").hide();   // Hide errors
         },
         stopProcess:   function(){
-            $(params.$spinner).empty();
+            params.$spinner.empty();
         },
         loadError:   function(jqXHR, textStatus, errorThrown) {
             // Error when comments are loaded
-            var msg = that.error_msg(jqXHR, textStatus, errorThrown);
-            $(params.container).html(that.dom.error({"error": msg}));
+            var msg = that.errorMsg(jqXHR, textStatus, errorThrown);
+            params.$container.html(that.dom.error({"error": msg}));
         },
-        error_msg:  function(jqXHR, textStatus, errorThrown) {
+        errorMsg:  function(jqXHR, textStatus, errorThrown) {
             that.stopProcess();
             var msg = params.defaultError;
             try {
@@ -83,7 +85,7 @@ var LIST    = (function(options){
                 type:       "GET",
                 cache:      false,
                 beforeSend: function() {
-                    $(params.$spinner).html(that.dom.spinner());
+                    params.$spinner.html(that.dom.spinner());
                 },
                 success:    function(data) {
                     params.$container.empty();
@@ -104,8 +106,8 @@ var LIST    = (function(options){
                         }
                         var o   = $(that.dom.item(d));
                         params.$container.append(o);
-                        if (typeof params.fnItemCreated === "function"){
-                            params.fnItemCreated(o);
+                        if (typeof options.fnItemCreated === "function"){
+                            options.fnItemCreated(o);
                         }
                     }
                     if (data.data.paging !== undefined && params.paginator !== undefined){
@@ -122,8 +124,8 @@ var LIST    = (function(options){
                         }
                         that.load($(aa[0]).attr("href"));
                     });
-                    if (typeof params.fnInitComplete === "function"){
-                        params.fnInitComplete();
+                    if (typeof options.fnInitComplete === "function"){
+                        options.fnInitComplete();
                     }
                 },
                 error:  that.loadError

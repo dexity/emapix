@@ -155,24 +155,17 @@
                 item:       $("#comment_tmpl"),
                 error:      $("#error_tmpl"),
                 spinner:    $("#load_spinner_tmpl"),
-                submit_spinner: $("#spinner_tmpl"),
-                submit_form:    $("#submit_form_tmpl")
+                submitSpinner: $("#spinner_tmpl"),
+                submitForm:    $("#submit_form_tmpl")
+            },
+            fnSubmitCallback:   function(data){
+                if (data !== undefined && data.data !== undefined && data.data.comments_total !== undefined){
+                    $("#comments_badge").html(data.data.comments_total);
+                }
+                comments.load("/comments/json?request={{req.resource}}&page=last");    // Move to last page
             }
-            
         });
         comments.load();
-        
-        //var comments = COMM({
-        //    container:      "comments",
-        //    type:           "request",
-        //    base_url:       "/comments/json?request={{req.resource}}",
-        //    submit_id:      "submit_comment",
-        //    tmpl_id:        "comments_tmpl",
-        //    submit_base_url:  "/comment/add/json?request={{req.resource}}",
-        //    load_spinner:   "comment_load_spinner"
-        //});
-        //comments.load_comments();
-        
         
         // Load map
 	var lat	= "{{ req.location.lat }}";
