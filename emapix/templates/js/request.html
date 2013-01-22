@@ -1,0 +1,22 @@
+<div class="e-request-item span8">
+    <a href="/request/{{resource}}"><img src="{{thumb_url}}"/></a>
+    <div>
+        <div class="e-request-description" title="{{description}}">
+            <a href="/request/{{resource}}">
+                {{description}}
+            </a>
+            {{#remove_url}}
+            <button class="close itemDelete" title="Delete request" ajaxify="{{remove_url}}">&times;</button>
+            {{/remove_url}}
+        </div>
+        <div>
+            <div title="latitude={{ item.lat }}, longitude={{ item.lon }}" class="pull-left">
+                {% include "misc/address.html" %}
+            </div>
+            <div class="pull-right">
+                <div class="e-request-time" title="{{date}}" >{{date_labal}}</div>
+                <div class="pull-right"><a href="">{{username}}</a></div>
+            </div>
+        </div>
+    </div>
+</div>

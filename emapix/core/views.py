@@ -482,7 +482,7 @@ def to_request(req, desc_size=None):
     if isinstance(desc_size, int):
         desc    = desc[:desc_size]
     return {"resource":     req.resource,
-            "description":  req.description 
+            "description":  req.description if len(req.description) < desc_size else "%s..." % req.description[:desc_size]
             }
 
 
@@ -723,25 +723,25 @@ def get_location_requests(request, loc):
     return _get_requests(request, reqs, {"title": "Requests For %s" % loc})
     
 
-def get_user_requests_ajax(request, username):
-    "Return user requests"
-    try:
-        userprof2   = UserProfile.objects.get(user__username=username)
-    except UserProfile.DoesNotExist, e:
-        return bad_request_json({"error": str(e)})
-    
-    reqs    = Request.objects.filter(user=userprof2.user).order_by("-submitted_date")
-    paginator   = Paginator(reqs, 10)   # 10 items per page
-    page    = request.GET.get("page")
-    
-    (items, page_num)   = paginated_items(paginator, page)
-    c   = {
-        "req_items":    TmplRequest.request_items(items),
-        "is_you":       is_you(request, userprof2.user),
-        "paginator":    paginator
-    }
-
-    return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
+#def get_user_requests_ajax(request, username):
+#    "Return user requests"
+#    try:
+#        userprof2   = UserProfile.objects.get(user__username=username)
+#    except UserProfile.DoesNotExist, e:
+#        return bad_request_json({"error": str(e)})
+#    
+#    reqs    = Request.objects.filter(user=userprof2.user).order_by("-submitted_date")
+#    paginator   = Paginator(reqs, 10)   # 10 items per page
+#    page    = request.GET.get("page")
+#    
+#    (items, page_num)   = paginated_items(paginator, page)
+#    c   = {
+#        "req_items":    TmplRequest.request_items(items),
+#        "is_you":       is_you(request, userprof2.user),
+#        "paginator":    paginator
+#    }
+#
+#    return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
 
 
 def get_user_photos_ajax(request, username):
@@ -806,19 +806,29 @@ def get_user_requests_json(request, username):
             "title":    req.description if len(req.description) < 60 else "%s..." % req.description[:60],
             "description":  req.description,
             "thumb_url":    item.thumb_url,
-            "street":   req.location.street,
-            "city":     req.location.city,
+            "location": {
+                "street":   req.location.street,
+                "city":     req.location.city,
+                "lat":      "",
+                "lon":      ""
+            },
             "username": username,
-            "time_display": item.htime.human_time
+            "utcdate":  item.htime.utc_time,
+            "hdate":    item.htime.human_time
         }
+        # XXX: Add only if request.user == userprof.user
+        data_item["remove_url"] = "/request/%s/remove/json" % req.resource
         data.append(data_item)
+    
     c   = {
-        "data":     data,
-        "paging":   {
-            "page":     page_num,
-            "total":    paginator.num_pages
-        },
-        "total":    paginator.count
+        "data":     {
+            "paging":   {
+                "page":     page_num,
+                "total":    paginator.num_pages
+            },
+            "requests_total":    paginator.count,
+            "requests": data
+        }
     }
     return http_response_json(c)
 

@@ -40,7 +40,9 @@
                 <div id="tab_load_spinner"></div>
             </ul>
             <div class="tab-content">
-                <div class="tab-pane active" id="tab_requests"></div>
+                <div class="tab-pane active" id="tab_requests">
+                    <div id="requests"></div>
+                </div>
                 <div class="tab-pane" id="tab_photos"></div>
                 <div class="tab-pane" id="tab_areas"></div>
                 <div class="tab-pane" id="tab_comments">
@@ -52,6 +54,7 @@
 </div>
 
 <script type="text/x-tmpl" id="comment_tmpl">{% jstmpl "js/comment.html" %}</script>
+<script type="text/x-tmpl" id="request_tmpl">{% jstmpl "js/request.html" %}</script>
 <script type="text/x-tmpl" id="spinner_tmpl">{% jstmpl "js/spinner.html" %}</script>
 <script type="text/x-tmpl" id="load_spinner_tmpl">{% jstmpl "js/load_spinner.html" %}</script>
 <script type="text/x-tmpl" id="error_tmpl">{% jstmpl "js/error.html" %}</script>
@@ -70,27 +73,27 @@
     
 <script type="text/javascript">
     
-    function load_requests()
-    {
-        // Loads requests
-        var sel = $("#tab_requests");
-        $.ajax({
-            url:    "/user/{{user.username}}/requests/ajax",
-            type:   "GET",
-            cache:  false,
-            beforeSend: function(jqXHR, settings) {
-                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
-            },
-            success:    function(data) {
-                sel.html(data.data);
-                set_delete_requests();
-            },
-            error:  function(jqXHR, textStatus, errorThrown) {
-                sel.html(format_error(jqXHR.responseText, errorThrown));
-                
-            }
-        });        
-    }
+    //function load_requests()
+    //{
+    //    // Loads requests
+    //    var sel = $("#tab_requests");
+    //    $.ajax({
+    //        url:    "/user/{{user.username}}/requests/ajax",
+    //        type:   "GET",
+    //        cache:  false,
+    //        beforeSend: function(jqXHR, settings) {
+    //            sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
+    //        },
+    //        success:    function(data) {
+    //            sel.html(data.data);
+    //            set_delete_requests();
+    //        },
+    //        error:  function(jqXHR, textStatus, errorThrown) {
+    //            sel.html(format_error(jqXHR.responseText, errorThrown));
+    //            
+    //        }
+    //    });        
+    //}
     
     function load_photos()
     {
@@ -113,34 +116,34 @@
     }
     
     
-    function set_delete_requests()
-    {
-        $("button.itemDelete").click(function(){
-            var del_button = this;
-            var spinner = $("#delete_spinner");
-            spinner.hide();
-            $("#body_errors").empty();
-            $("#delete_btn").click(function() {
-                $.ajax({
-                    url:    $(del_button).attr("ajaxify"),
-                    type:   "POST",
-                    data:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-                    cache:  false,
-                    beforeSend: function(jqXHR, settings) {
-                        spinner.show();
-                    },
-                    success:    function(data) {
-                        load_requests();
-                    },
-                    error:  function(jqXHR, textStatus, errorThrown) {
-                        $("#body_errors").html(format_error(jqXHR.responseText, errorThrown));
-                        spinner.hide();
-                    }
-                });
-            });
-            $("#remove_modal").modal();
-        });
-    }
+    //function set_delete_requests()
+    //{
+    //    $("button.itemDelete").click(function(){
+    //        var del_button = this;
+    //        var spinner = $("#delete_spinner");
+    //        spinner.hide();
+    //        $("#body_errors").empty();
+    //        $("#delete_btn").click(function() {
+    //            $.ajax({
+    //                url:    $(del_button).attr("ajaxify"),
+    //                type:   "POST",
+    //                data:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+    //                cache:  false,
+    //                beforeSend: function(jqXHR, settings) {
+    //                    spinner.show();
+    //                },
+    //                success:    function(data) {
+    //                    load_requests();
+    //                },
+    //                error:  function(jqXHR, textStatus, errorThrown) {
+    //                    $("#body_errors").html(format_error(jqXHR.responseText, errorThrown));
+    //                    spinner.hide();
+    //                }
+    //            });
+    //        });
+    //        $("#remove_modal").modal();
+    //    });
+    //}
     
     $(document).ready(function(){
         
@@ -180,6 +183,42 @@
             }
         });
         
+        var requests    = LIST({
+            container:      $("#requests"),
+            spinner:        $("#tab_load_spinner"),
+            baseUrl:        "/user/{{user.username}}/requests/json",
+            dataProp:       "data.requests",
+            itemProps:      {   
+                "description":  "description",
+                "username":     "username",
+                "date":         "hdate",
+                "date_label":   "utcdate",
+                "remove_url":   "remove_url",
+                "resource":     "request.resource",
+                //"request_description":  "request.description"
+            },           
+            templates:      {
+                item:       $("#request_tmpl"),
+                error:      $("#error_tmpl"),
+                spinner:    $("#load_spinner_tmpl")
+            },
+            fnItemCreated: function(o){
+                var com = o.find(".delete_comment");
+                MODAL({
+                    container:  "modal_container",
+                    link:       com,
+                    url:        com.attr("ajaxify"),
+                    body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
+                    header:     "Remove Comment",
+                    btn_label:  "Remove",
+                    extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                    callback:   function(){
+                        comments.load();
+                    }
+                }).init();                
+            }
+        });
+        
         // Register tabs
         $('a[data-toggle="tab"]').on('shown', function (e) {
             // XXX: Fix issue with reloading the tab
@@ -194,7 +233,8 @@
             
             switch (e.target.hash) {
                 case "#tab_requests":
-                    load_requests();
+                    requests.load();
+                    //load_requests();
                     break;
                 case "#tab_photos":
                     load_photos();
@@ -208,7 +248,8 @@
             
         });     
         
-        load_requests();
+        requests.load();
+        //load_requests();
         //$('a[data-toggle="tab"]').on('show', function (e) {
         //    console.debug(e.target.hash)
         //})
