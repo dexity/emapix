@@ -809,8 +809,9 @@ def get_user_requests_json(request, username):
             "location": {
                 "street":   req.location.street,
                 "city":     req.location.city,
-                "lat":      "",
-                "lon":      ""
+                "lat":      req.location.lat/1e6,
+                "lon":      req.location.lon/1e6,
+                "country":  req.location.country
             },
             "username": username,
             "utcdate":  item.htime.utc_time,

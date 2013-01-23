@@ -6,12 +6,21 @@
                 {{description}}
             </a>
             {{#remove_url}}
-            <button class="close itemDelete" title="Delete request" ajaxify="{{remove_url}}">&times;</button>
+            <button class="close .delete_request" title="Remove request" ajaxify="{{remove_url}}">&times;</button>
             {{/remove_url}}
         </div>
         <div>
-            <div title="latitude={{ item.lat }}, longitude={{ item.lon }}" class="pull-left">
-                {% include "misc/address.html" %}
+            <div title="latitude={{lat}}, longitude={{lon}}" class="pull-left">
+                <div style="display: inline">
+                {{#street}}
+                    <div class="pull-left" >{{street}}</div>
+                {{/street}}
+                    <div class="address_label">
+                        <a href="#" class="label label-success" title="{{city}}{{#city}}, {{/city}}{{country}}">
+                        {{city}}{{^city}}{{country}}{{/city}}
+                        </a>
+                    </div>
+                </div>
             </div>
             <div class="pull-right">
                 <div class="e-request-time" title="{{date}}" >{{date_labal}}</div>

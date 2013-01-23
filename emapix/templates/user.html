@@ -41,7 +41,9 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_requests">
-                    <div id="requests"></div>
+                    <div id="e-requests-list">
+                        <div id="requests"></div>
+                    </div>
                 </div>
                 <div class="tab-pane" id="tab_photos"></div>
                 <div class="tab-pane" id="tab_areas"></div>
@@ -191,11 +193,16 @@
             itemProps:      {   
                 "description":  "description",
                 "username":     "username",
+                "thumb_url":    "thumb_url",
                 "date":         "hdate",
                 "date_label":   "utcdate",
                 "remove_url":   "remove_url",
-                "resource":     "request.resource",
-                //"request_description":  "request.description"
+                "resource":     "resource",
+                "street":   "location.street",
+                "city":     "location.city",
+                "country":  "location.country",
+                "lat":      "location.lat",
+                "lon":      "location.lon"
             },           
             templates:      {
                 item:       $("#request_tmpl"),
@@ -203,17 +210,17 @@
                 spinner:    $("#load_spinner_tmpl")
             },
             fnItemCreated: function(o){
-                var com = o.find(".delete_comment");
+                var req = o.find(".delete_request");
                 MODAL({
                     container:  "modal_container",
-                    link:       com,
-                    url:        com.attr("ajaxify"),
-                    body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
-                    header:     "Remove Comment",
+                    link:       req,
+                    url:        req.attr("ajaxify"),
+                    body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the request?</div>',
+                    header:     "Remove Request",
                     btn_label:  "Remove",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                     callback:   function(){
-                        comments.load();
+                        requests.load();
                     }
                 }).init();                
             }
