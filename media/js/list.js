@@ -111,6 +111,7 @@ var LIST    = (function(options){
                         }
                     }
                     if (data.data.paging !== undefined && params.paginator !== undefined){
+                        params.$container.append('<div style="clear: both"></div>');
                         params.$container.append(params.paginator.show_pages(params.baseUrl,
                                                            data.data.paging.page,
                                                            data.data.paging.total));

@@ -41,9 +41,7 @@
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="tab_requests">
-                    <div id="e-requests-list">
-                        <div id="requests"></div>
-                    </div>
+                    <div id="requests"></div>
                 </div>
                 <div class="tab-pane" id="tab_photos"></div>
                 <div class="tab-pane" id="tab_areas"></div>
@@ -70,7 +68,6 @@
 <script src="/media/js/mustache.js"></script>
 <script src="/media/js/paginator.js"></script>
 <script src="/media/js/list.js"></script>
-<!--<script src="/media/js/comments.js"></script>-->
 <script src="/media/js/modal.js"></script>
     
 <script type="text/javascript">
@@ -215,7 +212,9 @@
                     container:  "modal_container",
                     link:       req,
                     url:        req.attr("ajaxify"),
-                    body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the request?</div>',
+                    body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
+                                '   <b>All photos and comments will be removed.</b>' +
+                                '</div>',
                     header:     "Remove Request",
                     btn_label:  "Remove",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
