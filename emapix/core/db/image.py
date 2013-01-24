@@ -25,7 +25,7 @@ class WImage(object):
         if not phreqs.exists():
             return None
         
-        return cls.get_image_by_photo(phreqs[0].photo, photo_type, size_type)
+        return cls.get_image_by_photo(phreqs[0].photo, size_type)
 
 
     @classmethod
@@ -50,7 +50,7 @@ class WImage(object):
         if not profph.exists():
             return None
         
-        return cls.get_image_by_photo(profph[0].photo, photo_type, size_type)
+        return cls.get_image_by_photo(profph[0].photo, size_type)
     
     
     @classmethod
@@ -63,11 +63,9 @@ class WImage(object):
     
     
     @classmethod
-    def get_image_by_photo(cls, photo, photo_type, size_type=None):
+    def get_image_by_photo(cls, photo, size_type=None):
         "Returns image by photo"
-        imgs    = Image.objects.filter(photo=photo)
-        if photo_type in ["request", "profile"]:
-            imgs    = imgs.filter(size_type=size_type)
+        imgs    = Image.objects.filter(photo=photo).filter(size_type=size_type)
         if not imgs.exists():
             return None
         return imgs[0]
@@ -76,7 +74,7 @@ class WImage(object):
     @classmethod
     def get_or_create_image_by_photo(cls, photo, photo_type, size_type=None, marked_delete=False, save=False):
         "Returns or creates image by photo"
-        img = cls.get_image_by_photo(photo, photo_type, size_type)
+        img = cls.get_image_by_photo(photo, size_type)
         if img:
             return img
 

@@ -1,0 +1,12 @@
+
+<div class="span2">
+    <a href="/request/{{resource}}" title="{{description}}">
+        <img src="{{image_url}}"/>
+    </a>
+    {{#city}}
+        <a href="#" class="label label-success">{{city}}</a>
+    {{/city}}
+    {{^city}}
+        <a href="#" class="label label-success">{{country}}</a>
+    {{/city}}
+</div>

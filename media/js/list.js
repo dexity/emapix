@@ -13,6 +13,7 @@ var LIST    = (function(options){
         itemProps:      options.itemProps,  // Maps data to template params
         $spinner:       options.spinner,
         baseUrl:        options.baseUrl,
+        itemsPerRow:    options.itemsPerRow,
         defaultError:   "Service error. Please try again.",
         //fnItemCreated:  options.fnItemCreated,
         //fnInitComplete: options.fnInitComplete,
@@ -46,6 +47,7 @@ var LIST    = (function(options){
         },
         dom:    {
             item:           aux.compTmpl(params.templates.item),
+            separator:      aux.compTmpl(params.templates.separator),   // For grid
             spinner:        aux.compTmpl(params.templates.spinner),
             error:          aux.compTmpl(params.templates.error)
         },
@@ -105,6 +107,12 @@ var LIST    = (function(options){
                             }
                         }
                         var o   = $(that.dom.item(d));
+                        if (typeof params.itemsPerRow === number &&
+                            that.dom.separator &&
+                            i !== 0 && (i % params.itemsPerRow) === 0){
+                            var sep = $(that.dom.separator());
+                            params.$container.append(sep);
+                        }
                         params.$container.append(o);
                         if (typeof options.fnItemCreated === "function"){
                             options.fnItemCreated(o);

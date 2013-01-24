@@ -43,8 +43,12 @@
                 <div class="tab-pane active" id="tab_requests">
                     <div id="requests"></div>
                 </div>
-                <div class="tab-pane" id="tab_photos"></div>
-                <div class="tab-pane" id="tab_areas"></div>
+                <div class="tab-pane" id="tab_photos">
+                    <div class="row e-photo-row">
+                        <div id="photos"></div>
+                    </div>
+                </div>
+                <!--<div class="tab-pane" id="tab_areas"></div>-->
                 <div class="tab-pane" id="tab_comments">
                     <div id="comments"></div>
                 </div>
@@ -55,6 +59,8 @@
 
 <script type="text/x-tmpl" id="comment_tmpl">{% jstmpl "js/comment.html" %}</script>
 <script type="text/x-tmpl" id="request_tmpl">{% jstmpl "js/request.html" %}</script>
+<script type="text/x-tmpl" id="image_tmpl">{% jstmpl "js/image.html" %}</script>
+<script type="text/x-tmpl" id="image_sep_tmpl">{% jstmpl "js/image_rows_sep.html" %}</script>
 <script type="text/x-tmpl" id="spinner_tmpl">{% jstmpl "js/spinner.html" %}</script>
 <script type="text/x-tmpl" id="load_spinner_tmpl">{% jstmpl "js/load_spinner.html" %}</script>
 <script type="text/x-tmpl" id="error_tmpl">{% jstmpl "js/error.html" %}</script>
@@ -72,12 +78,12 @@
     
 <script type="text/javascript">
     
-    //function load_requests()
+    //function load_photos()
     //{
-    //    // Loads requests
-    //    var sel = $("#tab_requests");
+    //    // Loads photos
+    //    var sel = $("#tab_photos");
     //    $.ajax({
-    //        url:    "/user/{{user.username}}/requests/ajax",
+    //        url:    "/user/{{user.username}}/photos/ajax",
     //        type:   "GET",
     //        cache:  false,
     //        beforeSend: function(jqXHR, settings) {
@@ -85,64 +91,13 @@
     //        },
     //        success:    function(data) {
     //            sel.html(data.data);
-    //            set_delete_requests();
     //        },
     //        error:  function(jqXHR, textStatus, errorThrown) {
     //            sel.html(format_error(jqXHR.responseText, errorThrown));
-    //            
     //        }
     //    });        
     //}
     
-    function load_photos()
-    {
-        // Loads photos
-        var sel = $("#tab_photos");
-        $.ajax({
-            url:    "/user/{{user.username}}/photos/ajax",
-            type:   "GET",
-            cache:  false,
-            beforeSend: function(jqXHR, settings) {
-                sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
-            },
-            success:    function(data) {
-                sel.html(data.data);
-            },
-            error:  function(jqXHR, textStatus, errorThrown) {
-                sel.html(format_error(jqXHR.responseText, errorThrown));
-            }
-        });        
-    }
-    
-    
-    //function set_delete_requests()
-    //{
-    //    $("button.itemDelete").click(function(){
-    //        var del_button = this;
-    //        var spinner = $("#delete_spinner");
-    //        spinner.hide();
-    //        $("#body_errors").empty();
-    //        $("#delete_btn").click(function() {
-    //            $.ajax({
-    //                url:    $(del_button).attr("ajaxify"),
-    //                type:   "POST",
-    //                data:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-    //                cache:  false,
-    //                beforeSend: function(jqXHR, settings) {
-    //                    spinner.show();
-    //                },
-    //                success:    function(data) {
-    //                    load_requests();
-    //                },
-    //                error:  function(jqXHR, textStatus, errorThrown) {
-    //                    $("#body_errors").html(format_error(jqXHR.responseText, errorThrown));
-    //                    spinner.hide();
-    //                }
-    //            });
-    //        });
-    //        $("#remove_modal").modal();
-    //    });
-    //}
     
     $(document).ready(function(){
         
@@ -203,6 +158,45 @@
             },           
             templates:      {
                 item:       $("#request_tmpl"),
+                error:      $("#error_tmpl"),
+                spinner:    $("#load_spinner_tmpl")
+            },
+            fnItemCreated: function(o){
+                var req = o.find(".delete_request");
+                MODAL({
+                    container:  "modal_container",
+                    link:       req,
+                    url:        req.attr("ajaxify"),
+                    body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
+                                '   <b>All photos and comments will be removed.</b>' +
+                                '</div>',
+                    header:     "Remove Request",
+                    btn_label:  "Remove",
+                    extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                    callback:   function(){
+                        requests.load();
+                    }
+                }).init();                
+            }
+        });
+        
+        var photos  = LIST({
+            container:      $("#photos"),
+            spinner:        $("#tab_load_spinner"),
+            baseUrl:        "/user/{{user.username}}/photos/json",
+            dataProp:       "data.photos",
+            itemProps:      {
+                "resource":     "",
+                "description":  "",
+                "image_url":    "",
+                "city":         "",
+                "country":      "",
+                "remove_url":   ""
+            },
+            itemsPerRow:    4,
+            templates:      {
+                item:       $("#image_tmpl"),
+                separator:  $("#image_sep_tmpl"),
                 error:      $("#error_tmpl"),
                 spinner:    $("#load_spinner_tmpl")
             },

@@ -33,6 +33,7 @@ from emapix.core.db.comment import WComment
 from emapix.core.db.user import WUser
 from emapix.core.db.photo import WPhoto
 from emapix.core.tmpl.request import TmplRequest
+from emapix.core.tmpl.image import TmplImage
 from emapix.core.forms import RecaptchaForm
 
 from emapix.utils.logger import Logger
@@ -744,24 +745,24 @@ def get_location_requests(request, loc):
 #    return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
 
 
-def get_user_photos_ajax(request, username):
-    "Return user photos"
-    try:
-        userprof2   = UserProfile.objects.get(user__username=username)
-    except UserProfile.DoesNotExist, e:
-        return bad_request_json({"error": str(e)})
+#def get_user_photos_ajax(request, username):
+#    "Return user photos"
+#    try:
+#        userprof2   = UserProfile.objects.get(user__username=username)
+#    except UserProfile.DoesNotExist, e:
+#        return bad_request_json({"error": str(e)})
+#
+#    (items, paginator)  = _get_photo_items(request)
+#    c   = {
+#        "items":        items,
+#        "is_you":       is_you(request, userprof2.user),
+#        "paginator":    paginator    
+#    }
+#    
+#    return http_response_json({"data": render_to_string("ajax/photos_list.html", c)})
 
-    (items, paginator)  = _get_photo_items(request)
-    c   = {
-        "items":        items,
-        "is_you":       is_you(request, userprof2.user),
-        "paginator":    paginator    
-    }
-    
-    return http_response_json({"data": render_to_string("ajax/photos_list.html", c)})
 
-
-def get_user_areas_ajax(request, username):
+def get_user_areas_json(request, username):
     "Return user areas"
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
@@ -782,6 +783,60 @@ def get_user_comments_json(request, username):
     except Exception, e:
         return bad_request_json({"error": str(e)})
 
+
+def get_user_photos_json(request, username):
+    "Return user photos"
+    try:
+        userprof2   = UserProfile.objects.get(user__username=username)
+    except UserProfile.DoesNotExist, e:
+        return bad_request_json({"error": str(e)})
+
+    #phreqs      = PhotoRequest.objects.filter(photo__image__size_type="medium")\
+    #              .filter(photo__image__is_avail=True) \
+    #              .filter(photo__user=userprof2.user)\
+    #              .order_by("-photo__image__updated_time")
+    phreqs      = PhotoRequest.objects.filter(photo__type="request")\
+                  .exclude(photo__marked_delete=True) \
+                  .filter(photo__user=userprof2.user)\
+                  .order_by("-photo__updated_time")    
+    paginator   = Paginator(phreqs, 12)   # 12 items per page
+    page        = request.GET.get("page")
+    
+    (paged_phreqs, page_num)   = paginated_items(paginator, page)
+    photos  = []
+    for phreq in paged_phreqs:
+        image   = WImage.get_image_by_photo(phreq.photo, size_type="medium")
+        photo   = {
+            "id":       phreq.photo.id,
+            "request":  to_request(phreq.request, 40),
+            "url":      image.url,
+            #"size_type":    image.size_type
+        }
+        photos.append(photo)
+    
+    data    = {
+        "photos":   photos,
+        "photos_total": phreqs.count(),
+        "paging":   {
+            "total":    paginator.num_pages,
+            "page":     page_num
+        }
+    }
+    #images  = []
+    #for phreq in paged_phreqs:
+    #    images.append(WImage.get_image_by_photo(phreq.photo, size_type="medium"))
+    #(items, paginator) = 
+    #paged_images    = images[:len(paged_phreqs)]
+    #return (zip(paged_images, paged_phreqs), paginator)   
+    #(items, paginator)  = _get_photo_items(request)
+    #items   = TmplImage.photo_request_images(paged_phreqs)
+    #
+    #c   = {
+    #    "items":        items,
+    #    "is_you":       is_you(request, userprof2.user),
+    #    "paginator":    paginator    
+    #}
+    return http_response_json(data)
 
 
 def get_user_requests_json(request, username):
