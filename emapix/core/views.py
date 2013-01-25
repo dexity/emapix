@@ -791,10 +791,7 @@ def get_user_photos_json(request, username):
     except UserProfile.DoesNotExist, e:
         return bad_request_json({"error": str(e)})
 
-    #phreqs      = PhotoRequest.objects.filter(photo__image__size_type="medium")\
-    #              .filter(photo__image__is_avail=True) \
-    #              .filter(photo__user=userprof2.user)\
-    #              .order_by("-photo__image__updated_time")
+    # Refactor to db?
     phreqs      = PhotoRequest.objects.filter(photo__type="request")\
                   .exclude(photo__marked_delete=True) \
                   .filter(photo__user=userprof2.user)\
@@ -809,33 +806,26 @@ def get_user_photos_json(request, username):
         photo   = {
             "id":       phreq.photo.id,
             "request":  to_request(phreq.request, 40),
-            "url":      image.url,
-            #"size_type":    image.size_type
+            "location": {
+                "city":     phreq.request.location.city,
+                "country":  phreq.request.location.country
+            },
+            "image_url":    image.url
         }
+        # XXX: Add only if request.user == userprof.user
+        photo["remove_url"] = "/photo/%s/remove/json" % phreq.photo.id
         photos.append(photo)
     
     data    = {
-        "photos":   photos,
-        "photos_total": phreqs.count(),
-        "paging":   {
-            "total":    paginator.num_pages,
-            "page":     page_num
+        "data": {
+            "photos":   photos,
+            "photos_total": phreqs.count(),
+            "paging":   {
+                "total":    paginator.num_pages,
+                "page":     page_num
+            }
         }
     }
-    #images  = []
-    #for phreq in paged_phreqs:
-    #    images.append(WImage.get_image_by_photo(phreq.photo, size_type="medium"))
-    #(items, paginator) = 
-    #paged_images    = images[:len(paged_phreqs)]
-    #return (zip(paged_images, paged_phreqs), paginator)   
-    #(items, paginator)  = _get_photo_items(request)
-    #items   = TmplImage.photo_request_images(paged_phreqs)
-    #
-    #c   = {
-    #    "items":        items,
-    #    "is_you":       is_you(request, userprof2.user),
-    #    "paginator":    paginator    
-    #}
     return http_response_json(data)
 
 

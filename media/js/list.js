@@ -23,6 +23,9 @@ var LIST    = (function(options){
     var aux   = {
         compTmpl:   function($tmpl){
             // Compiles template with mustache
+            if ($tmpl === undefined){
+                return $tmpl;
+            }
             return Mustache.compile($tmpl.html());
         },        
         getData:    function(o, path){
@@ -107,7 +110,7 @@ var LIST    = (function(options){
                             }
                         }
                         var o   = $(that.dom.item(d));
-                        if (typeof params.itemsPerRow === number &&
+                        if (typeof params.itemsPerRow === "number" &&
                             that.dom.separator &&
                             i !== 0 && (i % params.itemsPerRow) === 0){
                             var sep = $(that.dom.separator());

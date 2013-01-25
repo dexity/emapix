@@ -78,27 +78,6 @@
     
 <script type="text/javascript">
     
-    //function load_photos()
-    //{
-    //    // Loads photos
-    //    var sel = $("#tab_photos");
-    //    $.ajax({
-    //        url:    "/user/{{user.username}}/photos/ajax",
-    //        type:   "GET",
-    //        cache:  false,
-    //        beforeSend: function(jqXHR, settings) {
-    //            sel.html('<img src="/media/img/spinner_small.gif"/> Loading ...');
-    //        },
-    //        success:    function(data) {
-    //            sel.html(data.data);
-    //        },
-    //        error:  function(jqXHR, textStatus, errorThrown) {
-    //            sel.html(format_error(jqXHR.responseText, errorThrown));
-    //        }
-    //    });        
-    //}
-    
-    
     $(document).ready(function(){
         
         var comments    = LIST({
@@ -186,12 +165,12 @@
             baseUrl:        "/user/{{user.username}}/photos/json",
             dataProp:       "data.photos",
             itemProps:      {
-                "resource":     "",
-                "description":  "",
-                "image_url":    "",
-                "city":         "",
-                "country":      "",
-                "remove_url":   ""
+                "resource":     "request.resource",
+                "description":  "request.description",
+                "image_url":    "image_url",
+                "city":         "location.city",
+                "country":      "location.country",
+                "remove_url":   "remove_url"
             },
             itemsPerRow:    4,
             templates:      {
@@ -234,10 +213,9 @@
             switch (e.target.hash) {
                 case "#tab_requests":
                     requests.load();
-                    //load_requests();
                     break;
                 case "#tab_photos":
-                    load_photos();
+                    photos.load();
                     break;
                 case "#tab_comments":
                     comments.load();
