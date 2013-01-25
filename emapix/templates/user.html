@@ -100,14 +100,14 @@
                 spinner:    $("#load_spinner_tmpl")
             },
             fnItemCreated: function(o){
-                var com = o.find(".delete_comment");
+                var link = o.find(".delete_comment");
                 MODAL({
                     container:  "modal_container",
-                    link:       com,
-                    url:        com.attr("ajaxify"),
+                    link:       link,
+                    url:        link.attr("ajaxify"),
                     body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
                     header:     "Remove Comment",
-                    btn_label:  "Remove",
+                    btn_label:  "Remove Comment",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                     callback:   function(){
                         comments.load();
@@ -141,16 +141,16 @@
                 spinner:    $("#load_spinner_tmpl")
             },
             fnItemCreated: function(o){
-                var req = o.find(".delete_request");
+                var link = o.find(".delete_request");
                 MODAL({
                     container:  "modal_container",
-                    link:       req,
-                    url:        req.attr("ajaxify"),
+                    link:       link,
+                    url:        link.attr("ajaxify"),
                     body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
                                 '   <b>All photos and comments will be removed.</b>' +
                                 '</div>',
                     header:     "Remove Request",
-                    btn_label:  "Remove",
+                    btn_label:  "Remove Request",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                     callback:   function(){
                         requests.load();
@@ -180,19 +180,17 @@
                 spinner:    $("#load_spinner_tmpl")
             },
             fnItemCreated: function(o){
-                var req = o.find(".delete_request");
+                var link = o.find(".delete_photo");
                 MODAL({
                     container:  "modal_container",
-                    link:       req,
-                    url:        req.attr("ajaxify"),
-                    body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
-                                '   <b>All photos and comments will be removed.</b>' +
-                                '</div>',
-                    header:     "Remove Request",
-                    btn_label:  "Remove",
+                    link:       link,
+                    url:        link.attr("ajaxify"),
+                    body:       '<div class="alert error_spaces">Are you sure you want to remove the photo?</div>',
+                    header:     "Remove Photo",
+                    btn_label:  "Remove Photo",
                     extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                     callback:   function(){
-                        requests.load();
+                        photos.load();
                     }
                 }).init();                
             }

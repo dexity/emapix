@@ -49,7 +49,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
     url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
-    url(r"^request/%s/photo/remove/json$" % REQ_REGEX, "remove_request_photo_ajax"),
+    url(r"^photo/(\d+)/remove/json$", "remove_photo_ajax"),
     url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax"),
     url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax"),   # (?P<status>(\w+))
     

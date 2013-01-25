@@ -377,6 +377,7 @@ def get_request(request, res):
         }
         if isinstance(photo, Photo) and not photo.marked_delete:
             c["submitter"]  = photo.user
+            c["photo"]      = photo
             c["pic_hdate"]  = ts2hd(photo.created_time)
             c["pic_utcdate"]    = ts2utc(photo.created_time)
             if isinstance(img, Image): #and img.is_avail:
@@ -446,8 +447,9 @@ def request_status_ajax(request, res, status):
         return server_error_json({"error": str(e)})
     
 
+# XXX: Fix function. photo_id should be passed
 @csrf_protect
-def remove_request_photo_ajax(request, res):
+def remove_photo_ajax(request, res):
     "Marks request photo for removal"
     if request.method != "POST":
         return bad_request_json({"error": "Invalid request method"})
@@ -456,7 +458,7 @@ def remove_request_photo_ajax(request, res):
         return req
     try:
         WPhoto.remove_photo_or_raise(res)
-        return http_response_json({"data": "ok"})
+        return to_status(OK)
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
 
