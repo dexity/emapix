@@ -370,3 +370,9 @@ a img {
 .comment-meta-label {
     color: #999;
 }
+
+.delete_photo {
+    position: relative;
+    right:  8px;
+    top:    -140px;
+}
