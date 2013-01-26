@@ -7,26 +7,35 @@
     <div class="span2">
         <img src="{{photo_url}}" style="margin-bottom: 10px;" /><br />
         {% if is_you %} <!-- and no photo -->
-        <a href="/profile/{{user.username}}" >Add photo?</a>
+        <a href="/profile/photo" >
+            {% if photo_exists %}
+                Update photo
+            {% else %}
+                Add photo?
+            {% endif %}
+        </a>
         {% endif %}
     </div>
     <div class="span8">
-        {% if is_you and not user2.location %}
         <div class="row">
             <div class="span6"><h2>{{name}}</h2></div>
-            <div class="span2"><a href="/profile/{{user.username}}" style="float: right; padding-top: 10px;">Set location?</a></div>
+            <div class="span2">
+                <div style="float: right; padding-top: 10px;">
+                    {% if is_you and not userprof2.location %}
+                    <a href="/profile">Set location?</a>
+                    {% else %}
+                    <div class="label label-success">{{userprof2.location}}</div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        {% else %}
-        <h2>{{name}}</h2>
-        {{user2.location}}
-        {% endif %}
         <div class="clear_both"></div>
         
-        {% if user2.description%}
-        <div class="full-description">{{user2.description}}</div>
+        {% if userprof2.description%}
+        <div class="full-description">{{userprof2.description}}</div>
         {% else %}
         <div class="full-description" style="text-align: right">
-            <a href="/profile/{{user.username}}">More about youself?</a>
+            <a href="/profile">More about youself?</a>
         </div>
         {% endif %}
         <div class="clear_both"></div>

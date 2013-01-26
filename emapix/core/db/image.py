@@ -54,12 +54,12 @@ class WImage(object):
     
     
     @classmethod
-    def get_profile_image_url(cls, user, size_type="medium"):
+    def get_profile_image_meta(cls, user, size_type="medium"):
         "Returns user photo url"
         im  = cls.get_profile_image(user, "profile", size_type)
         if im and im.url:
-            return im.url
-        return "/media/img/user.png"
+            return (im.url, True)
+        return ("/media/img/user.png", False)
     
     
     @classmethod

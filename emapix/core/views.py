@@ -666,8 +666,9 @@ def get_profile_photo(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
+    (photo_url, photo_exist)  = WImage.get_profile_image_meta(request.user)
     c   = {
-        "photo": WImage.get_profile_image_url(request.user)
+        "photo": photo_url
     }
     
     return render(request, 'profile_photo.html', c)    
@@ -679,9 +680,11 @@ def get_user(request, username):
         userprof2   = UserProfile.objects.get(user__username=username)
         user2       = userprof2.user
         
+        (photo_url, photo_exists)   = WImage.get_profile_image_meta(user2)
         c   = {
             "userprof2":    userprof2,
-            "photo_url":    WImage.get_profile_image_url(user2),
+            "photo_url":    photo_url,
+            "photo_exists": photo_exists,
             "is_you":       is_you(request, user2)
         }
     except UserProfile.DoesNotExist, e:
