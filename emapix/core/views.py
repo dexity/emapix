@@ -447,9 +447,9 @@ def request_status_ajax(request, res, status):
         return server_error_json({"error": str(e)})
     
 
-# XXX: Fix function. photo_id should be passed
+# XXX: Merge remove_request_photo_ajax and remove_photo_ajax?
 @csrf_protect
-def remove_photo_ajax(request, res):
+def remove_request_photo_ajax(request, res):
     "Marks request photo for removal"
     if request.method != "POST":
         return bad_request_json({"error": "Invalid request method"})
@@ -461,6 +461,25 @@ def remove_photo_ajax(request, res):
         return to_status(OK)
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
+
+
+@csrf_protect
+def remove_photo_json(request, photo_id):
+    "Marks request photo for removal"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR})    
+    if request.method != "POST":
+        return bad_request_json({"error": "Invalid request method"})
+    try:
+        photo   = Photo.objects.get(id=photo_id)
+        if photo.user != request.user:
+            return forbidden_json({"error": AUTHOR_ERROR})
+        photo.marked_delete = True
+        photo.save()
+    except Photo.DoesNotExist:
+        return bad_request_json({"error": "Photo does not exist"})
+
+    return to_status(OK)
 
 
 def remove_request_ajax(request, res):
