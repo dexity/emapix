@@ -52,16 +52,29 @@ class Photo(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
+            # Photo is just created
             self.created_time = timestamp()     # Updated when object is created
+            if self.type == "request":
+                try:
+                    userprof    = UserProfile.objects.get(user=self.user)
+                    userprof.num_photos    += 1
+                    userprof.save()
+                except Exception, e:
+                    return
         self.updated_time = timestamp()
-        if self.type == "request":
-            try:
-                userprof    = UserProfile.objects.get(user=self.user)
-                userprof.num_photos    += 1
-                userprof.save()
-            except Exception, e:
-                return        
         super(Photo, self).save(*args, **kwargs)
+        
+        
+    def mark_delete(self):
+        try:
+            userprof    = UserProfile.objects.get(user=self.user)
+            userprof.num_photos    -= 1
+            userprof.save()
+        except Exception, e:
+            return
+        self.marked_delete = True
+        self.save()
+        
     
     def __unicode__(self):
         return ""

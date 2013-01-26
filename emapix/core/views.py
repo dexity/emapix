@@ -474,8 +474,7 @@ def remove_photo_json(request, photo_id):
         photo   = Photo.objects.get(id=photo_id)
         if photo.user != request.user:
             return forbidden_json({"error": AUTHOR_ERROR})
-        photo.marked_delete = True
-        photo.save()
+        photo.mark_delete()
     except Photo.DoesNotExist:
         return bad_request_json({"error": "Photo does not exist"})
 

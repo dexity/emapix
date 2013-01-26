@@ -24,5 +24,4 @@ class WPhoto(object):
         "Removes request photo"
         photo   = cls.request_photo(res)
         if photo:
-            photo.marked_delete = True
-            photo.save()
+            photo.mark_delete()

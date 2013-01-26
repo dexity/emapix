@@ -137,7 +137,7 @@ var LIST    = (function(options){
                         that.load($(aa[0]).attr("href"));
                     });
                     if (typeof options.fnInitComplete === "function"){
-                        options.fnInitComplete();
+                        options.fnInitComplete(data);
                     }
                 },
                 error:  that.loadError

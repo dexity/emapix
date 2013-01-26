@@ -159,7 +159,10 @@
                 submitForm:    $("#submit_form_tmpl")
             },
             fnSubmitCallback:   function(data){
-                if (data !== undefined && data.data !== undefined && data.data.comments_total !== undefined){
+                if (data !== undefined &&
+                    data.data !== undefined &&
+                    data.data.comments_total !== undefined)
+                {
                     $("#comments_badge").html(data.data.comments_total);
                 }
                 comments.load("/comments/json?request={{req.resource}}&page=last");    // Move to last page

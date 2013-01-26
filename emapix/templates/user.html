@@ -33,10 +33,16 @@
         
         <div class="tabbable">
             <ul class="nav nav-tabs" id="user_tabs">
-                <li {% if not active or active == "requests" %}class="active"{% endif %}><a href="#tab_requests" data-toggle="tab">Requests <span class="badge badge-important">{{userprof2.num_requests}}</span></a></li>
-                <li {% if active == "photos" %}class="active"{% endif %}><a href="#tab_photos" data-toggle="tab">Photos <span class="badge badge-success">{{userprof2.num_photos}}</span></a></li>
+                <li {% if not active or active == "requests" %}class="active"{% endif %}>
+                    <a href="#tab_requests" data-toggle="tab">Requests <span id="requests_badge" class="badge badge-important">{{userprof2.num_requests}}</span></a>
+                </li>
+                <li {% if active == "photos" %}class="active"{% endif %}>
+                    <a href="#tab_photos" data-toggle="tab">Photos <span  id="photos_badge" class="badge badge-success">{{userprof2.num_photos}}</span></a>
+                </li>
                 <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
-                <li {% if active == "comments" %}class="active"{% endif %}><a href="#tab_comments" data-toggle="tab">Comments <span class="badge badge-success">{{userprof2.num_comments}}</span></a></li>
+                <li {% if active == "comments" %}class="active"{% endif %}>
+                    <a href="#tab_comments" data-toggle="tab">Comments <span id="comments_badge" class="badge badge-success">{{userprof2.num_comments}}</span></a>
+                </li>
                 <div id="tab_load_spinner"></div>
             </ul>
             <div class="tab-content">
@@ -193,6 +199,14 @@
                         photos.load();
                     }
                 }).init();                
+            },
+            fnInitComplete: function(data){
+                if (data !== undefined &&
+                    data.data !== undefined &&
+                    data.data.photos_total !== undefined)
+                {
+                    $("#photos_badge").html(data.data.photos_total);
+                }                
             }
         });
         
