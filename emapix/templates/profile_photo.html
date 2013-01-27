@@ -3,32 +3,22 @@
 {% block profile_content %}
 
 <div class="row">
-    <div class="span2"><img src="{{photo}}"/></div>
+    <div class="span2"><img src="{{photo_url}}"/></div>
     <div class="span6">
         <button class="btn btn-primary" id="submit_photo">Submit Photo</button>
+        {% if photo_exists %}
         <a href="#" class="red" id="remove_photo" style="margin-left: 50px">Remove Photo</a>
-    </div>
-</div>
-
-<div id="remove_photo_modal" class="modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Remove Photo</h3>
-    </div>
-    <div class="modal-body">
-        <div class="alert">Are you sure you want to remove the photo?</div>
-    </div>
-    <div class="modal-footer">
-        <div class="e-alert-head e-alert-inline alert-error pull-left" style="display: none">Error messages Making some comments about this place</div>
-        <img src="/media/img/spinner_small.gif" id="remove_photo_spinner" style="display: none" class="e-button-spinner"/>
-        <button class="btn btn-primary">Remove Photo</button>
-        <a href="#" data-dismiss="modal">Cancel</a>
+        {% endif %}
     </div>
 </div>
 
 <div id="photo_container">
     {% include "modals/submit.html" %}
 </div>
+<div id="modal_container"></div>
+
+<!-- General csrf token -->
+{% csrf_token %}
 
 {% endblock %}
 
@@ -43,6 +33,7 @@
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
 <script src="/media/fileuploader/js/locale.js"></script>
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
+<script src="/media/js/modal.js"></script>
 <script src="/media/js/submit_photo.js"></script>
 
 <script type="text/javascript">
@@ -69,10 +60,20 @@
 	    sub.show_select();
 	});        
         
-        $("#remove_photo").click(function(e) {
-            e.preventDefault();
-            $("#remove_photo_modal").modal();
-        });        
+        MODAL({
+            container:  "modal_container",
+            link:       "remove_photo",
+            url:        "/profile/photo/remove/json",
+            body:       '<div class="alert error_spaces">Are you sure you want to remove the photo?</div>',
+            header:     "Remove Photo",
+            btn_label:  "Remove Photo",
+            extra_fields:   {
+                "csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()
+            },
+            callback:   function(){
+                window.location.href = "/profile/photo"
+            }
+        }).init();  
     })        
 </script>
 

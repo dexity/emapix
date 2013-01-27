@@ -658,6 +658,11 @@ def edit_profile(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
+    if request.method == "POST":
+        pass
+    
+    # XXX: Finish
+    
     return render(request, 'edit_profile.html')
 
 
@@ -672,12 +677,31 @@ def get_profile_photo(request):
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
     
-    (photo_url, photo_exist)  = WImage.get_profile_image_meta(request.user)
+    (photo_url, photo_exists)  = WImage.get_profile_image_meta(request.user)
     c   = {
-        "photo": photo_url
+        "photo_url":    photo_url,
+        "photo_exists": photo_exists
     }
     
     return render(request, 'profile_photo.html', c)    
+    
+    
+def remove_profile_photo_json(request):
+    "Removes profile photo"
+    if not request.user.is_authenticated():
+        return forbidden_json({"error": AUTH_ERROR})    
+    if request.method != "POST":
+        return bad_request_json({"error": "Invalid request method"})
+    try:
+        photos   = Photo.objects.filter(user=request.user).filter(type="profile")
+        if not photos.exists():
+            return bad_request_json({"error": "Profile photo does not exist"})
+        photo   = photos[0]
+        photo.mark_delete()
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
+
+    return to_status(OK)    
     
 
 def get_user(request, username):

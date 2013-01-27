@@ -38,7 +38,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^profile/photo/select$", "profile_photo_select"),
     url(r"^profile/photo/crop$", "profile_photo_crop"),
     url(r"^profile/photo/create$", "profile_photo_create"),
-    url(r"^profile/photo/remove$", "remove_profile_photo"),
+    url(r"^profile/photo/remove/json$", "remove_profile_photo_json"),
     
     # Photo submit methods
     url(r"^submit/select/%s$" % REQ_REGEX, "submit_select"),
