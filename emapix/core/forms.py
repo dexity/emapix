@@ -24,27 +24,27 @@ def hidden_field():
 
 class JoinForm(forms.Form):
     username    = forms.CharField(max_length=100,
-                                  widget=text_widget(),
-                                  validators=[RegexValidator(regex      = re.compile(USERNAME_REGEX),
-                                                             message    = "Should contain 5 or more letters A-Z or numbers 0-9",
-                                                             code       = "username"),
-                                              UsernameExists("Username already exists",
-                                                            "username_exists",
-                                                            User.objects)])
+                    widget=text_widget(),
+                    validators=[RegexValidator(regex      = re.compile(USERNAME_REGEX),
+                                               message    = "Should contain 5 or more letters A-Z or numbers 0-9",
+                                               code       = "username"),
+                                UsernameExists("Username already exists",
+                                              "username_exists",
+                                              User.objects)])
     email       = forms.EmailField(max_length=100,
-                                  widget=text_widget(),
-                                  validators=[EmailExists("Email already exists",
-                                                           "email_exists",
-                                                           User.objects)])
+                    widget=text_widget(),
+                    validators=[EmailExists("Email already exists",
+                                             "email_exists",
+                                             User.objects)])
     password    = forms.CharField(max_length=30,
-                                  widget=password_widget(),
-                                  validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX),
-                                                             message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
-                                                             code       = "password")])
+                    widget=password_widget(),
+                    validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX),
+                                               message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
+                                               code       = "password")])
     location    = forms.CharField(max_length=100,
-                                  required=False,
-                                  widget=forms.TextInput(attrs={"class": "input-large",
-                                                                "placeholder": "City, State"}))
+                    required=False,
+                    widget=forms.TextInput(attrs={"class": "input-large",
+                                                  "placeholder": "City, State"}))
     country     = forms.ChoiceField(choices=[("", "Select Country")] + COUNTRY_CHOICES,
                                     required=False,
                                     widget=forms.Select(attrs={"class": "input-medium"}))

@@ -1,6 +1,16 @@
 {% extends "base.html" %}
 
-{% block header %}
+{% block content %}
+<div class="pull-left"><h3>Join Emapix</h3></div>
+<div class="e-alert-head alert-success pull-left">It's <b>easy</b> and <b>free</b>.</div>
+<div class="clear_both"></div>
+
+<div class="span10">
+    {% include "forms/join_form.html" %}
+</div>
+{% endblock %}
+
+{% block footer %}
 <script type="text/javascript">
     $(document).ready(function(){
         fadeOutErrors();
@@ -16,15 +26,4 @@
         });
     });
 </script>
-{% endblock header %}
-
-{% block content %}
-<div class="pull-left"><h3>Join Emapix</h3></div>
-<div class="e-alert-head alert-success pull-left">It's <b>easy</b> and <b>free</b>.</div>
-<div class="clear_both"></div>
-
-<div class="span10">
-    {% include "forms/join_form.html" %}
-</div>
- 
-{% endblock content %}
+{% endblock %}

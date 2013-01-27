@@ -39,10 +39,13 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^profile/photo/create$", "profile_photo_create"),
     url(r"^profile/photo/remove/json$", "remove_profile_photo_json"),
     
-    # Photo submit methods
+    # Photo methods
     url(r"^submit/select/%s$" % REQ_REGEX, "submit_select"),
     url(r"^submit/crop/%s$" % REQ_REGEX, "submit_crop"),
     url(r"^submit/create/%s$" % REQ_REGEX, "submit_create"),
+    url(r"^photos$", "recent_photos"),
+    
+    # Search methods
     
     # Ajax
     url(r"^request/add$", "add_request"),
@@ -66,7 +69,6 @@ urlpatterns = patterns("emapix.core.views",
     
     # Layouts
     url(r"^help$", "help"),
-    url(r"^photos$", "recent_photos"),
     url(r"^search$", "search"),
     url(r"^search2$", "search2"),
     

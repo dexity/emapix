@@ -39,9 +39,6 @@ from emapix.core.forms import RecaptchaForm
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.views")
 
-#def index(request):
-#    return render_to_response("index.html")
-
 
 def generate_token(value):
     "Generates 40 character token"
@@ -69,7 +66,6 @@ def join(request):
                 "gender":       form.cleaned_data["gender"],
                 "token":        generate_token(form.cleaned_data["username"])  # token for confirmation    
             }
-
             request.session["join"] = join_session
             return HttpResponseRedirect("/recaptcha")
     else:
