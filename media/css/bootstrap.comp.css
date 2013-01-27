@@ -21,9 +21,11 @@ hr {
     margin-top: 10px;
 }
 .form-horizontal .control-group {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
 }
-
+.form-horizontal .help-block {
+    margin-top: 3px;
+}
 .modal-footer .btn {
     float: none;
     margin-right: 10px;

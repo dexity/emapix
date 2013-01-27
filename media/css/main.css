@@ -259,7 +259,8 @@ a img {
 /* Form */
 .alert-error.error_spaces,
 .alert-danger.error_spaces {
-    margin: 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
 
 .e-text-small {

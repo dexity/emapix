@@ -3,9 +3,7 @@
 {% block header %}
 <script type="text/javascript">
     $(document).ready(function(){
-        $("input").focus(function(){
-            $(".alert-error").fadeOut(1000);
-        });
+        fadeOutErrors();
         
         $("select[id='{{ form.b_month.auto_id }}']").change(function(){
             days    = '<option value="" selected="selected">Day</option>';
@@ -22,98 +20,11 @@
 
 {% block content %}
 <div class="pull-left"><h3>Join Emapix</h3></div>
-<div class="e-alert-head alert-success pull-left">It's easy and free. Take a breath... and you are done!</div>
+<div class="e-alert-head alert-success pull-left">It's <b>easy</b> and <b>free</b>.</div>
 <div class="clear_both"></div>
+
 <div class="span10">
-  <form class="form-horizontal" action="/join" method="post" >
-    {% csrf_token %}
-    <fieldset>
-      <div class="control-group">
-        <label class="control-label" for="{{ form.username.auto_id }}"><b>{{ form.username.label }}</b></label>
-        <div class="controls">
-            {{ form.username }}
-            <span class="help-inline e-color-grey">(Required)</span>
-            <span class="help-block">Username can only contain letters A-Z or numbers 0-9</span>
-            {% if form.username.errors %}
-            <div class="alert alert-error error_spaces" style="">
-                <button class="close" data-dismiss="alert">×</button>
-                {{ form.username.errors|first }}
-            </div>
-            {% endif %}
-        </div>
-      </div>
-      
-      <div class="control-group">
-        <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
-        <div class="controls">
-            {{ form.email }}
-            <span class="help-inline e-color-grey">(Required)</span>
-            {% if form.email.errors %}
-            <div class="alert alert-error error_spaces" style="">
-                <button class="close" data-dismiss="alert">×</button>
-                {{ form.email.errors|first }}
-            </div>
-            {% endif %}
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="{{ form.password.auto_id }}"><b>{{ form.password.label }}</b></label>
-        <div class="controls">
-            {{ form.password }}
-            <span class="help-inline e-color-grey">(Required)</span>
-            <span class="help-block">Password should be from 6 to 30 characters</span>
-            {% if form.password.errors %}
-            <div class="alert alert-error error_spaces" style="">
-                <button class="close" data-dismiss="alert">×</button>
-                {{ form.password.errors|first }}
-            </div>
-            {% endif %}
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="{{ form.location.auto_id }}"><b>{{ form.location.label }}</b></label>
-        <div class="controls">
-            {{ form.location }}
-            {{ form.country }}
-            {% if form.location.errors %}
-            <div class="alert alert-error error_spaces" style="">
-                <button class="close" data-dismiss="alert">×</button>
-                {{ form.location.errors|first }}
-            </div>
-            {% endif %}
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label"><b>Birthday</b></label>
-        <div class="controls">
-            {{ form.b_month }}
-            {{ form.b_day }}
-            {{ form.b_year }}
-            <span class="help-inline e-color-grey">
-                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)</span>          
-            {% if form.b_year.errors %}
-            <div class="alert alert-error error_spaces" style="">
-                <button class="close" data-dismiss="alert">×</button>
-                {{ form.b_year.errors|first }}
-            </div>
-            {% endif %}
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
-        <div class="controls">
-            {% for radio in form.gender %}
-            <div class="radio inline">
-                {{ radio }}
-            </div>
-            {% endfor %}
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Join Emapix</button>
-      </div>      
-    </fieldset>
-  </form>
+    {% include "forms/join_form.html" %}
 </div>
  
 {% endblock content %}

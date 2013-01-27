@@ -15,6 +15,13 @@ var month_days = {
     "DEC":  31,
 }
 
+function fadeOutErrors()
+{
+    $("input").focus(function(){
+        $(".alert-error").fadeOut(1000);
+    });
+}
+
 function set_error(error_msg, container)
 {
     var c   = container;
