@@ -8,7 +8,10 @@
         theme : 'custom',
         custom_theme_widget: 'recaptcha_widget'
     };
-</script>
+    $(document).ready(function(){
+        fadeOutErrors();
+    });
+</script>   
 {% endblock %}
 
 {% block content %}
@@ -19,3 +22,4 @@
 {% include "forms/recaptcha_form.html" %}
 
 {% endblock %}
+

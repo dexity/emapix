@@ -95,10 +95,10 @@ def handle_recaptcha(request):
             username        = join_session["username"]
             email           = join_session["email"]
             token           = join_session["token"]
-            
-            join_form       = JoinForm()    # XXX: Bind the form
+
             # Creates user
             try:
+                raise
                 user        = User()
                 user.username = username
                 user.email  = email
@@ -106,12 +106,12 @@ def handle_recaptcha(request):
                 user.is_active  = False
                 user.save()
             except Exception, e:
-                logger.error(str(e))
+                logger.error("User create error: %s" % e)
+                clean_join_session(request)
                 c   = {
-                    "form":     join_form,
-                    "hide_join":    True
+                    "error": "New user account can't be created at this time. Please try again later"
                 }
-                return render(request, "join.html", c)
+                return render(request, "misc/error_view.html", c)
             
             profile     = UserProfile()
             profile.user    = user
@@ -132,14 +132,29 @@ def handle_recaptcha(request):
             
             clean_join_session(request)
             request.session.set_expiry(None)
+            logger.info("New user: %s" % username)
             
-            return render(request, "message.html", {"type": "verify", "hide_join": True})
-    
+            # Redirect to welcome page
+            request.session["joined"]   = True
+            return HttpResponseRedirect("/welcome")
+
     c   = {
         "form":  form,
         "hide_join":    True
     }
     return render(request, "recaptcha.html", c)
+
+
+def welcome(request):
+    "Redirects to welcome page"
+    if request.session.has_key("joined") and request.session["joined"]:
+        del request.session["joined"]
+        c   = {
+            "hide_join": True,
+            "msg":      render_to_string("msg/confirm.html")
+        }
+        return render(request, "message.html", c)
+    return HttpResponseRedirect("/")
 
 
 def clean_join_session(request):

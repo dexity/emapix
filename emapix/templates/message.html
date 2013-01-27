@@ -1,82 +1,22 @@
 {% extends "base.html" %}
 
-{% block header %}
-<script type="text/javascript">
-    
-    function fadeToMain() {
-        $("#message").fadeOut(10000, function(){
-            window.location.replace("/");
-        });        
-    }
-    
-</script>
+{% block content %}
+<div class="row" id="message">
+    {{msg}}
+</div>
+
 {% endblock %}
 
-{% block content %}
-    {% if type == "verify" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-success">
-            <b>Thank you for joining Emapix!</b><br />
-            Verification message is sent to your email. Please click the link in the message
-            to confirm the registration.
-            <br />
-        </div>
-    </div>
-    {% endif %}
+{% block footer %}
+<script type="text/javascript">
     
-    {% if type == "confirm" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-success">
-            <b>Welcome to Emapix!</b><br />
-            You can now send photo requests or help other people to see the world.
-            See some <a href="/photos">Photos</a> submitted by other users. 
-            For help go to <a href="/help">Help</a> page.<br />
-            <br />
-            Explore the world!<br/>
-        </div>
-    </div>
-    {% endif %}    
-    
-    {% if type == "confirm_failed" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-error">
-            <b>Confirmation failed</b><br />
-            Something is wrong. Confirmation token is either invalid or expired.
-            Please visit <a href="/verify/resend">Resend Verification</a> page to resend verification link
-            <br/>
-        </div>
-    </div>
-    {% endif %}    
+    $(document).ready(function(){
+        $("#message").click(function(){
+            $("#message").fadeOut(10000, function(){
+                window.location.replace("/");
+            });         
+        });
+    });
 
-    {% if type == "forgot" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-success">
-            <b>New password request</b><br />
-            The new password request is sent to your email. Please click the link in the message
-            to get your new password.
-            <br />
-        </div>
-    </div>
-    {% endif %}
-
-    {% if type == "newpass_failed" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-error">
-            <b>Password renewal failed</b><br />
-            Something is wrong. Password renewal token is either invalid or expired.
-            Please visit <a href="/forgot">Forgot Password</a> page to send another request.
-            <br/>
-        </div>
-    </div>    
-    {% endif %}
-
-    {% if type == "newpass_success" %}
-    <div class="row" id="message" onclick="fadeToMain()">
-        <div class="span8 alert alert-success">
-            <b>New password set</b><br />
-            New password has been applied.
-        </div>
-    </div>
-    {% endif %}  
-    
+</script>
 {% endblock %}
