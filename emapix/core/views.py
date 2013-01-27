@@ -704,7 +704,7 @@ def remove_profile_photo_json(request):
     return to_status(OK)    
     
 
-def get_user(request, username):
+def get_user(request, username, tab="requests"):
     "Displays user profile"
     try:
         userprof2   = UserProfile.objects.get(user__username=username)
@@ -720,7 +720,7 @@ def get_user(request, username):
     except UserProfile.DoesNotExist, e:
         return render(request, 'misc/error_view.html', {"error": str(e)})
     
-    tab   = request.GET.get("tab", None)
+    #tab   = request.GET.get("tab", None)
     if tab in ["requests", "photos", "comments"]:
         c["active"]  = tab
     
@@ -849,7 +849,7 @@ def get_user_photos_json(request, username):
                   .exclude(photo__marked_delete=True) \
                   .filter(photo__user=userprof2.user)\
                   .order_by("-photo__updated_time")    
-    paginator   = Paginator(phreqs, 3)   # 12 items per page
+    paginator   = Paginator(phreqs, 12)   # 12 items per page
     page        = request.GET.get("page")
     
     (paged_phreqs, page_num)   = paginated_items(paginator, page)

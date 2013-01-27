@@ -42,15 +42,21 @@
         
         <div class="tabbable">
             <ul class="nav nav-tabs" id="user_tabs">
-                <li {% if not active or active == "requests" %}class="active"{% endif %}>
-                    <a href="#tab_requests" data-toggle="tab">Requests <span id="requests_badge" class="badge badge-important">{{userprof2.num_requests}}</span></a>
+                <li>
+                    <a href="#tab_requests" data-toggle="tab">
+                        Requests <span id="requests_badge" class="badge badge-important">{{userprof2.num_requests}}</span>
+                    </a>
                 </li>
-                <li {% if active == "photos" %}class="active"{% endif %}>
-                    <a href="#tab_photos" data-toggle="tab">Photos <span  id="photos_badge" class="badge badge-success">{{userprof2.num_photos}}</span></a>
+                <li>
+                    <a href="#tab_photos" data-toggle="tab">
+                        Photos <span  id="photos_badge" class="badge badge-success">{{userprof2.num_photos}}</span>
+                    </a>
                 </li>
                 <!--<li><a href="#tab_areas" data-toggle="tab">Areas <span class="badge badge-success">5</span></a></li>-->
-                <li {% if active == "comments" %}class="active"{% endif %}>
-                    <a href="#tab_comments" data-toggle="tab">Comments <span id="comments_badge" class="badge badge-success">{{userprof2.num_comments}}</span></a>
+                <li>
+                    <a href="#tab_comments" data-toggle="tab">
+                        Comments <span id="comments_badge" class="badge badge-success">{{userprof2.num_comments}}</span>
+                    </a>
                 </li>
                 <div id="tab_load_spinner"></div>
             </ul>
@@ -246,14 +252,18 @@
             }
             
         });     
-        
-        requests.load();
+
         //load_requests();
         //$('a[data-toggle="tab"]').on('show', function (e) {
         //    console.debug(e.target.hash)
         //})
-        
-        //$('a[href="#tab_requestss"]').tab("show");
+        {% if active == "photos" %}
+        $('a[href="#tab_photos"]').tab("show");
+        {% elif active == "comments" %}
+        $('a[href="#tab_comments"]').tab("show");
+        {% else %}
+        $('a[href="#tab_requests"]').tab("show");
+        {% endif %}
     })
 </script>
 

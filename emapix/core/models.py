@@ -28,6 +28,16 @@ class UserProfile(models.Model):
         return ""
 
 
+    @classmethod
+    def change_num_photos(cls, user, change_num):
+        try:
+            userprof    = cls.objects.get(user=user)
+            userprof.num_photos    += change_num
+            userprof.save()
+        except Exception, e:
+            pass
+
+
 class UserStatus(models.Model):
     user    = models.ForeignKey(UserProfile)
     status  = models.CharField(max_length=16, choices=STATUS_CHOICES)
@@ -55,26 +65,17 @@ class Photo(models.Model):
             # Photo is just created
             self.created_time = timestamp()     # Updated when object is created
             if self.type == "request":
-                try:
-                    userprof    = UserProfile.objects.get(user=self.user)
-                    userprof.num_photos    += 1
-                    userprof.save()
-                except Exception, e:
-                    return
+                UserProfile.change_num_photos(self.user, 1)
         self.updated_time = timestamp()
         super(Photo, self).save(*args, **kwargs)
         
         
     def mark_delete(self):
-        try:
-            userprof    = UserProfile.objects.get(user=self.user)
-            userprof.num_photos    -= 1
-            userprof.save()
-        except Exception, e:
-            return
+        if self.type == "request":
+            UserProfile.change_num_photos(self.user, -1)
         self.marked_delete = True
         self.save()
-        
+    
     
     def __unicode__(self):
         return ""
