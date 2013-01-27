@@ -643,8 +643,14 @@ def get_profile(request):
             - "View photos"
             - "View comments"
     """
-    
-    return render(request, 'profile_general.html')  #
+    try:
+        userprof    = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return render(request, 'misc/error_view.html', {"error": "User does not exist"})
+    c   = {
+        "userprof": userprof
+    }
+    return render(request, 'profile_general.html', c)
 
 
 def edit_profile(request):
@@ -819,7 +825,7 @@ def get_user_photos_json(request, username):
                   .exclude(photo__marked_delete=True) \
                   .filter(photo__user=userprof2.user)\
                   .order_by("-photo__updated_time")    
-    paginator   = Paginator(phreqs, 12)   # 12 items per page
+    paginator   = Paginator(phreqs, 3)   # 12 items per page
     page        = request.GET.get("page")
     
     (paged_phreqs, page_num)   = paginated_items(paginator, page)
