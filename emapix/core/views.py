@@ -189,27 +189,41 @@ def confirm(request, token):
 
 @csrf_protect
 def login(request):
-    if request.method == "POST":
-        form    = LoginForm(request.POST)
-        if form.is_valid():
-            django_auth.login(request, form.cleaned_data["user"])   # should have user authenticated already
-            return HttpResponseRedirect("/")
-    else:
-        form    = LoginForm()
+    "Loggs user in"
     c   = {
-        "form": form,
         "hide_join":    True
     }
+    if request.method == "POST":
+        form    = LoginForm(request.POST)
+        if not form.is_valid():
+            c["form"]   = form
+            return render(request, 'login.html', c)
+        
+        django_auth.login(request, form.cleaned_data["user"])   # should have user authenticated already
+        return HttpResponseRedirect("/")
+
+    c["form"]   = LoginForm()
     return render(request, 'login.html', c)
 
 
 def logout(request):
+    "Loggs user out"
     django_auth.logout(request)
     return HttpResponseRedirect("/")
 
 
+def verify_resend(request):
+    "Sends verification token again"
+    # XXX: Finish
+    pass
+
+
 @csrf_protect
 def forgot(request):
+    "Handles forgot request"
+    c   = {
+        "hide_join":    True
+    }    
     if request.method == "POST":
         form    = ForgotForm(request.POST)
         if form.is_valid():
@@ -222,15 +236,14 @@ def forgot(request):
                 profile.save()
                 
                 send_forgot_email(request, user.email, user.username, token)
-                return render(request, "message.html", {"type": "forgot"})
-            
+                c["msg"]    = render_to_string("msg/forgot.html")
+                return render(request, "message.html", c)
             except Exception, e:
-                logger.error(str(e))
-    else:
-        form    = ForgotForm()
-    c   = {
-        "form": form
-    }
+                logger.error("Forgot form failed: %s" % e)
+        c["form"]   = form
+        return render(request, 'forgot.html', c)        
+
+    c["form"]   = ForgotForm()
     return render(request, 'forgot.html', c)
 
 
