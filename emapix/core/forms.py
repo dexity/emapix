@@ -93,7 +93,17 @@ class LoginForm(forms.Form):
             raise forms.ValidationError(msg, code=code)
         
         if not user.is_active:
-            raise forms.ValidationError("User profile is not activated. Please check email", code="activ_failed")
+            raise forms.ValidationError("User profile is not active. Please refer to Help page.", code="activ_failed")
+        
+        # Note: This is a bit harsh. User is required to click validation link before logging in
+        try:
+            from emapix.core.models import UserProfile
+            prof    = UserProfile.objects.get(user=user)
+            if prof.activ_token:
+                raise forms.ValidationError("User account is not activated. \
+                                            Please check your email or resend activation code: www.emapix.com/verify/resend", code="activ_failed")
+        except UserProfile.DoesNotExist:
+            raise forms.ValidationError("User account was not created", code=code)
         
         cleaned_data["user"]    = user
         return cleaned_data
@@ -118,6 +128,17 @@ class ForgotForm(forms.Form):
         except Exception, e:
             raise forms.ValidationError(msg, code=code)
 
+
+class ResendForm(forms.Form):
+    email       = forms.EmailField(max_length=100,
+                                  widget=text_widget())
+    
+    def clean(self):
+        cleaned_data = super(forms.Form, self).clean()
+        email    = cleaned_data.get("email")        
+    
+        return cleaned_data
+        
 
 class NewPasswordForm(forms.Form):
     newpass    = forms.CharField(max_length=30,

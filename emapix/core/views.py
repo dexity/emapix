@@ -199,7 +199,8 @@ def login(request):
             c["form"]   = form
             return render(request, 'login.html', c)
         
-        django_auth.login(request, form.cleaned_data["user"])   # should have user authenticated already
+        # Should have user authenticated already
+        django_auth.login(request, form.cleaned_data["user"])   
         return HttpResponseRedirect("/")
 
     c["form"]   = LoginForm()
@@ -214,8 +215,14 @@ def logout(request):
 
 def verify_resend(request):
     "Sends verification token again"
-    # XXX: Finish
-    pass
+    c   = {
+        "hide_join":    True
+    }       
+    if request.method == "POST":
+        pass
+    
+    c["form"]   = ResendForm()
+    return render(request, "resend.html", c)
 
 
 @csrf_protect
@@ -249,7 +256,7 @@ def forgot(request):
 
 @csrf_protect
 def renew_password(request, token):
-
+    "Renews password"
     try:
         profile = UserProfile.objects.get(forgot_token = token)
         if request.method == "POST":
