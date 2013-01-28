@@ -154,7 +154,7 @@ def welcome(request):
         del request.session["joined"]
         c   = {
             "hide_join": True,
-            "msg":      render_to_string("msg/confirm.html")
+            "msg":      render_to_string("msg/verify.html")
         }
         return render(request, "message.html", c)
     return HttpResponseRedirect("/")
@@ -170,20 +170,19 @@ def clean_join_session(request):
 
 def confirm(request, token):
     # Check user token
-    c   = {}
+    c   = {
+        "hide_join":    True
+    }
     try:
         profile = UserProfile.objects.get(activ_token = token)
         profile.user.is_active  = True
         profile.user.save()
         profile.activ_token = None
         profile.save()
-        c   = {
-            "type": "confirm",
-            "hide_join":    True
-        }
+        c["msg"]    = render_to_string("msg/confirm.html")
     except Exception, e:
-        logger.debug(str(e))
-        c   = {"type": "confirm_failed"}
+        logger.error("Activation failed: %s" % e)
+        c["msg"]    = render_to_string("msg/confirm_failed.html")
 
     return render(request, "message.html", c)
 

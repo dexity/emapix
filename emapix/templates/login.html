@@ -1,50 +1,18 @@
 {% extends "base.html" %}
 
-{% block header %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("input").focus(function(){
-            $(".alert-error").fadeOut(1000);
-        });
-    });
-</script>
-{% endblock header %}
-
 {% block content %}
-
+    
 <h3>Login</h3>
 <div class="span10">
-<form class="form-horizontal" action="/login" method="post" >
-    {% csrf_token %}
-    <fieldset>
-	<div class="control-group">
-	    <label class="control-label" for="{{ form.username.auto_id }}"><b>{{ form.username.label }}</b></label>
-	    <div class="controls"> 		
-		{{ form.username }}
-	    </div>   
-	</div>
-      <div class="control-group">
-        <label class="control-label" for="{{ form.password.auto_id }}"><b>{{ form.password.label }}</b></label>
-        <div class="controls">
-	    {{ form.password }}
-	    <span class="help-inline"><a href="/forgot">Forgot?</a></span>
-	    {% if form.non_field_errors %}
-	    <div class="alert alert-error error_spaces" style="">
-		<button class="close" data-dismiss="alert">×</button>
-		{{ form.non_field_errors|first }}
-	    </div>
-	    {% endif %}
-        </div>
-      </div>
-      <div class="control-group">
-        <div class="controls">
-	    <button type="submit" class="btn btn-primary">Login</button>
-	    <div class="e-margin-bottom-20"></div>
-	    Don't have an account? <a href="/join">Create one</a>
-        </div>
-      </div>
-    </fieldset>
-</form>
+{% include "forms/login_form.html" %}
 </div>
 
-{% endblock content %}
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        fadeOutErrors();
+    });
+</script>
+{% endblock %}
