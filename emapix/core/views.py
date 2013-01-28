@@ -52,27 +52,31 @@ def join(request):
     
     if request.method == "POST":
         form    = JoinForm(request.POST)
-        if form.is_valid():
-            request.session.set_expiry(3600)    # 1 hour
-            join_session    = {
-                "username":     form.cleaned_data["username"],
-                "email":        form.cleaned_data["email"],
-                "password":     form.cleaned_data["password"],
-                "location":     form.cleaned_data["location"],
-                "country":      form.cleaned_data["country"],
-                "b_day":        form.cleaned_data["b_day"],
-                "b_month":      form.cleaned_data["b_month"],
-                "b_year":       form.cleaned_data["b_year"],
-                "gender":       form.cleaned_data["gender"],
-                "token":        generate_token(form.cleaned_data["username"])  # token for confirmation    
+        if not form.is_valid():
+            c   = {
+                "form":     form,
+                "hide_join":    True
             }
-            request.session["join"] = join_session
-            return HttpResponseRedirect("/recaptcha")
-    else:
-        form    = JoinForm()
+            return render(request, "join.html", c)
+            
+        request.session.set_expiry(3600)    # 1 hour
+        join_session    = {
+            "username":     form.cleaned_data["username"],
+            "email":        form.cleaned_data["email"],
+            "password":     form.cleaned_data["password"],
+            "location":     form.cleaned_data["location"],
+            "country":      form.cleaned_data["country"],
+            "b_day":        form.cleaned_data["b_day"],
+            "b_month":      form.cleaned_data["b_month"],
+            "b_year":       form.cleaned_data["b_year"],
+            "gender":       form.cleaned_data["gender"],
+            "token":        generate_token(form.cleaned_data["username"])  # token for confirmation    
+        }
+        request.session["join"] = join_session
+        return HttpResponseRedirect("/recaptcha")
 
     c   = {
-        "form":     form,
+        "form":     JoinForm(),
         "hide_join":    True
     }
     return render(request, "join.html", c)
@@ -98,7 +102,6 @@ def handle_recaptcha(request):
 
             # Creates user
             try:
-                raise
                 user        = User()
                 user.username = username
                 user.email  = email

@@ -49,7 +49,7 @@ class JoinForm(forms.Form):
                                     required=False,
                                     widget=forms.Select(attrs={"class": "input-medium"}))
     
-    b_day       = forms.ChoiceField(choices=[("", "Day")],
+    b_day       = forms.ChoiceField(choices=[("", "Day")] + month_days(31),
                                     required=False,
                                     widget=forms.Select(attrs={"class": "input-mini"}))
     b_month     = forms.ChoiceField(choices=[("", "Month")] + MONTH_CHOICES,
