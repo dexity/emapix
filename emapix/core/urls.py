@@ -8,7 +8,8 @@ urlpatterns = patterns("emapix.core.views",
     
     # Auth methods
     url(r"^join$", "join"),
-    url(r"^welcome$", "welcome"),
+    url(r"^welcome$", "welcome"),   # Redirection after user joined the service   
+    url(r"^success$", "success"),   # Redirection after successfull form
     url(r"^verify/resend$", "verify_resend"),
     url(r"^recaptcha$", "handle_recaptcha"),
     url(r"^confirm/(\w{40})$", "confirm"),

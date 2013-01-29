@@ -160,6 +160,21 @@ def welcome(request):
     return HttpResponseRedirect("/")
 
 
+def success(request, redirect_path="/"):
+    "Success redirection"
+    try:
+        c   = {
+            "hide_join": True,
+            "msg":  render_to_string(request.session["msg_tmpl"])
+        }
+        del request.session["msg_tmpl"]
+        return render(request, "message.html", c)
+    except Exception, e:
+        pass
+
+    return HttpResponseRedirect(redirect_path)
+
+
 def clean_join_session(request):
     "Remove join session"
     try:
@@ -219,7 +234,17 @@ def verify_resend(request):
         "hide_join":    True
     }       
     if request.method == "POST":
-        pass
+        form    = ResendForm(request.POST)
+        if not form.is_valid():
+            c["form"]   = form
+            return render(request, "resend.html", c)
+        
+        # Should be set by now
+        prof    = form.cleaned_data["user_profile"]
+        # Send activation email again
+        send_activation_email(request, prof.user.email, prof.user.username, prof.activ_token)
+        request.session["msg_tmpl"]  = "msg/verify_resend.html"
+        return HttpResponseRedirect("/success")
     
     c["form"]   = ResendForm()
     return render(request, "resend.html", c)
@@ -243,6 +268,7 @@ def forgot(request):
                 profile.save()
                 
                 send_forgot_email(request, user.email, user.username, token)
+                
                 c["msg"]    = render_to_string("msg/forgot.html")
                 return render(request, "message.html", c)
             except Exception, e:

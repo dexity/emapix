@@ -78,7 +78,7 @@ class LoginForm(forms.Form):
                                   validators=[RegexValidator(regex      = re.compile(PASSWORD_REGEX))])    
 
     def clean(self):
-        cleaned_data = super(forms.Form, self).clean()
+        cleaned_data = super(LoginForm, self).clean()
         username    = cleaned_data.get("username")
         password    = cleaned_data.get("password")
         
@@ -103,7 +103,7 @@ class LoginForm(forms.Form):
                 raise forms.ValidationError("User account is not activated. \
                                             Please check your email or resend activation code: www.emapix.com/verify/resend", code="activ_failed")
         except UserProfile.DoesNotExist:
-            raise forms.ValidationError("User account was not created", code=code)
+            raise forms.ValidationError("User account doesn't exist", code=code)
         
         cleaned_data["user"]    = user
         return cleaned_data
@@ -114,7 +114,7 @@ class ForgotForm(forms.Form):
                                   widget=text_widget())
     
     def clean(self):
-        cleaned_data = super(forms.Form, self).clean()
+        cleaned_data = super(ForgotForm, self).clean()
         email    = cleaned_data.get("email")        
     
         msg     = "Account with this email does not exist"
@@ -129,16 +129,20 @@ class ForgotForm(forms.Form):
             raise forms.ValidationError(msg, code=code)
 
 
-class ResendForm(forms.Form):
-    email       = forms.EmailField(max_length=100,
-                                  widget=text_widget())
+class ResendForm(ForgotForm):
     
     def clean(self):
-        cleaned_data = super(forms.Form, self).clean()
-        email    = cleaned_data.get("email")        
-    
-        return cleaned_data
+        cleaned_data = super(ResendForm, self).clean()
+        try:
+            prof    = UserProfile.objects.get(user=cleaned_data["user"])
+            if not prof.activ_token:
+                raise forms.ValidationError("User account is active")
+            cleaned_data["user_profile"]    = prof
+        except UserProfile.DoesNotExist:
+            raise forms.ValidationError("User account doesn't exist")
         
+        return cleaned_data
+
 
 class NewPasswordForm(forms.Form):
     newpass    = forms.CharField(max_length=30,
@@ -150,7 +154,7 @@ class NewPasswordForm(forms.Form):
                                   widget=password_widget())
     
     def clean(self):
-        cleaned_data = super(forms.Form, self).clean()
+        cleaned_data = super(NewPasswordForm, self).clean()
         newpass     = cleaned_data.get("newpass")
         renewpass   = cleaned_data.get("renewpass")
         
