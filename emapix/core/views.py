@@ -269,8 +269,8 @@ def forgot(request):
                 
                 send_forgot_email(request, user.email, user.username, token)
                 
-                c["msg"]    = render_to_string("msg/forgot.html")
-                return render(request, "message.html", c)
+                request.session["msg_tmpl"] = "msg/forgot.html"
+                return HttpResponseRedirect("/success")
             except Exception, e:
                 logger.error("Forgot form failed: %s" % e)
         c["form"]   = form
