@@ -1,0 +1,33 @@
+{% csrf_token %}
+<fieldset>
+  <div class="control-group">
+    <label class="control-label" for="{{ form.email.auto_id }}"><b>New Password</b></label>
+    <div class="controls">
+        {{ form.newpass }}
+        {% if form.newpass.errors %}
+        <div class="alert alert-error error_spaces" style="">
+            <button class="close" data-dismiss="alert">×</button>
+            {{ form.newpass.errors|first }}
+        </div>
+        {% endif %}            
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="{{ form.email.auto_id }}"><b>Repeat New Password</b></label>
+    <div class="controls">
+        {{ form.renewpass }}
+        {% if form.non_field_errors %}
+        <div class="alert alert-error error_spaces" style="">
+            <button class="close" data-dismiss="alert">×</button>
+            {{ form.non_field_errors|first }}
+        </div>
+        {% endif %}            
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+        <button type="submit" class="btn btn-primary">Create New Password</button>
+        <a class="btn" href="/">Cancel</a>
+    </div>
+  </div>
+</fieldset>

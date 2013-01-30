@@ -7,7 +7,10 @@
 please try again.</div>
 <div class="clear_both"></div>
 <div class="span10">
+
+<form class="form-horizontal" action="/verify/resend" method="post" >
 {% include "forms/resend_form.html" %}
+</form>
 </div>
 
 {% endblock %}
@@ -17,5 +20,5 @@ please try again.</div>
     $(document).ready(function(){
         fadeOutErrors();
     });
-</script>    
+</script>
 {% endblock %}

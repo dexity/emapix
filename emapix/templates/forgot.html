@@ -8,7 +8,9 @@ your email and we will send you a new password.
 You can change it later on.</div>
 <div class="clear_both"></div>
 <div class="span10">
+<form class="form-horizontal" action="/forgot" method="post" >
 {% include "forms/forgot_form.html" %}
+</form>
 </div>
 
 {% endblock %}

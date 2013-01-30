@@ -6,7 +6,9 @@
 <div class="clear_both"></div>
 
 <div class="span10">
-    {% include "forms/join_form.html" %}
+<form class="form-horizontal" action="/join" method="post" >
+{% include "forms/join_form.html" %}
+</form>
 </div>
 {% endblock %}
 

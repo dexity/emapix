@@ -283,33 +283,34 @@ def forgot(request):
 @csrf_protect
 def renew_password(request, token):
     "Renews password"
+    c   = {
+        "hide_join":    True
+    }
     try:
         profile = UserProfile.objects.get(forgot_token = token)
-        if request.method == "POST":
-            form    = NewPasswordForm(request.POST)
-            if form.is_valid():
-                newpass = form.cleaned_data["newpass"]
-                profile.forgot_token = ""
-                profile.user.set_password(newpass)
-                profile.user.save() # Important
-                profile.save()
-                
-                email   = profile.user.email
-                username    = profile.user.username
-                # Send email
-                send_newpass_confirm_email(request, email, username)
-                return render(request, "message.html", {"type": "newpass_success"})
-        else:
-            form    = NewPasswordForm()
-        c   = {
-            "form":     form,
-            "token":    token
-        }
-        return render(request, "newpass.html", c)
-        
     except Exception, e:
-        logger.debug(str(e))
-        return render(request, "message.html", {"type": "newpass_failed"})
+        logger.error("Renew password failed: %s" % e)
+        c["msg"]    = render_to_string("msg/newpass_failed.html")
+        return render(request, "message.html", c)
+    
+    if request.method == "POST":
+        form    = NewPasswordForm(request.POST)
+        if form.is_valid():
+            newpass = form.cleaned_data["newpass"]
+            profile.forgot_token = ""
+            profile.user.set_password(newpass)
+            profile.user.save() # Important
+            profile.save()
+            
+            email   = profile.user.email
+            username    = profile.user.username
+            # Send email
+            send_newpass_confirm_email(request, email, username)
+            return render(request, "message.html", {"type": "newpass_success"})
+
+    c["form"]   = NewPasswordForm()
+    c["token"]  = token
+    return render(request, "newpass.html", c)
 
 
 def make_request(request):
