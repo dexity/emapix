@@ -1,15 +1,5 @@
 {% extends "profile_base.html" %}
 
-{% block header %}
-    
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#profile_general").attr({"class": "active"});
-    })        
-</script>
-
-{% endblock header %}
-
 {% block profile_content %}
 <div id="profile_content">
     <div class="row">
@@ -40,7 +30,7 @@
     <div class="row">
         <div class="span2 prof-left">Birthday</div>
         <div class="span6">
-            {{userprof.b_month}} {{userprof.b_day}}, {{userprof.b_year}}
+            {{userprof.get_b_month_display}} {{userprof.b_day}}, {{userprof.b_year}}
         </div>
     </div>
     <div class="row">
@@ -60,4 +50,12 @@
         </div>
     </div>
 </div>
-{% endblock profile_content %}
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#profile_general").attr({"class": "active"});
+    })        
+</script>
+{% endblock %}

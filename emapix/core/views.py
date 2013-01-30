@@ -703,7 +703,9 @@ def get_profile(request):
     """
     TODO:
         Add tab "Privacy" with the parameters:
-        - "View profile"
+        - "General":
+            - "Show email"
+        - "Profile"
             - "View requests"
             - "View photos"
             - "View comments"

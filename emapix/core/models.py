@@ -13,7 +13,7 @@ class UserProfile(models.Model):
     description = models.CharField(max_length=1000, default="")
     country_alpha2     = models.CharField(max_length=2)
     b_day       = models.SmallIntegerField(null=True, blank=True)
-    b_month     = models.CharField(max_length=12)   # Full month
+    b_month     = models.CharField(max_length=12, choices=MONTH_CHOICES)   # Full month
     b_year      = models.SmallIntegerField()
     gender      = models.CharField(max_length=1, choices=GENDER_CHOICES)
     activ_token = models.CharField(max_length=64, null=True, blank=True)
