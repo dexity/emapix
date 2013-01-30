@@ -295,18 +295,23 @@ def renew_password(request, token):
     
     if request.method == "POST":
         form    = NewPasswordForm(request.POST)
-        if form.is_valid():
-            newpass = form.cleaned_data["newpass"]
-            profile.forgot_token = ""
-            profile.user.set_password(newpass)
-            profile.user.save() # Important
-            profile.save()
-            
-            email   = profile.user.email
-            username    = profile.user.username
-            # Send email
-            send_newpass_confirm_email(request, email, username)
-            return render(request, "message.html", {"type": "newpass_success"})
+        if not form.is_valid():
+            c["form"]   = form
+            c["token"]  = token
+            return render(request, "newpass.html", c)
+        
+        newpass = form.cleaned_data["newpass"]
+        profile.forgot_token = ""
+        profile.user.set_password(newpass)
+        profile.user.save() # Important
+        profile.save()
+        
+        email   = profile.user.email
+        username    = profile.user.username
+        # Send email
+        send_newpass_confirm_email(request, email, username)
+        c["msg"]    = render_to_string("msg/newpass_success.html")
+        return render(request, "message.html", c)
 
     c["form"]   = NewPasswordForm()
     c["token"]  = token

@@ -5,8 +5,7 @@
     <div class="controls">
         {{ form.newpass }}
         {% if form.newpass.errors %}
-        <div class="alert alert-error error_spaces" style="">
-            <button class="close" data-dismiss="alert">×</button>
+        <div class="alert alert-error error_spaces">
             {{ form.newpass.errors|first }}
         </div>
         {% endif %}            
@@ -17,8 +16,7 @@
     <div class="controls">
         {{ form.renewpass }}
         {% if form.non_field_errors %}
-        <div class="alert alert-error error_spaces" style="">
-            <button class="close" data-dismiss="alert">×</button>
+        <div class="alert alert-error error_spaces">
             {{ form.non_field_errors|first }}
         </div>
         {% endif %}            
@@ -27,7 +25,7 @@
   <div class="control-group">
     <div class="controls">
         <button type="submit" class="btn btn-primary">Create New Password</button>
-        <a class="btn" href="/">Cancel</a>
+        <a class="aux-link" href="/">Cancel</a>
     </div>
   </div>
 </fieldset>
