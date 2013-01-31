@@ -73,14 +73,14 @@ class ProfileForm(BaseUserForm):
     last_name   = forms.CharField(max_length=30, label="Last Name", required=False)
     email       = forms.EmailField(max_length=100,
                     widget=text_widget(),
-                    validators=[])    
+                    validators=[])    # XXX: Add validation
     description = forms.CharField(max_length=140, required=False, label="About Yourself",
                                   widget=forms.Textarea(attrs={"rows": 3, "class": "input-xlarge",
                                         "placeholder": "Tell something about yourself"}))
-    show_email  = forms.BooleanField()
-    show_location   = forms.BooleanField()
-    show_birthday   = forms.BooleanField()
-    show_gender     = forms.BooleanField()
+    show_email  = forms.BooleanField(required=False)
+    show_location   = forms.BooleanField(required=False)
+    show_birthday   = forms.BooleanField(required=False)
+    show_gender     = forms.BooleanField(required=False)
     
 
 class RecaptchaForm(forms.Form):

@@ -735,9 +735,38 @@ def edit_profile(request):
         return render(request, 'misc/error_view.html', {"error": "User does not exist"})
     
     user    = request.user
+    c   = {
+        "user": user
+    }
     if request.method == "POST":
-        pass
-    
+        form    = ProfileForm(request.POST)
+        if form.is_valid():
+            fcd  = form.cleaned_data
+            try:
+                user.first_name = fcd["first_name"]
+                user.last_name  = fcd["last_name"]
+                user.email      = fcd["email"]
+                user.save()
+                userprof.user       = user
+                userprof.location   = fcd["location"]
+                userprof.country_alpha2 = fcd["country"]
+                userprof.b_day      = fcd["b_day"]
+                userprof.b_month    = fcd["b_month"]
+                userprof.b_year     = fcd["b_year"]
+                userprof.gender     = fcd["gender"]
+                userprof.description    = fcd["description"]
+                userprof.show_email = fcd["show_email"]
+                userprof.show_location  = fcd["show_location"]
+                userprof.show_birthday  = fcd["show_birthday"]
+                userprof.show_gender    = fcd["show_gender"]
+                userprof.save()
+                return HttpResponseRedirect("/profile")
+            except Exception, e:
+                logger.error("Profile edit failed: %s" % e)
+        
+        c["form"]   = form
+        return render(request, 'edit_profile.html', c)
+
     data    = {
         "first_name":   user.first_name,
         "last_name":    user.last_name,
@@ -748,12 +777,13 @@ def edit_profile(request):
         "b_month":      userprof.b_month,
         "b_year":       userprof.b_year,
         "gender":       userprof.gender,
-        "description":  userprof.description
+        "description":  userprof.description,
+        "show_email":   userprof.show_email,
+        "show_location":   userprof.show_location,
+        "show_birthday":   userprof.show_birthday,
+        "show_gender":   userprof.show_gender,
     }
-    c   = {
-        "form":     ProfileForm(data),
-        "user":     request.user
-    }
+    c["form"]   = ProfileForm(data)
     return render(request, 'edit_profile.html', c)
 
 
