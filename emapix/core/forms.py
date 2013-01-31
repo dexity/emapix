@@ -71,6 +71,9 @@ class JoinForm(BaseUserForm):
 class ProfileForm(BaseUserForm):
     first_name  = forms.CharField(max_length=30, label="First Name", required=False)
     last_name   = forms.CharField(max_length=30, label="Last Name", required=False)
+    email       = forms.EmailField(max_length=100,
+                    widget=text_widget(),
+                    validators=[])    
     description = forms.CharField(max_length=140, required=False, label="About Yourself",
                                   widget=forms.Textarea(attrs={"rows": 3, "class": "input-xlarge",
                                         "placeholder": "Tell something about yourself"}))

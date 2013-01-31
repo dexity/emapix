@@ -16,18 +16,7 @@
 <script type="text/javascript">
     $(document).ready(function(){
         fadeOutErrors();
-        
-        $("select[name={{form.b_month.name}}]").change(function(){
-            var days    = '<option value="" selected="selected">Day</option>';
-            if (this.value in month_days) {
-                for (var i = 1; i< month_days[this.value]+1; i++) {
-                    days    += '<option value="' + i + '">' + i + '</option>'
-                }
-            }
-            $("select[name={{form.b_day.name}}]").html(days);
-            $("select[name={{form.b_day.name}}]").val("{{form.b_day.value}}");
-        });
-        $("select[name={{form.b_month.name}}]").val("{{form.b_month.value}}").change();
+        b_month_change("{{form.b_month.value}}", "{{form.b_day.value}}");
     });
 </script>
 {% endblock %}

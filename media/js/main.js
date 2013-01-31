@@ -22,6 +22,22 @@ function fadeOutErrors()
     });
 }
 
+var b_month_change  = function(b_month, b_day) {
+    
+    $("select[name=b_month]").change(function(){
+        var days    = '<option value="" selected="selected">Day</option>';
+        if (this.value in month_days) {
+            for (var i = 1; i< month_days[this.value]+1; i++) {
+                days    += '<option value="' + i + '">' + i + '</option>'
+            }
+        }
+        $("select[name=b_day]").html(days);
+        $("select[name=b_day]").val(b_day);
+    });
+    $("select[name=b_month]").val(b_month).change();    
+}
+
+
 function set_error(error_msg, container)
 {
     var c   = container;

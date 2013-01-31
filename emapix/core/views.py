@@ -50,6 +50,10 @@ def join(request):
     "Submits registration form and sends activation email"
     clean_join_session(request)
     
+    # For authenticated user join form is not displayed
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/")
+    
     if request.method == "POST":
         form    = JoinForm(request.POST)
         if not form.is_valid():
@@ -725,12 +729,30 @@ def edit_profile(request):
     "Edit profile"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+    try:
+        userprof    = UserProfile.objects.get(user=request.user)
+    except UserProfile.DoesNotExist:
+        return render(request, 'misc/error_view.html', {"error": "User does not exist"})
     
+    user    = request.user
     if request.method == "POST":
         pass
     
+    data    = {
+        "first_name":   user.first_name,
+        "last_name":    user.last_name,
+        "email":        user.email,
+        "location":     userprof.location,
+        "country":      userprof.country_alpha2,
+        "b_day":        userprof.b_day,
+        "b_month":      userprof.b_month,
+        "b_year":       userprof.b_year,
+        "gender":       userprof.gender,
+        "description":  userprof.description
+    }
     c   = {
-        "form":     ProfileForm()
+        "form":     ProfileForm(data),
+        "user":     request.user
     }
     return render(request, 'edit_profile.html', c)
 

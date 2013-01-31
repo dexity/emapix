@@ -25,6 +25,8 @@
 <script type="text/javascript">
     $(document).ready(function(){
         $("#profile_general").attr({"class": "active"});
+        fadeOutErrors();
+        b_month_change("{{form.b_month.value}}", "{{form.b_day.value}}");
     })        
 </script>
 {% endblock %}
