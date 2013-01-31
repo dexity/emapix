@@ -21,10 +21,11 @@ class UserProfile(models.Model):
     num_requests = models.IntegerField(default=0)   # Number of requests
     num_photos  = models.IntegerField(default=0)    # Request photos
     num_comments = models.IntegerField(default=0)   # Request comments
-    #show_email  = models.BooleanField(default=False)
-    #show_location   = models.BooleanField(default=True)
-    #show_birthday   = models.BooleanField(default=False)
-    #show_gender   = models.BooleanField(default=False)
+    
+    show_email  = models.BooleanField(default=False)
+    show_location   = models.BooleanField(default=True)
+    show_birthday   = models.BooleanField(default=False)
+    show_gender   = models.BooleanField(default=False)
     
     req_limit   = models.IntegerField(default=10)   # Temp
     
