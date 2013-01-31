@@ -2,13 +2,16 @@
 
 {% block header %}
     
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#profile_general").attr({"class": "active"});
-    })        
-</script>
+<style type="text/css">
+.form-username {
+    font-size: 15px;
+    font-weight: bold;
+    padding-top: 5px;
+    float:left;
+}
+</style>
 
-{% endblock header %}
+{% endblock %}
 
 {% block profile_content %}
 
@@ -16,4 +19,12 @@
 {% include "forms/edit_profile_form.html" %}
 </form>
 
-{% endblock profile_content %}
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#profile_general").attr({"class": "active"});
+    })        
+</script>
+{% endblock %}

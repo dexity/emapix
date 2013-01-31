@@ -69,10 +69,15 @@ class JoinForm(BaseUserForm):
 
 
 class ProfileForm(BaseUserForm):
-    description = forms.CharField(max_length=140)
-    # show_email
-    # show_location
-    # show_birthday
+    first_name  = forms.CharField(max_length=30, label="First Name", required=False)
+    last_name   = forms.CharField(max_length=30, label="Last Name", required=False)
+    description = forms.CharField(max_length=140, required=False, label="About Yourself",
+                                  widget=forms.Textarea(attrs={"rows": 3, "class": "input-xlarge",
+                                        "placeholder": "Tell something about yourself"}))
+    show_email  = forms.BooleanField()
+    show_location   = forms.BooleanField()
+    show_birthday   = forms.BooleanField()
+    show_gender     = forms.BooleanField()
     
 
 class RecaptchaForm(forms.Form):

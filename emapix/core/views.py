@@ -720,6 +720,7 @@ def get_profile(request):
     return render(request, 'profile_general.html', c)
 
 
+@csrf_protect
 def edit_profile(request):
     "Edit profile"
     if not request.user.is_authenticated():
@@ -728,9 +729,10 @@ def edit_profile(request):
     if request.method == "POST":
         pass
     
-    # XXX: Finish
-    
-    return render(request, 'edit_profile.html')
+    c   = {
+        "form":     ProfileForm()
+    }
+    return render(request, 'edit_profile.html', c)
 
 
 def set_password(request):

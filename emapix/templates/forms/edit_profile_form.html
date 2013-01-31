@@ -1,96 +1,114 @@
-<fieldset>    
-  <div class="control-group">
-    <label class="control-label">Username</label>
-    <div class="controls">
-        <div style="font-size: 15px; font-weight: bold; padding-top: 5px; float:left;">dexity</div>
-        <span class="help-inline e-color-grey e-padding-top-5" style="margin-left: 20px">(Cannot be changed)</span>
-    </div>
-  </div>
-      <div class="control-group">
-        <label class="control-label" for="input01">First Name</label>
+{% csrf_token %}
+<fieldset>
+    <div class="control-group">
+        <label class="control-label">Username</label>
         <div class="controls">
-          <input type="text" class="input-large" id="input01">
+            <div class="form-username">dexity</div>
+            <span class="help-inline e-color-grey e-padding-top-5" style="margin-left: 20px">(Cannot be changed)</span>
         </div>
-      </div>
-  <div class="control-group">
-    <label class="control-label" for="input02">Last Name</label>
-    <div class="controls">
-      <input type="text" class="input-large" id="input02">
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="input03">Email</label>
-    <div class="controls">
-      <input type="text" class="input-large" id="input03">
-          <label class="checkbox inline e-checkbox">
-            <input type="checkbox" id="optionsCheckbox" value="option1"> Show
-          </label>
-          <span class="help-inline e-color-grey">(Required)</span>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.first_name.auto_id }}">
+            <b>{{ form.first_name.label }}</b>
+        </label>
+        <div class="controls">
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.first_name.errors|first }}
+            </div>
+            {% endif %}
+        </div>
     </div>
-  </div>
-      <div class="control-group">
-        <label class="control-label" for="input04">Location</label>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.last_name.auto_id }}">
+            <b>{{ form.last_name.label }}</b>
+        </label>
         <div class="controls">
-          <input type="text" class="input-large" id="input04" placeholder="City, State">
-          <select id="select01" class="input-medium">
-            <option>United States</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-          </select>        
-      <label class="checkbox inline e-checkbox">
-        <input type="checkbox" id="optionsCheckbox" value="option1"> Show
-      </label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.last_name.errors|first }}
+            </div>
+            {% endif %}
         </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="input05">Birthday</label>
-        <div class="controls">
-          <select id="select02" class="input-small">
-            <option>Month</option>
-            <option>January</option>
-          </select>        
-          <select id="select03" class="input-mini">
-            <option>Day</option>
-            <option>1</option>
-          </select>        
-          <select id="select04" class="input-mini">
-            <option>Year</option>
-            <option>2012</option>
-          </select>
-          <label class="checkbox inline e-checkbox">
-            <input type="checkbox" id="optionsCheckbox" value="option1"> Show
-          </label>
-          <span class="help-inline e-color-grey">(<abbr title="Used to verify age and hidden by default">Year Required</abbr>)</span>          
-        </div>
-      </div>
-      <div class="control-group">
-        <label class="control-label" for="inlineRadio">Gender</label>
-        <div class="controls">
-            <label class="radio inline">
-                <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
-                Male
-            </label>        
-            <label class="radio inline">
-                <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
-                Female
-            </label>        
-            <label class="radio inline">
-                <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3">
-                Rather not say
-            </label>        
-        </div>
-      </div>
-  <div class="control-group">
-    <label class="control-label" for="textarea">About Yourself</label>
-    <div class="controls">
-      <textarea class="input-xlarge" id="textarea" rows="3"  placeholder="Tell something about yourself"></textarea>
     </div>
-  </div>
-  <div class="form-actions">
-    
-    <button type="submit" class="btn btn-primary">Save Changes</button>
-    <a class="btn" href="/profile">Cancel</a>
-  </div>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
+        <div class="controls">
+            {{ form.email }}
+            <label class="checkbox inline e-checkbox">
+                {{ form.show_email }} Show
+            </label>            
+            <span class="help-inline e-color-grey">(Required)</span>
+            {% if form.email.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.email.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.location.auto_id }}"><b>{{ form.location.label }}</b></label>
+        <div class="controls">
+            {{ form.location }}
+            {{ form.country }}
+            <label class="checkbox inline e-checkbox">
+                {{ form.show_location }} Show
+            </label>            
+            {% if form.location.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.location.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label"><b>Birthday</b></label>
+        <div class="controls">
+            {{ form.b_month }}
+            {{ form.b_day }}
+            {{ form.b_year }}
+            <label class="checkbox inline e-checkbox">
+                {{ form.show_birthday }} Show
+            </label>   
+            <span class="help-inline e-color-grey">
+                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)</span>          
+            {% if form.b_year.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.b_year.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
+        <div class="controls">
+            {% for radio in form.gender %}
+            <div class="radio inline">
+                {{ radio }}
+            </div>
+            {% endfor %}
+            <label class="checkbox inline e-checkbox">
+                {{ form.show_gender }} Show
+            </label>   
+        </div>
+    </div>
+    <div class="control-group">
+        <label class="control-label" for="{{ form.description.auto_id }}">
+            <b>{{ form.description.label }}</b>
+        </label>
+        <div class="controls">
+            {{ form.description }}
+            {% if form.description.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.description.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+    </div>    
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <a class="aux-link" href="/profile">Cancel</a>
+    </div>    
 </fieldset>
