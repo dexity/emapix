@@ -9,20 +9,21 @@ from emapix.utils.const import *
 
 class ObjectExists(object):
     
-    def __init__(self, message, code, objects):
+    def __init__(self, message, code, objects, **kwargs):
         self.objects    = objects
         self.message    = message
         self.code       = code
+        self.kwargs     = kwargs
     
-    def _get_items(self, value):
+    def _get_items(self, value, **kwargs):
         raise Exception("Not implemented")
     
     def __call__(self, value):
         if not isinstance(self.objects, models.Manager):
             raise ServiceException("Object is invalid")
 
-        items   = self._get_items(value)
-        if len(items) > 0:
+        items   = self._get_items(value, **self.kwargs)
+        if items.exists():
             raise forms.ValidationError(self.message, code=self.code)
 
 
@@ -37,6 +38,14 @@ class EmailExists(ObjectExists):
     def _get_items(self, value):
         return self.objects.filter(email = value)
     
+    
+class OtherEmailExists(ObjectExists):
+    
+    def _get_items(self, value, **kwargs):
+        if not kwargs.has_key("orig_email"):
+            raise forms.ValidationError("Service error: orig_email is required")
+        return self.objects.exclude(email = kwargs["orig_email"]).filter(email = value)
+
 
 #def validate_user(request):
 #    "Validates user and request. Returns json response if error or request"

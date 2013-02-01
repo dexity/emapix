@@ -19,7 +19,7 @@ from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
 http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
 
-from emapix.core.validators import validate_user_request, validate_user_comment    #, validate_user
+from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists    #, validate_user
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.core.forms import *
@@ -740,6 +740,11 @@ def edit_profile(request):
     }
     if request.method == "POST":
         form    = ProfileForm(request.POST)
+        email_valid = OtherEmailExists("Email already exists",
+                                    "email_exists",
+                                    User.objects,
+                                    orig_email = user.email)
+        form.fields["email"].validators = [email_valid]
         if form.is_valid():
             fcd  = form.cleaned_data
             try:
