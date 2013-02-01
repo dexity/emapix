@@ -287,8 +287,14 @@ def forgot(request):
 @csrf_protect
 def renew_password(request, token):
     "Renews password"
+    
+    # For authenticated user renew form is not displayed
+    if request.user.is_authenticated():
+        return HttpResponseRedirect("/")
+    
     c   = {
-        "hide_join":    True
+        "hide_join":    True,
+        "submit_btn":   "Create New Password"
     }
     try:
         profile = UserProfile.objects.get(forgot_token = token)
@@ -304,7 +310,7 @@ def renew_password(request, token):
             c["token"]  = token
             return render(request, "newpass.html", c)
         
-        newpass = form.cleaned_data["newpass"]
+        newpass = form.cleaned_data["passone"]
         profile.forgot_token = ""
         profile.user.set_password(newpass)
         profile.user.save() # Important

@@ -1,31 +1,26 @@
 {% csrf_token %}
 <fieldset>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.email.auto_id }}"><b>New Password</b></label>
-    <div class="controls">
-        {{ form.newpass }}
-        {% if form.newpass.errors %}
-        <div class="alert alert-error error_spaces">
-            {{ form.newpass.errors|first }}
+    {% for field in form %}
+    <div class="control-group">
+        <label class="control-label" for="{{ field.auto_id }}"><b>{{field.label}}</b></label>
+        <div class="controls">
+            {{ field }}
+            <span class="help-inline e-color-grey">(Required)</span>
+            {% if forloop.first %}
+            <span class="help-block">Password should be from 6 to 30 characters</span>
+            {% endif %}
+            {% if field.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ field.errors|first }}
+            </div>
+            {% endif %}            
         </div>
-        {% endif %}            
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.email.auto_id }}"><b>Repeat New Password</b></label>
-    <div class="controls">
-        {{ form.renewpass }}
-        {% if form.non_field_errors %}
-        <div class="alert alert-error error_spaces">
-            {{ form.non_field_errors|first }}
+    {% endfor %}
+    <div class="control-group">
+        <div class="controls">
+            <button type="submit" class="btn btn-primary">{{submit_btn}}</button>
+            <a class="aux-link" href="/">Cancel</a>
         </div>
-        {% endif %}            
     </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-        <button type="submit" class="btn btn-primary">Create New Password</button>
-        <a class="aux-link" href="/">Cancel</a>
-    </div>
-  </div>
 </fieldset>

@@ -163,20 +163,25 @@ class ResendForm(ForgotForm):
 
 
 class NewPasswordForm(forms.Form):
-    newpass    = forms.CharField(max_length = 30,
-                                  widget    = password_widget(),
-                                  validators = [RegexValidator(regex      = re.compile(PASSWORD_REGEX),
-                                                             message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
-                                                             code       = "password")])
-    renewpass  = forms.CharField(max_length = 30,
-                                  widget    = password_widget())
+    passone    = forms.CharField(max_length = 30,
+                    widget  = password_widget(),
+                    label   = "New Password",
+                    validators = [RegexValidator(regex      = re.compile(PASSWORD_REGEX),
+                                               message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
+                                               code       = "password")])
+    passtwo  = forms.CharField(max_length = 30,
+                    widget  = password_widget(),
+                    label   = "Repeat New Password",
+                    validators = [RegexValidator(regex      = re.compile(PASSWORD_REGEX),
+                                               message    = "Should contain from 6 to 30 letters A-Z or numbers 0-9",
+                                               code       = "password")])
     
     def clean(self):
         cleaned_data = super(NewPasswordForm, self).clean()
-        newpass     = cleaned_data.get("newpass")
-        renewpass   = cleaned_data.get("renewpass")
+        passone     = cleaned_data.get("passone")
+        passtwo     = cleaned_data.get("passtwo")
         
-        if newpass != renewpass:
+        if passone != passtwo:
             raise forms.ValidationError("Passwords do not match", code="passwords_match")
         
         return cleaned_data
