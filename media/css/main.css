@@ -389,3 +389,15 @@ a img {
 .aux-link {
     margin-left: 15px;
 }
+
+.show-item,
+.hide-item {
+    margin-left: 20px;
+    display: inline;
+}
+.show-item {
+    color: #62c462;
+}
+.hide-item {
+    color: #bd362f;
+}
