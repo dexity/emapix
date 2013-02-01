@@ -17,8 +17,10 @@
     </div>
     <div class="row">
         <div class="span2 prof-left">Email</div>
-        <div class="span6">
+        <div class="span3">
             <a href="mailto:{{userprof.user.email}}">{{userprof.user.email}}</a>
+        </div>
+        <div class="span3">            
             {% if userprof.show_email %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -28,8 +30,10 @@
     </div>
     <div class="row">
         <div class="span2 prof-left">Location</div>
-        <div class="span6">
+        <div class="span3">
             {{userprof.location}}
+        </div>
+        <div class="span3">            
             {% if userprof.show_location %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -39,19 +43,23 @@
     </div>
     <div class="row">
         <div class="span2 prof-left">Birthday</div>
-        <div class="span6">
+        <div class="span3">
             {{userprof.get_b_month_display}} {{userprof.b_day}}, {{userprof.b_year}}
+        </div>
+        <div class="span3">
             {% if userprof.show_birthday %}
             {% include "misc/show_item.html" %}
             {% else %}
             {% include "misc/hide_item.html" %}
-            {% endif %}
+            {% endif %}            
         </div>
     </div>
     <div class="row">
         <div class="span2 prof-left">Gender</div>
-        <div class="span6">
+        <div class="span3">
             {{userprof.get_gender_display}}
+        </div>
+        <div class="span3">            
             {% if userprof.show_gender %}
             {% include "misc/show_item.html" %}
             {% else %}
