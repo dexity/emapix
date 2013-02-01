@@ -33,7 +33,7 @@ urlpatterns = patterns("emapix.core.views",
     # User profile methods
     url(r"^profile$", "get_profile"),
     url(r"^profile/edit$", "edit_profile"),
-    url(r"^profile/password$", "set_password"),
+    url(r"^profile/password$", "update_password"),
     url(r"^profile/photo$", "get_profile_photo"),
     url(r"^profile/photo/select$", "profile_photo_select"),
     url(r"^profile/photo/crop$", "profile_photo_crop"),

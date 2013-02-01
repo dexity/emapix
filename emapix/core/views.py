@@ -798,11 +798,38 @@ def edit_profile(request):
     return render(request, 'edit_profile.html', c)
 
 
-def set_password(request):
-    "Set password"
+def update_password(request):
+    "Update password"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
-    return render(request, 'profile_password.html')
+    form    = NewPasswordForm()
+    form.fields["passone"].label    = "Original Password"
+    form.fields["passtwo"].label    = "New Password"
+    
+    c   = {
+        "form": form,
+        "submit_btn":   "Save Changes"
+    }
+    user    = request.user
+    if request.method == "POST":
+        form.data   = request.POST
+        form.is_bound   = True
+        if not form.is_valid():
+            c["form"]   = form
+            return render(request, "profile_password.html", c)
+        
+        origpass = form.cleaned_data["passone"]
+        newpass  = form.cleaned_data["passtwo"]
+        user.set_password(newpass)
+        user.save()
+        
+        email       = user.email
+        username    = user.username
+        # Send email
+        send_newpass_confirm_email(request, email, username)
+        return HttpResponseRedirect("/profile")
+    
+    return render(request, "profile_password.html", c)
 
 
 def get_profile_photo(request):

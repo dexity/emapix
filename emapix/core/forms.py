@@ -186,6 +186,7 @@ class NewPasswordForm(forms.Form):
         
         return cleaned_data
 
+# Add subclass of NewPasswordForm
     
 class RequestForm(forms.Form):
     lat     = forms.FloatField(widget=forms.HiddenInput())
