@@ -49,8 +49,6 @@
 	    max_size:	400,
             finished_callback:  function(){
                 $("#submit_modal").modal("hide");
-                // XXX: Make json request to replace image and metadata
-                //	instead of reloading the page. Save requests to Google Map
                 window.location.href = "/profile/photo";
             }
         });

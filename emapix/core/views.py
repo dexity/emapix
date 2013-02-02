@@ -901,8 +901,14 @@ def users(request):
     page        = request.GET.get("page")
     
     (items, page_num)   = paginated_items(paginator, page)
+    photo_urls  = []
+    for item in items:
+        (photo_url, photo_exists)   = WImage.get_profile_image_meta(item.user, size_type="small",
+                                                                    default_url="/media/img/small.png")
+        photo_urls.append(photo_url)
+
     c   = {
-        "items":        items,
+        "items":        zip(items, photo_urls),
         "paginator":    paginator
     }
     return render(request, 'users.html', c)

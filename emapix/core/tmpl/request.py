@@ -29,7 +29,7 @@ class TmplRequest(object):
         
         for req in requests:
             image   = WImage.get_image_by_request(req, size_type="small")
-            thumb_url   = "/media/img/default.png"
+            thumb_url   = "/media/img/small.png"
             if image:
                 thumb_url = image.url
             sd  = int(req.submitted_date)

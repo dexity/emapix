@@ -1,13 +1,5 @@
 {% extends "base.html" %}
 
-{% block header %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#nav_users").attr("class", "active");
-    });
-</script>
-{% endblock header %}
-
 {% block content %}
 
 <h3>Users</h3>
@@ -15,19 +7,19 @@
 <table>
     <tbody>
 	<tr>
-	{% for item in items %}
-	    {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"5" %}
-	    </tr>
-	    <tr>
-	    {% endif %}
-            <td class="user-info">
-                <img src="/media/img/default.png" height="60" width="60" alt=""/>
-                <div class="user-details">
-	                <a href="/user/{{item.user.username}}"><b>{{item.user.username}}</b></a><br />
-	                Requests <b>{{item.num_requests}}</b><br />
-	                Photos <b>{{item.num_photos}}</b><br />
-                </div>
-            </td>	    
+	{% for userprof, photo_url in items %}
+        {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"5" %}
+        </tr>
+        <tr>
+        {% endif %}
+        <td class="user-info">
+            <img src="{{photo_url}}" height="60" width="60" alt=""/>
+            <div class="user-details">
+                <a href="/user/{{userprof.user.username}}"><b>{{userprof.user.username}}</b></a><br />
+                Requests <b>{{userprof.num_requests}}</b><br />
+                Photos <b>{{userprof.num_photos}}</b><br />
+            </div>
+        </td>	    
 	{% endfor %}
 	</tr>
     </tbody>
@@ -35,4 +27,12 @@
 <div class="clear_both"></div>
 {% include "misc/pagination.html" %}
 
-{% endblock content %}
+{% endblock %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_users").attr("class", "active");
+    });
+</script>    
+{% endblock %}
