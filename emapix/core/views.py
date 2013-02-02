@@ -908,7 +908,8 @@ def users(request):
         photo_urls.append(photo_url)
 
     c   = {
-        "items":        zip(items, photo_urls),
+        "items":        items,
+        "photo_urls":   photo_urls,
         "paginator":    paginator
     }
     return render(request, 'users.html', c)

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load multifor%}
 
 {% block content %}
 
@@ -7,7 +8,7 @@
 <table>
     <tbody>
 	<tr>
-	{% for userprof, photo_url in items %}
+	{% for item in items; photo_url in photo_urls %}
         {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"5" %}
         </tr>
         <tr>
@@ -15,9 +16,9 @@
         <td class="user-info">
             <img src="{{photo_url}}" height="60" width="60" alt=""/>
             <div class="user-details">
-                <a href="/user/{{userprof.user.username}}"><b>{{userprof.user.username}}</b></a><br />
-                Requests <b>{{userprof.num_requests}}</b><br />
-                Photos <b>{{userprof.num_photos}}</b><br />
+                <a href="/user/{{item.user.username}}"><b>{{item.user.username}}</b></a><br />
+                Requests <b>{{item.num_requests}}</b><br />
+                Photos <b>{{item.num_photos}}</b><br />
             </div>
         </td>	    
 	{% endfor %}
