@@ -186,7 +186,13 @@ class NewPasswordForm(forms.Form):
         
         return cleaned_data
 
-# Add subclass of NewPasswordForm
+
+class UpdatePasswordForm(NewPasswordForm):
+    
+    def clean(self):
+        cleaned_data = forms.Form.clean(self)   # Default clean
+        return cleaned_data
+    
     
 class RequestForm(forms.Form):
     lat     = forms.FloatField(widget=forms.HiddenInput())

@@ -802,7 +802,7 @@ def update_password(request):
     "Update password"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
-    form    = NewPasswordForm()
+    form    = UpdatePasswordForm()
     form.fields["passone"].label    = "Original Password"
     form.fields["passtwo"].label    = "New Password"
     
@@ -814,6 +814,8 @@ def update_password(request):
     if request.method == "POST":
         form.data   = request.POST
         form.is_bound   = True
+        pass_valid  = ValidPassword("The password is not valid", "valid_password", user)
+        form.fields["passone"].validators.append(pass_valid)
         if not form.is_valid():
             c["form"]   = form
             return render(request, "profile_password.html", c)

@@ -47,6 +47,18 @@ class OtherEmailExists(ObjectExists):
         return self.objects.exclude(email = kwargs["orig_email"]).filter(email = value)
 
 
+class ValidPassword(object):
+    
+    def __init__(self, message, code, user):
+        self.message    = message
+        self.code       = code        
+        self.user       = user
+        
+    def __call__(self, value):
+        if not self.user.check_password(value):
+            raise forms.ValidationError(self.message, self.code)
+
+
 #def validate_user(request):
 #    "Validates user and request. Returns json response if error or request"
 #    if not request.user.is_authenticated():
