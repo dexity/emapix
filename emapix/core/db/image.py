@@ -1,4 +1,5 @@
 from emapix.core.models import *
+from emapix.core.db.photo import WPhoto
 
 class WImage(object):
     
@@ -43,17 +44,15 @@ class WImage(object):
         
         return cls.get_or_create_image_by_photo(ph, photo_type, size_type, marked_delete, save)
     
-    
+
     @classmethod
     def get_profile_image(cls, user, photo_type, size_type=None):
-        profph   = ProfilePhoto.objects.filter(user=user)\
-                        .filter(photo__type=photo_type)
-        if photo_type not in ["preview", "crop"]:  # Is used for creating profile image
-            profph  = profph.exclude(photo__marked_delete=True)
-        if not profph.exists():
+        "Returns profile image"
+        profph  = WPhoto.get_profile_photo(user, photo_type)
+        if profph is None:
             return None
         
-        return cls.get_image_by_photo(profph[0].photo, size_type)
+        return cls.get_image_by_photo(profph.photo, size_type)
     
     
     @classmethod

@@ -66,7 +66,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^comments/json$", "get_request_comments_json"),
     url(r"^comment/add/json$", "add_comment_json"),
     url(r"^comment/(\d+)/remove/json$", "remove_comment_json"),
-    url(r"^photo/(\d+)/remove/json$", "remove_photo_json"),
+    url(r"^photo/(\d+)/remove/json$", "remove_photo_json"), # ?
     
     # Layouts
     url(r"^help$", "help"),

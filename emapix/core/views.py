@@ -547,7 +547,7 @@ def remove_photo_json(request, photo_id):
         return bad_request_json({"error": "Invalid request method"})
     try:
         photo   = Photo.objects.get(id=photo_id)
-        if photo.user != request.user:
+        if photo.user != request.user:  # Only 
             return forbidden_json({"error": AUTHOR_ERROR})
         photo.mark_delete()
     except Photo.DoesNotExist:
@@ -846,7 +846,8 @@ def get_profile_photo(request):
     
     return render(request, 'profile_photo.html', c)    
     
-    
+
+@csrf_protect
 def remove_profile_photo_json(request):
     "Removes profile photo"
     if not request.user.is_authenticated():
@@ -854,11 +855,9 @@ def remove_profile_photo_json(request):
     if request.method != "POST":
         return bad_request_json({"error": "Invalid request method"})
     try:
-        photos   = Photo.objects.filter(user=request.user).filter(type="profile")
-        if not photos.exists():
-            return bad_request_json({"error": "Profile photo does not exist"})
-        photo   = photos[0]
-        photo.mark_delete()
+        status  = WPhoto.remove_profile_photo(request.user)
+        if status is False:
+            return bad_request_json({"error": "Error removing the profile photo"})
     except Exception, e:
         return bad_request_json({"error": str(e)})
 
