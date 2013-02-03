@@ -43,7 +43,7 @@ class WImage(object):
             phreq.save()
         
         return cls.get_or_create_image_by_photo(ph, photo_type, size_type, marked_delete, save)
-    
+
 
     @classmethod
     def get_profile_image(cls, user, photo_type, size_type=None):

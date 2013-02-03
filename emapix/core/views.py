@@ -1129,9 +1129,10 @@ def search2(request):
     return render(request, 'search2.html')
 
 
+@csrf_protect
 def submit_select(request, res):
     "Displays file form or uploads file to S3"
-    req = validate_user_request(request, res, False)
+    req = validate_user_request(request, res, False)    # Anyone can submit photo
     if not isinstance(req, Request):
         return req
     
@@ -1140,43 +1141,39 @@ def submit_select(request, res):
     if request.method == "POST":    # Ajax request
         # Upload image
         form   = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fd  = request.FILES["file"]
-            try:
-                # Note: Error messages are not really used here bacause of weird error handling in
-                #       jQueryFileUpload widget
-                
-                format      = IMAGE_TYPES.get(fd.content_type, "err")
-                filename    = s3key(res, "preview", format)
-                img         = ImageFile(fd)     # convert to image
-                
-                # DB handling
-                im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
-                im.name     = filename
-                im.height   = img.height
-                im.width    = img.width
-                im.url      = s3_key2url(filename)
-                im.size     = fd.size
-                im.format   = format
-                im.is_avail = s3_upload_file(fd, filename)
-                im.save()
-                
-                # Send email notification?
-                
-                # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-                return http_response_json([{"success": True, "url": s3_key2url(filename)}])
-            
-            except User.DoesNotExist:
-                return bad_request_json({"error": "User does not exist"})
-            except Exception, e:
-                logger.debug(str(e))
-                return bad_request_json([{"error": str(e)}])
+        if not form.is_valid():
+            return bad_form_json(form)
         
-        errors  = form.errors.items()
-        msg     = "Something is wrong ..."
-        if len(errors) != 0:
-            msg = errors[0]
-        return bad_request_json([{"error": msg}])
+        fd  = request.FILES["file"]
+        try:
+            # Note: Error messages are not really used here bacause of weird error handling in
+            #       jQueryFileUpload widget
+            
+            format      = IMAGE_TYPES.get(fd.content_type, "err")
+            filename    = s3key(res, "preview", format)
+            img         = ImageFile(fd)     # convert to image
+            
+            # DB handling
+            im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+            im.name     = filename
+            im.height   = img.height
+            im.width    = img.width
+            im.url      = s3_key2url(filename)
+            im.size     = fd.size
+            im.format   = format
+            im.is_avail = s3_upload_file(fd, filename)
+            im.save()
+            
+            # Send email notification?
+            
+            # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+            return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+        
+        except User.DoesNotExist:
+            return bad_request_json({"error": "User does not exist"})
+        except Exception, e:
+            logger.error("Error uploading request (%s) photo preview: %s" % (res, e))
+            return bad_request_json([{"error": str(e)}])
 
     # Display form
     c   = {
@@ -1186,6 +1183,7 @@ def submit_select(request, res):
     return render(request, 'modals/submit_select.html', c)    
     
 
+@csrf_protect
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
     req = validate_user_request(request, res, False)
@@ -1199,11 +1197,9 @@ def submit_crop(request, res):
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
-        
         # Crop image
         crop_form   = CropForm(request.POST)
         if not crop_form.is_valid():
-            # XXX: Test again, might be broken!
             return bad_form_json(crop_form)
         
         x   = int(crop_form.cleaned_data["x"])
@@ -1264,6 +1260,7 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
     return http_response_json({"success": True})    
 
 
+@csrf_protect
 def submit_create(request, res):
     "Creates images of different sizes"
     req = validate_user_request(request, res, False)
@@ -1293,7 +1290,7 @@ def submit_create(request, res):
             proc_images(file_base, db_imgs, fmt)
             return http_response_json({"success": True})
         except Exception, e:
-            logger.debug(str(e))
+            logger.error("Error uploading request (%s) photo: %s" % (res, e))
             return bad_request_json({"error": str(e)})
         
     c   = {
@@ -1303,7 +1300,7 @@ def submit_create(request, res):
     return render(request, 'modals/submit_create.html', c)    
 
 # XXX: Refactor profile_photo_select() and submit_select()
-
+@csrf_protect
 def profile_photo_select(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})   
@@ -1344,7 +1341,7 @@ def profile_photo_select(request):
         except User.DoesNotExist:
             return bad_request_json({"error": "User does not exist"})
         except Exception, e:
-            logger.debug(str(e))
+            logger.error("Error uploading profile photo preview: %s" % e)
             return bad_request_json([{"error": str(e)}])
 
     # Display form
@@ -1355,7 +1352,7 @@ def profile_photo_select(request):
 
 
 # XXX: Refactor profile_photo_crop() and submit_crop()
-
+@csrf_protect
 def profile_photo_crop(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})
@@ -1397,7 +1394,7 @@ def profile_photo_crop(request):
     return render(request, 'modals/submit_crop.html', c)    
 
 # XXX: Refactor profile_photo_create() and submit_create()
-
+@csrf_protect
 def profile_photo_create(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})    
@@ -1427,7 +1424,7 @@ def profile_photo_create(request):
             
             return http_response_json({"success": True})
         except Exception, e:
-            logger.error("Error uploading profile image: %s" % e)
+            logger.error("Error uploading profile photo: %s" % e)
             return bad_request_json({"error": str(e)})
         
     c   = {
