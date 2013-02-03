@@ -40,6 +40,7 @@
     
     $(document).ready(function(){
         
+        $("#profile_photo").attr({"class": "active"});
         var sub    = PHOTOSUB({
             select_url: "/profile/photo/select",
             crop_url:   "/profile/photo/crop",
@@ -48,11 +49,9 @@
             crop_size:  140,
 	    max_size:	400,
             finished_callback:  function(){
-                $("#submit_modal").modal("hide");
                 window.location.href = "/profile/photo";
             }
         });
-        $("#profile_photo").attr({"class": "active"});
 	$("#submit_photo").click(function(e) {
 	    e.preventDefault();
 	    sub.show_select();

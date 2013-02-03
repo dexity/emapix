@@ -21,11 +21,12 @@ var PHOTOSUB = (function(options){
         modal_container:  utils.select_option("modal_container", "submit_container"),
         modal:            utils.select_option("modal", "submit_modal"),
         modal_body:       utils.select_option("modal_body", "submit_body"),
-        modal_error:      utils.select_option("modal_error", "errors_container"),
-        modal_progress:   utils.select_option("modal_progress", "progress"),
         fileupload:       utils.select_option("fileupload", "fileupload"),
         cropper_form:     utils.select_option("cropper_form", "cropper_form"),
         create_form:      utils.select_option("create_form", "create_form"),
+        modal_status:     "#modal_status",
+        error_base:       "#error_",
+        default_error:    "Service error. Please try again.",
         max_size:         options.max_size || 400
     },
     // Private functions    
@@ -64,10 +65,12 @@ var PHOTOSUB = (function(options){
                 });
             }
         })
+        .bind("fileuploadsend", function(e, data) {
+            $(".alert-error").hide();
+        })
         .bind("fileuploaddone", function(e, data) {
-            
             if (data.result[0].success) {
-                that.show_crop();    // From request.html
+                that.show_crop();
             }
         })
     
@@ -97,23 +100,18 @@ var PHOTOSUB = (function(options){
         var jcrop_api = {
             size:           options.crop_size,
             submit_crop:    function(){
-                $(params.modal_progress).show();
                 $.ajax({
                     url:    options.crop_url,
                     type:   "POST",
                     data:   $(params.cropper_form).serialize(),
                     cache:  false,
-                    success:    function(data) {
-                        that.show_create();  // From request.html
+                    beforeSend: function(){
+                        that.init_process();
                     },
-                    error:  function(jqXHR, textStatus, errorThrown) {
-                        $(params.modal_progress).hide();
-                        
-                        var msg = '<div class="e-alert e-alert-inline alert-error">';
-                        msg += format_error(jqXHR.responseText, errorThrown, true);
-                        msg += '</div>';
-                        $(params.modal_error).html(msg);
-                    }
+                    success:    function(data) {
+                        that.show_create();
+                    },
+                    error:  that.error_modal
                 });
             },
             updateCoords:   function(c){
@@ -177,32 +175,86 @@ var PHOTOSUB = (function(options){
         });
         
         $("#submit_image").click(function(){
-            $(params.modal_progress).show();
             $.ajax({
                 url:    options.create_url,
                 type:   "POST",
                 data:   $(params.create_form).serialize(),
                 cache:  false,
-                success:    function(data) {
-                    options.finished_callback();
+                beforeSend: function(){
+                    that.init_process();
                 },
-                error:  function(jqXHR, textStatus, errorThrown) {
-                    $(params.modal_progress).hide();
-                    
-                    var msg = '<div class="e-alert e-alert-inline alert-error">';
-                    msg += format_error(jqXHR.responseText, errorThrown, true);
-                    msg += '</div>';
-                    $(params.modal_error).html(msg);
-                }
+                success:    function(data) {
+                    $(params.modal).modal("hide");
+                    if (typeof options.finished_callback === "function"){
+                        options.finished_callback();
+                    }
+                },
+                error:  that.error_modal
             });
         })        
+    },
+    dom = {
+        inline_error:  function(msg) {
+            return '<div class="alert alert-error e-alert-inline pull-left">' + msg + '</div>';
+        },
+        field_error:    function(msg) {
+            return '<div class="alert alert-error error_spaces">' + msg + '</div>';
+        },
+        spinner:    '<img src="/media/img/spinner_small.gif" class="e-button-spinner"/>'        
     };
     
     
     // Public object
     var that = {
         // Properties
-        
+        error_data:     function(jqXHR, textStatus, errorThrown){
+            // Structures error response
+            var gen_error, errors;
+            try {
+                var data    = JSON.parse(jqXHR.responseText);
+                errors      = data.errors;
+                if ( data.error !== undefined) {
+                    gen_error = data.error;
+                };
+                // Display default general error only if errors are set
+                if ($.isEmptyObject(errors) && gen_error === undefined) {
+                    gen_error = params.default_error;
+                }
+            } catch(err) {
+                gen_error = params.default_error;
+            }
+            return {"errors": errors, "error": gen_error};
+        },
+        error_modal:    function(jqXHR, textStatus, errorThrown){
+            that.end_process();
+            var ed  = that.error_data(jqXHR, textStatus, errorThrown);
+            if (ed.error) {
+                $(params.modal_status).html(dom.inline_error(ed.error));
+            }
+            for (var k in ed.errors) {
+                if (!ed.errors.hasOwnProperty(k)) {
+                    continue;
+                }
+                $(params.error_base + k).html(dom.field_error(ed.errors[k]));
+            }
+            // Enable button
+            $(params.modal).modal({backdrop: "static"});            
+        },
+        init_process:   function(){
+            $(".alert-error").hide();   // Hide errors
+            $(params.modal_status).html(dom.spinner);     // Show spinner
+            $(".modal-footer button").attr({"disabled": "disabled"})    // Disable button
+                .removeClass("disabled").addClass("disabled");               
+        },
+        end_process:    function(){
+            $(params.modal_status).empty();
+            $(".modal-footer button").removeClass("disabled").removeAttr("disabled");
+        },
+        init_success:   function(data){
+            $(".modal-backdrop").remove();
+            $(params.modal_container).html(data);
+            $(params.modal).modal({backdrop: "static"});
+        },
         // Functions
         show_select: function(){
             $.ajax({
@@ -210,16 +262,10 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success:    function(data) {
-                    $(".modal-backdrop").remove();
-                    $(params.modal_container).html(data);
-                    $(params.modal).modal({backdrop: "static"});
-                    
-                    init_fileupload({});
+                    that.init_success(data);
+                    init_fileupload();
                 },
-                error:  function(jqXHR, textStatus, errorThrown) {
-                    $(params.modal_error).html(format_error(jqXHR.responseText, errorThrown, true));
-                    $(params.modal).modal({backdrop: "static"});
-                }
+                error:  that.error_modal
             });        
         },
         show_crop: function(){
@@ -229,16 +275,10 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success: function(data) {
-                    $(".modal-backdrop").remove();
-                    $(params.modal_container).html(data);
-                    $(params.modal).modal({backdrop: "static"});
-                    
+                    that.init_success(data);
                     init_cropper();
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    $(params.modal_body).html(format_error(jqXHR.responseText, errorThrown));
-                    $(params.modal).modal({backdrop: "static"});
-                }
+                error:  that.error_modal
             });
         },
         show_create: function(){
@@ -248,16 +288,10 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success: function(data) {
-                    $(".modal-backdrop").remove();
-                    $(params.modal_container).html(data);
-                    $(params.modal).modal({backdrop: "static"});
-                    
+                    that.init_success(data);
                     init_create();
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    $(params.modal_body).html(format_error(jqXHR.responseText, errorThrown));
-                    $(params.modal).modal({backdrop: "static"});
-                }
+                error: that.error_modal
             });
         }        
     }

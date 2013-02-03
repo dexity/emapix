@@ -1314,43 +1314,39 @@ def profile_photo_select(request):
     if request.method == "POST":    # Ajax request
         # Upload image
         form   = UploadFileForm(request.POST, request.FILES)
-        if form.is_valid():
-            fd  = request.FILES["file"]
-            try:
-                # Note: Error messages are not really used here bacause of weird error handling in
-                #       jQueryFileUpload widget
-                
-                format      = IMAGE_TYPES.get(fd.content_type, "err")
-                filename    = s3key(user.username, "preview", format)
-                img         = ImageFile(fd)     # convert to image
-                
-                # DB handling
-                im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
-                im.name     = filename
-                im.height   = img.height
-                im.width    = img.width
-                im.url      = s3_key2url(filename)
-                im.size     = fd.size
-                im.format   = format
-                im.is_avail = s3_upload_file(fd, filename)
-                im.save()
-                
-                # Send email notification?
-                
-                # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-                return http_response_json([{"success": True, "url": s3_key2url(filename)}])
-            
-            except User.DoesNotExist:
-                return bad_request_json({"error": "User does not exist"})
-            except Exception, e:
-                logger.debug(str(e))
-                return bad_request_json([{"error": str(e)}])
+        if not form.is_valid():
+            return bad_form_json(form)
         
-        errors  = form.errors.items()
-        msg     = "Something is wrong ..."
-        if len(errors) != 0:
-            msg = errors[0]
-        return bad_request_json([{"error": msg}])
+        fd  = request.FILES["file"]
+        try:
+            # Note: Error messages are not really used here bacause of weird error handling in
+            #       jQueryFileUpload widget
+            
+            format      = IMAGE_TYPES.get(fd.content_type, "err")
+            filename    = s3key(user.username, "preview", format)
+            img         = ImageFile(fd)     # convert to image
+            
+            # DB handling
+            im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
+            im.name     = filename
+            im.height   = img.height
+            im.width    = img.width
+            im.url      = s3_key2url(filename)
+            im.size     = fd.size
+            im.format   = format
+            im.is_avail = s3_upload_file(fd, filename)
+            im.save()
+            
+            # Send email notification?
+            
+            # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+            return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+        
+        except User.DoesNotExist:
+            return bad_request_json({"error": "User does not exist"})
+        except Exception, e:
+            logger.debug(str(e))
+            return bad_request_json([{"error": str(e)}])
 
     # Display form
     c   = {
@@ -1365,7 +1361,7 @@ def profile_photo_crop(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})
     user    = request.user
-
+    
     im  = WImage.get_profile_image(user, "preview")
     if not im:
         return bad_request_json({"error": "Photo request doesn't exist"})
@@ -1373,21 +1369,17 @@ def profile_photo_crop(request):
     if request.method == "POST":
         # Crop image
         crop_form   = CropForm(request.POST)
-        if crop_form.is_valid():
-            x   = int(crop_form.cleaned_data["x"])
-            y   = int(crop_form.cleaned_data["y"])
-            h   = int(crop_form.cleaned_data["h"])
-            w   = int(crop_form.cleaned_data["w"])
-            #if not (x and y and h and w):
-            #    return HttpResponseRedirect("/submit2") # Error
-            
-            return handle_profile_crop_file(user, im, (x, y, w, h))
+        if not crop_form.is_valid():
+            return bad_form_json(crop_form)
         
-        errors  = crop_form.errors.items()
-        msg     = "Something is wrong ..."
-        if len(errors) != 0:
-            msg = errors[0]
-        return bad_request_json({"error": msg})
+        x   = int(crop_form.cleaned_data["x"])
+        y   = int(crop_form.cleaned_data["y"])
+        h   = int(crop_form.cleaned_data["h"])
+        w   = int(crop_form.cleaned_data["w"])
+        #if not (x and y and h and w):
+        #    return HttpResponseRedirect("/submit2") # Error
+        
+        return handle_profile_crop_file(user, im, (x, y, w, h))
     
     if im.width <= 140 and im.height <= 140:
         # No need to crop - upload directly
@@ -1411,12 +1403,13 @@ def profile_photo_create(request):
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})    
     user    = request.user
-
+    
     imc     = WImage.get_profile_image(user, "crop")
     if not imc:
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
+        
         try:
             file_base   = user.username
             fmt     = imc.format
@@ -1435,7 +1428,7 @@ def profile_photo_create(request):
             
             return http_response_json({"success": True})
         except Exception, e:
-            logger.debug(str(e))
+            logger.error("Error uploading profile image: %s" % e)
             return bad_request_json({"error": str(e)})
         
     c   = {

@@ -1,6 +1,6 @@
 {% var file=o.files[0]; %}
 {% if (file.error) { %}
-    <div class="e-alert-head e-alert-inline alert-error pull-left" id="errors_container">
+    <div class="alert alert-error e-alert-inline pull-left">
         {%=locale.fileupload.errors[file.error] || file.error%}
     </div>
 {% } else if (o.files.valid) { %}

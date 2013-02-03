@@ -12,15 +12,16 @@
 {% endblock %}
 
 {% block modal_footer %}
-    <form id="fileupload">
-        <div id="files_container"></div> 
-        {% csrf_token %}
-        <span class="btn btn-primary fileinput-button" id="select_file">
-            <span>Select File</span>
-            {{ form.file }}
-        </span>
-        <a href="#" data-dismiss="modal">Close</a>
-    </form>
+<form id="fileupload">
+    <div id="files_container"></div> 
+    {% csrf_token %}
+    <div id="modal_status"></div>
+    <span class="btn btn-primary fileinput-button" id="select_file">
+        <span class="select_button">Select File</span>
+        {{ form.file }}
+    </span>
+    <a href="#" data-dismiss="modal">Close</a>
+</form>
 {% endblock %}
 
 {% block modal_bottom %}

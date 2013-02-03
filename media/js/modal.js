@@ -119,7 +119,6 @@ var MODAL = (function(options){
         submit_form:    function(){
             
             var fields  = $(params.modal + " form").serialize() || {};
-            console.debug(fields);
             if (typeof params.extra_fields === "object"){
                 for (var key in params.extra_fields){
                     if (params.extra_fields.hasOwnProperty(key)){

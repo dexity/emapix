@@ -47,8 +47,9 @@ class WImage(object):
     @classmethod
     def get_profile_image(cls, user, photo_type, size_type=None):
         profph   = ProfilePhoto.objects.filter(user=user)\
-                        .filter(photo__type=photo_type) \
-                        .exclude(photo__marked_delete=True)
+                        .filter(photo__type=photo_type)
+        if photo_type not in ["preview", "crop"]:  # Is used for creating profile image
+            profph  = profph.exclude(photo__marked_delete=True)
         if not profph.exists():
             return None
         
@@ -83,4 +84,8 @@ class WImage(object):
         img = Image(photo=photo, size_type=size_type)
         if save:
             img.save()
-        return img   # Create new Image        
+        return img   # Create new Image
+    
+
+        
+        
