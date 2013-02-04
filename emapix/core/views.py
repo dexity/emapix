@@ -1101,29 +1101,29 @@ def get_user_requests_json(request, username):
 
 def recent_photos(request):
     "Returns list of photos"
-    (items, paginator)  = _get_photo_items(request)
+    phreqs      = PhotoRequest.objects.filter(photo__type="request")\
+                  .exclude(photo__marked_delete=True) \
+                  .order_by("-photo__updated_time")    
+    paginator   = Paginator(phreqs, 12)   # 12 items per page
+    page        = request.GET.get("page")
+    
+    (paged_phreqs, page_num)   = paginated_items(paginator, page)
+    images  = []
+    for phreq in paged_phreqs:
+        image   = WImage.get_image_by_photo(phreq.photo, size_type="medium")
+        images.append(image)
+        
     c   = {
-        "items":        items,
+        "items":        paged_phreqs,
+        "images":       images,
         "paginator":    paginator
     }
     return render(request, 'photos.html', c)
 
 
-# XXX: Refactor to something else?
-def _get_photo_items(request):
-    "Returns photo request items and paginator"
-    images  = Image.objects.filter(size_type="medium").filter(is_avail=True).order_by("-updated_time")
-    phreqs  = PhotoRequest.objects.filter(photo__image__in=images).order_by("-photo__image__updated_time") # Same number as images length
-    paginator   = Paginator(phreqs, 12)   # 12 items per page
-    page    = request.GET.get("page")
-    
-    (paged_phreqs, page_num)   = paginated_items(paginator, page)
-    paged_images    = images[:len(paged_phreqs)]
-    return (zip(paged_images, paged_phreqs), paginator)    
-    
-
 def search(request):
     return render(request, 'search.html')
+
 
 def search2(request):
     return render(request, 'search2.html')

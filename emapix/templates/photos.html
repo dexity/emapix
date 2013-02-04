@@ -1,19 +1,12 @@
 {% extends "base.html" %}
-
-{% block header %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#nav_photos").attr("class", "active");
-    });
-</script>
-{% endblock header %}
+{% load multifor %}
 
 {% block content %}
 
 <h3>Recent Photos</h3>
 <div class="row e-photo-row">
-{% for image, phreq in items %}
-{% with phreq.request as req %}
+{% for item in items; image in images %}
+{% with item.request as req %}
     {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"4" %}
 </div>
 <div class="row e-photo-row">
@@ -35,3 +28,11 @@
 {% include "misc/pagination.html" %}
 
 {% endblock content %}
+
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_photos").attr("class", "active");
+    });
+</script>
+{% endblock %}
