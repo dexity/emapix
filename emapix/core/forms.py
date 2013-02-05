@@ -39,7 +39,7 @@ class BaseUserForm(forms.Form):
     b_day       = forms.ChoiceField(choices=[("", "Day")] + month_days(31),
                                     required=False,
                                     widget=forms.Select(attrs={"class": "input-mini"}))
-    b_month     = forms.ChoiceField(choices=[("", "Month")] + MONTH_CHOICES,
+    b_month     = forms.ChoiceField(choices=MONTH_CHOICES,
                                     required=False,
                                     widget=forms.Select(attrs={"class": "input-small"}))
     b_year      = forms.ChoiceField(choices=[("", "Year")] + YEAR_CHOICES,

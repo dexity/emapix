@@ -65,6 +65,7 @@ IMAGE_SIZES = [
 ]
 
 MONTH_CHOICES    = [
+    ("", "Month"),
     ("JAN", "January"),
     ("FEB", "February"),
     ("MAR", "March"),

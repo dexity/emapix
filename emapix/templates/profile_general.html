@@ -44,7 +44,13 @@
     <div class="row">
         <div class="span2 prof-left">Birthday</div>
         <div class="span3">
-            {{userprof.get_b_month_display}} {{userprof.b_day}}, {{userprof.b_year}}
+            {% if userprof.b_month %}
+                {{userprof.get_b_month_display}}
+            {% endif %}
+            {% if userprof.b_day %}
+                {{userprof.b_day}}
+            {% endif %}
+            {{userprof.b_year}}
         </div>
         <div class="span3">
             {% if userprof.show_birthday %}

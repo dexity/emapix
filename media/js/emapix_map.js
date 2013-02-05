@@ -272,8 +272,8 @@ function onShowRequests(chkBox, event)
 
 // Main function
 function initialize() {
-    // XXX: Fix default location
-    var lajolla = new google.maps.LatLng(32.818062,-117.269440);
+    // XXX: Fix default location: make a separate request
+    var lajolla = new google.maps.LatLng(32.849885, -117.270298);
     var myOptions = {
         center: lajolla,
         zoom: 13,

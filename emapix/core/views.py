@@ -329,7 +329,10 @@ def renew_password(request, token):
 
 
 def make_request(request):
-    c   = {}
+    "Makes request"
+    if not request.user.is_authenticated():
+        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})    
+    #c   = {}
     return render(request, 'make.html')
 
 
@@ -761,7 +764,10 @@ def edit_profile(request):
                 userprof.user       = user
                 userprof.location   = fcd["location"]
                 userprof.country_alpha2 = fcd["country"]
-                userprof.b_day      = fcd["b_day"]
+                b_day   = fcd["b_day"]
+                if not b_day:
+                    b_day   = None
+                userprof.b_day      = b_day
                 userprof.b_month    = fcd["b_month"]
                 userprof.b_year     = fcd["b_year"]
                 userprof.gender     = fcd["gender"]
