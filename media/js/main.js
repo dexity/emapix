@@ -53,19 +53,17 @@ function set_error(error_msg, container)
 }
 
 
-function format_error(error_msg, error_default, msg_only)
-{
+var format_error    = function(error_msg, error_default, msg_only){
     var msg;
     try {
         msg = JSON.parse(error_msg).error;
     } catch(err) {
         msg = error_default;
     }
-    if (msg_only === true)
+    if (msg_only === true){
         return msg;
-    var s   = '<div class="alert alert-error" style="margin-top: 10px;">';
-    s   += msg;
-    s   += '</div>';
+    }
+    var s   = '<div class="alert alert-error" style="margin-top: 10px;">' + msg + '</div>';
     return s;
 }
 
@@ -80,3 +78,4 @@ var error_msg   = function(jqXHR, textStatus, errorThrown) {
     } catch(err) {}
     return msg;
 }
+

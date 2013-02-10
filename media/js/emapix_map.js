@@ -1,6 +1,8 @@
 
 // XXX: Fix default location: make a separate request
 
+// Requires main.js 
+
 (function(){
     var map;
     var infoWindow;
@@ -10,6 +12,7 @@
     var ilat     = 32.849885;   // La Jolla, CA
     var ilon     = -117.270298;
     var pressTimer;
+    var defaultError    = "Service error. Please try again.";
     
     var base_api	= "http://localhost/api";
     var host        = "http://localhost";
@@ -17,6 +20,11 @@
     var base_s3		= "https://s3.amazonaws.com/emapix_uploads";
     var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
     
+    var dom = {
+        inline_error:  function(msg) {
+            return '<div class="alert alert-error" style="margin-top: 10px;">' + msg + '</div>';
+        }
+    }
     String.prototype.format = function() {
             var args = arguments;
             return this.replace(/{(\d+)}/g, function(match, number) { 
@@ -27,6 +35,24 @@
             });
         };
 
+    //function(jqXHR, textStatus, errorThrown){
+    //        // Structures error response
+    //        var gen_error, errors;
+    //        try {
+    //            var data    = JSON.parse(jqXHR.responseText);
+    //            errors      = data.errors;
+    //            if ( data.error !== undefined) {
+    //                gen_error = data.error;
+    //            };
+    //            // Display default general error only if errors are set
+    //            if ($.isEmptyObject(errors) && gen_error === undefined) {
+    //                gen_error = params.default_error;
+    //            }
+    //        } catch(err) {
+    //            gen_error = params.default_error;
+    //        }
+    //        return {"errors": errors, "error": gen_error};
+    //    }    
 
     var infoStr  = '<div style="margin-bottom: 10px;"><i>{0}</i></div>' + 
         '<b>Location</b>: {1}; {2}' +
@@ -64,8 +90,8 @@
                 
                 var reqs	= res["result"];
                 for (i in reqs) {
-                    req	= reqs[i];
-                    marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+                    var req	= reqs[i];
+                    var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
                     
                     // Add click listener in closure
                     (function(){
@@ -104,7 +130,7 @@
                 {
                     var res	= $.parseJSON(data);
                     if ("status" in res && res["status"] == "ok") {
-                        req	= res["result"]
+                        var req	= res["result"]
                         var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
                         markersArray.push(marker);
                         
@@ -127,11 +153,11 @@
     function _lat(loc) { return loc.lat().toFixed(6); }
     function _lon(loc) { return loc.lng().toFixed(6); }
     function req_lat(req) {
-            lat	= req["lat"]/1e6;
+            var lat	= req["lat"]/1e6;
             return lat.toFixed(6);
     }
     function req_lon(req) {
-            lon	= req["lon"]/1e6;
+            var lon	= req["lon"]/1e6;
             return lon.toFixed(6);
     }
     // Keep it for now
@@ -150,35 +176,50 @@
         currMarker  = marker;
     }
     
+    var errorHandler    = function(iw) {
+        return function(jqXHR, textStatus, errorThrown){
+            if (!iw){
+                return;
+            }
+            var msg = defaultError;
+            try {
+                var error  = JSON.parse(jqXHR.responseText).error;
+                if ( error !== undefined) {
+                    msg = error;
+                };
+            } catch(err) {}
+            iw.setContent(dom.inline_error(msg));
+            iw.open(map);
+        }
+    }
+    
     // Bubbles
-    var showRequest = function(location, req_data)
-    {   // Displays request bubble
-        
-        $.get("/request/add?lat="+_lat(location)+"&lon="+_lon(location),
-            function(data){
-                if (infoWindow){
-                    infoWindow.close(); // Close previous request bubble before opening a new one
-                }
-                // Server handles errors
-                infoWindow = new google.maps.InfoWindow({
-                    content:    data,
-                    position:   location,
-                    map:        map
-                });
+    var showRequest = function(location, req_data){
+        // Displays request bubble
+        if (infoWindow){
+            // Close previous request bubble before opening a new one
+            infoWindow.close(); 
+        }
+        infoWindow = new google.maps.InfoWindow({
+            position:   location
+        });
+        $.ajax({
+            url:    "/request/add?lat="+_lat(location)+"&lon="+_lon(location),
+            success:    function(data){
+                iw.setContent(s);
+                iw.open(map);
                 $('#send_request').click(function(e){
                     e.preventDefault();
                     submitRequest(infoWindow, _lat(location), _lon(location));
                 });
-                
-             
-                //google.maps.event.trigger(map, 'mouseup');
-            }
-        );
+            },
+            error:  errorHandler(infoWindow)
+        });
     }
 
     
     function showView(marker, uri, id) {
-        iw = new google.maps.InfoWindow({
+        var iw = new google.maps.InfoWindow({
             content:	viewStr.format(uri),
         });
         iw.open(map, marker);
@@ -199,14 +240,14 @@
     function showInfo(marker, resource) {
         $.get("/request/info/" + resource,
             function(data){
-              iw = new google.maps.InfoWindow({content:   data});            
+              var iw = new google.maps.InfoWindow({content:   data});            
               openWindow(iw, map, marker);
             });
     }
     
     // XXX: Refactor
     function showAction(marker, lat, lon, id) {
-        iw = new google.maps.InfoWindow({
+        var iw = new google.maps.InfoWindow({
             content:    actionStr.format(lat, lon, api_key, marker.title),
         });
         iw.open(map, marker);

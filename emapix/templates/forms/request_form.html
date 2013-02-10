@@ -1,11 +1,4 @@
-{% if limit_reached %}
-<div class="alert alert-error" style="margin-top: 10px;">
-    You reached {{max_limit}} requests. <br />
-    Please wait till the end of the promo <br />
-    or <a href="#">manage requests</a>
-    <!--XXX: Add link -->
-</div>
-{% else %}
+
 <div style="margin-bottom: -10px;">
     <div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
     <form action="/request/add" method="post" id="request_form">
@@ -22,4 +15,4 @@
         <button class="btn btn-primary" id="send_request" style="margin-top: 10px;" >Submit Request</button>
     </form>
 </div>
-{% endif %}
+

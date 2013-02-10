@@ -338,14 +338,17 @@ def make_request(request):
 
 @csrf_protect
 def add_request(request):
-    "Displays and handles photo request form"
+    "Displays and handles photo request form on the map"
     if not request.user.is_authenticated():
-        logger.debug(str(request.user))
-        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+        return forbidden_json({"error": AUTH_ERROR_TXT})
     
-    _user   = request.user
+    user    = request.user
+    try:
+        prof    = UserProfile.objects.get(user=user)
+    except Exception, e:
+        return bad_request_json({"error": str(e)})
     c   = {}
-        
+    
     if request.method == "POST":
         # POST request
         form    = RequestForm(request.POST)
@@ -373,7 +376,7 @@ def add_request(request):
             
             # Create Request
             r   = Request()
-            r.user  = _user
+            r.user  = user
             r.location  = l
             r.description   = form.cleaned_data["description"]
             r.resource  = random16()
@@ -383,25 +386,32 @@ def add_request(request):
         else:
             lat     = request.POST.get("lat", "")
             lon     = request.POST.get("lon", "")
-    else:
-        # GET request
-        lat = request.GET.get("lat", "")
-        lon = request.GET.get("lon", "")
-        form    = RequestForm(initial={"lat": lat, "lon": lon})
+    #else:
+    #    # GET request
+    #    lat = request.GET.get("lat", "")
+    #    lon = request.GET.get("lon", "")
+    #    form    = RequestForm(initial={"lat": lat, "lon": lon})
+    
+    # GET request
+    lat = request.GET.get("lat", "")
+    lon = request.GET.get("lon", "")
+    form    = RequestForm(initial={"lat": lat, "lon": lon})
     
     c["lat"]    = lat
     c["lon"]    = lon        
 
-    # Check is request limit is reached
-    reqs    = Request.objects.filter(user=_user)
-    ups     = UserProfile.objects.filter(user=_user)
-    if (len(ups) > 0 and len(reqs) >= ups[0].req_limit):
-        c["limit_reached"]  = True
-        c["max_limit"]  = ups[0].req_limit
+    reqs    = WRequest.get_recent_requests(user=user, days=1, recent=False)
+    overhead = reqs.count() - prof.req_limit
+    if overhead > 0:
+        return forbidden_json({"error": "Daily quota of %s requests is reached" % prof.req_limit})
     
     c["form"]   = form
+    c.update(csrf(request))
     
-    return render(request, 'forms/request_form.html', c)
+    resp    = {
+        "data": render_to_string("forms/request_form.html", c)
+    }
+    return http_response_json(resp)
 
 
 def get_requests_json(request):
@@ -409,8 +419,8 @@ def get_requests_json(request):
     if not request.user.is_authenticated():
         return to_status(FAIL, "User is not authenticated")
     
-    _user   = request.user
-    reqs    = Request.objects.filter(user=_user)
+    user   = request.user
+    reqs    = Request.objects.filter(user=user)
     return to_status(OK, to_requests(reqs))
 
 
