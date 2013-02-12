@@ -347,65 +347,55 @@ def add_request(request):
         prof    = UserProfile.objects.get(user=user)
     except Exception, e:
         return bad_request_json({"error": str(e)})
-    c   = {}
     
     if request.method == "POST":
-        # POST request
         form    = RequestForm(request.POST)
-        if form.is_valid():
-            p   = request.POST
-            lat = form.cleaned_data["lat"]
-            lon = form.cleaned_data["lon"]
+        if not form.is_valid():
+            return bad_form_json(form)
+        
+        lat = form.cleaned_data["lat"]
+        lon = form.cleaned_data["lon"]
+        
+        # Create Location
+        l   = Location()
+        l.lat   = 1e6*lat
+        l.lon   = 1e6*lon
+        
+        # Set address (to separate function)
+        addr    = latlon2addr(lat, lon)
+        if addr is not None:
+            (l.res_lat, l.res_lon)   = addr[0]
+            (l.street, l.city, l.country) = addr[1]
+            l.res_type  = addr[2]
+            l.zipcode   = addr[3]
             
-            # Create Location
-            l   = Location()
-            l.lat   = 1e6*lat
-            l.lon   = 1e6*lon
-            
-            # Set address (to separate function)
-            addr    = latlon2addr(lat, lon)
-            if addr is not None:
-                ll  = addr[0]
-                l.res_lat   = ll[0]
-                l.res_lon   = ll[1]
-                (l.street, l.city, l.country) = addr[1]
-                l.res_type  = addr[2]
-                l.zipcode   = addr[3]
-                
-            l.save()
-            
-            # Create Request
-            r   = Request()
-            r.user  = user
-            r.location  = l
-            r.description   = form.cleaned_data["description"]
-            r.resource  = random16()
-            r.save()
-            
-            return to_status(OK, to_request(r))
-        else:
-            lat     = request.POST.get("lat", "")
-            lon     = request.POST.get("lon", "")
-    #else:
-    #    # GET request
-    #    lat = request.GET.get("lat", "")
-    #    lon = request.GET.get("lon", "")
-    #    form    = RequestForm(initial={"lat": lat, "lon": lon})
+        l.save()
+        
+        # Create Request
+        r   = Request()
+        r.user  = user
+        r.location  = l
+        r.description   = form.cleaned_data["description"]
+        r.resource  = random16()
+        r.save()
+        
+        return to_status(OK, to_request(r)) # XXX: Fix
     
     # GET request
     lat = request.GET.get("lat", "")
     lon = request.GET.get("lon", "")
     form    = RequestForm(initial={"lat": lat, "lon": lon})
-    
-    c["lat"]    = lat
-    c["lon"]    = lon        
 
     reqs    = WRequest.get_recent_requests(user=user, days=1, recent=False)
     overhead = reqs.count() - prof.req_limit
     if overhead > 0:
         return forbidden_json({"error": "Daily quota of %s requests is reached" % prof.req_limit})
     
-    c["form"]   = form
+    c   = {
+        "lat":  lat,
+        "lon":  lon,
+        "form": form
+    }
     c.update(csrf(request))
     
     resp    = {
@@ -417,11 +407,11 @@ def add_request(request):
 def get_requests_json(request):
     # Returns list of all user's markers
     if not request.user.is_authenticated():
-        return to_status(FAIL, "User is not authenticated")
+        return to_status(FAIL, "User is not authenticated")  # XXX: Fix
     
     user   = request.user
     reqs    = Request.objects.filter(user=user)
-    return to_status(OK, to_requests(reqs))
+    return to_status(OK, to_requests(reqs))  # XXX: Fix
 
 
 def request_info(request, res):
@@ -497,7 +487,7 @@ def edit_request_ajax(request, res):
             req.save()
         except Exception, e:
             return server_error_json({"error": str(e)})
-        return to_status(OK)
+        return to_status(OK)     # XXX: Fix
     
     # Dynamically set new widget
     form    = RequestForm({"description": req.description})
@@ -546,7 +536,7 @@ def remove_request_photo_ajax(request, res):
         return req
     try:
         WPhoto.remove_photo_or_raise(res)
-        return to_status(OK)
+        return to_status(OK)     # XXX: Fix
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
 
@@ -566,7 +556,7 @@ def remove_photo_json(request, photo_id):
     except Photo.DoesNotExist:
         return bad_request_json({"error": "Photo does not exist"})
 
-    return to_status(OK)
+    return to_status(OK)     # XXX: Fix
 
 
 def remove_request_ajax(request, res):
@@ -715,7 +705,7 @@ def remove_comment_json(request, comment_id):
         com.delete()
     except Exception, e:
         return bad_request_json({"error": str(e)})
-    return to_status(OK)
+    return to_status(OK)     # XXX: Fix
     
 
 def get_profile(request):
@@ -877,7 +867,7 @@ def remove_profile_photo_json(request):
     except Exception, e:
         return bad_request_json({"error": str(e)})
 
-    return to_status(OK)    
+    return to_status(OK)     # XXX: Fix 
     
 
 def get_user(request, username, tab="requests"):

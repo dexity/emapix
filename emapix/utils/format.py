@@ -3,12 +3,14 @@ import json
 
 # XXX: Refactor this module
 def to_request(r):
-    s   = {"id":    r.id,
-           "lat":   "",
-           "lon":   "",
-           "description": r.description,
-           "submitted_date": r.submitted_date,
-           "resource":  r.resource}
+    s   = {
+        "id":    r.id,
+        "lat":   "",
+        "lon":   "",
+        "description": r.description,
+        "submitted_date": r.submitted_date,
+        "resource":  r.resource
+    }
     if r.location:
         s["lat"]    = r.location.lat
         s["lon"]    = r.location.lon
@@ -27,6 +29,7 @@ def to_json(obj):
 
 
 def to_status(status, result=None):
+    "Returns s"
     resp    = {
         "status": status
     }

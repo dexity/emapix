@@ -21,9 +21,12 @@
     var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
     
     var dom = {
-        inline_error:  function(msg) {
+        inlineError:  function(msg) {
             return '<div class="alert alert-error" style="margin-top: 10px;">' + msg + '</div>';
-        }
+        },
+        fieldError:    function(msg) {
+            return '<div class="alert alert-error error_spaces">' + msg + '</div>';
+        }        
     }
     String.prototype.format = function() {
             var args = arguments;
@@ -121,32 +124,47 @@
     }
     
     
-    function submitRequest(bubble, lat, lon)
-    {
-        $.post(host+"/request/add",
-            $("#request_form").serialize(),
-            function(data){
-                try
-                {
-                    var res	= $.parseJSON(data);
-                    if ("status" in res && res["status"] == "ok") {
-                        var req	= res["result"]
-                        var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
-                        markersArray.push(marker);
-                        
-                        // Set click event
-                        google.maps.event.addListener(marker, 'click', function() {
-                            // Check if photo exists
-                            showInfo(marker, req["resource"]);
-                        });
-                        bubble.close();
-                    }
-                }
-                catch (e){
-                    // Not json
-                    infoWindow.setContent(data);
-                }
-            });
+    var submitRequest   = function(bubble, lat, lon){
+        $.ajax({
+            url:    host+"/request/add",
+            type:   "POST",
+            cache:  false,
+            data:   $("#request_form").serialize(),
+            success:    function(data) {
+                
+                var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+                markersArray.push(marker);
+                
+                // Set click event
+                google.maps.event.addListener(marker, 'click', function() {
+                    // Check if photo exists
+                    showInfo(marker, req["resource"]);
+                });
+                bubble.close();
+                
+                //try
+                //{
+                //    var res	= $.parseJSON(data);
+                //    if ("status" in res && res["status"] == "ok") {
+                //        var req	= res["result"]
+                //        var marker	= createMarker(req_lat(req), req_lon(req), req["resource"]);
+                //        markersArray.push(marker);
+                //        
+                //        // Set click event
+                //        google.maps.event.addListener(marker, 'click', function() {
+                //            // Check if photo exists
+                //            showInfo(marker, req["resource"]);
+                //        });
+                //        bubble.close();
+                //    }
+                //}
+                //catch (e){
+                //    // Not json
+                //    infoWindow.setContent(data);
+                //}
+            },
+            error: errorHandler(infoWindow)
+        });
         
     }
     
@@ -160,11 +178,12 @@
             var lon	= req["lon"]/1e6;
             return lon.toFixed(6);
     }
-    // Keep it for now
-    function wrap_content(content, id)
-    {
-        return '<div id="'+id+'">'+content+'</div>';
-    }
+    
+    //// Keep it for now
+    //function wrap_content(content, id)
+    //{
+    //    return '<div id="'+id+'">'+content+'</div>';
+    //}
     
     function openWindow(iw, map, marker)
     {
@@ -176,20 +195,42 @@
         currMarker  = marker;
     }
     
+    var errorData   = function(jqXHR, textStatus, errorThrown){
+        // Structures error response
+        var gen_error, errors;
+        try {
+            var data    = JSON.parse(jqXHR.responseText);
+            errors      = data.errors;
+            if ( data.error !== undefined) {
+                gen_error = data.error;
+            };
+            // Display default general error only if errors are set
+            if ($.isEmptyObject(errors) && gen_error === undefined) {
+                gen_error = defaultError;
+            }
+        } catch(err) {
+            gen_error = defaultError;
+        }
+        return {"errors": errors, "error": gen_error};
+    }
+   
     var errorHandler    = function(iw) {
         return function(jqXHR, textStatus, errorThrown){
             if (!iw){
                 return;
             }
-            var msg = defaultError;
-            try {
-                var error  = JSON.parse(jqXHR.responseText).error;
-                if ( error !== undefined) {
-                    msg = error;
-                };
-            } catch(err) {}
-            iw.setContent(dom.inline_error(msg));
-            iw.open(map);
+            var ed  = errorData(jqXHR, textStatus, errorThrown);
+            console.debug(ed);
+            if (ed.error) {
+                iw.setContent(dom.inlineError(msg));
+                iw.open(map);                
+            }
+            for (var k in ed.errors) {
+                if (!ed.errors.hasOwnProperty(k)) {
+                    continue;
+                }
+                $("#error_" + k).html(dom.fieldError(ed.errors[k]));
+            }
         }
     }
     
@@ -205,9 +246,10 @@
         });
         $.ajax({
             url:    "/request/add?lat="+_lat(location)+"&lon="+_lon(location),
+            cache:  false,
             success:    function(data){
-                iw.setContent(s);
-                iw.open(map);
+                infoWindow.setContent(data.data);
+                infoWindow.open(map);
                 $('#send_request').click(function(e){
                     e.preventDefault();
                     submitRequest(infoWindow, _lat(location), _lon(location));

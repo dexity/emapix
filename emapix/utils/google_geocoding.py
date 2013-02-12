@@ -38,37 +38,37 @@ def latlon2addr(lat, lon):
         return None
 
     status  = js["status"]
-    if status == "OK" and len(js["results"]) > 0:
-        adr_comp    = js["results"][0]["address_components"]    # Most specific
-        for comp in adr_comp:
-            if "street_number" in comp["types"]:
-                street  = comp["long_name"] + " "
-            elif "route" in comp["types"]:
-                if street is None:
-                    street = ""
-                street  += comp["long_name"]
-            elif "sublocality" in comp["types"]:
-                city    = comp["long_name"]
-            elif "locality" in comp["types"] and city is None:
-                city    = comp["long_name"] # If "sublocality" is empty
-            elif "administrative_area_level_2" in comp["types"] and city is None:
-                city    = comp["long_name"] # If "sublocality" or "locality" are empty
-            elif "administrative_area_level_1" in comp["types"]:    # state
-                if city is None:
-                    city = ""
-                else:
-                    city += ", "
-                city    += comp["short_name"]
-            elif "country" in comp["types"]:
-                country = comp["long_name"]
-            elif "postal_code" in comp["types"]:
-                zipcode = comp["short_name"]
-    
-        latlon      = js["results"][0]["geometry"]["location"]
-        loc_type    = js["results"][0]["geometry"]["location_type"]
-        (lat, lon)  = (latlon["lat"], latlon["lng"])
-    else:
+    if not (status == "OK" and len(js["results"]) > 0):
         return None
+    
+    adr_comp    = js["results"][0]["address_components"]    # Most specific
+    for comp in adr_comp:
+        if "street_number" in comp["types"]:
+            street  = comp["long_name"] + " "
+        elif "route" in comp["types"]:
+            if street is None:
+                street = ""
+            street  += comp["long_name"]
+        elif "sublocality" in comp["types"]:
+            city    = comp["long_name"]
+        elif "locality" in comp["types"] and city is None:
+            city    = comp["long_name"] # If "sublocality" is empty
+        elif "administrative_area_level_2" in comp["types"] and city is None:
+            city    = comp["long_name"] # If "sublocality" or "locality" are empty
+        elif "administrative_area_level_1" in comp["types"]:    # state
+            if city is None:
+                city = ""
+            else:
+                city += ", "
+            city    += comp["short_name"]
+        elif "country" in comp["types"]:
+            country = comp["long_name"]
+        elif "postal_code" in comp["types"]:
+            zipcode = comp["short_name"]
+
+    latlon      = js["results"][0]["geometry"]["location"]
+    loc_type    = js["results"][0]["geometry"]["location_type"]
+    (lat, lon)  = (latlon["lat"], latlon["lng"])
     
     return ((lat, lon), (street, city, country), loc_type, zipcode)
 

@@ -199,7 +199,8 @@ class RequestForm(forms.Form):
     lon     = forms.FloatField(widget=forms.HiddenInput())
     description = forms.CharField(min_length=6, max_length=140,
                                   error_messages={"min_length": "Should be at least 6 characters",
-                                                  "max_length": "Should be less than 140 characters"},
+                                                  "max_length": "Should be less than 140 characters",
+                                                  "required": "Please add the description"},
                                   widget    = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ..."}))
     
     #def clean(self):
