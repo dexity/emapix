@@ -46,8 +46,9 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^photos$", "recent_photos"),
     
     # Search methods
-    
-    # Ajax
+
+    # Json
+    url(r"^request/all/json$", "get_requests_json"),
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
     url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
@@ -56,12 +57,11 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax"),
     url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax"),   # (?P<status>(\w+))
     
-    # Json
-    url(r"^request/all/json$", "get_requests_json"),
     url(r"^user/(?P<username>(%s))/comments/json$" % uregex, "get_user_comments_json"),
     url(r"^user/(?P<username>(%s))/requests/json$" % uregex, "get_user_requests_json"),
     url(r"^user/(?P<username>(%s))/photos/json$" % uregex, "get_user_photos_json"),
     url(r"^user/(?P<username>(%s))/areas/json$" % uregex, "get_user_areas_json"),   # Not implemented
+    
     url(r"^comments/json$", "get_request_comments_json"),
     url(r"^comment/add/json$", "add_comment_json"),
     url(r"^comment/(\d+)/remove/json$", "remove_comment_json"),

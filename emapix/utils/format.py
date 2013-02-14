@@ -2,7 +2,11 @@ from emapix.utils.utils import http_response_json
 import json
 
 # XXX: Refactor this module
+
 def to_request(r):
+    "Serializes request"
+    if not r:
+        return {}
     s   = {
         "id":    r.id,
         "lat":   "",

@@ -379,7 +379,10 @@ def add_request(request):
         r.resource  = random16()
         r.save()
         
-        return to_status(OK, to_request(r)) # XXX: Fix
+        data    = {
+            "data": to_request(r)
+        }
+        return http_response_json(data)
     
     # GET request
     lat = request.GET.get("lat", "")
@@ -405,36 +408,36 @@ def add_request(request):
 
 
 def get_requests_json(request):
-    # Returns list of all user's markers
+    "Returns list of all user's markers"
     if not request.user.is_authenticated():
-        return to_status(FAIL, "User is not authenticated")  # XXX: Fix
+        return forbidden_json({"error": AUTH_ERROR_TXT})
     
-    user   = request.user
+    user    = request.user
     reqs    = Request.objects.filter(user=user)
-    return to_status(OK, to_requests(reqs))  # XXX: Fix
+    data    = {
+        "data": to_requests(reqs)
+    }
+    return http_response_json(data)
 
 
 def request_info(request, res):
     "Displays the request info"
     if not request.user.is_authenticated():
-        return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})
+        return forbidden_json({"error": AUTH_ERROR_TXT})
     
     try:
         req = Request.objects.get(resource=res)
-        c   = {}
-        c["id"]     = req.id
-        if req.location:
-            c["lat"]    = req.location.lat/1e6
-            c["lon"]    = req.location.lon/1e6
-            c["street"] = req.location.street
-            c["city"]   = req.location.city
-            c["country"]    = req.location.country
-        c["description"]    = req.description
-        c["resource"]   = req.resource
     except Request.DoesNotExist:
-        return render(request, 'misc/error_view.html', {"error": "Request does not exist"})
-    
-    return render(request, 'ajax/request_info.html', c)
+        return bad_request_json({"error": str(e)})
+
+    c   = {
+        "req":  req
+    }
+    c.update(csrf(request))
+    data    = {
+        "data":     render_to_string("ajax/request_info.html", c)
+    }
+    return http_response_json(data)
 
 
 def get_request(request, res):
@@ -461,7 +464,6 @@ def get_request(request, res):
             if isinstance(img, Image): #and img.is_avail:
                 c["pic_url"]    = img.url
     
-
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})
     
