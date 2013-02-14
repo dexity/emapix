@@ -1,6 +1,8 @@
 
 <div style="margin-bottom: -10px;">
-    
+    {% if img %}
+    <img src="{{img.url}}" style="margin-bottom: 5px; width: 150px"/>
+    {% endif %}
     <div style="margin-bottom: 10px; width: 300px"><i>{{ req.description }}</i></div>
     {% include "misc/address.html" %}
     <br />

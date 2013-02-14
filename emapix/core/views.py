@@ -426,12 +426,14 @@ def request_info(request, res):
         return forbidden_json({"error": AUTH_ERROR_TXT})
     
     try:
-        req = Request.objects.get(resource=res)
-    except Request.DoesNotExist:
+        req     = Request.objects.get(resource=res)
+        img     = WImage.get_image_by_request(req, size_type="medium")
+    except Exception, e:
         return bad_request_json({"error": str(e)})
 
     c   = {
-        "req":  req
+        "req":  req,
+        "img":  img
     }
     c.update(csrf(request))
     data    = {
