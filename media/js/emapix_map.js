@@ -1,7 +1,7 @@
 
 // XXX: Fix default location: make a separate request
 
-// Requires main.js 
+// Requires: main.js, modal.js
 
 (function(){
     var map;
@@ -9,8 +9,8 @@
     var markersArray    = [];
     var currMarker      = null;
     var currBubble      = null;
-    var ilat     = 32.849885;   // La Jolla, CA
-    var ilon     = -117.270298;
+    var ilat        = 32.849885;   // La Jolla, CA
+    var ilon        = -117.270298;
     var pressTimer;
     var defaultError    = "Service error. Please try again.";
     
@@ -79,8 +79,8 @@
     
     var onMarkerClick   = function(marker, req){
         // Handles click event on marker
-        var lat	= req_lat(req);
-        var lon	= req_lon(req)
+        //var lat	= req_lat(req);
+        //var lon	= req_lon(req)
         google.maps.event.addListener(marker, 'click', function() {
             showInfo(marker, req.resource);
         });      
@@ -99,11 +99,12 @@
                 var marker  = createMarker(req_lat(req), req_lon(req), req.resource);
                 markersArray.push(marker);
                 
-                // Set click event
-                google.maps.event.addListener(marker, 'click', function() {
-                    // Check if photo exists
-                    showInfo(marker, req.resource); // XXX: Finish
-                });
+                onMarkerClick(marker, req);
+                //// Set click event
+                //google.maps.event.addListener(marker, 'click', function() {
+                //    // Check if photo exists
+                //    showInfo(marker, req.resource); // XXX: Finish
+                //});
                 bubble.close();
             },
             error: errorHandler(infoWindow)
@@ -125,12 +126,6 @@
         var lon	= req.lon/1e6;
         return lon.toFixed(6);
     }
-    
-    //// Keep it for now
-    //function wrap_content(content, id)
-    //{
-    //    return '<div id="'+id+'">'+content+'</div>';
-    //}
     
     var openWindow  = function(iw, map, marker){
         if (currBubble) {
@@ -208,8 +203,19 @@
     }
 
     
-    var onRemoveClick   = function(){
-        // MODAL
+    var onRemoveClick   = function(iw, marker, res){
+
+        MODAL({
+            container:  "modal_container",
+            link:       "remove_request",
+            url:        "/request/" + res + "/remove/json",
+            header:     "Remove Request",
+            btn_label:  "Remove Request",
+            callback:   function(){
+                iw.close();
+                marker.setMap(null);
+            }
+        }).init();
         
         //$(ids.remove_marker).click(function(event) {
         //    $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
@@ -234,7 +240,7 @@
                 });
                 openWindow(iw, map, marker);
                 
-                
+                onRemoveClick(iw, marker, resource)
             },
             error:  ""  // XXX: Fix
         });
@@ -298,13 +304,6 @@
             onShowRequests($(this), e);
         });
         onShowRequests($(ids.show_reqs));
-    
-        //// Remove request
-        //$(document).on("click", "#remove_link", function(e){
-        //    e.preventDefault();
-        //    $("#body_errors").html("");
-        //    $("#remove_modal").modal();
-        //});
     }    
     
     $(document).ready(function(){

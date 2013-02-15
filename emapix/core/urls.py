@@ -37,7 +37,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^profile/photo/select$", "profile_photo_select"),
     url(r"^profile/photo/crop$", "profile_photo_crop"),
     url(r"^profile/photo/create$", "profile_photo_create"),
-    url(r"^profile/photo/remove/json$", "remove_profile_photo_json"),
+    url(r"^profile/photo/remove/json$", "remove_profile_photo_json"),    # XXX: Fix
     
     # Photo methods
     url(r"^submit/select/%s$" % REQ_REGEX, "submit_select"),
@@ -52,7 +52,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/add$", "add_request"),
     url(r"^request/info/%s$" % REQ_REGEX, "request_info"),
     url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax"),
-    url(r"^request/%s/photo/remove/json$" % REQ_REGEX, "remove_request_photo_ajax"),
+    url(r"^request/%s/photo/remove/json$" % REQ_REGEX, "remove_request_photo_ajax"),    # XXX: Fix
     # Note: Is the url pattern r"^request/%s/photo/(\d+)/remove/json$" useful?
     url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax"),
     url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax"),   # (?P<status>(\w+))
@@ -64,8 +64,8 @@ urlpatterns = patterns("emapix.core.views",
     
     url(r"^comments/json$", "get_request_comments_json"),
     url(r"^comment/add/json$", "add_comment_json"),
-    url(r"^comment/(\d+)/remove/json$", "remove_comment_json"),
-    url(r"^photo/(\d+)/remove/json$", "remove_photo_json"), # ?
+    url(r"^comment/(\d+)/remove/json$", "remove_comment_json"),    # XXX: Fix?
+    url(r"^photo/(\d+)/remove/json$", "remove_photo_json"), # ? XXX: Fix
     
     # Layouts
     url(r"^help$", "help"),

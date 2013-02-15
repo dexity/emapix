@@ -8,8 +8,8 @@ var MODAL = (function(options){
     var params = {
         container:  "#" + options.container,
         $link:      (typeof options.link === "string") ? $("#" + options.link) : options.link,
-        modal:      "#modal",
-        modal_status:   "#modal_status",
+        modal:      "#" + options.container + " .modal",
+        modal_status:   "#" + options.container + " .modal_status",
         body:       options.body,
         url:        options.url,
         header:     options.header,
@@ -21,14 +21,14 @@ var MODAL = (function(options){
     },
     dom = {
         modal:  function(header) {
-            var s   = '<div id="modal" class="modal hide fade">' +
+            var s   = '<div class="modal hide fade">' +
                 '   <div class="modal-header">' +
                 '       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
                 '       <h3>' + params.header + '</h3>' +
                 '   </div>' +
                 '   <div class="modal-body"></div>' +
                 '   <div class="modal-footer">' +
-                '       <div id="modal_status"></div>' +
+                '       <div class="modal_status"></div>' +
                 '       <button class="btn btn-primary submit_form">' + params.btn_label + '</button>' +
                 '       <a href="#" data-dismiss="modal">Cancel</a>' +
                 '   </div>'+

@@ -563,20 +563,26 @@ def remove_photo_json(request, photo_id):
     return to_status(OK)     # XXX: Fix
 
 
+@csrf_protect
 def remove_request_ajax(request, res):
     "Removes request"
-    if request.method != "POST":
-        return bad_request_json({"error": "Invalid request method"})
     req = validate_user_request(request, res, True)
     if not isinstance(req, Request):
         return req
 
-    try:
-        result = WRequest.purge_request_or_raise(res, req.user)
-        return http_response_json({"data": "ok"})
-    except Exception, e:
-        return bad_request_json({"error": str(e)})
-
+    if request.method == "POST":
+        try:
+            result = WRequest.purge_request_or_raise(res, req.user)
+            return http_response_json({"data": "ok"})
+        except Exception, e:
+            return bad_request_json({"error": str(e)})
+    
+    c   = {}
+    c.update(csrf(request))
+    resp    = {
+        "data": render_to_string("forms/remove_request_form.html", c)
+    }
+    return http_response_json(resp)
 
 
 def to_request(req, desc_size=None):
