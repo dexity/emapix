@@ -14,12 +14,6 @@
     var pressTimer;
     var defaultError    = "Service error. Please try again.";
     
-    var base_api	= "http://localhost/api";
-    var host        = "http://localhost";
-    //var base_api	= "http://ec2-184-73-88-189.compute-1.amazonaws.com/api";
-    var base_s3		= "https://s3.amazonaws.com/emapix_uploads";
-    var api_key		= "0dae2799bb2d9b88e1d38a337377b221";
-    
     var dom = {
         inlineError:  function(msg) {
             return '<div class="alert alert-error" style="margin-top: 10px;">' + msg + '</div>';
@@ -30,17 +24,9 @@
     };
     
     var ids = {
-        show_reqs: "#show_requests"
+        show_reqs:  "#show_requests",
+        remove_marker:  "#remove_marker"
     }
-    String.prototype.format = function() {
-            var args = arguments;
-            return this.replace(/{(\d+)}/g, function(match, number) { 
-              return typeof args[number] != 'undefined'
-                ? args[number]
-                : match
-              ;
-            });
-        };
 
     //function(jqXHR, textStatus, errorThrown){
     //        // Structures error response
@@ -61,19 +47,6 @@
     //        return {"errors": errors, "error": gen_error};
     //    }    
 
-    var infoStr  = '<div style="margin-bottom: 10px;"><i>{0}</i></div>' + 
-        '<b>Location</b>: {1}; {2}' +
-        '<div style="margin-top: 10px;"><a href="#" target="_blank" class="pull-left">Request Details</a>' +
-        '<a href="" target="_blank" class="pull-right" style="color: red;">Remove</a><div>';
-        
-    //var actionStr	= '<img id="img_id" src="#" alt="" width=200 hidden=true/></br>' + 
-    //    'Location: {0}; {1}<br/>' +
-    //    '<input type="file" name="uploaded" />' +
-    //    '<button type="button" id="upload_picture">Upload Picture</button><br/>' +
-    //    '<button type="button" id="remove_marker">Remove Marker</button><br/>';
-    
-    var viewStr		= '<img src="{0}" width=200/><br/>' +
-    '<button type="button" id="remove_marker">Remove</button>';
     
     var createMarker    = function(lat, lon, resource){
         // Creates marker and sets it on the map
@@ -83,10 +56,7 @@
             map:        map		// set map?
         });	
     }
-    
-    function imageUri(resource) {
-        return "{0}/{1}.jpg".format(base_s3, resource);
-    }
+
     
     var showMarkers = function() {
         "Displays markers"
@@ -112,19 +82,7 @@
         var lat	= req_lat(req);
         var lon	= req_lon(req)
         google.maps.event.addListener(marker, 'click', function() {
-            // Will not make a separate request for every marker
             showInfo(marker, req.resource);
-            
-            /*uri	= imageUri(_marker.title);
-            showAction(_marker, lat, lon, _req["id"]);
-            
-            // Check if photo exists
-            if (_req["photo_exists"]) {
-                showView(_marker, uri, _req["id"]);
-            } else {
-                showAction(_marker, lat, lon, _req["id"]);
-            }
-            */
         });      
     }
     
@@ -250,26 +208,22 @@
     }
 
     
-    function showView(marker, uri, id) {
-        var iw = new google.maps.InfoWindow({
-            content:	viewStr.format(uri),
-        });
-        iw.open(map, marker);
+    var onRemoveClick   = function(){
+        // MODAL
         
-        // Refactor?
-        $('button#remove_marker').click(function(event) {
-            $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
-                function(data) {
-                    var res	= $.parseJSON(data);
-                    if (res["status"] == "ok") {
-                        iw.close();
-                        marker.setMap(null);
-                    }
-                });
-        });
+        //$(ids.remove_marker).click(function(event) {
+        //    $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
+        //        function(data) {
+        //            var res	= $.parseJSON(data);
+        //            if (res["status"] == "ok") {
+        //                iw.close();
+        //                marker.setMap(null);
+        //            }
+        //        });
+        //});        
     }
     
-    function showInfo(marker, resource) {
+    var showInfo    = function(marker, resource) {
         // Makes request and shows window
         $.ajax({
             url:    "/request/info/" + resource,
@@ -279,71 +233,13 @@
                     content:   data.data
                 });
                 openWindow(iw, map, marker);
+                
+                
             },
             error:  ""  // XXX: Fix
         });
     }
-    
-    // XXX: Refactor
-    function showAction(marker, lat, lon, id) {
-        var iw = new google.maps.InfoWindow({
-            content:    actionStr.format(lat, lon, api_key, marker.title),
-        });
-        iw.open(map, marker);
-        
-        /*
-        $('input').change(function(){
-            // Set image
-            if (this.files && this.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    $('#img_id').show();
-                    $('#img_id').attr('src', e.target.result);
-                }
-                reader.readAsDataURL(this.files[0]);
-            }
-        });
-        
-        $('button#upload_picture').click(function(event) {
-            var data = new FormData();
-            $.each($('input')[0].files, function(i, file) {
-                data.append('uploaded', file);	// should have one file
-            });
-            $.ajax({
-                url: 	base_api + "/upload?key=" + api_key + "&resource=" + marker.title,
-                data: 	data,
-                cache: 	false,
-                contentType: false,
-                processData: false,
-                type: 	'POST',
-                success: function(data){
-                    google.maps.event.clearListeners(marker, "click");	// Remove listeners
-    
-                    // Refactor?
-                    google.maps.event.addListener(marker, 'click', function() {
-                            uri	= imageUri(marker.title);
-                            showView(marker, uri, id);
-                    });								
-                    
-                    iw.close();
-                }
-            });
-                
-        });
-        
-        // Refactor?
-        $('button#remove_marker').click(function(event) {
-                $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
-                                function(data) {
-                                        var res	= $.parseJSON(data);
-                                        if (res["status"] == "ok") {
-                                                iw.close();
-                                                marker.setMap(null);
-                                        }
-                                });
-        });
-        */
-    }
+
     
     var clearOverlays   = function() {
         if (markersArray) {
@@ -361,7 +257,6 @@
             clearOverlays();    
         }
     }    
-    
     
     
     // Main function
