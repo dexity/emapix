@@ -205,28 +205,19 @@
     
     var onRemoveClick   = function(iw, marker, res){
 
-        MODAL({
-            container:  "modal_container",
-            link:       "remove_request",
-            url:        "/request/" + res + "/remove/json",
-            header:     "Remove Request",
-            btn_label:  "Remove Request",
-            callback:   function(){
-                iw.close();
-                marker.setMap(null);
-            }
-        }).init();
-        
-        //$(ids.remove_marker).click(function(event) {
-        //    $.get(base_api+"/" + id +"/remove", {"key": api_key}, // fix title
-        //        function(data) {
-        //            var res	= $.parseJSON(data);
-        //            if (res["status"] == "ok") {
-        //                iw.close();
-        //                marker.setMap(null);
-        //            }
-        //        });
-        //});        
+        google.maps.event.addListener(iw, 'domready', function(event){
+            MODAL({
+                container:  "modal_container",
+                link:       "remove_request",
+                url:        "/request/" + res + "/remove/json",
+                header:     "Remove Request",
+                btn_label:  "Remove Request",
+                callback:   function(){
+                    iw.close();
+                    marker.setMap(null);
+                }
+            }).init();
+        });
     }
     
     var showInfo    = function(marker, resource) {

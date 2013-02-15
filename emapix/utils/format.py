@@ -28,10 +28,15 @@ def to_requests(rs):
     return l
 
 
+def to_ok():
+    return http_response_json({"status": "ok"})
+
+
 def to_json(obj):
     return json.dumps(obj)
 
 
+# Remove?
 def to_status(status, result=None):
     "Returns s"
     resp    = {

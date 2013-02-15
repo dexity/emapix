@@ -37,7 +37,7 @@ var MODAL = (function(options){
             return s;
         },
         inline_error:  function(msg) {
-            return '<div class="e-alert e-alert-inline alert-error pull-left">' + msg + '</div>';
+            return '<div class="alert e-alert-inline alert-error pull-left">' + msg + '</div>';
         },
         field_error:    function(msg) {
             return '<div class="alert alert-error error_spaces">' + msg + '</div>';
