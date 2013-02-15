@@ -585,7 +585,8 @@ def remove_request_ajax(request, res):
     return http_response_json(resp)
 
 
-def to_request(req, desc_size=None):
+# XXX: Refactor to format.py
+def to_request2(req, desc_size=None):
     "Returns request dictionary"
     desc    = req.description
     if isinstance(desc_size, int):
@@ -629,7 +630,7 @@ def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=Fa
         }
         if userprof:
             comdict["remove_url"]   = "/comment/%s/remove/json" % com.id
-            comdict["request"]  = to_request(rc.request, desc_size=50)
+            comdict["request"]  = to_request2(rc.request, desc_size=50)
         comments.append(comdict)
     if req:
         com_total   = req.num_comments
@@ -643,7 +644,7 @@ def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=Fa
         }
     }
     if req:
-        data["data"]["request"] =  to_request(req)
+        data["data"]["request"] =  to_request2(req)
     
     return http_response_json(data)    
 
@@ -1041,7 +1042,7 @@ def get_user_photos_json(request, username):
         image   = WImage.get_image_by_photo(phreq.photo, size_type="medium")
         photo   = {
             "id":       phreq.photo.id,
-            "request":  to_request(phreq.request, 40),
+            "request":  to_request2(phreq.request, 40),
             "location": {
                 "city":     phreq.request.location.city,
                 "country":  phreq.request.location.country

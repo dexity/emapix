@@ -53,7 +53,7 @@
         return new google.maps.Marker({
             position:  	new google.maps.LatLng(lat, lon),
             title:      resource,
-            map:        map		// set map?
+            map:        map		// Set map
         });	
     }
 
@@ -86,6 +86,7 @@
     
     var submitRequest   = function(bubble, lat, lon){
         "Submits the request"
+        
         $.ajax({
             url:    "/request/add",
             type:   "POST",
@@ -94,9 +95,10 @@
             success:    function(data) {
                 req = data.data;
                 
+                console.debug(data);
                 var marker  = createMarker(req_lat(req), req_lon(req), req.resource);
+                currMarker  = marker;
                 
-                //marker.setMap(map);
                 onMarkerClick(marker, req);
                 markersArray.push(marker);
                 bubble.close();
@@ -257,7 +259,7 @@
         var myOptions = {
             center: location,
             zoom: 13,
-            streetViewControl:  false,  // Enable if needed
+            streetViewControl:  true,  // Enable if needed
             mapTypeId: google.maps.MapTypeId.ROADMAP,
             draggableCursor: "crosshair"
         };
