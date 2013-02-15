@@ -491,7 +491,7 @@ def edit_request_ajax(request, res):
             req.save()
         except Exception, e:
             return server_error_json({"error": str(e)})
-        return to_status(OK)     # XXX: Fix
+        return to_ok()
     
     # Dynamically set new widget
     form    = RequestForm({"description": req.description})
@@ -540,7 +540,7 @@ def remove_request_photo_ajax(request, res):
         return req
     try:
         WPhoto.remove_photo_or_raise(res)
-        return to_status(OK)     # XXX: Fix
+        return to_ok()
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
 
@@ -560,7 +560,7 @@ def remove_photo_json(request, photo_id):
     except Photo.DoesNotExist:
         return bad_request_json({"error": "Photo does not exist"})
 
-    return to_status(OK)     # XXX: Fix
+    return to_ok()
 
 
 @csrf_protect
@@ -573,7 +573,7 @@ def remove_request_ajax(request, res):
     if request.method == "POST":
         try:
             result = WRequest.purge_request_or_raise(res, req.user)
-            return http_response_json({"data": "ok"})
+            return to_ok()
         except Exception, e:
             return bad_request_json({"error": str(e)})
     
@@ -715,7 +715,7 @@ def remove_comment_json(request, comment_id):
         com.delete()
     except Exception, e:
         return bad_request_json({"error": str(e)})
-    return to_status(OK)     # XXX: Fix
+    return to_ok()
     
 
 def get_profile(request):
@@ -877,7 +877,7 @@ def remove_profile_photo_json(request):
     except Exception, e:
         return bad_request_json({"error": str(e)})
 
-    return to_status(OK)     # XXX: Fix 
+    return to_ok()
     
 
 def get_user(request, username, tab="requests"):

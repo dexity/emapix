@@ -79,8 +79,6 @@
     
     var onMarkerClick   = function(marker, req){
         // Handles click event on marker
-        //var lat	= req_lat(req);
-        //var lon	= req_lon(req)
         google.maps.event.addListener(marker, 'click', function() {
             showInfo(marker, req.resource);
         });      
@@ -97,14 +95,10 @@
                 req = data.data;
                 
                 var marker  = createMarker(req_lat(req), req_lon(req), req.resource);
-                markersArray.push(marker);
                 
+                //marker.setMap(map);
                 onMarkerClick(marker, req);
-                //// Set click event
-                //google.maps.event.addListener(marker, 'click', function() {
-                //    // Check if photo exists
-                //    showInfo(marker, req.resource); // XXX: Finish
-                //});
+                markersArray.push(marker);
                 bubble.close();
             },
             error: errorHandler(infoWindow)

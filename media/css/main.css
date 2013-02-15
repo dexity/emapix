@@ -350,7 +350,7 @@ a img {
     left: 40px;
 }
 
-#modal_status {
+.modal_status {
     display: inline;
 }
 
