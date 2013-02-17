@@ -1,0 +1,22 @@
+{% extends "misc/request_controls.html" %}
+
+{% block left_column %}
+{% if is_open %}
+    <a href="#" id="edit_request">Edit Request</a><br />
+    {% if pic_url %}
+    <a href="#" id="submit_photo">Submit Different Photo</a><br />
+    {% endif %}
+    <a href="/request/{{req.resource}}/status/close/json" id="request_status">Close Request</a>
+    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+{% else %}
+    <a href="/request/{{req.resource}}/status/open/json" id="request_status">Open Request</a>
+    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+{% endif %}
+{% endblock %}
+
+{% block right_column %}
+{% if is_open %}
+    <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
+{% endif %}
+<a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
+{% endblock %}

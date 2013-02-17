@@ -1,0 +1,14 @@
+{% extends "misc/request_controls.html" %}
+
+{% block left_column %}
+{% if is_open and pic_url %}
+<a href="#" id="submit_photo">Submit Different Photo</a><br />
+{% endif %}
+{% endblock %}
+
+{% block right_column %}
+{% if is_open %}
+<a href="#" class="red" id="remove_photo">Remove Photo</a><br />
+{% endif %}
+{% endblock %}
+

@@ -9,7 +9,7 @@
 
 <div class="row">
     <div class="span5">
-        <h3>{{req.description|slice:":35"}}{% if req.description|length > 35 %}...{% endif %}</h3>
+        <h3>{{req.description|slice:":40"}}{% if req.description|length > 40 %}...{% endif %}</h3>
     </div>
     <div class="span1">
         {% if is_open %}
@@ -29,52 +29,59 @@
 	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
-	    <div class="span2">Approximate Address:</div>
+	    <div class="span2" title="Approximate Address">Address:</div>
 	    {% include "misc/address.html" %}
 	</div>
         <div class="e-request-info">
 	    <div class="row">
-		<div class="span2">Location:</div>
+		<div class="span2" title="Location of the request">Location:</div>
 		<div>{{ req.location.lat }}, {{ req.location.lon }}</div>
 	    </div>
 	    <div class="row">
-		<div class="span2">Requested:</div>
+		<div class="span2" title="User who created the request">Requested:</div>
 		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
 	    </div>
             {% if submitter %}
 	    <div class="row">
-		<div class="span2">Submitted:</div>
+		<div class="span2" title="User who submitted photo">Submitted:</div>
 		<a href="/user/{{submitter.username}}">{{submitter.username}}</a>
                 <div class="e-time" title="{{pic_utcdate}}">{{pic_hdate}}</div>
 	    </div>
             {% endif %}
         </div>
-        {% if pic_url or is_you %}
-        <div class="row e-control-options">
+        {% if req_auth %}
+            {% include "misc/request_req_auth.html" %}
+        {% elif pic_auth %}
+            {% include "misc/request_pic_auth.html" %}
+        {% endif %}
+<!--        <div class="row e-control-options">
             <div class="span3 pull-left">
+                {% if req_auth %}
                 {% if is_open %}
                     <a href="#" id="edit_request">Edit Request</a><br />
                     {% if pic_url %}
                     <a href="#" id="submit_photo">Submit Different Photo</a><br />
                     {% endif %}
-                    <a href="/request/{{req.resource}}/status/close/json" id="request_status">Close Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+                    <a href="/request/{{req.resource}}/status/close/json" id="request_status">Close Request</a>
+                    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
                 {% else %}
-                    <a href="/request/{{req.resource}}/status/open/json" id="request_status">Open Request</a> <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+                    <a href="/request/{{req.resource}}/status/open/json" id="request_status">Open Request</a>
+                    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
+                {% endif %}
                 {% endif %}
             </div>
             <div class="span3 pull-right">
-		{% if is_you %}
+		{% if req_auth %}
                 {% if is_open %}
                     <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
                 {% endif %}
                 <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
 		{% endif %}
             </div>
-        </div>
+        </div>-->
         <div class="e-alert alert-error pull-left" style="display: none;" id="controls_error"></div>
         <div class="clearfix"></div>
-        {% endif %}
         <div class="e-request-info">
             <div class="section-title">Comments
                 <span class="badge badge-success e-section-badge" id="comments_badge">{{req.num_comments}}</span>
@@ -111,7 +118,10 @@
 
 {% block footer %}
     
-{% if is_you %}
+{% if req_auth %}
+
+{% endif %}
+
 <script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
 <script src="/media/fileuploader/js/misc/tmpl.js"></script>
 <script src="/media/fileuploader/js/misc/load-image.min.js"></script>
@@ -124,7 +134,6 @@
 <script src="/media/js/modal.js"></script>
 <script src="/media/js/submit_photo.js"></script>
 
-{% endif %}
 <script src="/media/js/mustache.js"></script>
 <script src="/media/js/paginator.js"></script>
 <script src="/media/js/list.js"></script>
@@ -211,7 +220,7 @@
 	
         $("#request_status").click(function(e){
             e.preventDefault();
-            var url = $("#request_status").attr("href");    //"/request/{{req.resource}}/status/close/json";
+            var url = $("#request_status").attr("href");
             $.ajax({
                 url:    url,
                 type:   "POST",

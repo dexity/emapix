@@ -455,12 +455,14 @@ def get_request(request, res):
         c   = {
             "req":      req,
             "is_open":  req.status == "o",
-            "is_you":   is_you(request, req.user),
+            "req_auth": is_you(request, req.user),
             "hdate":    ts2hd(req.submitted_date),
             "utcdate":  ts2utc(req.submitted_date)
         }
         if isinstance(photo, Photo) and not photo.marked_delete:
             c["submitter"]  = photo.user
+            # Request owner or photo owner has access to submitted photo
+            c["pic_auth"]   = c["req_auth"] or is_you(request, photo.user)
             c["photo"]      = photo
             c["pic_hdate"]  = ts2hd(photo.created_time)
             c["pic_utcdate"]    = ts2utc(photo.created_time)

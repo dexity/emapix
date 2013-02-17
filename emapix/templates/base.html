@@ -15,7 +15,7 @@
         <link href="/media/css/main.css" rel="stylesheet">
         <link href="/media/css/bootstrap.comp.css" rel="stylesheet">
     
-        {% block header %}{% endblock header %}
+        {% block header %}{% endblock %}
   
     </head>
     <body data-spy="scroll" data-target=".subnav" data-offset="50">
@@ -61,7 +61,7 @@
             {% endif %}
             {% endif %}
             
-            {% block content %}{% endblock content %}
+            {% block content %}{% endblock %}
     
             <div class="clear_both"></div>
             <div class="footer">
@@ -75,6 +75,6 @@
                 Emapix &copy; 2012
             </div>
         </div>
-        {% block footer %}{% endblock footer %}
+        {% block footer %}{% endblock %}
     </body>
 </html>
