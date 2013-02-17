@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.transaction import commit_on_success
 from django.contrib.auth.models import User
 
 from emapix.utils.const import *
@@ -18,9 +19,9 @@ class UserProfile(models.Model):
     gender      = models.CharField(max_length=1, choices=GENDER_CHOICES)
     activ_token = models.CharField(max_length=64, null=True, blank=True)
     forgot_token = models.CharField(max_length=64, null=True, blank=True)
-    num_requests = models.IntegerField(default=0)   # Number of requests
-    num_photos  = models.IntegerField(default=0)    # Request photos
-    num_comments = models.IntegerField(default=0)   # Request comments
+    num_requests = models.IntegerField(default=0)   # Total requests
+    num_photos  = models.IntegerField(default=0)    # Total request photos
+    num_comments = models.IntegerField(default=0)   # Total request comments
     
     show_email  = models.BooleanField(default=False)
     show_location   = models.BooleanField(default=True)
@@ -28,19 +29,23 @@ class UserProfile(models.Model):
     show_gender   = models.BooleanField(default=False)
     
     req_limit   = models.IntegerField(default=10)   # Temp
-    
-    def __unicode__(self):
-        return ""
 
 
     @classmethod
-    def change_num_photos(cls, user, change_num):
+    def change(cls, field_name, user, change_num):
+        "Class method for settings fields: num_requests, num_photos, num_comments"
         try:
-            userprof    = cls.objects.get(user=user)
-            userprof.num_photos    += change_num
-            userprof.save()
+            prof    = cls.objects.get(user=user)
+            value   = getattr(prof, field_name) + change_num
+            setattr(prof, field_name, value)
+            prof.save()
         except Exception, e:
             pass
+
+
+    def __unicode__(self):
+        return ""
+
 
 
 class UserStatus(models.Model):
@@ -65,19 +70,20 @@ class Photo(models.Model):
     type    = models.CharField(max_length=16, choices=PHOTO_CHOICES)
     marked_delete   = models.BooleanField(default=False)
 
+    @commit_on_success
     def save(self, *args, **kwargs):
         if not self.id:
             # Photo is just created
             self.created_time = timestamp()     # Updated when object is created
             if self.type == "request":
-                UserProfile.change_num_photos(self.user, 1)
+                UserProfile.change("num_photos", self.user, 1)
         self.updated_time = timestamp()
         super(Photo, self).save(*args, **kwargs)
         
-        
+    @commit_on_success
     def mark_delete(self):
         if self.type == "request":
-            UserProfile.change_num_photos(self.user, -1)
+            UserProfile.change("num_photos", self.user, -1)
         self.marked_delete = True
         self.save()
     
@@ -135,10 +141,18 @@ class Request(models.Model):
     photos  = models.ManyToManyField(Photo, through="PhotoRequest", null=True, blank=True)
     num_comments = models.IntegerField(default=0)
 
+    @commit_on_success
     def save(self, *args, **kwargs):
         if not self.id:
             self.submitted_date = timestamp()
+            UserProfile.change("num_requests", self.user, 1)
+        
         super(Request, self).save(*args, **kwargs)        
+    
+    @commit_on_success
+    def delete(self, *args, **kwargs):
+        UserProfile.change("num_requests", self.user, -1)
+        super(Request, self).delete(*args, **kwargs)
     
     def __unicode__(self):
         return ""
@@ -183,16 +197,18 @@ class Comment(models.Model):
     text    = models.CharField(max_length=3072, default="")
     submitted_date  = models.CharField(max_length=16)  # timestamp
     
+    @commit_on_success
     def save(self, *args, **kwargs):
         if not self.id:
             self.submitted_date = timestamp()
-        try:
-            userprof    = UserProfile.objects.get(user=self.user)
-            userprof.num_comments    += 1
-            userprof.save()
-        except Exception, e:
-            return
-        super(Comment, self).save(*args, **kwargs)        
+            UserProfile.change("num_comments", self.user, 1)
+
+        super(Comment, self).save(*args, **kwargs)
+        
+    @commit_on_success
+    def delete(self, *args, **kwargs):
+        UserProfile.change("num_comments", self.user, -1)
+        super(Comment, self).delete(*args, **kwargs)    
     
     def __unicode__(self):
         return ""
@@ -206,6 +222,7 @@ class RequestComment(models.Model):
         "Increment number of comments in request"
         if not self.comment or not self.request:
             return
+        # XXX: What is that?
         try:
             self.request.num_comments    += 1
             self.request.save()

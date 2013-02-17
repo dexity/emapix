@@ -22,7 +22,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/make$", "make_request"),
     url(r"^request/%s$" % REQ_REGEX, "get_request"),
     url(r"^requests$", "get_requests"),
-    url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"),
+    url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"), # Not currently used
     
     # User methods
     url(r"^users$", "users"),

@@ -389,6 +389,7 @@ def add_request(request):
     lon = request.GET.get("lon", "")
     form    = RequestForm(initial={"lat": lat, "lon": lon})
 
+    # Check daily limit
     reqs    = WRequest.get_recent_requests(user=user, days=1, recent=False)
     overhead = reqs.count() - prof.req_limit
     if overhead > 0:
@@ -959,44 +960,6 @@ def get_location_requests(request, loc):
     "Returns requests for location which can be either city (City, State) or country"
     reqs    = WRequest.get_recent_requests()
     return _get_requests(request, reqs, {"title": "Requests For %s" % loc})
-    
-
-#def get_user_requests_ajax(request, username):
-#    "Return user requests"
-#    try:
-#        userprof2   = UserProfile.objects.get(user__username=username)
-#    except UserProfile.DoesNotExist, e:
-#        return bad_request_json({"error": str(e)})
-#    
-#    reqs    = Request.objects.filter(user=userprof2.user).order_by("-submitted_date")
-#    paginator   = Paginator(reqs, 10)   # 10 items per page
-#    page    = request.GET.get("page")
-#    
-#    (items, page_num)   = paginated_items(paginator, page)
-#    c   = {
-#        "req_items":    TmplRequest.request_items(items),
-#        "is_you":       is_you(request, userprof2.user),
-#        "paginator":    paginator
-#    }
-#
-#    return http_response_json({"data": render_to_string("ajax/requests_list.html", c)})
-
-
-#def get_user_photos_ajax(request, username):
-#    "Return user photos"
-#    try:
-#        userprof2   = UserProfile.objects.get(user__username=username)
-#    except UserProfile.DoesNotExist, e:
-#        return bad_request_json({"error": str(e)})
-#
-#    (items, paginator)  = _get_photo_items(request)
-#    c   = {
-#        "items":        items,
-#        "is_you":       is_you(request, userprof2.user),
-#        "paginator":    paginator    
-#    }
-#    
-#    return http_response_json({"data": render_to_string("ajax/photos_list.html", c)})
 
 
 def get_user_areas_json(request, username):

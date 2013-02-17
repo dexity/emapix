@@ -117,6 +117,18 @@ def paginated_items(paginator, page_num):
         return (paginator.page(paginator.num_pages), paginator.num_pages)   # Out of range
 
 
+def func2method(func,clas,method_name=None):
+    """Adds func to class so it is an accessible method;
+    use method_name to specify the name to be used for calling the method.
+    The new method is accessible to any instance immediately."""
+    func.im_class   = clas
+    func.im_func    = func
+    func.im_self    = None
+    if not method_name:
+        method_name = func.__name__
+    clas.__dict__[method_name] = func
+    
+
 def is_you(request, user):
     "Checks if authenticated user is the same user"
     return True if user == request.user else False

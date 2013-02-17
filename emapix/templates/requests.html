@@ -1,19 +1,11 @@
 {% extends "base.html" %}
 
-{% block header %}
-<script type="text/javascript">
-    $(document).ready(function(){
-        $("#nav_requests").attr("class", "active");
-    });
-</script>
-{% endblock header %}
-
 {% block content %}
 
 <h3>Recent Requests</h3>
 
 <div id="e-requests-list">
-    
+
 {% for item in req_items %}
     {% with req=item.request %}
     <div class="e-request-item {% if item == req_items|first %}e-first-item{% endif %} span8">
@@ -41,5 +33,12 @@
 <div class="clear_both"></div>
 {% include "misc/pagination.html" %}
 
+{% endblock %}
 
-{% endblock content %}
+{% block footer %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        $("#nav_requests").attr("class", "active");
+    });
+</script>
+{% endblock %}
