@@ -5,12 +5,12 @@
 
 (function(){
     var map;
-    var infoWindow;
+    var reqWindow;
     var markersArray    = [];
-    var currMarker      = null;
-    var currBubble      = null;
-    var ilat        = 32.849885;   // La Jolla, CA
-    var ilon        = -117.270298;
+    var currMarker;
+    var currWindow;
+    var ilat            = 32.849885;   // La Jolla, CA
+    var ilon            = -117.270298;
     var pressTimer;
     var defaultError    = "Service error. Please try again.";
     
@@ -24,30 +24,12 @@
     };
     
     var ids = {
-        show_reqs:  "#show_requests",
-        remove_marker:  "#remove_marker"
+        show_reqs:      "#show_requests",
+        remove_marker:  "#remove_marker",
+        request_form:   "#request_form",
+        send_request:   "#send_request"
     }
 
-    //function(jqXHR, textStatus, errorThrown){
-    //        // Structures error response
-    //        var gen_error, errors;
-    //        try {
-    //            var data    = JSON.parse(jqXHR.responseText);
-    //            errors      = data.errors;
-    //            if ( data.error !== undefined) {
-    //                gen_error = data.error;
-    //            };
-    //            // Display default general error only if errors are set
-    //            if ($.isEmptyObject(errors) && gen_error === undefined) {
-    //                gen_error = params.default_error;
-    //            }
-    //        } catch(err) {
-    //            gen_error = params.default_error;
-    //        }
-    //        return {"errors": errors, "error": gen_error};
-    //    }    
-
-    
     var createMarker    = function(lat, lon, resource){
         // Creates marker and sets it on the map
         return new google.maps.Marker({
@@ -59,7 +41,7 @@
 
     
     var showMarkers = function() {
-        "Displays markers"
+        // Displays markers
         $.ajax({
             url:    "/request/all/json",
             cache:  false,
@@ -72,8 +54,8 @@
                     onMarkerClick(marker, req)
                     markersArray.push(marker);
                 }
-            },
-            error:  errorHandler
+            }
+            //error:  errorHandler
         });
     }
     
@@ -84,26 +66,25 @@
         });      
     }
     
-    var submitRequest   = function(bubble, lat, lon){
-        "Submits the request"
+    var submitRequest   = function(iw, lat, lon){
+        // Submits the request
         
         $.ajax({
             url:    "/request/add",
             type:   "POST",
             cache:  false,
-            data:   $("#request_form").serialize(),
+            data:   $(ids.request_form).serialize(),
             success:    function(data) {
                 req = data.data;
                 
-                console.debug(data);
                 var marker  = createMarker(req_lat(req), req_lon(req), req.resource);
                 currMarker  = marker;
                 
                 onMarkerClick(marker, req);
                 markersArray.push(marker);
-                bubble.close();
+                iw.close();
             },
-            error: errorHandler(infoWindow)
+            error: errorHandler(iw)
         });
         
     }
@@ -124,11 +105,12 @@
     }
     
     var openWindow  = function(iw, map, marker){
-        if (currBubble) {
-            currBubble.close();
+        // Opens window for marker
+        if (currWindow) {
+            currWindow.close();
         }
         iw.open(map, marker);
-        currBubble  = iw;
+        currWindow  = iw;
         currMarker  = marker;
     }
     
@@ -151,15 +133,16 @@
         return {"errors": errors, "error": gen_error};
     }
    
-    var errorHandler    = function(iw) {
+    var errorHandler    = function(iw, marker) {
+        // Handles errors
         return function(jqXHR, textStatus, errorThrown){
             if (!iw){
                 return;
             }
             var ed  = errorData(jqXHR, textStatus, errorThrown);
             if (ed.error) {
-                iw.setContent(dom.inlineError(msg));
-                iw.open(map);                
+                iw.setContent(dom.inlineError(ed.error));
+                iw.open(map, marker);                
             }
             for (var k in ed.errors) {
                 if (!ed.errors.hasOwnProperty(k)) {
@@ -167,40 +150,37 @@
                 }
                 $("#error_" + k).html(dom.fieldError(ed.errors[k]));
             }
-            //google.maps.event.trigger(iw, 'content_changed');
-            //iw.setContent(iw.getContent());
-            //iw.open(map);
         }
     }
     
-    // Bubbles
-    var showRequest = function(location, req_data){
-        // Displays request bubble
-        if (infoWindow){
-            // Close previous request bubble before opening a new one
-            infoWindow.close(); 
+    // Entry function for sending request
+    var showRequest = function(location){
+        // Displays request window
+        if (reqWindow){
+            // Close previous request window before opening a new one
+            reqWindow.close(); 
         }
-        infoWindow = new google.maps.InfoWindow({
+        reqWindow = new google.maps.InfoWindow({
             position:   location
         });
         $.ajax({
             url:    "/request/add?lat="+_lat(location)+"&lon="+_lon(location),
             cache:  false,
             success:    function(data){
-                infoWindow.setContent(data.data);
-                infoWindow.open(map);
-                $('#send_request').click(function(e){
+                reqWindow.setContent(data.data);
+                reqWindow.open(map);
+                $(ids.send_request).click(function(e){
                     e.preventDefault();
-                    submitRequest(infoWindow, _lat(location), _lon(location));
+                    submitRequest(reqWindow, _lat(location), _lon(location));
                 });
             },
-            error:  errorHandler(infoWindow)
+            error:  errorHandler(reqWindow)
         });
     }
 
     
     var onRemoveClick   = function(iw, marker, res){
-
+        // Handles remove request click
         google.maps.event.addListener(iw, 'domready', function(event){
             MODAL({
                 container:  "modal_container",
@@ -218,23 +198,22 @@
     
     var showInfo    = function(marker, resource) {
         // Makes request and shows window
+        var iw = new google.maps.InfoWindow();        
         $.ajax({
             url:    "/request/info/" + resource,
             cache:  false,
             success:    function(data){
-                var iw = new google.maps.InfoWindow({
-                    content:   data.data
-                });
+                iw.setContent(data.data);
                 openWindow(iw, map, marker);
                 
                 onRemoveClick(iw, marker, resource)
             },
-            error:  ""  // XXX: Fix
+            error:  errorHandler(iw, marker)
         });
     }
-
     
     var clearOverlays   = function() {
+        // Clears markers from the map
         if (markersArray) {
             for (var i = 0; i < markersArray.length; i++ ) {
                 markersArray[i].setMap(null);
@@ -244,6 +223,7 @@
     }
     
     var onShowRequests  = function(chkBox, event){
+        // Handles check event to display all requests
         if (chkBox.is(":checked")){
             showMarkers();
         } else {
@@ -277,14 +257,16 @@
                 map.setOptions({
                     draggable:  false
                 });
-                showRequest(event.latLng, null);               
+                showRequest(event.latLng);               
             }, 500);
+            event.stop();
         }); 	
         google.maps.event.addListener(map, 'mouseup', function(event){
             map.setOptions({
                 draggable:  true
             });                        
             clearTimeout(pressTimer); 
+            event.stop();
         });
     
         $(ids.show_reqs).change(function(e) {
