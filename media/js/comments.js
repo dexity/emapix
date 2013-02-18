@@ -80,10 +80,10 @@ var COMM    = (function(options){
     options.fnInitComplete  = function(){
         if (params.submitBaseUrl !== undefined){
             list_params.$container.append(list.dom.submitForm({}));
+            // Register click event for comment submission
+            $(params.submitBtn).unbind().click(list.submitForm);
         }
         
-        // Register click event for comment submission
-        $(params.submitBtn).unbind().click(list.submitForm);
     }   
     
     return list;

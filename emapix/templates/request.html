@@ -55,31 +55,6 @@
         {% elif pic_auth %}
             {% include "misc/request_pic_auth.html" %}
         {% endif %}
-<!--        <div class="row e-control-options">
-            <div class="span3 pull-left">
-                {% if req_auth %}
-                {% if is_open %}
-                    <a href="#" id="edit_request">Edit Request</a><br />
-                    {% if pic_url %}
-                    <a href="#" id="submit_photo">Submit Different Photo</a><br />
-                    {% endif %}
-                    <a href="/request/{{req.resource}}/status/close/json" id="request_status">Close Request</a>
-                    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
-                {% else %}
-                    <a href="/request/{{req.resource}}/status/open/json" id="request_status">Open Request</a>
-                    <img src="/media/img/spinner_small.gif" id="close_spinner" style="display: none" class="e-spinner"/><br />
-                {% endif %}
-                {% endif %}
-            </div>
-            <div class="span3 pull-right">
-		{% if req_auth %}
-                {% if is_open %}
-                    <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
-                {% endif %}
-                <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />
-		{% endif %}
-            </div>
-        </div>-->
         <div class="e-alert alert-error pull-left" style="display: none;" id="controls_error"></div>
         <div class="clearfix"></div>
         <div class="e-request-info">
@@ -111,10 +86,8 @@
 <!-- General csrf token -->
 {% csrf_token %}
 
-<!-- Remove request modal -->
-{% include "modals/delete_request.html" %}
-
 {% endblock content %}
+
 
 {% block footer %}
     
@@ -122,6 +95,61 @@
 
 {% endif %}
 
+<script type="text/javascript"
+    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
+</script>
+
+<script src="/media/js/modal.js"></script>
+<script src="/media/js/mustache.js"></script>
+<script src="/media/js/paginator.js"></script>
+<script src="/media/js/list.js"></script>
+<script src="/media/js/comments.js"></script>
+
+<script type="text/javascript">
+    
+    var loadMap    = function(){
+        // Loads map
+	var lat	= "{{ req.location.lat }}";
+	var lon	= "{{ req.location.lon }}";
+	var location = new google.maps.LatLng(lat, lon);
+	var mapOptions = {
+	    center: location,
+	    zoom: 13,
+            scrollwheel: false,
+	    mapTypeId: google.maps.MapTypeId.ROADMAP,
+	};
+	var map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+        
+	var marker	= new google.maps.Marker({
+            position:  	new google.maps.LatLng(lat, lon),
+            title:      "{{ req.description }}",
+            map:        map
+        });
+    }
+    
+    var commentOpts = {
+        container:      $("#comments"),
+        spinner:        $("#tab_load_spinner"),
+        baseUrl:        "/comments/json?request={{req.resource}}",
+        dataProp:       "data.comments",
+        itemProps:      {   
+            "text":         "text",
+            "username":     "username",
+            "date":         "hdate",
+            "date_label":   "utcdate",
+        },           
+        templates:      {
+            item:       $("#comment_tmpl"),
+            error:      $("#error_tmpl"),
+            spinner:    $("#load_spinner_tmpl")
+        }
+    }
+    // Set comments
+    var comments    = COMM(commentOpts);  
+</script>
+
+{% if user.is_authenticated %}
+    
 <script src="/media/fileuploader/js/vendor/jquery.ui.widget.js"></script>
 <script src="/media/fileuploader/js/misc/tmpl.js"></script>
 <script src="/media/fileuploader/js/misc/load-image.min.js"></script>
@@ -131,39 +159,15 @@
 <script src="/media/fileuploader/js/jquery.fileupload-ui.js"></script>
 <script src="/media/fileuploader/js/locale.js"></script>
 <script src="/media/jcrop/js/jquery.Jcrop.js"></script>
-<script src="/media/js/modal.js"></script>
 <script src="/media/js/submit_photo.js"></script>
-
-<script src="/media/js/mustache.js"></script>
-<script src="/media/js/paginator.js"></script>
-<script src="/media/js/list.js"></script>
-<script src="/media/js/comments.js"></script>
-
-<script type="text/javascript"
-    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyA85oDjeGmemRXYK5MfKfCM3RKVadnrHDk&sensor=false">
-</script>
 
 <script type="text/javascript">
     
-    $(document).ready(function(){
-	
-        // Load comments
-        var comments    = COMM({
-            container:      $("#comments"),
-            spinner:        $("#tab_load_spinner"),
-            baseUrl:        "/comments/json?request={{req.resource}}",
+    var initSubmitComment   = function(){
+        
+        var submitOpts   = {
             submitBaseUrl:  "/comment/add/json?request={{req.resource}}",
-            dataProp:       "data.comments",
-            itemProps:      {   
-                "text":         "text",
-                "username":     "username",
-                "date":         "hdate",
-                "date_label":   "utcdate",
-            },           
             templates:      {
-                item:       $("#comment_tmpl"),
-                error:      $("#error_tmpl"),
-                spinner:    $("#load_spinner_tmpl"),
                 submitSpinner: $("#spinner_tmpl"),
                 submitForm:    $("#submit_form_tmpl")
             },
@@ -175,52 +179,40 @@
                     $("#comments_badge").html(data.data.comments_total);
                 }
                 comments.load("/comments/json?request={{req.resource}}&page=last");    // Move to last page
-            }
-        });
-        comments.load();
-        
-        // Load map
-	var lat	= "{{ req.location.lat }}";
-	var lon	= "{{ req.location.lon }}";
-	var location = new google.maps.LatLng(lat, lon);
-	var myOptions = {
-	    center: location,
-	    zoom: 13,
-            scrollwheel: false,
-	    mapTypeId: google.maps.MapTypeId.ROADMAP,
-	};
-	var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-	var marker	= new google.maps.Marker({
-			position:  	new google.maps.LatLng(lat, lon),
-			title:		"{{ req.description }}",
-			map:		map
-		    });
-        
-        // Load photo submitter
-        var sub    = PHOTOSUB({
-            select_url: "/submit/select/{{req.resource}}",
-            crop_url:   "/submit/crop/{{req.resource}}",
-            create_url: "/submit/create/{{req.resource}}",
-            crop_size:  460,
-            max_size:   780,
-            finished_callback:  function(){
-                // XXX: Make json request to replace image and metadata
-                //	instead of reloading the page. Save requests to Google Map
-                window.location.href = "/request/{{ req.resource }}";
-            }
-        });
-        
-        var update_status   = function(){
-            // - Update status label
-            // - Update link "Close request" <-> "Open request"
-            // - Disable some of the links
-            // > Need to reload the page?
+            }            
+        };
+        // Update comment options with submit options
+        $.extend(true, commentOpts, submitOpts);
+        comments    = COMM(commentOpts);
+    }
+    
+    // Load photo submitter
+    var sub    = PHOTOSUB({
+        select_url: "/submit/select/{{req.resource}}",
+        crop_url:   "/submit/crop/{{req.resource}}",
+        create_url: "/submit/create/{{req.resource}}",
+        crop_size:  460,
+        max_size:   780,
+        finished_callback:  function(){
+            // XXX: Make json request to replace image and metadata
+            //	instead of reloading the page. Save requests to Google Map
             window.location.href = "/request/{{ req.resource }}";
         }
-	
+    });
+    
+    var changeStatus    = function(){
+            
         $("#request_status").click(function(e){
             e.preventDefault();
             var url = $("#request_status").attr("href");
+            
+            var update_status   = function(){
+                // - Update status label
+                // - Update link "Close request" <-> "Open request"
+                // - Disable some of the links
+                // > Need to reload the page?
+                window.location.href = "/request/{{ req.resource }}";
+            }
             $.ajax({
                 url:    url,
                 type:   "POST",
@@ -241,9 +233,22 @@
             });
             
         });
-        
-        // XXX: Show only if user is the owner
+    }    
+    
+    $(document).ready(function(){
 	
+        initSubmitComment();
+        comments.load();
+        loadMap();
+        
+	$("#submit_photo").click(function(e) {
+	    e.preventDefault();
+	    sub.show_select();
+	});
+        
+        changeStatus();
+        
+        // Edit request
         MODAL({
             container:  "modal_container",
             link:       "edit_request",
@@ -254,6 +259,7 @@
             }
         }).init();
         
+        // Remove Photo
         MODAL({
             container:  "modal_container",
             link:       "remove_photo",
@@ -267,6 +273,7 @@
             }
         }).init();
 
+        // Remove request
         MODAL({
             container:  "modal_container",
             link:       "remove_request",
@@ -277,15 +284,19 @@
                 window.location.href = "/requests"
             }
         }).init();
-             
-        
-	$("#submit_photo").click(function(e) {
-	    e.preventDefault();
-	    sub.show_select();
-	});
 
     });
 </script>
+
+{% else %}
+<script type="text/javascript">
+    $(document).ready(function(){
+        comments.load();
+        loadMap();
+    });
+</script>
+
+{% endif %}
     
 
 {% endblock %}
