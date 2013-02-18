@@ -24,7 +24,7 @@ var PHOTOSUB = (function(options){
         fileupload:       utils.select_option("fileupload", "fileupload"),
         cropper_form:     utils.select_option("cropper_form", "cropper_form"),
         create_form:      utils.select_option("create_form", "create_form"),
-        modal_status:     "#modal_status",
+        modal_status:     utils.select_option("modal", "submit_modal") + " .modal_status",
         error_base:       "#error_",
         default_error:    "Service error. Please try again.",
         max_size:         options.max_size || 400
