@@ -535,7 +535,7 @@ def request_status_ajax(request, res, status):
 # XXX: Merge remove_request_photo_ajax and remove_photo_ajax?
 @csrf_protect
 def remove_request_photo_ajax(request, res):
-    "Marks request photo for removal"
+    "Marks request photo for removal. Used in request view"
     if request.method != "POST":
         return bad_request_json({"error": "Invalid request method"})
     req = validate_user_request(request, res, True)
@@ -550,7 +550,7 @@ def remove_request_photo_ajax(request, res):
 
 @csrf_protect
 def remove_photo_json(request, photo_id):
-    "Marks request photo for removal"
+    "Marks request photo for removal. Used in user view"
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR})    
     if request.method != "POST":
