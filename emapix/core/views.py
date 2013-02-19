@@ -1385,7 +1385,7 @@ def profile_photo_crop(request):
         if isinstance(result, HttpResponseBadRequest):
             return result
         
-        return HttpResponseRedirect("/profile/photo/create/%s" % res)
+        return HttpResponseRedirect("/profile/photo/create/%s?redirect=true" % res)
     
     c   = {
         "crop_form":    CropForm(),
@@ -1394,7 +1394,6 @@ def profile_photo_crop(request):
         "img_height":   im.height
     }
     c.update(csrf(request))
-    
     resp    = {
         "data":     render_to_string("modals/submit_crop.html", c)
     }
@@ -1429,7 +1428,7 @@ def profile_photo_create(request):
             
             proc_images(file_base, db_imgs, fmt)
             
-            return http_response_json({"success": True})
+            return to_ok()
         except Exception, e:
             logger.error("Error uploading profile photo: %s" % e)
             return bad_request_json({"error": str(e)})
@@ -1437,6 +1436,11 @@ def profile_photo_create(request):
     c   = {
         "img_src":      imc.url
     }
-    return render(request, 'modals/submit_create.html', c)  
+    c.update(csrf(request))
+    resp    = {
+        "data":     render_to_string("modals/submit_create.html", c),
+        "redirect": request.GET.get("redirect", None) == "true"
+    }
+    return http_response_json(resp)
 
 
