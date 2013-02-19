@@ -10,6 +10,7 @@ class WRequest(object):
     def get_recent_requests(cls, user=None, days=None, recent=True):
         "Returns recent requests filtered by user or days"
         reqs    = Request.objects.all()
+        #exclude(photo__marked_delete=True)
         if user:
             reqs    = reqs.filter(user=user)
         if days:
@@ -24,7 +25,7 @@ class WRequest(object):
     @classmethod
     def get_requests_by_location(cls):
         pass
-             
+        
         
     
     @classmethod

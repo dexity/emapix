@@ -33,13 +33,25 @@ class WPhoto(object):
         prs = PhotoRequest.objects.filter(request__resource=res).filter(photo__type="request")
         if not prs.exists():
             return None
-        return prs[0].photo
+        return prs[0]
+    
+    
+    @classmethod
+    def photo_by_request(cls, res):
+        rph = cls.request_photo(res)
+        if not rph:
+            return None
+        return rph.photo
     
     
     @classmethod
     def remove_photo(cls, res):
         "Removes request photo"
-        photo   = cls.request_photo(res)
-        if photo:
-            photo.mark_delete()
+        reqphotos  = PhotoRequest.objects.filter(request__resource=res)
+        reqphs  = reqphotos.filter(photo__type="request")
+        for rp in reqphs:
+            rp.photo.mark_delete()
+        reqphotos.delete()
+        return True
 
+   

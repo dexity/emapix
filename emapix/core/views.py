@@ -450,7 +450,7 @@ def get_request(request, res):
         req.location.lat    = req.location.lat/1e6
         req.location.lon    = req.location.lon/1e6
         img     = WImage.get_image_by_request(req, size_type="large")
-        photo   = WPhoto.request_photo(res)
+        photo   = WPhoto.photo_by_request(res)
         
         c   = {
             "req":      req,
@@ -539,16 +539,17 @@ def remove_request_photo_ajax(request, res):
     if not isinstance(req, Request):
         return req
     
-    photo   = WPhoto.request_photo(res)
-    if photo is None:
+    rph   = WPhoto.request_photo(res)
+    if not (rph and rph.photo):
         return bad_request_json({"error": "Photo does not exist"})
     
+    photo   = rph.photo
     # Only photo owner or request owner can remove the photo
     if not (is_you(request, photo.user) or is_you(request, req.user)):
         return forbidden_json({"error": AUTHOR_ERROR})
 
     if request.method == "POST":
-        photo.mark_delete()
+        WPhoto.remove_photo(res)
         return to_ok()
     
     c   = {}
@@ -972,6 +973,7 @@ def get_requests(request):
 
 def get_location_requests(request, loc):
     "Returns requests for location which can be either city (City, State) or country"
+    # Not currently used
     reqs    = WRequest.get_recent_requests()
     return _get_requests(request, reqs, {"title": "Requests For %s" % loc})
 
