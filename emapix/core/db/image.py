@@ -23,6 +23,8 @@ class WImage(object):
     def get_image_by_request(cls, req, photo_type="request", size_type=None):
         "Returns Image object by request object"
         phreqs   = PhotoRequest.objects.filter(request=req).filter(photo__type=photo_type)
+        if photo_type not in ["preview", "crop"]:  # Used for creating request image
+            phreqs  = phreqs.exclude(photo__marked_delete=True)
         if not phreqs.exists():
             return None
         
