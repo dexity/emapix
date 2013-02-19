@@ -40,7 +40,7 @@ class WRequest(object):
     @classmethod
     def purge_request_or_raise(cls, res, user):
         "Removes request and all related data"
-        WPhoto.remove_photo_or_raise(res)
+        WPhoto.remove_photo(res)
         WComment.remove_comments(res)
         cls.remove_request(res)
 

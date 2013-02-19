@@ -532,17 +532,17 @@ def request_status_ajax(request, res, status):
         return server_error_json({"error": str(e)})
     
 
-# XXX: Merge remove_request_photo_ajax and remove_photo_ajax?
 @csrf_protect
 def remove_request_photo_ajax(request, res):
     "Marks request photo for removal. Used in request view"
-    if request.method != "POST":
-        return bad_request_json({"error": "Invalid request method"})
-    req = validate_user_request(request, res, True)
+    #if request.method != "POST":
+    #    return bad_request_json({"error": "Invalid request method"})
+    req = validate_user_request(request, res, False)
     if not isinstance(req, Request):
         return req
+    
     try:
-        WPhoto.remove_photo_or_raise(res)
+        #WPhoto.remove_photo_or_raise(res)
         return to_ok()
     except Exception, e:
         return server_error_json({"error": "Photo cannot be removed at this time"})
@@ -552,7 +552,8 @@ def remove_request_photo_ajax(request, res):
 def remove_photo_json(request, photo_id):
     "Marks request photo for removal. Used in user view"
     if not request.user.is_authenticated():
-        return forbidden_json({"error": AUTH_ERROR})    
+        return forbidden_json({"error": AUTH_ERROR})
+    # XXX: Fix modal: add GET
     if request.method != "POST":
         return bad_request_json({"error": "Invalid request method"})
     try:

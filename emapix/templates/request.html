@@ -213,10 +213,8 @@
         container:  "modal_container",
         link:       "remove_photo",
         url:        "/request/{{req.resource}}/photo/remove/json",
-        //body:       '<div class="alert alert-danger error_spaces">Are you sure you want to remove the photo?</div>',
         header:     "Remove Photo",
         btn_label:  "Remove Photo",
-        extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
         callback:   function(){
             window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
         }
