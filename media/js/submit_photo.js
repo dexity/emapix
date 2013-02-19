@@ -80,18 +80,18 @@ var PHOTOSUB = (function(options){
             minFileSize: 100,
             acceptFileTypes: /(\.|\/)(jpe?g|png)$/i,    // .jpg and .png images are allowed
             process: [{
-                    action: 'load',
-                    fileTypes: /^image\/(jpeg|png)$/,
-                    maxFileSize: 10000000 // 20MB
-                },
-                {
-                    action:     'resize',
-                    maxWidth:   params.max_size,
-                    maxHeight:  params.max_size
-                },
-                {
-                    action: 'save'
-                }]
+                action: 'load',
+                fileTypes: /^image\/(jpeg|png)$/,
+                maxFileSize: 10000000 // 20MB
+            },
+            {
+                action:     'resize',
+                maxWidth:   params.max_size,
+                maxHeight:  params.max_size
+            },
+            {
+                action: 'save'
+            }]
         });
     
     },
@@ -262,7 +262,7 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success:    function(data) {
-                    that.init_success(data);
+                    that.init_success(data.data);
                     init_fileupload();
                 },
                 error:  that.error_modal
@@ -275,7 +275,11 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success: function(data) {
-                    that.init_success(data);
+                    that.init_success(data.data);
+                    if (data.redirect){
+                        init_create();
+                        return;
+                    }
                     init_cropper();
                 },
                 error:  that.error_modal
@@ -288,7 +292,7 @@ var PHOTOSUB = (function(options){
                 type:   "GET",
                 cache:  false,
                 success: function(data) {
-                    that.init_success(data);
+                    that.init_success(data.data);
                     init_create();
                 },
                 error: that.error_modal

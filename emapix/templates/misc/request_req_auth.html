@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% block right_column %}
-{% if is_open %}
+{% if is_open and pic_url %}
     <a href="#" class="red" id="remove_photo">Remove Photo</a><br />
 {% endif %}
 <a href="/request/{{ req.resource }}/remove" class="red" id="remove_request">Remove Request</a><br />

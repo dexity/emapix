@@ -1162,7 +1162,11 @@ def submit_select(request, res):
         "form":     UploadFileForm(),
         "resource": res
     }
-    return render(request, 'modals/submit_select.html', c)    
+    c.update(csrf(request))
+    resp    = {
+        "data":     render_to_string("modals/submit_select.html", c)
+    }
+    return http_response_json(resp)    
     
 
 @csrf_protect
@@ -1199,7 +1203,7 @@ def submit_crop(request, res):
         if isinstance(result, HttpResponseBadRequest):
             return result
         
-        return HttpResponseRedirect("/submit/create/%s" % res)
+        return HttpResponseRedirect("/submit/create/%s?redirect=true" % res)
 
     c   = {
         "crop_form":    CropForm(),
@@ -1208,7 +1212,12 @@ def submit_crop(request, res):
         "img_width":    im.width,
         "img_height":   im.height
     }
-    return render(request, 'modals/submit_crop.html', c)
+    c.update(csrf(request))
+    
+    resp    = {
+        "data":     render_to_string("modals/submit_crop.html", c)
+    }
+    return http_response_json(resp)
 
 
 def handle_request_crop_file(req, user, image, (x, y, w, h)):
@@ -1239,7 +1248,7 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
     except Exception, e:
         return bad_request_json({"error": str(e)})
     
-    return http_response_json({"success": True})    
+    return to_ok()   
 
 
 @csrf_protect
@@ -1270,16 +1279,22 @@ def submit_create(request, res):
                 db_imgs.append((size, im))
             
             proc_images(file_base, db_imgs, fmt)
-            return http_response_json({"success": True})
+            return to_ok()
         except Exception, e:
             logger.error("Error uploading request (%s) photo: %s" % (res, e))
             return bad_request_json({"error": str(e)})
-        
+    
     c   = {
         "resource":     res,
         "img_src":      imc.url
     }
-    return render(request, 'modals/submit_create.html', c)    
+    c.update(csrf(request))
+    resp    = {
+        "data":     render_to_string("modals/submit_create.html", c),
+        "redirect": request.GET.get("redirect", None) == "true"
+    }
+    return http_response_json(resp)
+
 
 # XXX: Refactor profile_photo_select() and submit_select()
 @csrf_protect
@@ -1328,9 +1343,14 @@ def profile_photo_select(request):
 
     # Display form
     c   = {
-        "form":     UploadFileForm()
+        "form":     UploadFileForm(),
+        "resource": res
     }
-    return render(request, 'modals/submit_select.html', c)    
+    c.update(csrf(request))
+    resp    = {
+        "data":     render_to_string("modals/submit_select.html", c)
+    }
+    return http_response_json(resp)    
 
 
 # XXX: Refactor profile_photo_crop() and submit_crop()
@@ -1373,7 +1393,12 @@ def profile_photo_crop(request):
         "img_width":    im.width,
         "img_height":   im.height
     }
-    return render(request, 'modals/submit_crop.html', c)    
+    c.update(csrf(request))
+    
+    resp    = {
+        "data":     render_to_string("modals/submit_crop.html", c)
+    }
+    return http_response_json(resp)   
 
 # XXX: Refactor profile_photo_create() and submit_create()
 @csrf_protect
