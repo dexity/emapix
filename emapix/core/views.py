@@ -535,17 +535,28 @@ def request_status_ajax(request, res, status):
 @csrf_protect
 def remove_request_photo_ajax(request, res):
     "Marks request photo for removal. Used in request view"
-    #if request.method != "POST":
-    #    return bad_request_json({"error": "Invalid request method"})
     req = validate_user_request(request, res, False)
     if not isinstance(req, Request):
         return req
     
-    try:
-        #WPhoto.remove_photo_or_raise(res)
+    photo   = WPhoto.request_photo(res)
+    if photo is None:
+        return bad_request_json({"error": "Photo does not exist"})
+    
+    # Only photo owner or request owner can remove the photo
+    if not (is_you(request, photo.user) or is_you(request, req.user)):
+        return forbidden_json({"error": AUTHOR_ERROR})
+
+    if request.method == "POST":
+        photo.mark_delete()
         return to_ok()
-    except Exception, e:
-        return server_error_json({"error": "Photo cannot be removed at this time"})
+    
+    c   = {}
+    c.update(csrf(request))
+    resp   = {
+        "data":     render_to_string("forms/remove_photo_form.html", c)
+    }
+    return http_response_json(resp)
 
 
 @csrf_protect

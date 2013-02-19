@@ -131,7 +131,7 @@ def func2method(func,clas,method_name=None):
 
 def is_you(request, user):
     "Checks if authenticated user is the same user"
-    return user == request.user
+    return request.user == user
     
 
 def template_str(name):
