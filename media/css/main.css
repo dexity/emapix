@@ -231,12 +231,7 @@ a img {
     width: 460px;
     height: 460px;
 }
-.e-comment {
-    width: 450px;
-}
-.e-comment-item {
-    margin-bottom: -8px;
-}
+
 #tab_comments #comments {
     margin-top: -5px;
 }
@@ -355,6 +350,19 @@ a img {
 }
 
 /* Comments */
+
+.e-comment {
+    width: 450px;
+}
+.e-comment-item {
+    margin-bottom: -8px;
+}
+#comments textarea {
+    margin-top: 10px;
+}
+#comments .e-paging {
+    margin-bottom: 0px;
+}
 #comment_load_spinner {
     display: inline;
 }

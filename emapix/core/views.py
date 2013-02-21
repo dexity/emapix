@@ -613,7 +613,7 @@ def to_request2(req, desc_size=None):
 
 
 def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=False):
-    "Util that returns comments in json format"
+    "Util that returns comments in json format both for request and user profile"
     coms    = RequestComment.objects
     if req:
         coms    = coms.filter(request=req)
@@ -673,14 +673,14 @@ def get_request_comments_json(request):
     
     try:
         req     = Request.objects.get(resource=res)
-        return get_comments(request, req=req, num_pages=2)
+        return get_comments(request, req=req, num_pages=10)
     except Exception, e:    # Request.DoesNotExist
         return bad_request_json({"error": str(e)})
     
 
 @csrf_protect
 def add_comment_json(request):
-    "Adds comment"
+    "Adds comment to the request"
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR_TXT})
     if request.method != "POST":
@@ -690,7 +690,6 @@ def add_comment_json(request):
         res     = request.GET.get("request", None)
         req     = Request.objects.get(resource=res)
         user    = request.user
-        
     except Request.DoesNotExist, e:
         return bad_request_json({"error": str(e)})
             
