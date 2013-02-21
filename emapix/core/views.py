@@ -911,8 +911,7 @@ def get_user(request, username, tab="requests"):
         }
     except UserProfile.DoesNotExist, e:
         return render(request, 'misc/error_view.html', {"error": str(e)})
-    
-    #tab   = request.GET.get("tab", None)
+
     if tab in ["requests", "photos", "comments"]:
         c["active"]  = tab
     
@@ -1077,8 +1076,8 @@ def get_user_requests_json(request, username):
             "utcdate":  item.htime.utc_time,
             "hdate":    item.htime.human_time
         }
-        # XXX: Add only if request.user == userprof.user
-        data_item["remove_url"] = "/request/%s/remove/json" % req.resource
+        if is_you(request, userprof2.user):
+            data_item["remove_url"] = "/request/%s/remove/json" % req.resource
         data.append(data_item)
     
     c   = {

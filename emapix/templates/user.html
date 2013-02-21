@@ -1,11 +1,23 @@
 {% extends "base.html" %}
 {% load jstmpl %}
 
+{% block header %}
+<style type="text/css" media="all">
+.profile_photo {
+    margin-bottom: 10px;
+}
+.profile_location {
+    float: right;
+    padding-top: 10px;
+}
+</style>
+{% endblock %}
+
 {% block content %}
 
 <div class="row">
     <div class="span2">
-        <img src="{{photo_url}}" style="margin-bottom: 10px;" /><br />
+        <img src="{{photo_url}}" class="profile_photo" /><br />
         {% if is_you %} <!-- and no photo -->
         <a href="/profile/photo" >
             {% if photo_exists %}
@@ -20,7 +32,7 @@
         <div class="row">
             <div class="span6"><h2>{{name}}</h2></div>
             <div class="span2">
-                <div style="float: right; padding-top: 10px;">
+                <div class="profile_location">
                     {% if is_you and not userprof2.location %}
                     <a href="/profile">Set location?</a>
                     {% else %}
@@ -89,7 +101,8 @@
 <div id="modal_container"></div>
 
 {% csrf_token %}
-{% endblock content %}
+
+{% endblock %}
 
 {% block footer %}
 <script src="/media/js/mustache.js"></script>
@@ -99,143 +112,159 @@
     
 <script type="text/javascript">
     
+    // Default options
+    var requestOpts = {
+        container:      $("#requests"),
+        spinner:        $("#tab_load_spinner"),
+        baseUrl:        "/user/{{userprof2.user.username}}/requests/json",
+        dataProp:       "data.requests",
+        itemProps:      {   
+            "description":  "description",
+            "username":     "username",
+            "thumb_url":    "thumb_url",
+            "date":         "utcdate",
+            "date_label":   "hdate",
+            "resource":     "resource",
+            "street":   "location.street",
+            "city":     "location.city",
+            "country":  "location.country",
+            "lat":      "location.lat",
+            "lon":      "location.lon"
+        },           
+        templates:      {
+            item:       $("#request_tmpl"),
+            error:      $("#error_tmpl"),
+            spinner:    $("#load_spinner_tmpl")
+        }
+    };
+    
+    var photoOpts   = {
+        container:      $("#photos"),
+        spinner:        $("#tab_load_spinner"),
+        baseUrl:        "/user/{{userprof2.user.username}}/photos/json",
+        dataProp:       "data.photos",
+        itemProps:      {
+            "resource":     "request.resource",
+            "description":  "request.description",
+            "image_url":    "image_url",
+            "city":         "location.city",
+            "country":      "location.country"
+        },
+        itemsPerRow:    4,
+        templates:      {
+            item:       $("#image_tmpl"),
+            separator:  $("#image_sep_tmpl"),
+            error:      $("#error_tmpl"),
+            spinner:    $("#load_spinner_tmpl")
+        },
+        fnInitComplete: function(data){
+            if (data !== undefined &&
+                data.data !== undefined &&
+                data.data.photos_total !== undefined)
+            {
+                $("#photos_badge").html(data.data.photos_total);
+            }                
+        }
+    };
+
+    var commentOpts = {
+        container:      $("#comments"),
+        spinner:        $("#tab_load_spinner"),
+        baseUrl:        "/user/{{userprof2.user.username}}/comments/json",
+        dataProp:       "data.comments",
+        itemProps:      {   
+            "text":         "text",
+            "username":     "username",
+            "date":         "hdate",
+            "date_label":   "utcdate",
+            "request_resource":     "request.resource",
+            "request_description":  "request.description"
+        },           
+        templates:      {
+            item:       $("#comment_tmpl"),
+            error:      $("#error_tmpl"),
+            spinner:    $("#load_spinner_tmpl")
+        }
+    };
+    
+    
+    {% if is_you %}
+    // Update options for authorised user
+    
+    $.extend(true, requestOpts, {
+        itemProps:  {
+            "remove_url":   "remove_url"
+        },
+        fnItemCreated: function(o){
+            var link = o.find(".delete_request");
+            MODAL({
+                container:  "modal_container",
+                link:       link,
+                url:        link.attr("ajaxify"),
+                body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
+                            '   <b>All photos and comments will be removed.</b>' +
+                            '</div>',
+                header:     "Remove Request",
+                btn_label:  "Remove Request",
+                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                callback:   function(){
+                    requests.load();
+                }
+            }).init();                
+        }        
+    });
+    
+    $.extend(true, photoOpts, {
+        itemProps:  {
+            "remove_url":   "remove_url"
+        },
+        fnItemCreated: function(o){
+            var link = o.find(".delete_photo");
+            MODAL({
+                container:  "modal_container",
+                link:       link,
+                url:        link.attr("ajaxify"),
+                body:       '<div class="alert error_spaces">Are you sure you want to remove the photo?</div>',
+                header:     "Remove Photo",
+                btn_label:  "Remove Photo",
+                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                callback:   function(){
+                    photos.load();
+                }
+            }).init();                
+        }        
+    });
+    
+    $.extend(true, commentOpts, {
+        itemProps:  {
+            "remove_url":   "remove_url"
+        },
+        fnItemCreated: function(o){
+            var link = o.find(".delete_comment");
+            MODAL({
+                container:  "modal_container",
+                link:       link,
+                url:        link.attr("ajaxify"),
+                body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
+                header:     "Remove Comment",
+                btn_label:  "Remove Comment",
+                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
+                callback:   function(){
+                    comments.load();
+                }
+            }).init();                
+        }
+    });       
+    
+    {% endif %}    
+    
     $(document).ready(function(){
-        
-        var comments    = LIST({
-            container:      $("#comments"),
-            spinner:        $("#tab_load_spinner"),
-            baseUrl:        "/user/{{user.username}}/comments/json",
-            dataProp:       "data.comments",
-            itemProps:      {   
-                "text":         "text",
-                "username":     "username",
-                "date":         "hdate",
-                "date_label":   "utcdate",
-                "remove_url":   "remove_url",
-                "request_resource":     "request.resource",
-                "request_description":  "request.description"
-            },           
-            templates:      {
-                item:       $("#comment_tmpl"),
-                error:      $("#error_tmpl"),
-                spinner:    $("#load_spinner_tmpl")
-            },
-            fnItemCreated: function(o){
-                var link = o.find(".delete_comment");
-                MODAL({
-                    container:  "modal_container",
-                    link:       link,
-                    url:        link.attr("ajaxify"),
-                    body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
-                    header:     "Remove Comment",
-                    btn_label:  "Remove Comment",
-                    extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-                    callback:   function(){
-                        comments.load();
-                    }
-                }).init();                
-            }
-        });
-        
-        var requests    = LIST({
-            container:      $("#requests"),
-            spinner:        $("#tab_load_spinner"),
-            baseUrl:        "/user/{{user.username}}/requests/json",
-            dataProp:       "data.requests",
-            itemProps:      {   
-                "description":  "description",
-                "username":     "username",
-                "thumb_url":    "thumb_url",
-                "date":         "hdate",
-                "date_label":   "utcdate",
-                "remove_url":   "remove_url",
-                "resource":     "resource",
-                "street":   "location.street",
-                "city":     "location.city",
-                "country":  "location.country",
-                "lat":      "location.lat",
-                "lon":      "location.lon"
-            },           
-            templates:      {
-                item:       $("#request_tmpl"),
-                error:      $("#error_tmpl"),
-                spinner:    $("#load_spinner_tmpl")
-            },
-            fnItemCreated: function(o){
-                var link = o.find(".delete_request");
-                MODAL({
-                    container:  "modal_container",
-                    link:       link,
-                    url:        link.attr("ajaxify"),
-                    body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
-                                '   <b>All photos and comments will be removed.</b>' +
-                                '</div>',
-                    header:     "Remove Request",
-                    btn_label:  "Remove Request",
-                    extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-                    callback:   function(){
-                        requests.load();
-                    }
-                }).init();                
-            }
-        });
-        
-        var photos  = LIST({
-            container:      $("#photos"),
-            spinner:        $("#tab_load_spinner"),
-            baseUrl:        "/user/{{user.username}}/photos/json",
-            dataProp:       "data.photos",
-            itemProps:      {
-                "resource":     "request.resource",
-                "description":  "request.description",
-                "image_url":    "image_url",
-                "city":         "location.city",
-                "country":      "location.country",
-                "remove_url":   "remove_url"
-            },
-            itemsPerRow:    4,
-            templates:      {
-                item:       $("#image_tmpl"),
-                separator:  $("#image_sep_tmpl"),
-                error:      $("#error_tmpl"),
-                spinner:    $("#load_spinner_tmpl")
-            },
-            fnItemCreated: function(o){
-                var link = o.find(".delete_photo");
-                MODAL({
-                    container:  "modal_container",
-                    link:       link,
-                    url:        link.attr("ajaxify"),
-                    body:       '<div class="alert error_spaces">Are you sure you want to remove the photo?</div>',
-                    header:     "Remove Photo",
-                    btn_label:  "Remove Photo",
-                    extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
-                    callback:   function(){
-                        photos.load();
-                    }
-                }).init();                
-            },
-            fnInitComplete: function(data){
-                if (data !== undefined &&
-                    data.data !== undefined &&
-                    data.data.photos_total !== undefined)
-                {
-                    $("#photos_badge").html(data.data.photos_total);
-                }                
-            }
-        });
-        
+        var requests    = LIST(requestOpts);
+        var photos      = LIST(photoOpts);
+        var comments    = LIST(commentOpts);
+    
         // Register tabs
         $('a[data-toggle="tab"]').on('shown', function (e) {
-            // XXX: Fix issue with reloading the tab
-            //$(this).unbind("click");
-            //console.debug(e.target.hash);
-            //$(e.target).click(function(){
-            //    console.debug($(e.target.hash));
-            //    $(this).unbind("click");
-            //    //$(e.target).tab("show");
-            //});
-
             
             switch (e.target.hash) {
                 case "#tab_requests":
@@ -253,10 +282,7 @@
             
         });     
 
-        //load_requests();
-        //$('a[data-toggle="tab"]').on('show', function (e) {
-        //    console.debug(e.target.hash)
-        //})
+        // Display tab by passing url
         {% if active == "photos" %}
         $('a[href="#tab_photos"]').tab("show");
         {% elif active == "comments" %}
