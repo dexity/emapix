@@ -734,14 +734,21 @@ def remove_comment_json(request, comment_id):
     com     = validate_user_comment(request, comment_id, True)
     if not isinstance(com, Comment):
         return com
-    if request.method != "POST":
-        return bad_request_json({"error": METHOD_ERROR})
     
-    try:
-        com.delete()
-    except Exception, e:
-        return bad_request_json({"error": str(e)})
-    return to_ok()
+    if request.method == "POST":
+        # Remove comment and requestcomment.
+        try:
+            com.delete()
+        except Exception, e:
+            return bad_request_json({"error": str(e)})
+        return to_ok()
+    
+    c   = {}
+    c.update(csrf(request))
+    resp    = {
+        "data": render_to_string("forms/remove_comment_form.html", c)
+    }
+    return http_response_json(resp)      
     
 
 def get_profile(request):
@@ -1002,10 +1009,11 @@ def get_user_comments_json(request, username):
         return forbidden_json({"error": AUTH_ERROR})
     
     try:
-        userprof    = UserProfile.objects.get(user=request.user)
-        return get_comments(request, userprof=userprof, num_pages=10, recent_first=True)
+        userprof2    = UserProfile.objects.get(user__username=username)
     except Exception, e:
         return bad_request_json({"error": str(e)})
+
+    return get_comments(request, userprof=userprof2, num_pages=10, recent_first=True)    
 
 
 def get_user_photos_json(request, username):

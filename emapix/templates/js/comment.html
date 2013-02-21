@@ -2,7 +2,7 @@
     <div class="comment-block">
         <div class="comment-text">{{text}}</div>
         {{#remove_url}}
-        <button class="close delete_comment" title="Delete comment" ajaxify="{{remove_url}}">×</button>
+        <button class="close delete_comment" title="Remove comment" ajaxify="{{remove_url}}">×</button>
         {{/remove_url}}
     </div>
     {{#request_description}}
@@ -13,6 +13,5 @@
     {{/request_description}}
     <div class="pull-right">
         <div class="e-request-time" title="{{date_label}}">{{date}}</div>
-        <div class="pull-right"><a href="/user/{{username}}">{{username}}</a></div>
     </div>
 </div>

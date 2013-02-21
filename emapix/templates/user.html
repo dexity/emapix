@@ -224,10 +224,8 @@
                 container:  "modal_container",
                 link:       link,
                 url:        link.attr("ajaxify"),
-                body:       '<div class="alert error_spaces">Are you sure you want to remove the photo?</div>',
                 header:     "Remove Photo",
                 btn_label:  "Remove Photo",
-                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                 callback:   function(){
                     photos.load();
                 }
@@ -245,10 +243,8 @@
                 container:  "modal_container",
                 link:       link,
                 url:        link.attr("ajaxify"),
-                body:       '<div class="alert alert-info error_spaces">Are you sure you want to remove the comment?</div>',
                 header:     "Remove Comment",
                 btn_label:  "Remove Comment",
-                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                 callback:   function(){
                     comments.load();
                 }
