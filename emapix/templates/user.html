@@ -112,6 +112,10 @@
     
 <script type="text/javascript">
     
+    var requests;
+    var photos;
+    var comments;    
+    
     // Default options
     var requestOpts = {
         container:      $("#requests"),
@@ -156,15 +160,15 @@
             separator:  $("#image_sep_tmpl"),
             error:      $("#error_tmpl"),
             spinner:    $("#load_spinner_tmpl")
-        },
-        fnInitComplete: function(data){
-            if (data !== undefined &&
-                data.data !== undefined &&
-                data.data.photos_total !== undefined)
-            {
-                $("#photos_badge").html(data.data.photos_total);
-            }                
         }
+        //fnInitComplete: function(data){
+        //    if (data !== undefined &&
+        //        data.data !== undefined &&
+        //        data.data.photos_total !== undefined)
+        //    {
+        //        $("#photos_badge").html(data.data.photos_total);
+        //    }                
+        //}
     };
 
     var commentOpts = {
@@ -201,12 +205,8 @@
                 container:  "modal_container",
                 link:       link,
                 url:        link.attr("ajaxify"),
-                body:       '<div class="alert error_spaces">Are you sure you want to remove the request? <br />' +
-                            '   <b>All photos and comments will be removed.</b>' +
-                            '</div>',
                 header:     "Remove Request",
                 btn_label:  "Remove Request",
-                extra_fields:   {"csrfmiddlewaretoken": $("input[name=csrfmiddlewaretoken]").val()},
                 callback:   function(){
                     requests.load();
                 }
@@ -259,9 +259,9 @@
     {% endif %}    
     
     $(document).ready(function(){
-        var requests    = LIST(requestOpts);
-        var photos      = LIST(photoOpts);
-        var comments    = LIST(commentOpts);
+        requests    = LIST(requestOpts);
+        photos      = LIST(photoOpts);
+        comments    = LIST(commentOpts);
     
         // Register tabs
         $('a[data-toggle="tab"]').on('shown', function (e) {
