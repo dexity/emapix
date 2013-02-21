@@ -143,6 +143,25 @@ def template_str(name):
         pass
     return ""
     
+    
+def change_number(cls, field_name, obj_sel, change_num):
+    "Function for incrementing or decrementing fields (e.g. num_requests, num_photos ...)"
+    if not obj_sel:
+        return
+    try:
+        # obj_sel can be either dict (e.g. {user: self.user}) or object
+        if isinstance(obj_sel, dict):
+            obj = cls.objects.get(**obj_sel)
+        else:
+            obj = obj_sel
+        value   = getattr(obj, field_name) + change_num
+        if value < 0:
+            value = 0
+        setattr(obj, field_name, value)
+        obj.save()
+    except Exception, e:
+        pass
+    
 
 def bad_form_json(form):
     "Returns json response for invalid form"

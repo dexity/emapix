@@ -3,7 +3,7 @@ from django.db.transaction import commit_on_success
 from django.contrib.auth.models import User
 
 from emapix.utils.const import *
-from emapix.utils.utils import timestamp
+from emapix.utils.utils import timestamp, change_number
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.core.models")
@@ -31,21 +31,8 @@ class UserProfile(models.Model):
     req_limit   = models.IntegerField(default=10)   # Temp
 
 
-    @classmethod
-    def change(cls, field_name, user, change_num):
-        "Class method for settings fields: num_requests, num_photos, num_comments"
-        try:
-            prof    = cls.objects.get(user=user)
-            value   = getattr(prof, field_name) + change_num
-            setattr(prof, field_name, value)
-            prof.save()
-        except Exception, e:
-            pass
-
-
     def __unicode__(self):
         return ""
-
 
 
 class UserStatus(models.Model):
@@ -76,14 +63,14 @@ class Photo(models.Model):
             # Photo is just created
             self.created_time = timestamp()     # Updated when object is created
             if self.type == "request":
-                UserProfile.change("num_photos", self.user, 1)
+                change_number(UserProfile, "num_photos", {"user": self.user}, 1)
         self.updated_time = timestamp()
         super(Photo, self).save(*args, **kwargs)
         
     @commit_on_success
     def mark_delete(self):
         if self.type == "request":
-            UserProfile.change("num_photos", self.user, -1)
+            change_number(UserProfile, "num_photos", {"user": self.user}, -1)
         self.marked_delete = True
         self.save()
     
@@ -145,13 +132,13 @@ class Request(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.submitted_date = timestamp()
-            UserProfile.change("num_requests", self.user, 1)
+            change_number(UserProfile, "num_requests", {"user": self.user}, 1)
         
         super(Request, self).save(*args, **kwargs)        
     
     @commit_on_success
     def delete(self, *args, **kwargs):
-        UserProfile.change("num_requests", self.user, -1)
+        change_number(UserProfile, "num_requests", {"user": self.user}, -1)
         super(Request, self).delete(*args, **kwargs)
     
     def __unicode__(self):
@@ -201,13 +188,13 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.submitted_date = timestamp()
-            UserProfile.change("num_comments", self.user, 1)
+            change_number(UserProfile, "num_comments", {"user": self.user}, 1)
 
         super(Comment, self).save(*args, **kwargs)
         
     @commit_on_success
     def delete(self, *args, **kwargs):
-        UserProfile.change("num_comments", self.user, -1)
+        change_number(UserProfile, "num_comments", {"user": self.user}, -1)
         super(Comment, self).delete(*args, **kwargs)    
     
     def __unicode__(self):
@@ -218,19 +205,18 @@ class RequestComment(models.Model):
     request = models.ForeignKey(Request)
     comment = models.ForeignKey(Comment)
     
+    @commit_on_success
     def save(self, *args, **kwargs):
         "Increment number of comments in request"
-        if not self.comment or not self.request:
-            return
-        # XXX: What is that?
-        try:
-            self.request.num_comments    += 1
-            self.request.save()
-        except Exception, e:
-            return
-        
+        if not self.id:
+            change_number(Request, "num_comments", self.request, 1)
         super(RequestComment, self).save(*args, **kwargs)      
     
-    
+    @commit_on_success
+    def delete(self, *args, **kwargs):
+        "Increment number of comments in request"
+        change_number(Request, "num_comments", self.request, -1)
+        super(RequestComment, self).delete(*args, **kwargs)
+        
     def __unicode__(self):
         return ""
