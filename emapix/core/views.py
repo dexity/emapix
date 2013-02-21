@@ -516,7 +516,7 @@ def edit_request_ajax(request, res):
     
 def request_status_ajax(request, res, status):
     "Change status of the request"
-    req = validate_user_request(request, res)
+    req = validate_user_request(request, res)   # Only owner can change the request status
     if not isinstance(req, Request):
         return req
     

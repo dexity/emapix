@@ -40,6 +40,8 @@ class WImage(object):
         
         if profph.exists():  # Use existing profile photo
             ph      = profph[0].photo
+            ph.marked_delete    = marked_delete # In case if the previous status was different
+            ph.save()
         else:   # Create a new photo request
             ph      = Photo(user=user, type=photo_type, marked_delete=marked_delete)
             ph.save()
