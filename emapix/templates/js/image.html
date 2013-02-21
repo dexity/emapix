@@ -2,7 +2,9 @@
 <div class="span2">
     <a href="/request/{{resource}}" title="{{description}}">
         <img src="{{image_url}}"/>
-        <button class="close delete_photo" title="Delete photo" ajaxify="{{remove_url}}">×</button>
+        {{#remove_url}}
+        <button class="close delete_photo" title="Remove photo" ajaxify="{{remove_url}}">×</button>
+        {{/remove_url}}
     </a>
     {{#city}}
         <a href="#" class="label label-success">{{city}}</a>

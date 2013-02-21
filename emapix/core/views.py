@@ -565,18 +565,28 @@ def remove_photo_json(request, photo_id):
     "Marks request photo for removal. Used in user view"
     if not request.user.is_authenticated():
         return forbidden_json({"error": AUTH_ERROR})
-    # XXX: Fix modal: add GET
-    if request.method != "POST":
-        return bad_request_json({"error": "Invalid request method"})
+
     try:
         photo   = Photo.objects.get(id=photo_id)
         if photo.user != request.user:  # Only 
             return forbidden_json({"error": AUTHOR_ERROR})
-        photo.mark_delete()
     except Photo.DoesNotExist:
         return bad_request_json({"error": "Photo does not exist"})
-
-    return to_ok()
+    
+    if request.method == "POST":
+        try:
+            phreq   = PhotoRequest.objects.get(photo=photo)
+            WPhoto.remove_photo(phreq.request.resource)
+        except Exception, e:
+            return server_error_json({"error": str(e)})
+        return to_ok()
+    
+    c   = {}
+    c.update(csrf(request))
+    resp    = {
+        "data": render_to_string("forms/remove_photo_form.html", c)
+    }
+    return http_response_json(resp)    
 
 
 @csrf_protect
@@ -1026,8 +1036,8 @@ def get_user_photos_json(request, username):
             },
             "image_url":    image.url
         }
-        # XXX: Add only if request.user == userprof.user
-        photo["remove_url"] = "/photo/%s/remove/json" % phreq.photo.id
+        if is_you(request, userprof2.user):
+            photo["remove_url"] = "/photo/%s/remove/json" % phreq.photo.id
         photos.append(photo)
     
     data    = {
