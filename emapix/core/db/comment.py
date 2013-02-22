@@ -20,11 +20,21 @@ class WComment(object):
     @classmethod
     def remove_comments(cls, res):
         "Removes all request comments"
-        try:
-            reqcoms = RequestComment.objects.filter(request__resource=res)
-            for rq in reqcoms:  # Need more efficient?
-                rq.comment.delete()
-            reqcoms.delete()
-            return True
-        except Exception, e:
-            return False
+        reqcoms = RequestComment.objects.filter(request__resource=res)
+        cls.remove_req_comments(reqcoms)
+    
+    
+    @classmethod
+    def remove_comment(cls, com_id):
+        "Removes request comment"
+        reqcoms = RequestComment.objects.filter(comment__id = com_id)
+        cls.remove_req_comments(reqcoms)   
+
+
+    @classmethod
+    def remove_req_comments(cls, reqcoms):
+        "Removes request comments"
+        for rq in reqcoms:  # Need more efficient?
+            rq.comment.delete()
+        reqcoms.delete()
+        

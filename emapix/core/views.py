@@ -736,9 +736,8 @@ def remove_comment_json(request, comment_id):
         return com
     
     if request.method == "POST":
-        # Remove comment and requestcomment.
         try:
-            com.delete()
+            WComment.remove_comment(com.id)
         except Exception, e:
             return bad_request_json({"error": str(e)})
         return to_ok()
