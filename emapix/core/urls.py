@@ -22,7 +22,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/make$", "make_request"),
     url(r"^request/%s$" % REQ_REGEX, "get_request"),
     url(r"^requests$", "get_requests"),
-    url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"), # Not currently used
+    #url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"), # Not currently used
     
     # User methods
     url(r"^users$", "users"),
@@ -46,7 +46,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^photos$", "recent_photos"),
     
     # Search methods
-
+    
     # Json
     url(r"^request/all/json$", "get_requests_json"),
     url(r"^request/add$", "add_request"),
@@ -73,10 +73,10 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^search2$", "search2"),
     
     # TODO
-    url(r"^about$", "about"),
-    url(r"^forum$", "forum"),
-    url(r"^feedback$", "feedback"),
-    url(r"^developer$", "developer"),
-    url(r"^privacy$", "privacy"),
-    url(r"^terms$", "terms"),
+    #url(r"^about$", "about"),
+    #url(r"^forum$", "forum"),
+    #url(r"^feedback$", "feedback"),
+    #url(r"^developer$", "developer"),
+    #url(r"^privacy$", "privacy"),
+    #url(r"^terms$", "terms"),
 )
