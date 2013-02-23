@@ -18,7 +18,7 @@
 <div class="row">
     <div class="span2">
         <img src="{{photo_url}}" class="profile_photo" /><br />
-        {% if is_you %} <!-- and no photo -->
+        {% if is_you %}
         <a href="/profile/photo" >
             {% if photo_exists %}
                 Update photo
@@ -32,23 +32,25 @@
         <div class="row">
             <div class="span6"><h2>{{name}}</h2></div>
             <div class="span2">
+                {% if userprof2.location %}
                 <div class="profile_location">
-                    {% if is_you and not userprof2.location %}
-                    <a href="/profile">Set location?</a>
-                    {% else %}
                     <div class="label label-info">{{userprof2.location}}</div>
-                    {% endif %}
                 </div>
+                {% elif is_you %}
+                <div class="profile_location">
+                    <a href="/profile">Set location?</a>
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="clear_both"></div>
         
-        {% if userprof2.description%}
-        <div class="full-description">{{userprof2.description}}</div>
-        {% else %}
+        {% if is_you and not userprof2.description%}
         <div class="full-description" style="text-align: right">
             <a href="/profile">More about youself?</a>
         </div>
+        {% elif userprof2.description %}
+        <div class="full-description">{{userprof2.description}}</div>
         {% endif %}
         <div class="clear_both"></div>
         
@@ -139,7 +141,12 @@
             item:       $("#request_tmpl"),
             error:      $("#error_tmpl"),
             spinner:    $("#load_spinner_tmpl")
-        }
+        },
+        fnInitComplete: function(data){
+            try {
+                $("#requests_badge").html(data.data.requests_total);
+            } catch(err){}  
+        }  
     };
     
     var photoOpts   = {
@@ -160,15 +167,12 @@
             separator:  $("#image_sep_tmpl"),
             error:      $("#error_tmpl"),
             spinner:    $("#load_spinner_tmpl")
+        },
+        fnInitComplete: function(data){
+            try {
+                $("#photos_badge").html(data.data.photos_total);
+            } catch(err){}  
         }
-        //fnInitComplete: function(data){
-        //    if (data !== undefined &&
-        //        data.data !== undefined &&
-        //        data.data.photos_total !== undefined)
-        //    {
-        //        $("#photos_badge").html(data.data.photos_total);
-        //    }                
-        //}
     };
 
     var commentOpts = {
@@ -188,7 +192,12 @@
             item:       $("#comment_tmpl"),
             error:      $("#error_tmpl"),
             spinner:    $("#load_spinner_tmpl")
-        }
+        },
+        fnInitComplete: function(data){
+            try {
+                $("#comments_badge").html(data.data.comments_total);
+            } catch(err){}  
+        }        
     };
     
     
