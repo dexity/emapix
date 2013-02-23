@@ -1372,8 +1372,7 @@ def profile_photo_select(request):
 
     # Display form
     c   = {
-        "form":     UploadFileForm(),
-        "resource": res
+        "form":     UploadFileForm()
     }
     c.update(csrf(request))
     resp    = {
