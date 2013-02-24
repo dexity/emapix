@@ -32,7 +32,7 @@ class UserProfile(models.Model):
 
 
     def __unicode__(self):
-        return ""
+        return "%s, %s" % (self.user, self.location) 
 
 
 class UserStatus(models.Model):
@@ -45,7 +45,7 @@ class UserStatus(models.Model):
         super(UserStatus, self).save(*args, **kwargs)        
     
     def __unicode__(self):
-        return ""
+        return "%s %s" % (self.user, self.status)
 
 
 class Photo(models.Model):
@@ -76,7 +76,8 @@ class Photo(models.Model):
     
     
     def __unicode__(self):
-        return ""
+        # Refactor to "<resource> <type>"
+        return "%s %s" % (self.type, self.created_time)
 
 
 class Image(models.Model):
@@ -100,7 +101,7 @@ class Image(models.Model):
         super(Image, self).save(*args, **kwargs)
     
     def __unicode__(self):
-        return ""
+        return self.name
 
 
 class Location(models.Model):
@@ -115,7 +116,7 @@ class Location(models.Model):
     res_type    = models.CharField(max_length=64, null=True, blank=True)
     
     def __unicode__(self):
-        return ""
+        return "(%s, %s)" % (self.lat, self.lon)
     
 
 class Request(models.Model):
@@ -142,7 +143,7 @@ class Request(models.Model):
         super(Request, self).delete(*args, **kwargs)
     
     def __unicode__(self):
-        return ""
+        return self.resource
 
 
 class PhotoRequest(models.Model):
@@ -151,7 +152,7 @@ class PhotoRequest(models.Model):
     # Some access control (?)
     
     def __unicode__(self):
-        return ""
+        return "%s %s" % (self.photo.type, str(self.request))
 
 
 class ProfilePhoto(models.Model):
@@ -159,7 +160,7 @@ class ProfilePhoto(models.Model):
     user        = models.ForeignKey(User)
     
     def __unicode__(self):
-        return ""
+        return "%s %s" % (self.photo.type, self.user)
 
 
 # XXX: Do I need the model?
@@ -176,7 +177,7 @@ class RequestStatus(models.Model):
         super(RequestStatus, self).save(*args, **kwargs)        
     
     def __unicode__(self):
-        return ""
+        return "%s %s" % (str(self.request), self.status)
 
 
 class Comment(models.Model):
@@ -198,7 +199,7 @@ class Comment(models.Model):
         super(Comment, self).delete(*args, **kwargs)    
     
     def __unicode__(self):
-        return ""
+        return self.text[:20]
 
 
 class RequestComment(models.Model):
@@ -219,4 +220,4 @@ class RequestComment(models.Model):
         super(RequestComment, self).delete(*args, **kwargs)
         
     def __unicode__(self):
-        return ""
+        return "%s %s" % (str(self.request), str(self.comment))

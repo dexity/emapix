@@ -145,7 +145,7 @@ INSTALLED_APPS = (
     'emapix',
     'south',
     'django.contrib.admin',
-    'django.contrib.admindocs',
+    #'django.contrib.admindocs',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
