@@ -2,6 +2,7 @@
 
 import os.path
 
+
 try:
     import emapixconf
 except:
@@ -138,14 +139,15 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.admin',
     'emapix.api',
     'emapix.prototype',
     'emapix.layout',
     'emapix.core',
     'emapix',
     'south',
-    'django.contrib.admin',
-    #'django.contrib.admindocs',
+    'constance',
+    'constance.backends.database'
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
@@ -155,7 +157,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "django.core.context_processors.static",
-    "django.contrib.messages.context_processors.messages"
+    "constance.context_processors.config",
+    "django.contrib.messages.context_processors.messages",
+    "constance.context_processors.config"
 )
 
 # Log settings
@@ -186,4 +190,9 @@ LOGGING = {
             'propagate': True,
         },
     }
+}
+
+CONSTANCE_BACKEND   = "constance.backends.database.DatabaseBackend"
+CONSTANCE_CONFIG    = {
+    "map_key":     ("", "Google Map key")
 }

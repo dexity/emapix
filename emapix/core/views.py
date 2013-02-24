@@ -15,6 +15,8 @@ import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
 from django.conf import settings
 
+from constance import config
+
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
 http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
@@ -332,8 +334,10 @@ def make_request(request):
     "Makes request"
     if not request.user.is_authenticated():
         return render(request, 'misc/error_view.html', {"error": AUTH_ERROR})    
-    #c   = {}
-    return render(request, 'make.html')
+    c   = {
+        "map_key":  config.map_key
+    }
+    return render(request, 'make.html', c)
 
 
 @csrf_protect
@@ -457,7 +461,8 @@ def get_request(request, res):
             "is_open":  req.status == "o",
             "req_auth": is_you(request, req.user),
             "hdate":    ts2hd(req.submitted_date),
-            "utcdate":  ts2utc(req.submitted_date)
+            "utcdate":  ts2utc(req.submitted_date),
+            "map_key":  config.map_key
         }
         if isinstance(photo, Photo) and not photo.marked_delete:
             c["submitter"]  = photo.user
