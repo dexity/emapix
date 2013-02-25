@@ -18,12 +18,12 @@ if DEBUG:
     EMAIL_BACKEND   = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = '/tmp/emapix_emails'
 else:
-    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST  = ""
-    EMAIL_PORT  = ""
-    EMAIL_HOST_USER = ""
-    EMAIL_HOST_PASSWORD = ""
-    EMAIL_USE_TLS   = ""
+    EMAIL_BACKEND   = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST      = emapixconf.EMAIL_HOST
+    EMAIL_PORT      = emapixconf.EMAIL_PORT
+    EMAIL_HOST_USER = emapixconf.EMAIL_HOST_USER
+    EMAIL_HOST_PASSWORD = emapixconf.EMAIL_HOST_PASSWORD
+    EMAIL_USE_TLS   = emapixconf.EMAIL_USE_TLS
 
 
 ADMINS = emapixconf.ADMINS
