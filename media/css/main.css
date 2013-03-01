@@ -170,16 +170,23 @@ a img {
     width: 400px;
 }*/
 
-.full-description {
+.full-description,
+.e-comment-item {
     padding: 10px;
-    margin-top: 10px;
-    margin-bottom:10px;
     display: block;
     word-wrap: break-word;
     background-color:#f5f7fa;
     border-radius:5px;
     -moz-border-radius:5px;
     -webkit-border-radius:5px;
+}
+.full-description {
+    margin-top: 10px;
+    margin-bottom:10px;
+}
+
+.e-comment-item {
+    margin-bottom: 2px;
 }
 .e-request-info {
     margin-top: 15px;
@@ -232,9 +239,6 @@ a img {
     height: 460px;
 }
 
-#tab_comments #comments {
-    margin-top: -5px;
-}
 .e-username {
     font-size: 15px;
     font-weight: bold;
@@ -353,9 +357,6 @@ a img {
 
 .e-comment {
     width: 450px;
-}
-.e-comment-item {
-    margin-bottom: -8px;
 }
 #comments textarea {
     margin-top: 10px;
