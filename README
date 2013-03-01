@@ -1,9 +1,37 @@
 Emapix - distributed photo request service
 
-Software packages:
+Software Packages
+-----------------
 
-Python  - 2.7.x
-Django  - 1.4
-South   - 0.7.6
-recaptcha-client    - 1.0.x
+- Python 2.7
+- south 0.7.x               (https://pypi.python.org/pypi/South)
+- django-constance 0.4      (https://pypi.python.org/pypi/django-constance)
+- django-picklefield 0.3    (https://pypi.python.org/pypi/django-picklefield)
+- recaptcha-client 1.0.x    (https://pypi.python.org/pypi/recaptcha-client)
+- PIL 1.1.7                 (https://pypi.python.org/pypi/PIL)
+- MySQLdb 1.2.3             (https://pypi.python.org/pypi/MySQL-python/1.2.3)
+- mod_wsgi  (from source code? http://modwsgi.googlecode.com/files/mod_wsgi-3.4.tar.gz)
+
+Installation
+------------
+
+$ sudo apt-get install python-setuptools
+$ sudo easy_install django==1.4.0
+$ sudo apt-get install apache2
+$ sudo apt-get install apache2-threaded-dev
+$ sudo apt-get install make         # If doesn't exist
+$ sudo apt-get install python-dev   # If doesn't exist
+$ # Install mod_wsgi from source code
+  #$ sudo apt-get install libapache2-mod-wsgi	# will install python-2.6
+$ sudo apt-get install sqlite3
+$ sudo easy_install south
+$ sudo easy_install django-constance
+$ sudo easy_install django-picklefield
+$ sudo easy_install recaptcha-client
+$ sudo easy_install PIL
+$ sudo apt-get install python-imaging
+$ sudo apt-get install mysql-server
+$ sudo easy_install MySQL-python==1.2.3
+
+
 
