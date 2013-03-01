@@ -117,21 +117,24 @@ def proc_image(dim, dbimg, file_base, limg, format):
             img = crop_image(img, (iw, iw))
         img = resize_image(img, (dim, dim))
         
-    # Upload to S3
-    fd      = StringIO.StringIO()
-    img.save(fd, fmt)
-    # Get file size
-    fd.seek(0, 2)   # End of file
-    size    = fd.tell()
+    try:
+        # Upload to S3
+        fd      = StringIO.StringIO()
+        img.save(fd, fmt)
+        # Get file size
+        fd.seek(0, 2)   # End of file
+        size    = fd.tell()
+            
+        fd.seek(0)
+        filename    = s3key(file_base, dbimg.size_type, format)
         
-    fd.seek(0)
-    filename    = s3key(file_base, dbimg.size_type, format)
-    
-    (dbimg.width, dbimg.height)   = img.size
-    dbimg.url      = s3_key2url(filename)
-    dbimg.is_avail = s3_upload_file(fd, filename, IMAGE_FORMATS[format][0])
-    dbimg.size     = size
-    dbimg.format   = format
-    dbimg.save()
+        (dbimg.width, dbimg.height)   = img.size
+        dbimg.url      = s3_key2url(filename)
+        dbimg.is_avail = s3_upload_file(fd, filename, IMAGE_FORMATS[format][0])
+        dbimg.size     = size
+        dbimg.format   = format
+        dbimg.save()
+    except Exception, e:
+        logger.error(str(e))
 
     
