@@ -1009,8 +1009,6 @@ def get_user_areas_json(request, username):
     
 def get_user_comments_json(request, username):
     "Returns user comments"
-    if not request.user.is_authenticated():
-        return forbidden_json({"error": AUTH_ERROR})
     
     try:
         userprof2    = UserProfile.objects.get(user__username=username)
