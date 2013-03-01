@@ -655,10 +655,11 @@ def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=Fa
         comdict = {
             "id":       com.id,
             "text":     com.text,
-            "username": com.user.username,
             "hdate":    ts2h(sd, ct),
             "utcdate":  ts2utc(com.submitted_date)
         }
+        if userprof is None:    # Don't show username for profile
+            comdict["username"] = com.user.username
         if userprof:
             comdict["remove_url"]   = "/comment/%s/remove/json" % com.id
             comdict["request"]  = to_request2(rc.request, desc_size=50)

@@ -13,5 +13,8 @@
     {{/request_description}}
     <div class="pull-right">
         <div class="e-request-time" title="{{date_label}}">{{date}}</div>
+        {{#username}}
+        <div class="pull-right"><a href="/user/{{username}}">{{username}}</a></div>
+        {{/username}}
     </div>
 </div>
