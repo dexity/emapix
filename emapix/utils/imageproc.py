@@ -37,11 +37,12 @@ def crop_s3_image(img_name, crop_name, select_box):
         fd.seek(0, 2)   # End of file
         size    = fd.tell()
         
+        # Upload the image to Amazon S3
         fd.seek(0)  # Beginning of file
         status  = s3_upload_file(fd, crop_name, content_type)
         return (status, size)
     except Exception, e:
-        logger.debug(str(e))
+        logger.error(str(e))
         return (False, 0)
 
 
@@ -53,11 +54,10 @@ def load_s3image(file_base, format):
     return Image.open(fd)
 
 
-#def proc_images(user, req, format):
 def proc_images(file_base, db_imgs, format):
     "Processes images in parallel"
     if not format in IMAGE_FORMATS.keys():
-        raise   # Wrong format
+        raise Exception("Image format is not supported")  # Wrong format
     img = load_s3image(file_base, format)
     
     queue   = Queue.Queue()
@@ -100,6 +100,7 @@ def resize_image(img, size):
 # XXX: Specific for threads. Need a more general implementation
 def proc_image(dim, dbimg, file_base, limg, format):
     "Processes image based on dimension and image size"
+    # limg - loaded image
     img     = limg
     fmt     = IMAGE_FORMATS[format][1]    # "JPEG", "PNG"
     (iw, ih)    = img.size
@@ -135,6 +136,6 @@ def proc_image(dim, dbimg, file_base, limg, format):
         dbimg.format   = format
         dbimg.save()
     except Exception, e:
-        logger.error(str(e))
+        logger.error("proc_image: %s %s" % (filename, str(e)))
 
     

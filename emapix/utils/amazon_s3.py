@@ -32,7 +32,7 @@ def s3_upload_file(fd, s3_filename=None, content_type=None):
         fd.close()
         return True
     except Exception, e:    # object doesn't exist or something else
-        logger.debug(str(e))    
+        logger.error("s3_upload_file: %s %s" % (s3_filename, str(e)))    
     return False    # Not uploaded
 
 
@@ -48,7 +48,7 @@ def s3_download_file(fd, s3_filename):
         fd.seek(0)
         return k.content_type
     except Exception, e:
-        logger.debug(str(e))
+        logger.error("s3_download_file: %s %s" % (s3_filename, str(e)))
     return None
 
 
@@ -57,20 +57,16 @@ def s3_key2url(key):
     return "https://s3.amazonaws.com/%s/%s" % (BUCKET_NAME, key)
     
 
-def resource2key(resource):
-    return resource + ".jpg"
-
-
-def file_exists(resource):
-    # not used
-    try:
-        conn = S3Connection(S3_KEY, S3_SECRET)
-        b   = conn.get_bucket(BUCKET_NAME)
-        key = b.get_key(resource2key(resource))
-        return key != None
-    except Exception, e:
-        logger.debug(str(e))
-        return False
-        
-        
-        
+#def resource2key(resource):
+#    return resource + ".jpg"
+#
+#def file_exists(resource):
+#    # not used
+#    try:
+#        conn = S3Connection(S3_KEY, S3_SECRET)
+#        b   = conn.get_bucket(BUCKET_NAME)
+#        key = b.get_key(resource2key(resource))
+#        return key != None
+#    except Exception, e:
+#        logger.debug(str(e))
+#        return False

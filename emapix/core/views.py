@@ -24,6 +24,7 @@ http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_jso
 from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists    #, validate_user
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
+from emapix.utils.imageproc import load_s3image, proc_image   # Temp
 from emapix.core.forms import *
 from emapix.core.models import *
 from emapix.utils.google_geocoding import latlon2addr
@@ -1304,14 +1305,19 @@ def submit_create(request, res):
             # Populate image db records
             params  = ((460, "large"), (200, "medium"), (50, "small"))
             db_imgs = []
+            
+            img = load_s3image(file_base, fmt)  # Temp
+            
+            # Sequential implementation
             for param in params:
                 (size, size_type)   = param
                 im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
                 im.name = s3key(file_base, size_type, fmt)
                 im.save()
-                db_imgs.append((size, im))
+                #db_imgs.append((size, im))
+                proc_image(size, im, file_base, img.copy(), fmt)
             
-            proc_images(file_base, db_imgs, fmt)
+            #proc_images(file_base, db_imgs, fmt)
             return to_ok()
         except Exception, e:
             logger.error("Error uploading request (%s) photo: %s" % (res, e))
