@@ -470,8 +470,8 @@ def get_request(request, res):
             # Request owner or photo owner has access to submitted photo
             c["pic_auth"]   = c["req_auth"] or is_you(request, photo.user)
             c["photo"]      = photo
-            c["pic_hdate"]  = ts2hd(photo.created_time)
-            c["pic_utcdate"]    = ts2utc(photo.created_time)
+            c["pic_hdate"]  = ts2hd(photo.updated_time)
+            c["pic_utcdate"]    = ts2utc(photo.updated_time)
             if isinstance(img, Image): #and img.is_avail:
                 c["pic_url"]    = img.url
     
