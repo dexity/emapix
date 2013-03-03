@@ -149,7 +149,7 @@ def change_number(cls, field_name, obj_sel, change_num):
     if not obj_sel:
         return
     try:
-        # obj_sel can be either dict (e.g. {user: self.user}) or object
+        # obj_sel can be either dict (e.g. {user: self.user}) or an object
         if isinstance(obj_sel, dict):
             obj = cls.objects.get(**obj_sel)
         else:
@@ -160,7 +160,7 @@ def change_number(cls, field_name, obj_sel, change_num):
         setattr(obj, field_name, value)
         obj.save()
     except Exception, e:
-        pass
+        logger.error("change_number failed: %s %s" % (cls.__name__, e))
     
 
 def bad_form_json(form):

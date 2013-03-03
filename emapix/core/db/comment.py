@@ -36,5 +36,5 @@ class WComment(object):
         "Removes request comments"
         for rq in reqcoms:  # Need more efficient?
             rq.comment.delete()
-        reqcoms.delete()
+            rq.delete()
         
