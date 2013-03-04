@@ -1,7 +1,8 @@
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<html><head>
-<title>403 Forbidden</title>
-</head><body>
-<h1>Forbidden</h1>
-<p>You don't have permission to access the server.</p>
-</body></html>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="alert alert-error">
+    <strong>403 Forbidden</strong>
+    You don't have permission to access the server.
+</div>
+{% endblock %}
