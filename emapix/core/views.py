@@ -1482,3 +1482,5 @@ def profile_photo_create(request):
     return http_response_json(resp)
 
 
+def server_status(request):
+    return HttpResponse("ok")
