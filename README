@@ -4,6 +4,7 @@ Software Packages
 -----------------
 
 - Python 2.7
+- boto 2.3.x                (https://pypi.python.org/pypi/boto) # Already installed in EC2
 - south 0.7.x               (https://pypi.python.org/pypi/South)
 - django-constance 0.4      (https://pypi.python.org/pypi/django-constance)
 - django-picklefield 0.3    (https://pypi.python.org/pypi/django-picklefield)
@@ -11,6 +12,7 @@ Software Packages
 - PIL 1.1.7                 (https://pypi.python.org/pypi/PIL)
 - MySQLdb 1.2.3             (https://pypi.python.org/pypi/MySQL-python/1.2.3)
 - mod_wsgi  (from source code? http://modwsgi.googlecode.com/files/mod_wsgi-3.4.tar.gz)
+- postfix 2.9.3             (http://www.postfix.org/)
 
 Installation
 ------------
@@ -32,6 +34,7 @@ $ sudo easy_install PIL
 $ sudo apt-get install python-imaging
 $ sudo apt-get install mysql-server
 $ sudo easy_install MySQL-python==1.2.3
+$ sudo apt-get install postfix
 
 
 
