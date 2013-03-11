@@ -162,6 +162,48 @@ def change_number(cls, field_name, obj_sel, change_num):
     except Exception, e:
         logger.error("change_number failed: %s %s" % (cls.__name__, e))
     
+    
+def accept_json(request):
+    "Returns True is Accept header is json"
+    accept  = request.META["HTTP_ACCEPT"]
+    if accept.startswith("application/json"):
+        return True
+    
+    return False
+    
+
+def bad_form(form, mimetype="application/json"):
+    "Returns response in mimetype for invalid form"
+    errors  = form.errors.items()
+    msg     = "Service error."
+    if len(errors) == 0:
+        return bad_request({"error": msg}, mimetype) # Form is valid
+    resp_errors = {}
+    for e in errors:
+        (name, value)   = (e[0], e[1][0])
+        resp_errors[name]   = value
+    return bad_request({"errors": resp_errors}, mimetype)     
+    
+    
+def bad_request(obj, mimetype="application/json"):
+    "Returns response in mimetype with 400 error status"
+    return HttpResponseBadRequest(json.dumps(obj), mimetype=mimetype)
+
+
+def forbidden(obj, mimetype="application/json"):
+    "Returns response in mimetype with 403 error status"
+    return HttpResponseForbidden(json.dumps(obj), mimetype=mimetype)
+
+    
+def http_response(obj, mimetype="application/json"):
+    "Returns response in mimetype with 200 status"
+    return HttpResponse(json.dumps(obj), mimetype=mimetype)
+
+
+def server_error(obj, mimetype="application/json"):
+    "Returns response in mimetype with 500 error status"
+    return HttpResponseServerError(json.dumps(obj), mimetype=mimetype)
+    
 
 def bad_form_json(form):
     "Returns json response for invalid form"

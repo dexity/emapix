@@ -19,7 +19,8 @@ from constance import config
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json
+http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json, accept_json, \
+bad_request, bad_form, http_response
 
 from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists    #, validate_user
 from emapix.utils.format import *
@@ -1152,13 +1153,16 @@ def submit_select(request, res):
     if not isinstance(req, Request):
         return req
     
-    user    = request.user  # User object
+    user        = request.user  # User object
+    mimetype    = "application/json"
+    if not accept_json(request):
+        mimetype    = "text/plain"
     
     if request.method == "POST":    # Ajax request
         # Upload image
         form   = UploadFileForm(request.POST, request.FILES)
         if not form.is_valid():
-            return bad_form_json(form)
+            return bad_form(form, mimetype)
         
         fd  = request.FILES["file"]
         try:
@@ -1183,13 +1187,13 @@ def submit_select(request, res):
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+            return http_response([{"success": True, "url": s3_key2url(filename)}], mimetype)
         
         except User.DoesNotExist:
-            return bad_request_json({"error": "User does not exist"})
+            return bad_request({"error": "User does not exist"}, mimetype)
         except Exception, e:
             logger.error("Error uploading request (%s) photo preview: %s" % (res, e))
-            return bad_request_json([{"error": str(e)}])
+            return bad_request([{"error": str(e)}], mimetype)
 
     # Display form
     c   = {
