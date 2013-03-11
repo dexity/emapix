@@ -1346,12 +1346,15 @@ def profile_photo_select(request):
         return forbidden_json({"error": AUTH_ERROR_TXT})   
     
     user    = request.user
-    
+    mimetype    = "application/json"
+    if not accept_json(request):
+        mimetype    = "text/plain"
+        
     if request.method == "POST":    # Ajax request
         # Upload image
         form   = UploadFileForm(request.POST, request.FILES)
         if not form.is_valid():
-            return bad_form_json(form)
+            return bad_form(form, mimetype)
         
         fd  = request.FILES["file"]
         try:
@@ -1376,13 +1379,13 @@ def profile_photo_select(request):
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response_json([{"success": True, "url": s3_key2url(filename)}])
+            return http_response([{"success": True, "url": s3_key2url(filename)}], mimetype)
         
         except User.DoesNotExist:
-            return bad_request_json({"error": "User does not exist"})
+            return bad_request({"error": "User does not exist"}, mimetype)
         except Exception, e:
             logger.error("Error uploading profile photo preview: %s" % e)
-            return bad_request_json([{"error": str(e)}])
+            return bad_request([{"error": str(e)}], mimetype)
 
     # Display form
     c   = {
