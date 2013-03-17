@@ -7,16 +7,16 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^$", "get_requests"),
     
     # Auth methods
-    url(r"^join$", "join"),
+    url(r"^join$", "join", {"SSL": True}),
     url(r"^welcome$", "welcome"),   # Redirection after user joined the service   
     url(r"^success$", "success"),   # Redirection after successfull form
     url(r"^verify/resend$", "verify_resend"),
     url(r"^recaptcha$", "handle_recaptcha"),
     url(r"^confirm/(\w{40})$", "confirm"),
-    url(r"^login$", "login"),
+    url(r"^login$", "login", {"SSL": True}),
     url(r"^logout$", "logout"),
     url(r"^forgot$", "forgot"),
-    url(r"^password/renew/(\w{40})$", "renew_password"),
+    url(r"^password/renew/(\w{40})$", "renew_password", {"SSL": True}),
     
     # Request methods
     url(r"^request/make$", "make_request"),
@@ -32,7 +32,7 @@ urlpatterns = patterns("emapix.core.views",
     # User profile methods
     url(r"^profile$", "get_profile"),
     url(r"^profile/edit$", "edit_profile"),
-    url(r"^profile/password$", "update_password"),
+    url(r"^profile/password$", "update_password", {"SSL": True}),
     url(r"^profile/photo$", "get_profile_photo"),
     url(r"^profile/photo/select$", "profile_photo_select"),
     url(r"^profile/photo/crop$", "profile_photo_crop"),
