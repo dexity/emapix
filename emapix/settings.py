@@ -195,5 +195,6 @@ LOGGING = {
 
 CONSTANCE_BACKEND   = "constance.backends.database.DatabaseBackend"
 CONSTANCE_CONFIG    = {
-    "map_key":     ("", "Google Map key")
+    "map_key":     ("", "Google Map key"),
+    "google_analytics": ("", "Google Analytics Tracking")
 }
