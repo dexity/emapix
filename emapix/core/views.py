@@ -1430,7 +1430,7 @@ def profile_photo_crop(request):
         if isinstance(result, HttpResponseBadRequest):
             return result
         
-        return HttpResponseRedirect("/profile/photo/create/%s?redirect=true" % res)
+        return HttpResponseRedirect("/profile/photo/create?redirect=true")
     
     c   = {
         "crop_form":    CropForm(),

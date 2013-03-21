@@ -13,8 +13,5 @@ urlpatterns = patterns('',
     # all other requests
     #(r'^.*', 'emapix.views.forbidden'),
     
-    # Uncomment the admin/doc line below to enable admin documentation:
-    # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
     url(r'^admin/', include(admin.site.urls)),
 )
