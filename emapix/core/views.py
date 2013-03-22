@@ -396,10 +396,10 @@ def add_request(request):
     form    = RequestForm(initial={"lat": lat, "lon": lon})
 
     # Check daily limit
-    reqs    = WRequest.get_recent_requests(user=user, days=1, recent=False)
-    overhead = reqs.count() - prof.req_limit
-    if overhead > 0:
-        return forbidden_json({"error": "Daily quota of %s requests is reached" % prof.req_limit})
+    #reqs    = WRequest.get_recent_requests(user=user, days=1, recent=False)
+    #overhead = reqs.count() - prof.req_limit
+    #if overhead > 0:
+    #    return forbidden_json({"error": "Daily quota of %s requests is reached" % prof.req_limit})
     
     c   = {
         "lat":  lat,
