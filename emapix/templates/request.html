@@ -108,8 +108,8 @@
     
     var loadMap    = function(){
         // Loads map
-	var lat	= "{{ req.location.lat }}";
-	var lon	= "{{ req.location.lon }}";
+	var lat	= "{{req.location.lat|escapejs}}";
+	var lon	= "{{req.location.lon|escapejs}}";
 	var location = new google.maps.LatLng(lat, lon);
 	var mapOptions = {
 	    center: location,
@@ -121,7 +121,7 @@
         
 	var marker	= new google.maps.Marker({
             position:  	new google.maps.LatLng(lat, lon),
-            title:      "{{ req.description }}",
+            title:      "{{req.description|escapejs}}",
             map:        map
         });
     }
@@ -198,7 +198,7 @@
         finished_callback:  function(){
             // XXX: Make json request to replace image and metadata
             //	instead of reloading the page. Save requests to Google Map
-            window.location.href = "/request/{{ req.resource }}";
+            window.location.href = "/request/{{req.resource}}";
         }
     });
     
@@ -261,7 +261,7 @@
                 // - Update link "Close request" <-> "Open request"
                 // - Disable some of the links
                 // > Need to reload the page?
-                window.location.href = "/request/{{ req.resource }}";
+                window.location.href = "/request/{{req.resource}}";
             }
             $.ajax({
                 url:    url,
