@@ -37,4 +37,3 @@ $ sudo easy_install MySQL-python==1.2.3
 $ sudo apt-get install postfix
 
 
-
