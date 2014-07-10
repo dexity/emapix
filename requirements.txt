@@ -1,6 +1,7 @@
 #PIL==1.1.7
 #python-imaging
-django==1.5
+#django==1.5
+pysqlite
 South==0.7.6
 django-constance
 django-picklefield

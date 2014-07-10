@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.http import HttpResponseRedirect, get_host
+from django.http import HttpResponseRedirect
 
 SSL = 'SSL'
 
@@ -46,6 +46,6 @@ class SSLRedirect:
 
         protocol = secure and "https" or "http"
 
-        newurl = "%s://%s%s" % (protocol,get_host(request),request.get_full_path())
+        newurl = "%s://%s%s" % (protocol, request.get_host(),request.get_full_path())
 
         return HttpResponseRedirect(newurl)
