@@ -1,0 +1,8 @@
+#PIL==1.1.7
+#python-imaging
+django==1.5
+South==0.7.6
+django-constance
+django-picklefield
+recaptcha-client
+MySQL-python==1.2.3
