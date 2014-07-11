@@ -163,42 +163,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "constance.context_processors.config"
 )
 
-# Log settings
-LOG_FORMAT      = "[%(asctime)s] %(levelname)-8s PID(%(process)d) THREAD(%(thread)d) %(name)s - %(funcName)s: !!! %(message)s !!!"
-LOG_FILENAME    = "/var/log/emapix/emapix.log"
-LOG_FILESIZE    = 1024 * 1024 * 5   # roatate after 5 MB
-LOG_FILECOUNT   = 5                 # a total of 5 rotating logs
-LOG_DATEFMT     = "%Y-%m-%d %H:%M:%S"
-
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-     },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
-}
-
 CONSTANCE_BACKEND   = "constance.backends.database.DatabaseBackend"
 CONSTANCE_CONFIG    = {
     "map_key":     ("", "Google Map key"),
