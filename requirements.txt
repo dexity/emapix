@@ -1,8 +1,9 @@
 #PIL==1.1.7
 #python-imaging
 #MySQL-python==1.2.3
+#pysqlite
 django==1.5
-pysqlite
+boto
 South==0.7.6
 django-constance
 django-picklefield

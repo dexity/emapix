@@ -20,3 +20,9 @@ libraries:
 
 builtins:
 - django_wsgi: on
+
+skip_files:
+- ^(.*/)?.*~$
+- ^(.*/)?.*\.py[co]$
+- ^libs/Django.*
+- ^libs/django
