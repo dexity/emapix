@@ -10,6 +10,7 @@ except:
 
 DEBUG   = emapixconf.DEBUG
 TEMPLATE_DEBUG = DEBUG
+ALLOWED_HOSTS = ['*']
 
 # Email
 NOREPLY_EMAIL  = "noreply@emapix.com"
@@ -163,8 +164,32 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "constance.context_processors.config"
 )
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+     },
+    'handlers': {
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler'
+        }
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+    }
+}
+
 CONSTANCE_BACKEND   = "constance.backends.database.DatabaseBackend"
 CONSTANCE_CONFIG    = {
-    "map_key":     ("", "Google Map key"),
+    "map_key": ("", "Google Map key"),
     "google_analytics": ("", "Google Analytics Tracking")
 }

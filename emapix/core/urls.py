@@ -1,4 +1,4 @@
-from django.conf.urls.defaults import patterns, include, url
+from django.conf.urls import patterns, include, url
 
 from emapix.utils.const import USERNAME_REGEX, REQ_REGEX, LOC_REGEX
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
