@@ -5,6 +5,8 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /media
+  static_dir: media
 - url: .*
   script: emapix.wsgi.application
 
@@ -22,7 +24,12 @@ builtins:
 - django_wsgi: on
 
 skip_files:
+- ^\.git
+- ^\.idea
 - ^(.*/)?.*~$
 - ^(.*/)?.*\.py[co]$
 - ^libs/Django.*
 - ^libs/django
+- ^libs/MySQL
+- ^libs/_mysql
+- ^libs/PIL
