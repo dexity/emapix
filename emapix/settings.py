@@ -1,19 +1,23 @@
 # Django settings for emapix project.
 
 import os.path
-
+from google.appengine.api import app_identity
 
 try:
     import emapixconf
 except:
     import emapixconf_default as emapixconf
 
+APP_ID = app_identity.get_application_id()
+APP_MAILHOST = "{}.appspotmail.com".format(APP_ID)
+APP_HOST = app_identity.get_default_version_hostname()
 DEBUG   = emapixconf.DEBUG
 TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*']
 
 # Email
-NOREPLY_EMAIL  = "noreply@emapix.com"
+#NOREPLY_EMAIL  = "noreply@emapix.com"
+NOREPLY_EMAIL = "noreply@{}".format(APP_MAILHOST)
 
 if DEBUG:
     EMAIL_BACKEND   = 'django.core.mail.backends.filebased.EmailBackend'

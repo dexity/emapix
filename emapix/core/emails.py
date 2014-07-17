@@ -1,4 +1,4 @@
-from django.core.mail import send_mail
+from emapix.utils.mail import send_mail
 
 from emapix.settings import NOREPLY_EMAIL
 
@@ -63,6 +63,3 @@ def send_newpass_confirm_email(request, email, username):
     msg = NEWPASS_MESSAGE % username
     
     send_mail("New password", msg, NOREPLY_EMAIL, [email,], fail_silently=False)
-    
-    
-    
