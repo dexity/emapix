@@ -18,18 +18,8 @@ ALLOWED_HOSTS = ['*']
 # Email
 #NOREPLY_EMAIL  = "noreply@emapix.com"
 NOREPLY_EMAIL = "noreply@{}".format(APP_MAILHOST)
-
-if DEBUG:
-    EMAIL_BACKEND   = 'django.core.mail.backends.filebased.EmailBackend'
-    EMAIL_FILE_PATH = '/tmp/emapix_emails'
-else:
-    EMAIL_BACKEND   = 'django.core.mail.backends.smtp.EmailBackend'
-    EMAIL_HOST      = emapixconf.EMAIL_HOST
-    EMAIL_PORT      = emapixconf.EMAIL_PORT
-    EMAIL_HOST_USER = emapixconf.EMAIL_HOST_USER
-    EMAIL_HOST_PASSWORD = emapixconf.EMAIL_HOST_PASSWORD
-    EMAIL_USE_TLS   = emapixconf.EMAIL_USE_TLS
-
+SENDGRID_USERNAME = emapixconf.SENDGRID_USERNAME
+SENDGRID_PASSWORD = emapixconf.SENDGRID_PASSWORD
 
 ADMINS = emapixconf.ADMINS
 

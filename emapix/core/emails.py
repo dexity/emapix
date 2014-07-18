@@ -47,7 +47,7 @@ def send_activation_email(request, email, username, token):
     url     = ACTIV_URL % (request.META["SERVER_NAME"], token)
     msg     = ACTIV_MESSAGE % (username, url)
 
-    send_mail("Verify registration", msg, NOREPLY_EMAIL, [email,], fail_silently=False)
+    send_mail("Verify registration", msg, NOREPLY_EMAIL, [email,])
     
     
 def send_forgot_email(request, email, username, token):
@@ -55,11 +55,11 @@ def send_forgot_email(request, email, username, token):
     url     = FORGOT_URL % (request.META["SERVER_NAME"], token)
     msg     = FORGOT_MESSAGE % (username, url)
 
-    send_mail("Renew password", msg, NOREPLY_EMAIL, [email,], fail_silently=False)
+    send_mail("Renew password", msg, NOREPLY_EMAIL, [email,])
     
     
 def send_newpass_confirm_email(request, email, username):
     "Sends confirmation that new password has been set"
     msg = NEWPASS_MESSAGE % username
     
-    send_mail("New password", msg, NOREPLY_EMAIL, [email,], fail_silently=False)
+    send_mail("New password", msg, NOREPLY_EMAIL, [email,])
