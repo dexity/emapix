@@ -1,48 +1,35 @@
 # Django settings for emapix project.
 
-import os.path
+import os
 from google.appengine.api import app_identity
 
-try:
-    import emapixconf
-except:
-    import emapixconf_default as emapixconf
-
 APP_ID = app_identity.get_application_id()
-APP_MAILHOST = "{}.appspotmail.com".format(APP_ID)
+APP_MAILHOST = '{}.appspotmail.com'.format(APP_ID)
 APP_HOST = app_identity.get_default_version_hostname()
-DEBUG   = emapixconf.DEBUG
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*']
 
 # Email
-#NOREPLY_EMAIL  = "noreply@emapix.com"
-NOREPLY_EMAIL = "noreply@{}".format(APP_MAILHOST)
-SENDGRID_USERNAME = emapixconf.SENDGRID_USERNAME
-SENDGRID_PASSWORD = emapixconf.SENDGRID_PASSWORD
+NOREPLY_EMAIL = 'noreply@{}'.format(APP_MAILHOST)
+SENDGRID_USERNAME = ''
+SENDGRID_PASSWORD = ''
 
-ADMINS = emapixconf.ADMINS
+ADMINS = (
+    ('Alex Dementsov', 'dexity@gmail.com'),
+)
 
-S3_KEY      = emapixconf.S3_KEY
-S3_SECRET   = emapixconf.S3_SECRET
-BUCKET_NAME = emapixconf.BUCKET_NAME
-API_KEY     = emapixconf.API_KEY    # test key for api
+S3_KEY = ''
+S3_SECRET = ''
+BUCKET_NAME = ''
+API_KEY = ''  # test key for api
+RECAPTCHA_PUBLIC_KEY = ''
+RECAPTCHA_PRIVATE_KEY = ''
 
-RECAPTCHA_PUBLIC_KEY    = emapixconf.RECAPTCHA_PUBLIC_KEY
-RECAPTCHA_PRIVATE_KEY   = emapixconf.RECAPTCHA_PRIVATE_KEY
+MANAGERS = ADMINS
 
+DATABASES = {}
 
-MANAGERS    = ADMINS
-
-DATABASES   = emapixconf.DATABASES
-
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# On Unix systems, a value of None will cause Django to use the same
-# timezone as the operating system.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
 TIME_ZONE = 'America/Chicago'
 
 # Language code for this installation. All choices can be found here:
@@ -51,16 +38,10 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
 USE_I18N = True
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale
 USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
 MEDIA_URL = ''
 STATIC_ROOT = 'static'
@@ -68,18 +49,12 @@ STATIC_URL = '/static/'
 ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+STATICFILES_DIRS = ()
 
-# List of finder classes that know how to find static files in
-# various locations.
+# List of finder classes that know how to find static files in various locations.
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -89,12 +64,10 @@ SECRET_KEY = '^!$%$usxu_e$a-6gllcuc_uv9i4&-nk#+-pl-o59c&js#31($n'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
-    #'emapix.middleware.access.AccessMiddleware',    # checks keys
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -104,11 +77,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'emapix.urls'
 
 TEMPLATE_DIRS = (
-    #os.path.join(os.path.dirname(__file__), 'layout/templates'),
     os.path.join(os.path.dirname(__file__), 'templates'),
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
 )
 
 INSTALLED_APPS = (
@@ -130,15 +99,15 @@ INSTALLED_APPS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "emapix.core.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "constance.context_processors.config",
-    "django.contrib.messages.context_processors.messages",
-    "constance.context_processors.config"
+    'django.contrib.auth.context_processors.auth',
+    'emapix.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'constance.context_processors.config',
+    'django.contrib.messages.context_processors.messages',
+    'constance.context_processors.config'
 )
 
 LOGGING = {
@@ -165,8 +134,13 @@ LOGGING = {
     }
 }
 
-CONSTANCE_BACKEND   = "constance.backends.database.DatabaseBackend"
-CONSTANCE_CONFIG    = {
-    "map_key": ("", "Google Map key"),
-    "google_analytics": ("", "Google Analytics Tracking")
+CONSTANCE_BACKEND = 'constance.backends.database.DatabaseBackend'
+CONSTANCE_CONFIG = {
+    'map_key': ('', 'Google Map key'),
+    'google_analytics': ('', 'Google Analytics Tracking')
 }
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
