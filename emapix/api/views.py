@@ -1,18 +1,11 @@
-import json
-import time
 
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
 from emapix.utils import handle_uploaded_file, file_exists
 from emapix.utils.utils import timestamp
 from emapix.utils.format import *
 from emapix.utils.const import OK, FAIL
-
 from emapix.api.models import PhotoRequest 
 
-
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.api.views")
+import logging
 
 def add(request):
     "Adds record to the photo request"
@@ -23,7 +16,7 @@ def add(request):
         pr.save()
         return to_status(OK, to_photo(pr))
     except Exception, e:
-        logger.debug(str(e))
+        logging.debug(str(e))
         return to_status(FAIL, str(e))
 
 
@@ -34,7 +27,7 @@ def remove(request, reqid):
         pr.delete()
         return to_status(OK)
     except Exception, e:
-        logger.debug(str(e))
+        logging.debug(str(e))
         return to_status(FAIL, str(e))
 
 
@@ -59,7 +52,7 @@ def get(request, reqid):
         #_update_photo_request(pr)   # hide
         return to_status(OK, to_photo(pr))
     except Exception, e:
-        logger.debug(str(e))
+        logging.debug(str(e))
         return to_status(FAIL, str(e))
 
 
@@ -73,7 +66,7 @@ def get_all(request):
             l.append(to_photo(p))
         return to_status(OK, l)
     except Exception, e:
-        logger.debug(str(e))
+        logging.debug(str(e))
         return to_status(FAIL)
 
 
@@ -85,13 +78,13 @@ def update(request, reqid):
         pr.save()
         return to_status(OK, to_photo(pr))
     except Exception, e:
-        logger.debug(str(e))
+        logging.debug(str(e))
         return to_status(FAIL, str(e))
 
 
 def upload(request):
     "Uploads file to S3"  
-    logger.debug(request.FILES.keys())
+    logging.debug(request.FILES.keys())
     if request.method == 'POST':
         # XXX: Check status of uploaded file
         handle_uploaded_file(request.FILES['uploaded'], request.REQUEST.get("resource", None))

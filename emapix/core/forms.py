@@ -1,16 +1,14 @@
 
 import re
 from django import forms
-from django.core.validators import RegexValidator, validate_email, validate_slug
+from django.core.validators import RegexValidator, validate_slug
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate
 
 from emapix.core.validators import *
-from emapix.utils.const import *
 from emapix.core.fields import ReCaptchaField
+import logging
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.core.forms")
 
 def text_widget():
     return forms.TextInput(attrs={"class": "input-large"})

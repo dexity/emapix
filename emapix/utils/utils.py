@@ -7,9 +7,8 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.template.loaders.filesystem import Loader
 
 from emapix.utils.const import *
+import logging
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.utils.utils")
 
 def sha1(value):
     "Returns hex digest value of sha1 encryption"
@@ -160,7 +159,7 @@ def change_number(cls, field_name, obj_sel, change_num):
         setattr(obj, field_name, value)
         obj.save()
     except Exception, e:
-        logger.error("change_number failed: %s %s" % (cls.__name__, e))
+        logging.error("change_number failed: %s %s" % (cls.__name__, e))
     
     
 def accept_json(request):

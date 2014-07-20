@@ -6,9 +6,8 @@ import Queue
 from emapix.utils import amazon_s3 as storage
 from emapix.utils.utils import s3key
 from emapix.utils.const import IMAGE_FORMATS
+import logging
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.utils.imageproc")
 
 def crop_s3_image(img_name, crop_name, select_box):
     """
@@ -39,7 +38,7 @@ def crop_s3_image(img_name, crop_name, select_box):
         status  = storage.upload_file(fd, crop_name, content_type)
         return (status, size)
     except Exception, e:
-        logger.error(str(e))
+        logging.error(str(e))
         return (False, 0)
 
 
@@ -133,6 +132,6 @@ def proc_image(dim, dbimg, file_base, limg, format):
         dbimg.format   = format
         dbimg.save()
     except Exception, e:
-        logger.error("proc_image: %s %s" % (filename, str(e)))
+        logging.error("proc_image: %s %s" % (filename, str(e)))
 
     

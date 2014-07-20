@@ -35,8 +35,7 @@ from emapix.core.db.photo import WPhoto
 from emapix.core.tmpl.request import TmplRequest
 from emapix.core.forms import RecaptchaForm
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.core.views")
+import logging
 
 
 def generate_token(value):
@@ -112,7 +111,7 @@ def handle_recaptcha(request):
                 user.is_active  = False
                 user.save()
             except Exception, e:
-                logger.error("User create error: %s" % e)
+                logging.error("User create error: %s" % e)
                 clean_join_session(request)
                 c   = {
                     "error": "New user account can't be created at this time. Please try again later"
@@ -138,7 +137,7 @@ def handle_recaptcha(request):
             
             clean_join_session(request)
             request.session.set_expiry(None)
-            logger.info("New user: %s" % username)
+            logging.info("New user: %s" % username)
             
             # Redirect to welcome page
             request.session["joined"]   = True
@@ -199,7 +198,7 @@ def confirm(request, token):
         profile.save()
         c["msg"]    = render_to_string("msg/confirm.html")
     except Exception, e:
-        logger.error("Activation failed: %s" % e)
+        logging.error("Activation failed: %s" % e)
         c["msg"]    = render_to_string("msg/confirm_failed.html")
 
     return render(request, "message.html", c)
@@ -275,7 +274,7 @@ def forgot(request):
                 request.session["msg_tmpl"] = "msg/forgot.html"
                 return HttpResponseRedirect("/success")
             except Exception, e:
-                logger.error("Forgot form failed: %s" % e)
+                logging.error("Forgot form failed: %s" % e)
         c["form"]   = form
         return render(request, 'forgot.html', c)        
 
@@ -298,7 +297,7 @@ def renew_password(request, token):
     try:
         profile = UserProfile.objects.get(forgot_token = token)
     except Exception, e:
-        logger.error("Renew password failed: %s" % e)
+        logging.error("Renew password failed: %s" % e)
         c["msg"]    = render_to_string("msg/newpass_failed.html")
         return render(request, "message.html", c)
     
@@ -824,7 +823,7 @@ def edit_profile(request):
                 userprof.save()
                 return HttpResponseRedirect("/profile")
             except Exception, e:
-                logger.error("Profile edit failed: %s" % e)
+                logging.error("Profile edit failed: %s" % e)
         
         c["form"]   = form
         return render(request, 'edit_profile.html', c)
@@ -1187,7 +1186,7 @@ def submit_select(request, res):
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
         except Exception, e:
-            logger.error("Error uploading request (%s) photo preview: %s" % (res, e))
+            logging.error("Error uploading request (%s) photo preview: %s" % (res, e))
             return bad_request([{"error": str(e)}], mimetype)
 
     # Display form
@@ -1319,7 +1318,7 @@ def submit_create(request, res):
             #proc_images(file_base, db_imgs, fmt)
             return to_ok()
         except Exception, e:
-            logger.error("Error uploading request (%s) photo: %s" % (res, e))
+            logging.error("Error uploading request (%s) photo: %s" % (res, e))
             return bad_request_json({"error": str(e)})
     
     c   = {
@@ -1379,7 +1378,7 @@ def profile_photo_select(request):
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
         except Exception, e:
-            logger.error("Error uploading profile photo preview: %s" % e)
+            logging.error("Error uploading profile photo preview: %s" % e)
             return bad_request([{"error": str(e)}], mimetype)
 
     # Display form
@@ -1470,7 +1469,7 @@ def profile_photo_create(request):
             
             return to_ok()
         except Exception, e:
-            logger.error("Error uploading profile photo: %s" % e)
+            logging.error("Error uploading profile photo: %s" % e)
             return bad_request_json({"error": str(e)})
         
     c   = {

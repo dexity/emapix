@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 from emapix.utils.const import *
 from emapix.utils.utils import timestamp, change_number
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.core.models")
 
 class UserProfile(models.Model):
     user        = models.OneToOneField(User)

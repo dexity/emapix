@@ -3,13 +3,10 @@
 Amazon S3 utils
 """
 
-from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
-
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
-
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.utils.amazon_s3")
+from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
+import logging
 
 
 def upload_file(fd, s3_filename=None, content_type=None):
@@ -32,7 +29,7 @@ def upload_file(fd, s3_filename=None, content_type=None):
         fd.close()
         return True
     except Exception, e:    # object doesn't exist or something else
-        logger.error("upload_file: %s %s" % (s3_filename, str(e)))
+        logging.error("upload_file: %s %s" % (s3_filename, str(e)))
     return False    # Not uploaded
 
 
@@ -48,7 +45,7 @@ def download_file(fd, s3_filename):
         fd.seek(0)
         return k.content_type
     except Exception, e:
-        logger.error("download_file: %s %s" % (s3_filename, str(e)))
+        logging.error("download_file: %s %s" % (s3_filename, str(e)))
     return None
 
 

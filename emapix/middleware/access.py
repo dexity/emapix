@@ -1,10 +1,7 @@
 from emapix.views import forbidden, service_error
-from django.http import HttpResponse
 
 from emapix.settings import API_KEY     # Temp: get from db
 
-from emapix.utils.logger import Logger
-logger = Logger.get("emapix.middleware.access")
 
 class AccessMiddleware(object):
     
