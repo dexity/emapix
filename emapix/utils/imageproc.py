@@ -1,14 +1,11 @@
 import StringIO
 from PIL import Image
-import urllib2
 import threading
 import Queue
-import time
 
-from emapix.utils.amazon_s3 import s3_upload_file, s3_download_file, s3_key2url
-from emapix.core.db.image import WImage
-from emapix.utils.utils import normalize_format, s3key
-from emapix.utils.const import IMAGE_TYPES, IMAGE_FORMATS
+from emapix.utils import amazon_s3 as storage
+from emapix.utils.utils import s3key
+from emapix.utils.const import IMAGE_FORMATS
 
 from emapix.utils.logger import Logger
 logger = Logger.get("emapix.utils.imageproc")
@@ -25,7 +22,7 @@ def crop_s3_image(img_name, crop_name, select_box):
     try:
         # Download selected image from Amazon S3
         fd  = StringIO.StringIO()
-        content_type    = s3_download_file(fd, img_name)
+        content_type    = storage.download_file(fd, img_name)
         im1     = Image.open(fd)
         im2     = im1.crop((x, y, x + w, y + h))    # lazy operation
         fd.close()
@@ -39,7 +36,7 @@ def crop_s3_image(img_name, crop_name, select_box):
         
         # Upload the image to Amazon S3
         fd.seek(0)  # Beginning of file
-        status  = s3_upload_file(fd, crop_name, content_type)
+        status  = storage.upload_file(fd, crop_name, content_type)
         return (status, size)
     except Exception, e:
         logger.error(str(e))
@@ -50,7 +47,7 @@ def load_s3image(file_base, format):
     "Download cropped file from S3 and return Image object of the file"
     filename    = s3key(file_base, "crop", format)
     fd  = StringIO.StringIO()
-    content_type    = s3_download_file(fd, filename)
+    content_type = storage.download_file(fd, filename)
     return Image.open(fd)
 
 
@@ -130,8 +127,8 @@ def proc_image(dim, dbimg, file_base, limg, format):
         filename    = s3key(file_base, dbimg.size_type, format)
         
         (dbimg.width, dbimg.height)   = img.size
-        dbimg.url      = s3_key2url(filename)
-        dbimg.is_avail = s3_upload_file(fd, filename, IMAGE_FORMATS[format][0])
+        dbimg.url      = storage.key2url(filename)
+        dbimg.is_avail = storage.upload_file(fd, filename, IMAGE_FORMATS[format][0])
         dbimg.size     = size
         dbimg.format   = format
         dbimg.save()

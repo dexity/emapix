@@ -4,16 +4,14 @@
 import time
 
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest  # remove
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render
 from django.template.loader import render_to_string
-from django.views.decorators.csrf import csrf_protect, csrf_exempt
+from django.views.decorators.csrf import csrf_protect
 from django.core.context_processors import csrf
-from django.db import models
 from django.contrib.auth.models import User
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import Paginator
 import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
-from django.conf import settings
 
 from constance import config
 
@@ -27,17 +25,14 @@ from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.utils.imageproc import load_s3image, proc_image   # Temp
 from emapix.core.forms import *
-from emapix.core.models import *
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
-from emapix.utils.amazon_s3 import s3_upload_file, s3_key2url
+from emapix.utils import amazon_s3 as storage
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
 from emapix.core.db.comment import WComment
-from emapix.core.db.user import WUser
 from emapix.core.db.photo import WPhoto
 from emapix.core.tmpl.request import TmplRequest
-from emapix.core.tmpl.image import TmplImage
 from emapix.core.forms import RecaptchaForm
 
 from emapix.utils.logger import Logger
@@ -1178,16 +1173,16 @@ def submit_select(request, res):
             im.name     = filename
             im.height   = img.height
             im.width    = img.width
-            im.url      = s3_key2url(filename)
+            im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
-            im.is_avail = s3_upload_file(fd, filename)
+            im.is_avail = storage.upload_file(fd, filename)
             im.save()
             
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": s3_key2url(filename)}], mimetype)
+            return http_response([{"success": True, "url": storage.key2url(filename)}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
@@ -1279,7 +1274,7 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
         imc.name     = filename
         imc.height   = h
         imc.width    = w
-        imc.url      = s3_key2url(filename)            
+        imc.url      = storage.key2url(filename)
         (imc.is_avail, imc.size)    = crop_s3_image(image.name, filename, (x, y, w, h))
         imc.format   = image.format
         imc.save()
@@ -1370,16 +1365,16 @@ def profile_photo_select(request):
             im.name     = filename
             im.height   = img.height
             im.width    = img.width
-            im.url      = s3_key2url(filename)
+            im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
-            im.is_avail = s3_upload_file(fd, filename)
+            im.is_avail = storage.upload_file(fd, filename)
             im.save()
             
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": s3_key2url(filename)}], mimetype)
+            return http_response([{"success": True, "url": storage.key2url(filename)}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
