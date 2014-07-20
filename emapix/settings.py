@@ -3,9 +3,15 @@
 import os
 from google.appengine.api import app_identity
 
-APP_ID = app_identity.get_application_id()
-APP_MAILHOST = '{}.appspotmail.com'.format(APP_ID)
-APP_HOST = app_identity.get_default_version_hostname()
+try:
+    # Available only for AppEngine environment
+    APP_ID = app_identity.get_application_id()
+    APP_MAILHOST = '{}.appspotmail.com'.format(APP_ID)
+    APP_HOST = app_identity.get_default_version_hostname()
+except AttributeError:
+    APP_ID = None
+    APP_MAILHOST = ''
+    APP_HOST = ''
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 ALLOWED_HOSTS = ['*']
