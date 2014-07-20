@@ -1,11 +1,14 @@
 
 """
 Amazon S3 utils
+
+Note:
+    Need to specify parameters S3_KEY and S3_SECRET
 """
 
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
-from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
+from django.conf.settings import S3_KEY, S3_SECRET, BUCKET_NAME
 import logging
 
 
