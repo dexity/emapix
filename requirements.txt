@@ -6,4 +6,5 @@ django-picklefield
 recaptcha-client
 MySQL-python==1.2.3
 PIL==1.1.7
+GoogleAppEngineCloudStorageClient
 sendgrid

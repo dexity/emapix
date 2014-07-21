@@ -3,7 +3,7 @@ import time
 import json
 
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseServerError
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.paginator import EmptyPage, PageNotAnInteger
 from django.template.loaders.filesystem import Loader
 
 from emapix.utils.const import *
@@ -95,9 +95,9 @@ def normalize_format(fmt):
     return None
 
 
-def s3key(res, type, format):
+def storage_filename(res, type, format):
     "Contructs S3 key from type and format"
-    return "%s%s.%s" % (res, type, format)
+    return "{}{}.{}".format(res, type, format)
 
 
 def paginated_items(paginator, page_num):

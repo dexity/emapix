@@ -4,7 +4,7 @@ import threading
 import Queue
 
 from emapix.utils import amazon_s3 as storage
-from emapix.utils.utils import s3key
+from emapix.utils.utils import storage_filename
 from emapix.utils.const import IMAGE_FORMATS
 import logging
 
@@ -44,7 +44,7 @@ def crop_s3_image(img_name, crop_name, select_box):
 
 def load_s3image(file_base, format):
     "Download cropped file from S3 and return Image object of the file"
-    filename    = s3key(file_base, "crop", format)
+    filename    = storage_filename(file_base, "crop", format)
     fd  = StringIO.StringIO()
     content_type = storage.download_file(fd, filename)
     return Image.open(fd)
@@ -123,7 +123,7 @@ def proc_image(dim, dbimg, file_base, limg, format):
         size    = fd.tell()
             
         fd.seek(0)
-        filename    = s3key(file_base, dbimg.size_type, format)
+        filename    = storage_filename(file_base, dbimg.size_type, format)
         
         (dbimg.width, dbimg.height)   = img.size
         dbimg.url      = storage.key2url(filename)

@@ -17,17 +17,18 @@ from constance import config
 
 from emapix.utils.const import *
 from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, s3key, paginated_items, is_you, bad_form_json, server_error_json, accept_json, \
+http_response_json, forbidden_json, storage_filename, paginated_items, is_you, bad_form_json, server_error_json, accept_json, \
 bad_request, bad_form, http_response
 
-from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists    #, validate_user
+from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
 from emapix.utils.imageproc import load_s3image, proc_image   # Temp
 from emapix.core.forms import *
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
-from emapix.utils import amazon_s3 as storage
+#from emapix.utils import amazon_s3 as storage
+from emapix.utils import cloud_storage as storage
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest
 from emapix.core.db.comment import WComment
@@ -1164,9 +1165,9 @@ def submit_select(request, res):
             #       jQueryFileUpload widget
             
             format      = IMAGE_TYPES.get(fd.content_type, "err")
-            filename    = s3key(res, "preview", format)
+            filename    = storage_filename(res, "preview", format)
             img         = ImageFile(fd)     # convert to image
-            
+
             # DB handling
             im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
             im.name     = filename
@@ -1255,14 +1256,14 @@ def submit_crop(request, res):
 def handle_request_crop_file(req, user, image, (x, y, w, h)):
     "Handles request crop file"
     res         = req.resource
-    filename    = s3key(res, "crop", image.format)
+    filename    = storage_filename(res, "crop", image.format)
     imc  = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
     return handle_crop_file(imc, filename, image, (x, y, w, h))
     
 
 def handle_profile_crop_file(user, image, (x, y, w, h)):
     "Handles profile crop file"
-    filename    = s3key(user.username, "crop", image.format)
+    filename    = storage_filename(user.username, "crop", image.format)
     imc  = WImage.get_or_create_profile_image(user, "crop", marked_delete=True)
     return handle_crop_file(imc, filename, image, (x, y, w, h))
 
@@ -1310,7 +1311,7 @@ def submit_create(request, res):
             for param in params:
                 (size, size_type)   = param
                 im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
-                im.name = s3key(file_base, size_type, fmt)
+                im.name = storage_filename(file_base, size_type, fmt)
                 im.save()
                 #db_imgs.append((size, im))
                 proc_image(size, im, file_base, img.copy(), fmt)
@@ -1356,7 +1357,7 @@ def profile_photo_select(request):
             #       jQueryFileUpload widget
             
             format      = IMAGE_TYPES.get(fd.content_type, "err")
-            filename    = s3key(user.username, "preview", format)
+            filename    = storage_filename(user.username, "preview", format)
             img         = ImageFile(fd)     # convert to image
             
             # DB handling
@@ -1461,7 +1462,7 @@ def profile_photo_create(request):
                 (size, size_type)   = param
                 # get_or_create_profile_image(cls, user, photo_type, size_type=None, marked_delete=False, save=False):
                 im  = WImage.get_or_create_profile_image(user, "profile", size_type)
-                im.name = s3key(file_base, size_type, fmt)
+                im.name = storage_filename(file_base, size_type, fmt)
                 im.save()
                 db_imgs.append((size, im))
             
@@ -1473,11 +1474,11 @@ def profile_photo_create(request):
             return bad_request_json({"error": str(e)})
         
     c   = {
-        "img_src":      imc.url
+        "img_src": imc.url
     }
     c.update(csrf(request))
     resp    = {
-        "data":     render_to_string("modals/submit_create.html", c),
+        "data": render_to_string("modals/submit_create.html", c),
         "redirect": request.GET.get("redirect", None) == "true"
     }
     return http_response_json(resp)
