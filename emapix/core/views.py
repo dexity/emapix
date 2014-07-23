@@ -27,7 +27,6 @@ from emapix.utils.imageproc import load_s3image, proc_image   # Temp
 from emapix.core.forms import *
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
-#from emapix.utils import amazon_s3 as storage
 from emapix.utils import cloud_storage as storage
 from emapix.core.db.image import WImage
 from emapix.core.db.request import WRequest

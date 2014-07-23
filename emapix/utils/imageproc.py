@@ -3,7 +3,7 @@ from PIL import Image
 import threading
 import Queue
 
-from emapix.utils import amazon_s3 as storage
+from emapix.utils import cloud_storage as storage
 from emapix.utils.utils import storage_filename
 from emapix.utils.const import IMAGE_FORMATS
 import logging
