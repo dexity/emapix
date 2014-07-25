@@ -1302,7 +1302,6 @@ def submit_create(request, res):
             fmt     = imc.format
             # Populate image db records
             params  = ((460, "large"), (200, "medium"), (50, "small"))
-            db_imgs = []
             
             img = load_s3image(file_base, fmt)  # Temp
             
@@ -1312,10 +1311,7 @@ def submit_create(request, res):
                 im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
                 im.name = storage_filename(file_base, size_type, fmt)
                 im.save()
-                #db_imgs.append((size, im))
                 proc_image(size, im, file_base, img.copy(), fmt)
-            
-            #proc_images(file_base, db_imgs, fmt)
             return to_ok()
         except Exception, e:
             logging.error("Error uploading request (%s) photo: %s" % (res, e))

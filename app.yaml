@@ -35,4 +35,3 @@ skip_files:
 - ^libs/django
 - ^libs/MySQL
 - ^libs/_mysql
-- ^libs/PIL
