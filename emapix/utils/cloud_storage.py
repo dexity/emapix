@@ -40,7 +40,10 @@ def download_file(fd, filename):
 def key2url(filename):
     """Returns url for the Cloud Storage."""
     blob_key = blobstore.create_gs_key('/gs' + file2path(filename))
-    return images.get_serving_url(blob_key)
+    try:
+        return images.get_serving_url(blob_key)
+    except images.ObjectNotFoundError:
+        return ''
     #return '/_ah/gcs/{}/{}'.format(BUCKET_NAME, filename)
 
 

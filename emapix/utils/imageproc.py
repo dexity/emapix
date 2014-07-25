@@ -32,7 +32,6 @@ def crop_s3_image(img_name, crop_name, select_box):
         # Get file size
         fd.seek(0, 2)   # End of file
         size    = fd.tell()
-        
         # Upload the image to Amazon S3
         fd.seek(0)  # Beginning of file
         status  = storage.upload_file(fd, crop_name, content_type)

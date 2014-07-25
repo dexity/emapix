@@ -1172,10 +1172,10 @@ def submit_select(request, res):
             im.name     = filename
             im.height   = img.height
             im.width    = img.width
-            im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
             im.is_avail = storage.upload_file(fd, filename)
+            im.url      = storage.key2url(filename)
             im.save()
             
             # Send email notification?
@@ -1273,8 +1273,8 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
         imc.name     = filename
         imc.height   = h
         imc.width    = w
-        imc.url      = storage.key2url(filename)
         (imc.is_avail, imc.size)    = crop_s3_image(image.name, filename, (x, y, w, h))
+        imc.url      = storage.key2url(filename)
         imc.format   = image.format
         imc.save()
     except Exception, e:
@@ -1364,10 +1364,10 @@ def profile_photo_select(request):
             im.name     = filename
             im.height   = img.height
             im.width    = img.width
+            im.is_avail = storage.upload_file(fd, filename)
             im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
-            im.is_avail = storage.upload_file(fd, filename)
             im.save()
             
             # Send email notification?
