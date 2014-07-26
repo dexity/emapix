@@ -12,7 +12,7 @@ from emapix.settings import S3_KEY, S3_SECRET, BUCKET_NAME
 import logging
 
 
-def upload_file(fd, filename=None, content_type=None):
+def upload_file(fd, filename=None, content_type=None, bucket_name=BUCKET_NAME):
     """Uploads file to S3 service from file descriptor.
     
     """
@@ -24,7 +24,7 @@ def upload_file(fd, filename=None, content_type=None):
 
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
-        b   = conn.get_bucket(BUCKET_NAME)
+        b   = conn.get_bucket(bucket_name)
         b.set_acl('public-read')
         
         k = Key(b)
@@ -39,11 +39,11 @@ def upload_file(fd, filename=None, content_type=None):
     return False    # Not uploaded
 
 
-def download_file(fd, filename):
+def download_file(fd, filename, bucket_name=BUCKET_NAME):
     "Sets content to file descriptor from S3 service"
     try:
         conn = S3Connection(S3_KEY, S3_SECRET)
-        b   = conn.get_bucket(BUCKET_NAME)
+        b   = conn.get_bucket(bucket_name)
         
         k   = Key(b)
         k.key   = filename

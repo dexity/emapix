@@ -84,7 +84,6 @@ class Image(models.Model):
     name    = models.CharField(max_length=50, default="")   # unique?
     height  = models.IntegerField(default=0)
     width   = models.IntegerField(default=0)
-    # XXX: Remove
     url     = models.CharField(max_length=256)   # URL of the photo
     size    = models.IntegerField(default=0)    # Size of image in bytes
     size_type   = models.CharField(max_length=16, choices=IMAGE_SIZES, null=True, blank=True)
