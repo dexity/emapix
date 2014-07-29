@@ -10,12 +10,17 @@ a img {
     border: 0px;
 }
 
-.div_inline {
-    display: inline;
+.icon {
+    margin-top: 5px;
+    margin-left: -15px;
 }
-/*.red {
-    color: #b94a48;
-}*/
+.icon img {
+    height: 60px;
+}
+
+.inline {
+    display: inline !important;
+}
 
 /* Navigation */
 .e-nav-user {

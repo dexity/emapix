@@ -4,7 +4,7 @@ from emapix.utils.const import USERNAME_REGEX, REQ_REGEX, LOC_REGEX
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
 
 urlpatterns = patterns("emapix.core.views",
-    url(r"^$", "get_requests"),
+    url(r"^$", "get_requests", name="home"),
     
     # Auth methods
     url(r"^join$", "join", name="join"),
@@ -20,14 +20,14 @@ urlpatterns = patterns("emapix.core.views",
     
     # Request methods
     url(r"^request/make$", "make_request", name="make_request"),
-    url(r"^request/%s$" % REQ_REGEX, "get_request", name="get_request"),
-    url(r"^requests$", "get_requests", name="get_requests"),
+    url(r"^request/%s$" % REQ_REGEX, "get_request", name="request"),
+    url(r"^requests$", "get_requests", name="requests"),
     #url(r"^requests/%s$" % LOC_REGEX, "get_location_requests"), # Not currently used
     
     # User methods
     url(r"^users$", "users", name="users"),
     url(r"^user/(?P<username>(%s))$" % uregex, "get_user", name="user"),
-    url(r"^user/(?P<username>(%s))/(?P<tab>(requests|photos|comments))$" % uregex, "get_user", name="user_tab"),
+    url(r"^user/(?P<username>(%s))/(?P<tab>(requests|photos|comments))$" % uregex, "get_user", name="user_section"),
     
     # User profile methods
     url(r"^profile$", "get_profile", name="profile"),

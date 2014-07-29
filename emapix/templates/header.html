@@ -2,57 +2,88 @@
 <div class="clearfix hidden-xs">
     <div class="pull-right e-nav-user">
     {% if userprof %}
-        <a href="/user/{{user.username}}"><b>{{user.username}}</b></a>
-        <a href="/profile">Settings</a>
-        <a href="/user/{{user.username}}/requests" class="brown">Requests</a> <span class="badge badge-important">{{userprof.num_requests}}</span>
-        <a href="/user/{{user.username}}/photos" class="green">Photos</a> <span class="badge badge-success">{{userprof.num_photos}}</span>
-        <a href="#">Help</a>
-        <a href="/logout">Logout</a>
+        <a href="{% url "user" user.username %}"><b>{{user.username}}</b></a>
+        <a href="{% url "profile" %}">Settings</a>
+        <a href="{% url "user_section" user.username "requests" %}" class="brown">Requests</a> <span class="badge badge-important">{{userprof.num_requests}}</span>
+        <a href="{% url "user_section" user.username "photos" %}" class="green">Photos</a> <span class="badge badge-success">{{userprof.num_photos}}</span>
+        <a href="{% url "help" %}">Help</a>
+        <a href="{% url "logout" %}">Logout</a>
     {% else %}
-        <a href="#">Help</a>
-        <a href="/login">Login</a>
+        <a href="{% url "help" %}">Help</a>
+        <a href="{% url "login" %}">Login</a>
     {% endif %}
     </div>
     <div class="clearfix"></div>
     <div class="row e-nav">
        <div class="col-md-3">
-           <a href="/" id="logo"><img src="/media/img/logo.png"/></a>
+           <a href="{% url "home" %}" id="logo"><img src="/media/img/logo.png"/></a>
        </div>
        <div class="col-md-6">
-           <ul class="nav nav-pills pull-left">
-            <li id="nav_requests"><a href="/requests"><b>Requests</b></a></li>
-            <li id="nav_photos"><a href="/photos"><b>Photos</b></a></li>
-            <li id="nav_users"><a href="/users"><b>Users</b></a></li>
-           </ul>
+            <ul class="nav nav-pills pull-left">
+                <li id="nav_requests"><a href="{% url "requests" %}"><b>Requests</b></a></li>
+                <li id="nav_photos"><a href="{% url "photos" %}"><b>Photos</b></a></li>
+                <li id="nav_users"><a href="{% url "users" %}"><b>Users</b></a></li>
+            </ul>
             {# <form class="pull-left" action="">#}
             {#     <input type="text" class="search-query col-md-2" placeholder="City, Zip code ...">#}
             {# </form>#}
        </div>
        <div class="col-md-3">
-           <a href="/request/make" class="btn btn-success pull-right"><b>Make Request</b></a>
+           <a href="{% url "make_request" %}" class="btn btn-success pull-right"><b>Make Request</b></a>
        </div>
     </div>
     {% if not userprof %}
     {% if not hide_join %}
-        <button class="btn btn-large btn-success clearfix" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
+        <button class="btn btn-large btn-success clearfix" id="join" onClick="location.href='{% url "join" %}'"><b>Join Emapix</b></button>
     {% endif %}
     {% endif %}
 </div>
 
 {# Mobile header #}
 <div class="clearfix visible-xs">
-
-    <div class="btn-group pull-right">
-        <div class="dropdown-toggle" data-toggle="dropdown">
-            <i class="glyphicon glyphicon-th-list"></i>
-            <span class="caret"></span>
+    <div class="row clearfix">
+        <div class="col-xs-2">
+            <a href="{% url "home" %}" class="pull-left icon"><img src="/media/img/icon.png"/></a>
         </div>
-        <ul class="dropdown-menu" role="menu">
-            <li><a href="/how-it-works/">How It Works</a></li>
-            <li><a href="/eco/">Give Back</a></li>
-            <li><a href="#">Travel Store</a></li>
-            <li class="divider"></li>
-            <li><a href="/logout">Logout</a></li>
-        </ul>
+        <div class="col-xs-10">
+            <div class="row">
+                <div class="col-xs-10">
+                    <a href="{% url "user" user.username %}" class="pull-right"><b>{{user.username}}</b></a>
+                </div>
+                <div class="col-xs-2">
+                    <div class="btn-group pull-right">
+                        <div class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="glyphicon glyphicon-th-list"></i>
+                        </div>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="{% url "user_section" user.username "requests" %}" class="brown">Requests
+                                    <span class="badge pull-right">{{userprof.num_requests}}</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url "user_section" user.username "photos" %}" class="green">Photos
+                                    <span class="badge pull-right">{{userprof.num_photos}}</span>
+                                </a>
+                            </li>
+                            <li><a href="{% url "profile" %}">Settings</a></li>
+                            <li><a href="{% url "help" %}">Help</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url "requests" %}">Recent Requests</a></li>
+                            <li><a href="{% url "photos" %}">Recent Photos</a></li>
+                            <li><a href="{% url "users" %}">Users</a></li>
+                            <li class="divider"></li>
+                            <li><a href="{% url "logout" %}">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-xs-12">
+                    <a href="{% url "make_request" %}" class="btn btn-success pull-right"><b>Make Request</b></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
