@@ -11,7 +11,7 @@
 </div>
 <div class="row e-photo-row">
     {% endif %}
-    <div class="span2">
+    <div class="col-md-2">
         <a href="/request/{{req.resource}}" title="{{req.description|slice:":40"}}{% if req.description|length > 40 %}...{% endif %}">
             <img src="{{image.url}}"/>
         </a>

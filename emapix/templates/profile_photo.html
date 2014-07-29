@@ -3,8 +3,8 @@
 {% block profile_content %}
 
 <div class="row">
-    <div class="span2"><img src="{{photo_url}}"/></div>
-    <div class="span6">
+    <div class="col-md-2"><img src="{{photo_url}}"/></div>
+    <div class="col-md-6">
         <button class="btn btn-primary" id="submit_photo">Submit Photo</button>
         {% if photo_exists %}
         <a href="#" class="red" id="remove_photo" style="margin-left: 50px">Remove Photo</a>

@@ -16,7 +16,7 @@
 {% block content %}
 
 <div class="row">
-    <div class="span2">
+    <div class="col-md-2">
         <img src="{{photo_url}}" class="profile_photo" /><br />
         {% if is_you %}
         <a href="/profile/photo" >
@@ -28,10 +28,10 @@
         </a>
         {% endif %}
     </div>
-    <div class="span8">
+    <div class="col-md-8">
         <div class="row">
-            <div class="span6"><h2>{{name}}</h2></div>
-            <div class="span2">
+            <div class="col-md-6"><h2>{{name}}</h2></div>
+            <div class="col-md-2">
                 {% if userprof2.location %}
                 <div class="profile_location">
                     <div class="label label-info">{{userprof2.location}}</div>

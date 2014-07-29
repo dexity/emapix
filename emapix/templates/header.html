@@ -1,0 +1,45 @@
+
+<div class="clearfix hidden-xs">
+    <div class="pull-right e-nav-user">
+    {% if userprof %}
+        <a href="/user/{{user.username}}"><b>{{user.username}}</b></a>
+        <a href="/profile">Settings</a>
+        <a href="/user/{{user.username}}/requests" class="brown">Requests</a> <span class="badge badge-important">{{userprof.num_requests}}</span>
+        <a href="/user/{{user.username}}/photos" class="green">Photos</a> <span class="badge badge-success">{{userprof.num_photos}}</span>
+        <a href="#">Help</a>
+        <a href="/logout">Logout</a>
+    {% else %}
+        <a href="#">Help</a>
+        <a href="/login">Login</a>
+    {% endif %}
+    </div>
+    <div class="clearfix"></div>
+    <div class="row e-nav">
+       <div class="col-md-3">
+           <a href="/" id="logo"><img src="/media/img/logo.png"/></a>
+       </div>
+       <div class="col-md-6">
+           <ul class="nav nav-pills pull-left">
+            <li id="nav_requests"><a href="/requests"><b>Requests</b></a></li>
+            <li id="nav_photos"><a href="/photos"><b>Photos</b></a></li>
+            <li id="nav_users"><a href="/users"><b>Users</b></a></li>
+           </ul>
+            {# <form class="pull-left" action="">#}
+            {#     <input type="text" class="search-query col-md-2" placeholder="City, Zip code ...">#}
+            {# </form>#}
+       </div>
+       <div class="col-md-3">
+           <a href="/request/make" class="btn btn-success"><b>Make Request</b></a>
+       </div>
+    </div>
+    {% if not userprof %}
+    {% if not hide_join %}
+        <button class="btn btn-large btn-success clearfix" id="join" onClick="location.href='/join'"><b>Join Emapix</b></button>
+    {% endif %}
+    {% endif %}
+</div>
+
+{# Mobile header #}
+<div class="clearfix visible-xs">
+
+</div>

@@ -11,10 +11,10 @@
 </style>
 
 <div class="row">
-    <div class="span5">
+    <div class="col-md-5">
         <h3>{{req.description|slice:":40"}}{% if req.description|length > 40 %}...{% endif %}</h3>
     </div>
-    <div class="span1">
+    <div class="col-md-1">
         {% if is_open %}
         <div class="e-status-open pull-right">Open</div>
         {% else %}
@@ -24,7 +24,7 @@
 </div>
 <div class="clear_both"></div>
 <div class="row">
-    <div class="span6">
+    <div class="col-md-6">
 	{% if pic_url %}
 	<img src="{{pic_url}}" />
         {% else %}
@@ -32,22 +32,22 @@
 	{% endif %}
         <div class="full-description" title="Description">{{ req.description }}</div>
 	<div class="row">
-	    <div class="span2" title="Approximate Address">Address:</div>
+	    <div class="col-md-2" title="Approximate Address">Address:</div>
 	    {% include "misc/address.html" %}
 	</div>
         <div class="e-request-info">
 	    <div class="row">
-		<div class="span2" title="Location of the request">Location:</div>
+		<div class="col-md-2" title="Location of the request">Location:</div>
 		<div>{{ req.location.lat }}, {{ req.location.lon }}</div>
 	    </div>
 	    <div class="row">
-		<div class="span2" title="User who created the request">Requested:</div>
+		<div class="col-md-2" title="User who created the request">Requested:</div>
 		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
 	    </div>
             {% if submitter %}
 	    <div class="row">
-		<div class="span2" title="User who submitted photo">Submitted:</div>
+		<div class="col-md-2" title="User who submitted photo">Submitted:</div>
 		<a href="/user/{{submitter.username}}">{{submitter.username}}</a>
                 <div class="e-time" title="{{pic_utcdate}}">{{pic_hdate}}</div>
 	    </div>
@@ -69,7 +69,7 @@
             <div id="comments"></div>
         </div>
     </div>    
-    <div class="span6"><div id="map_canvas"></div></div>
+    <div class="col-md-6"><div id="map_canvas"></div></div>
 </div>
 
 <!-- Modals -->
