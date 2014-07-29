@@ -44,7 +44,6 @@ def key2url(filename):
         return images.get_serving_url(blob_key)
     except images.ObjectNotFoundError:
         return ''
-    #return '/_ah/gcs/{}/{}'.format(BUCKET_NAME, filename)
 
 
 def file2path(filename):
