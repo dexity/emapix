@@ -8,7 +8,7 @@
 
 {% for item in req_items %}
     {% with req=item.request %}
-    <div class="e-request-item {% if item == req_items|first %}e-first-item{% endif %} col-md-8">
+    <div class="e-request-item {% if item == req_items|first %}e-first-item{% endif %} col-md-8 col-sm-12">
         <a href="/request/{{req.resource}}"><img src="{{item.thumb_url}}"/></a>
         <div>
             <div class="e-request-description" title="{{req.description}}">
@@ -30,7 +30,7 @@
     {% endwith %}
 {% endfor %}               
 </div>
-<div class="clear_both"></div>
+<div class="clearfix"></div>
 {% include "misc/pagination.html" %}
 
 {% endblock %}

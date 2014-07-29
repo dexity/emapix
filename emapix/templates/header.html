@@ -29,7 +29,7 @@
             {# </form>#}
        </div>
        <div class="col-md-3">
-           <a href="/request/make" class="btn btn-success"><b>Make Request</b></a>
+           <a href="/request/make" class="btn btn-success pull-right"><b>Make Request</b></a>
        </div>
     </div>
     {% if not userprof %}
@@ -42,4 +42,17 @@
 {# Mobile header #}
 <div class="clearfix visible-xs">
 
+    <div class="btn-group pull-right">
+        <div class="dropdown-toggle" data-toggle="dropdown">
+            <i class="glyphicon glyphicon-th-list"></i>
+            <span class="caret"></span>
+        </div>
+        <ul class="dropdown-menu" role="menu">
+            <li><a href="/how-it-works/">How It Works</a></li>
+            <li><a href="/eco/">Give Back</a></li>
+            <li><a href="#">Travel Store</a></li>
+            <li class="divider"></li>
+            <li><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
 </div>
