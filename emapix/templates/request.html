@@ -42,13 +42,13 @@
 	    </div>
 	    <div class="row">
 		<div class="col-md-2" title="User who created the request">Requested:</div>
-		<a href="/user/{{ req.user.username }}">{{ req.user.username }}</a>
+		<a href="{% url "user" req.user.username %}">{{ req.user.username }}</a>
                 <div class="e-time" title="{{ utcdate }}">{{ hdate }}</div>
 	    </div>
             {% if submitter %}
 	    <div class="row">
 		<div class="col-md-2" title="User who submitted photo">Submitted:</div>
-		<a href="/user/{{submitter.username}}">{{submitter.username}}</a>
+		<a href="{% url "user" submitter.username %}">{{submitter.username}}</a>
                 <div class="e-time" title="{{pic_utcdate}}">{{pic_hdate}}</div>
 	    </div>
             {% endif %}
@@ -198,7 +198,7 @@
         finished_callback:  function(){
             // XXX: Make json request to replace image and metadata
             //	instead of reloading the page. Save requests to Google Map
-            window.location.href = "/request/{{req.resource}}";
+            window.location.href = "{% url "request" req.resource %}";
         }
     });
     
@@ -213,11 +213,11 @@
     var removePhoto =    MODAL({
         container:  "modal_container",
         link:       "remove_photo",
-        url:        "/request/{{req.resource}}/photo/remove/json",
+        url:        "{% url "remove_request_photo" req.resource %}",
         header:     "Remove Photo",
         btn_label:  "Remove Photo",
         callback:   function(){
-            window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
+            window.location.href = "{% url "request" req.resource %}"  // XXX: Not efficient!
         }
     });
     {% endif %}
@@ -228,10 +228,10 @@
     var editRequest = MODAL({
         container:  "modal_container",
         link:       "edit_request",
-        url:        "/request/{{req.resource}}/edit/json",
+        url:        "{% url "edit_request" req.resource %}",
         header:     "Edit Request",
         callback:   function(){
-            window.location.href = "/request/{{req.resource}}"  // XXX: Not efficient!
+            window.location.href = "{% url "request" req.resource %}"  // XXX: Not efficient!
         }
     });
     {% endif %}
@@ -242,11 +242,11 @@
     var removeRequest   = MODAL({
         container:  "modal_container",
         link:       "remove_request",
-        url:        "/request/{{req.resource}}/remove/json",
+        url:        "{% url "remove_request" req.resource %}",
         header:     "Remove Request",
         btn_label:  "Remove Request",
         callback:   function(){
-            window.location.href = "/requests"
+            window.location.href = "{% url "requests" %}"
         }
     });
     
@@ -261,7 +261,7 @@
                 // - Update link "Close request" <-> "Open request"
                 // - Disable some of the links
                 // > Need to reload the page?
-                window.location.href = "/request/{{req.resource}}";
+                window.location.href = "{% url "request" req.resource %}";
             }
             $.ajax({
                 url:    url,

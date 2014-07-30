@@ -122,7 +122,7 @@
     var requestOpts = {
         container:      $("#requests"),
         spinner:        $("#tab_load_spinner"),
-        baseUrl:        "/user/{{userprof2.user.username}}/requests/json",
+        baseUrl:        "{% url "user_requests" userprof2.user.username %}",
         dataProp:       "data.requests",
         itemProps:      {   
             "description":  "description",
@@ -152,7 +152,7 @@
     var photoOpts   = {
         container:      $("#photos"),
         spinner:        $("#tab_load_spinner"),
-        baseUrl:        "/user/{{userprof2.user.username}}/photos/json",
+        baseUrl:        "{% url "user_photos" userprof2.user.username %}",
         dataProp:       "data.photos",
         itemProps:      {
             "resource":     "request.resource",
@@ -178,7 +178,7 @@
     var commentOpts = {
         container:      $("#comments"),
         spinner:        $("#tab_load_spinner"),
-        baseUrl:        "/user/{{userprof2.user.username}}/comments/json",
+        baseUrl:        "{% url "user_comments" userprof2.user.username %}",
         dataProp:       "data.comments",
         itemProps:      {   
             "text":         "text",

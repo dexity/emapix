@@ -16,7 +16,7 @@
         <td class="user-info">
             <img src="{{photo_url}}" height="60" width="60" alt=""/>
             <div class="user-details">
-                <a href="/user/{{item.user.username}}"><b>{{item.user.username}}</b></a><br />
+                <a href="{% url "user" item.user.username %}"><b>{{item.user.username}}</b></a><br />
                 Requests <b>{{item.num_requests}}</b><br />
                 Photos <b>{{item.num_photos}}</b><br />
             </div>
