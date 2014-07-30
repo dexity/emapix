@@ -1095,7 +1095,7 @@ def get_user_requests_json(request, username):
             "hdate":    item.htime.human_time
         }
         if is_you(request, userprof2.user):
-            data_item["remove_url"] = "/request/%s/remove/json" % req.resource
+            data_item["remove_url"] = reverse("remove_request", args=(req.resource,))
         data.append(data_item)
     
     c   = {

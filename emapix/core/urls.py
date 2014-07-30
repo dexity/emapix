@@ -54,8 +54,8 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^request/%s/edit/json$" % REQ_REGEX, "edit_request_ajax", name="edit_request"),
     url(r"^request/%s/photo/remove/json$" % REQ_REGEX, "remove_request_photo_ajax", name="remove_request_photo"),    # XXX: Fix
     # Note: Is the url pattern r"^request/%s/photo/(\d+)/remove/json$" useful?
-    url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax", name="remove_request_ajax"),
-    url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax", name="request_status_ajax"),   # (?P<status>(\w+))
+    url(r"^request/%s/remove/json$" % REQ_REGEX, "remove_request_ajax", name="remove_request"),
+    url(r"^request/%s/status/(\w+)/json$" % REQ_REGEX, "request_status_ajax", name="request_status"),   # (?P<status>(\w+))
     
     url(r"^user/(?P<username>(%s))/comments/json$" % uregex, "get_user_comments_json", name="user_comments"),
     url(r"^user/(?P<username>(%s))/requests/json$" % uregex, "get_user_requests_json", name="user_requests"),
@@ -68,7 +68,7 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^photo/(\d+)/remove/json$", "remove_photo_json", name="remove_photo"), # XXX: Fix
     
     url(r"^status$", "server_status"),
-    
+
     # Layouts
     url(r"^help$", "help", name="help"),
     url(r"^search$", "search", name="search"),
