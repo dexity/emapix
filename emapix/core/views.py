@@ -10,6 +10,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.context_processors import csrf
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
 import django.contrib.auth as django_auth
 from django.core.files.images import ImageFile
 
@@ -75,7 +76,7 @@ def join(request):
             "token":        generate_token(form.cleaned_data["username"])  # token for confirmation    
         }
         request.session["join"] = join_session
-        return HttpResponseRedirect("/recaptcha")
+        return HttpResponseRedirect(reverse("recaptcha"))
 
     c   = {
         "form":     JoinForm(),
@@ -141,7 +142,7 @@ def handle_recaptcha(request):
             
             # Redirect to welcome page
             request.session["joined"]   = True
-            return HttpResponseRedirect("/welcome")
+            return HttpResponseRedirect(reverse("welcome"))
 
     c   = {
         "form":  form,
@@ -246,7 +247,7 @@ def verify_resend(request):
         # Send activation email again
         send_activation_email(request, prof.user.email, prof.user.username, prof.activ_token)
         request.session["msg_tmpl"]  = "msg/verify_resend.html"
-        return HttpResponseRedirect("/success")
+        return HttpResponseRedirect(reverse("success"))
     
     c["form"]   = ResendForm()
     return render(request, "resend.html", c)
@@ -272,7 +273,7 @@ def forgot(request):
                 send_forgot_email(request, user.email, user.username, token)
                 
                 request.session["msg_tmpl"] = "msg/forgot.html"
-                return HttpResponseRedirect("/success")
+                return HttpResponseRedirect(reverse("success"))
             except Exception, e:
                 logging.error("Forgot form failed: %s" % e)
         c["form"]   = form

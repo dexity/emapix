@@ -6,7 +6,7 @@
 <div class="clearfix"></div>
 
 <div class="col-md-10">
-<form class="form-horizontal" action="/join" method="post" >
+<form class="form-horizontal" action="{% url "join" %}" method="post" >
 {% include "forms/join_form.html" %}
 </form>
 </div>

@@ -19,7 +19,7 @@
 <div class="clearfix"></div>
 <div class="e-margin-top-10"></div>
 
-<form class="form-horizontal" action="/recaptcha" method="post">
+<form class="form-horizontal" action="{% url "recaptcha" %}" method="post">
 {% include "forms/recaptcha_form.html" %}
 </form>
 

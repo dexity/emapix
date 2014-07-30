@@ -16,7 +16,7 @@
 <div class="e-alert-head pull-left">Create your new password</div>
 <div class="clearfix"></div>
 <div class="col-md-10">
-<form class="form-horizontal" action="/password/renew/{{token}}" method="post" >
+<form class="form-horizontal" action="{% url "renew_password" token %}" method="post" >
 {% include "forms/newpass_form.html" %}
 </form>
 </div>

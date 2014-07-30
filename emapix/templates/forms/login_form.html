@@ -10,7 +10,7 @@
     <label class="control-label" for="{{ form.password.auto_id }}"><b>{{ form.password.label }}</b></label>
     <div class="controls">
 	{{ form.password }}
-	<span class="help-inline"><a href="/forgot">Forgot?</a></span>
+	<span class="help-inline"><a href="{% url "forgot_password" %}">Forgot?</a></span>
 	{% if form.non_field_errors %}
 	<div class="alert alert-error error_spaces" style="">
 	    {{ form.non_field_errors|first }}
@@ -22,7 +22,7 @@
     <div class="controls">
 	<button type="submit" class="btn btn-primary">Login</button>
 	<div class="e-margin-bottom-20"></div>
-	Don't have an account? <a href="/join">Create one</a>
+	Don't have an account? <a href="{% url "join" %}">Create one</a>
     </div>
   </div>
 </fieldset>

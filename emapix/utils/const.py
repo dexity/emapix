@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from django.core.urlresolvers import reverse
+
 OK      = "ok"
 FAIL    = "fail"
 
@@ -103,7 +105,7 @@ MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
 
 YEAR_CHOICES    = [(str(x), str(x)) for x in range(2006, 1899, -1)]
 
-AUTH_ERROR      = 'Please <a href="/login">login</a> or <a href="/join">sign up</a>'
+AUTH_ERROR      = 'Please <a href="{}">login</a> or <a href="{}">sign up</a>'.format(reverse("login"), reverse("join"))
 AUTH_ERROR_TXT  = 'You need to be logged in'
 AUTHOR_ERROR    = "You don't have permission"
 METHOD_ERROR    = "Method is not supported"

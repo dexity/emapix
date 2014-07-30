@@ -4,7 +4,7 @@
     
 <h3>Login</h3>
 <div class="col-md-10">
-<form class="form-horizontal" action="/login" method="post" >
+<form class="form-horizontal" action="{% url "login" %}" method="post" >
 {% include "forms/login_form.html" %}
 </form>
 </div>
