@@ -129,7 +129,7 @@
     var commentOpts = {
         container:      $("#comments"),
         spinner:        $("#tab_load_spinner"),
-        baseUrl:        "/comments/json?request={{req.resource}}",
+        baseUrl:        "{% url "request_comments" %}" + "?request={{req.resource}}",
         dataProp:       "data.comments",
         itemProps:      {   
             "text":         "text",
@@ -168,7 +168,7 @@
     var initSubmitComment   = function(){
         
         var submitOpts   = {
-            submitBaseUrl:  "/comment/add/json?request={{req.resource}}",
+            submitBaseUrl:  "{% url "add_comment" %}" + "?request={{req.resource}}",
             templates:      {
                 submitSpinner: $("#spinner_tmpl"),
                 submitForm:    $("#submit_form_tmpl")
@@ -180,7 +180,7 @@
                 {
                     $("#comments_badge").html(data.data.comments_total);
                 }
-                comments.load("/comments/json?request={{req.resource}}&page=last");    // Move to last page
+                comments.load("{% url "request_comments" %}" + "?request={{req.resource}}&page=last");    // Move to last page
             }            
         };
         // Update comment options with submit options
@@ -190,9 +190,9 @@
     
     // Load photo submitter
     var sub    = PHOTOSUB({
-        select_url: "/submit/select/{{req.resource}}",
-        crop_url:   "/submit/crop/{{req.resource}}",
-        create_url: "/submit/create/{{req.resource}}",
+        select_url: "{% url "submit_select" req.resource %}",
+        crop_url:   "{% url "submit_crop" req.resource %}",
+        create_url: "{% url "submit_create" req.resource %}",
         crop_size:  460,
         max_size:   780,
         finished_callback:  function(){

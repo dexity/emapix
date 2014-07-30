@@ -658,7 +658,7 @@ def get_comments(request, req=None, userprof=None, num_pages=10, recent_first=Fa
         if userprof is None:    # Don't show username for profile
             comdict["username"] = com.user.username
         if userprof:
-            comdict["remove_url"]   = "/comment/%s/remove/json" % com.id
+            comdict["remove_url"]   = reverse("remove_comment", args=(com.id,))
             comdict["request"]  = to_request2(rc.request, desc_size=50)
         comments.append(comdict)
     if req:
@@ -1045,7 +1045,7 @@ def get_user_photos_json(request, username):
             "image_url":    image.url
         }
         if is_you(request, userprof2.user):
-            photo["remove_url"] = "/photo/%s/remove/json" % phreq.photo.id
+            photo["remove_url"] = reverse("remove_photo", args=(phreq.photo.id,))
         photos.append(photo)
     
     data    = {
@@ -1236,7 +1236,7 @@ def submit_crop(request, res):
         if isinstance(result, HttpResponseBadRequest):
             return result
         
-        return HttpResponseRedirect("/submit/create/%s?redirect=true" % res)
+        return HttpResponseRedirect(reverse("submit_create", args=(res,)) + "?redirect=true")
 
     c   = {
         "crop_form":    CropForm(),
