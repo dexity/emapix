@@ -12,7 +12,7 @@ a img {
 
 .icon {
     margin-top: 5px;
-    margin-left: -15px;
+    margin-left: -25px;
 }
 .icon img {
     height: 60px;
@@ -41,15 +41,9 @@ a img {
 }
 
 /* Request */
-#e-requests-list {
-	margin-left: -20px;
-}
 .e-request-item {
     border-bottom: 1px dotted #ccdcef;
-    padding:5px 10px 5px 0px;	
-}
-.e-request-item:after {
-    clear: both;
+    padding: 5px 0px;
 }
 .e-request-item a > img {
     float:left;
@@ -65,8 +59,8 @@ a img {
 }
 .e-request-description {
     font-size: 17px;
-    height: 25px;
-    padding-top: 5px;
+    margin-bottom: 5px;
+
 }
 .e-request-time {
     color: #999;
@@ -103,8 +97,7 @@ a img {
 }
 .footer {
     padding: 17px 20px 18px;
-    margin-top: 18px;
-    margin-bottom: 2px;
+    margin: 18px -15px 0px -15px;
     background-color: #f5f5f5;
     border-top: 1px solid #e5e5e5;
     *zoom: 1;	

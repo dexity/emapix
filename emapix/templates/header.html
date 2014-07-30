@@ -1,6 +1,6 @@
 
-<div class="clearfix hidden-xs">
-    <div class="pull-right e-nav-user">
+<div class="hidden-xs">
+    <div class="clearfix pull-right e-nav-user">
     {% if userprof %}
         <a href="{% url "user" user.username %}"><b>{{user.username}}</b></a>
         <a href="{% url "profile" %}">Settings</a>
@@ -40,7 +40,7 @@
 </div>
 
 {# Mobile header #}
-<div class="clearfix visible-xs">
+<div class="visible-xs">
     <div class="row clearfix">
         <div class="col-xs-2">
             <a href="{% url "home" %}" class="pull-left icon"><img src="/media/img/icon.png"/></a>

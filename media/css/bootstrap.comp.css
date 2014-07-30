@@ -11,17 +11,9 @@
   overflow-y: none;    
 }*/
 
-@media (max-width: 979px) {
-  body {
-    margin-right: 20px;
-    margin-left: 20px;
-  }
-}
-@media (max-width: 480px) {
-  body {
-    margin-right: -5px;
-    margin-left: 10px;
-  }
+body {
+    margin-right: 5px;
+    margin-left: 5px;
 }
 hr {
     margin-top: 10px;
