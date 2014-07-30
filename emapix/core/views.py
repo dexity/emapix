@@ -822,7 +822,7 @@ def edit_profile(request):
                 userprof.show_birthday  = fcd["show_birthday"]
                 userprof.show_gender    = fcd["show_gender"]
                 userprof.save()
-                return HttpResponseRedirect("/profile")
+                return HttpResponseRedirect(reverse("profile"))
             except Exception, e:
                 logging.error("Profile edit failed: %s" % e)
         
@@ -880,7 +880,7 @@ def update_password(request):
         username    = user.username
         # Send email
         send_newpass_confirm_email(request, email, username)
-        return HttpResponseRedirect("/profile")
+        return HttpResponseRedirect(reverse("profile"))
     
     return render(request, "profile_password.html", c)
 
@@ -1421,7 +1421,7 @@ def profile_photo_crop(request):
         if isinstance(result, HttpResponseBadRequest):
             return result
         
-        return HttpResponseRedirect("/profile/photo/create?redirect=true")
+        return HttpResponseRedirect(reverse("profile_photo_create") + "?redirect=true")
     
     c   = {
         "crop_form":    CropForm(),

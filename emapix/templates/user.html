@@ -19,7 +19,7 @@
     <div class="col-md-2">
         <img src="{{photo_url}}" class="profile_photo" /><br />
         {% if is_you %}
-        <a href="/profile/photo" >
+        <a href="{% url "profile_photo" %}" >
             {% if photo_exists %}
                 Update photo
             {% else %}
@@ -38,7 +38,7 @@
                 </div>
                 {% elif is_you %}
                 <div class="profile_location">
-                    <a href="/profile">Set location?</a>
+                    <a href="{% url "profile" %}">Set location?</a>
                 </div>
                 {% endif %}
             </div>
@@ -47,7 +47,7 @@
         
         {% if is_you and not userprof2.description%}
         <div class="full-description" style="text-align: right">
-            <a href="/profile">More about youself?</a>
+            <a href="{% url "profile" %}">More about youself?</a>
         </div>
         {% elif userprof2.description %}
         <div class="full-description">{{userprof2.description}}</div>

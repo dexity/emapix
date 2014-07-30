@@ -7,9 +7,9 @@
 <div class="row">
     <div class="col-md-2">
         <ul class="nav nav-list">
-            <li id="profile_general" ><a href="/profile">Profile</a></li>
-            <li id="profile_photo" ><a href="/profile/photo">Profile Photo</a></li>
-            <li id="profile_password" ><a href="/profile/password">Password</a></li>
+            <li id="profile_general" ><a href="{% url "profile" %}">Profile</a></li>
+            <li id="profile_photo" ><a href="{% url "profile_photo" %}">Profile Photo</a></li>
+            <li id="profile_password" ><a href="{% url "update_password" %}">Password</a></li>
         </ul>
     </div>
     <div class="col-md-8">
