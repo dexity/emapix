@@ -96,7 +96,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'emapix.api',
     'emapix.prototype',
-    'emapix.layout',
     'emapix.core',
     'emapix',
     'south',

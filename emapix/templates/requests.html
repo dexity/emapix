@@ -2,16 +2,12 @@
 
 {% block content %}
 
-<div class="row">
-    <div class="col-xs-12">
-    <h4>Recent Requests</h4>
-    {% for item in req_items %}
-        {% with req=item.request %}
-            {% include "includes/request_item.html" %}
-        {% endwith %}
-    {% endfor %}
-    </div>
-</div>
+<h4>Recent Requests</h4>
+{% for item in req_items %}
+    {% with req=item.request %}
+        {% include "includes/request_item.html" %}
+    {% endwith %}
+{% endfor %}
 {% include "misc/pagination.html" %}
 
 {% endblock %}
