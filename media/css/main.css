@@ -1,7 +1,6 @@
 
 #logo {
     float: left!important;
-    margin-right: 10px;
     margin-top: -6px;
 }
 
@@ -12,7 +11,6 @@ a img {
 
 .icon {
     margin-top: 5px;
-    margin-left: -25px;
 }
 .icon img {
     height: 60px;
@@ -83,13 +81,20 @@ a img {
        -moz-border-radius: 4px;
             border-radius: 4px;	    
 }
+.e-request-status {
+    margin-top: 15px;
+}
 .e-status-open {
-    background-color: #6CC644;
+    color: #6CC644;
+    border: 1px solid #6CC644;
 }
 .e-status-closed {
     background-color: #BD2C00;
 }
 
+.map-request {
+    height:460px;
+}
 
 /* Misc */
 #join {
@@ -403,3 +408,21 @@ a img {
 .hide-item {
     color: #bd362f;
 }
+
+/* Mobile */
+@media (max-width: 480px){
+
+.map-request {
+    height:200px;
+    width: 100%;
+}
+.e-request-status {
+    margin-top: 0px;
+}
+#submit_photo {
+    margin-top: 10px;
+}
+
+}
+
+

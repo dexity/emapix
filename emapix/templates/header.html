@@ -46,6 +46,7 @@
             <a href="{% url "home" %}" class="pull-left icon"><img src="/media/img/icon.png"/></a>
         </div>
         <div class="col-xs-10">
+            {% if userprof %}
             <div class="row">
                 <div class="col-xs-10">
                     <a href="{% url "user" user.username %}" class="pull-right"><b>{{user.username}}</b></a>
@@ -78,6 +79,23 @@
                     </div>
                 </div>
             </div>
+            {% else %}
+            <div class="row">
+                <div class="col-xs-10">
+                    <a href="{% url "login" %}" class="pull-right">Login</a>
+                </div>
+                <div class="col-xs-2">
+                    <div class="btn-group pull-right">
+                        <div class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="glyphicon glyphicon-th-list"></i>
+                        </div>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{% url "help" %}">Help</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
             <br>
             <div class="row">
                 <div class="col-xs-12">
