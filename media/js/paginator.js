@@ -60,13 +60,12 @@ var PAGES   = (function(options){
                 return "";
             }
             // Returns paginator
-            var s   = '<div class="pagination e-paging">',
-            page_url   = function(page){
+            var page_url   = function(page){
                 var url = params.base_url,
                     sep = /\?/g.test(url) ? "&" : "?";
                 return  url + sep + 'page=' + page;
             };
-            s   += '    <ul>';
+            var s   = '<ul class="pagination e-paging">';
             if (utils.has_prev(p, t)) {
                 s   += '<li><a href="' + page_url(utils.prev_page(p, t)) + '" class="prev">Previous</a></li>';
             }
@@ -81,7 +80,6 @@ var PAGES   = (function(options){
                 s   += '<li><a href="' + page_url(utils.next_page(p, t)) + '" class="next">Next</a></li>'
             }
             s   += '</ul>';
-            s   += '</div>';
             return s;
         }
     };

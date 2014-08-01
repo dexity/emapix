@@ -1,44 +1,37 @@
 {% extends "base.html" %}
 {% load jstmpl %}
 
-{% block header %}
-<style type="text/css" media="all">
-.profile_photo {
-    margin-bottom: 10px;
-}
-.profile_location {
-    float: right;
-    padding-top: 10px;
-}
-</style>
-{% endblock %}
-
 {% block content %}
 
 <div class="row">
     <div class="col-md-2">
-        <img src="{{photo_url}}" class="profile_photo" /><br />
-        {% if is_you %}
-        <a href="{% url "profile_photo" %}" >
-            {% if photo_exists %}
-                Update photo
-            {% else %}
-                Add photo?
-            {% endif %}
-        </a>
-        {% endif %}
+        <div class="row profile-photo">
+            <div class="col-sm-12 col-xs-6">
+                <img src="{{photo_url}}" />
+            </div>
+            <div class="col-sm-12 col-xs-6">
+                {% if is_you %}
+                <a href="{% url "profile_photo" %}" >
+                    {% if photo_exists %}
+                        Update photo
+                    {% else %}
+                        Add photo
+                    {% endif %}
+                </a><br>
+                    {% if not userprof2.location %}
+                    <a href="{% url "profile" %}">Set location</a>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
     </div>
     <div class="col-md-8">
         <div class="row">
-            <div class="col-md-6"><h2>{{name}}</h2></div>
-            <div class="col-md-2">
+            <div class="col-md-6"><h3>{{name}}</h3></div>
+            <div class="col-md-6">
                 {% if userprof2.location %}
                 <div class="profile_location">
                     <div class="label label-info">{{userprof2.location}}</div>
-                </div>
-                {% elif is_you %}
-                <div class="profile_location">
-                    <a href="{% url "profile" %}">Set location?</a>
                 </div>
                 {% endif %}
             </div>
@@ -90,6 +83,7 @@
             </div>
         </div>        
     </div>
+    <div class="col-md-2"></div>
 </div>
 
 <script type="text/x-tmpl" id="comment_tmpl">{% jstmpl "js/comment.html" %}</script>
@@ -267,9 +261,9 @@
         requests    = LIST(requestOpts);
         photos      = LIST(photoOpts);
         comments    = LIST(commentOpts);
-    
+
         // Register tabs
-        $('a[data-toggle="tab"]').on('shown', function (e) {
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             
             switch (e.target.hash) {
                 case "#tab_requests":

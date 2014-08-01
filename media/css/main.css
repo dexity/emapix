@@ -304,6 +304,17 @@ a img {
     
 }
 
+.profile-photo {
+    margin-top: 10px;
+}
+.profile-photo img {
+    margin-bottom: 10px;
+}
+.profile_location {
+    float: right;
+    padding-top: 20px;
+}
+
 #profile_content .row {
     margin-bottom: 5px;
 }
@@ -414,19 +425,21 @@ a img {
 /* Mobile */
 @media (max-width: 480px){
 
-.map-request {
-    height:200px;
-}
-.e-request-status {
-    margin-top: 0px;
-}
-#submit_photo {
-    margin-top: 10px;
-}
-.map-make-request {
-    height:300px;
-}
-
+    .map-request {
+        height:200px;
+    }
+    .e-request-status {
+        margin-top: 0px;
+    }
+    #submit_photo {
+        margin-top: 10px;
+    }
+    .map-make-request {
+        height:300px;
+    }
+    .profile-photo img {
+        margin-bottom: 0px;
+    }
 }
 
 
