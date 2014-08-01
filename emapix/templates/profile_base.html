@@ -5,17 +5,18 @@
 <h4>Settings</h4>
 <div class="e-margin-bottom-10"></div>
 <div class="row">
-    <div class="col-md-2">
-        <ul class="nav nav-list">
+    <div class="col-sm-2">
+        <ul class="nav nav-pills nav-stacked">
             <li id="profile_general" ><a href="{% url "profile" %}">Profile</a></li>
             <li id="profile_photo" ><a href="{% url "profile_photo" %}">Profile Photo</a></li>
             <li id="profile_password" ><a href="{% url "update_password" %}">Password</a></li>
         </ul>
+        <hr class="visible-xs">
     </div>
-    <div class="col-md-8">
+    <div class="col-sm-8">
         {% block profile_content %}{% endblock profile_content %}
     </div>
-    
+    <div class="col-sm-2"></div>
 </div>
 
 {% endblock content %}        

@@ -298,10 +298,6 @@ a img {
 
 .prof-left {
     text-align: right;
-    font-weight: bold;
-}
-.prof-right {
-    
 }
 
 .profile-photo {
@@ -439,6 +435,9 @@ a img {
     }
     .profile-photo img {
         margin-bottom: 0px;
+    }
+    .prof-left {
+        text-align: left;
     }
 }
 
