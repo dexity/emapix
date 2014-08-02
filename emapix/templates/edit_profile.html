@@ -1,18 +1,5 @@
 {% extends "profile_base.html" %}
 
-{% block header %}
-    
-<style type="text/css">
-.form-username {
-    font-size: 15px;
-    font-weight: bold;
-    padding-top: 5px;
-    float:left;
-}
-</style>
-
-{% endblock %}
-
 {% block profile_content %}
 
 <form class="form-horizontal" action="{% url "edit_profile" %}" id="edit_profile" method="post">

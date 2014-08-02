@@ -11,7 +11,7 @@ import logging
 
 
 def text_widget():
-    return forms.TextInput(attrs={"class": "input-large"})
+    return forms.TextInput(attrs={"class": "form-control"})
 
 def password_widget():
     return forms.PasswordInput(attrs={"class": "input-large"})
@@ -28,20 +28,20 @@ class BaseUserForm(forms.Form):
                                              User.objects)])
     location    = forms.CharField(max_length=100,
                     required=False,
-                    widget=forms.TextInput(attrs={"class": "input-large",
+                    widget=forms.TextInput(attrs={"class": "form-control",
                                                   "placeholder": "City, State"}))
-    country     = forms.ChoiceField(choices=[("", "Select Country")] + COUNTRY_CHOICES,
+    country     = forms.ChoiceField(choices=[("", "Country")] + COUNTRY_CHOICES,
                                     required=False,
-                                    widget=forms.Select(attrs={"class": "input-medium"}))
+                                    widget=forms.Select(attrs={"class": "form-control"}))
     
     b_day       = forms.ChoiceField(choices=[("", "Day")] + month_days(31),
                                     required=False,
-                                    widget=forms.Select(attrs={"class": "input-mini"}))
+                                    widget=forms.Select(attrs={"class": "form-control"}))
     b_month     = forms.ChoiceField(choices=MONTH_CHOICES,
                                     required=False,
-                                    widget=forms.Select(attrs={"class": "input-small"}))
+                                    widget=forms.Select(attrs={"class": "form-control"}))
     b_year      = forms.ChoiceField(choices=[("", "Year")] + YEAR_CHOICES,
-                                    widget=forms.Select(attrs={"class": "input-mini"}),
+                                    widget=forms.Select(attrs={"class": "form-control"}),
                                     validators=[validate_slug],
                                     error_messages={'invalid': 'Enter the birth year.',
                                                     'required': 'Birth year is required'})
@@ -67,13 +67,15 @@ class JoinForm(BaseUserForm):
 
 
 class ProfileForm(BaseUserForm):
-    first_name  = forms.CharField(max_length=30, label="First Name", required=False)
-    last_name   = forms.CharField(max_length=30, label="Last Name", required=False)
+    first_name  = forms.CharField(max_length=30, label="First Name", required=False,
+                                  widget=text_widget())
+    last_name   = forms.CharField(max_length=30, label="Last Name", required=False,
+                                  widget=text_widget())
     email       = forms.EmailField(max_length=100,
                     widget=text_widget(),
                     validators=[])  # Validator is added before validation
     description = forms.CharField(max_length=140, required=False, label="About Yourself",
-                                  widget=forms.Textarea(attrs={"rows": 3, "class": "input-xlarge",
+                                  widget=forms.Textarea(attrs={"rows": 3, "class": "form-control",
                                         "placeholder": "Tell something about yourself"}))
     show_email  = forms.BooleanField(required=False)
     show_location   = forms.BooleanField(required=False)

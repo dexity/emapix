@@ -269,12 +269,15 @@ a img {
 .e-text-small {
     font-size: 11px;
 }
-.e-checkbox {
-    margin-top: -5px;
-}
+
 .e-users-stat {
     float:left;
     margin-left: 5px;
+}
+
+.e-year-label {
+    margin-left: -35px;
+    margin-top: 7px;
 }
 
 .address_label {
@@ -314,14 +317,6 @@ a img {
 #profile_content .row {
     margin-bottom: 5px;
 }
-#edit_profile .control-label {
-    font-weight: bold;
-}
-/*
-#edit_profile .control-group {
-    margin-bottom: 10px;
-}
-*/
 #edit_profile {
     margin-top: -5px;
 }
@@ -436,9 +431,12 @@ a img {
     .profile-photo img {
         margin-bottom: 0px;
     }
+}
+
+/* Tablet */
+@media (max-width: 768px){
+
     .prof-left {
         text-align: left;
     }
 }
-
-

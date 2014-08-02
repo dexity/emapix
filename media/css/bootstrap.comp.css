@@ -35,6 +35,13 @@ hr {
 .form-horizontal .help-block {
     margin-top: 3px;
 }
+label {
+    font-weight: normal;
+}
+
+.form-group {
+    margin-bottom: 5px;
+}
 .modal-footer .btn {
     float: none;
     margin-right: 10px;
@@ -55,7 +62,6 @@ hr {
     padding: 6px 12px;
     margin-top: 4px;
 }
-
 
 /* Mobile */
 @media (max-width: 480px){

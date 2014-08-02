@@ -1,17 +1,17 @@
 {% csrf_token %}
 <fieldset>
-    <div class="control-group">
-        <label class="control-label">Username</label>
-        <div class="controls">
-            <div class="form-username">{{user.username}}</div>
-            <span class="help-inline e-color-grey e-padding-top-5" style="margin-left: 20px">(Cannot be changed)</span>
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">Username:</div>
+        <div class="col-xs-9">
+            <div class="e-username">{{user.username}}</div>
+            <span class="e-color-grey" style="margin-left: 20px">(Cannot be changed)</span>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.first_name.auto_id }}">
-            <b>{{ form.first_name.label }}</b>
-        </label>
-        <div class="controls">
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">
+            <label class="control-label">{{ form.first_name.label }}:</label>
+        </div>
+        <div class="col-sm-5 col-xs-9">
             {{ form.first_name }}
             {% if form.first_name.errors %}
             <div class="alert alert-error error_spaces">
@@ -20,11 +20,11 @@
             {% endif %}
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.last_name.auto_id }}">
-            <b>{{ form.last_name.label }}</b>
-        </label>
-        <div class="controls">
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">
+            <label class="control-label">{{ form.last_name.label }}:</label>
+        </div>
+        <div class="col-sm-5 col-xs-9">
             {{ form.last_name }}
             {% if form.last_name.errors %}
             <div class="alert alert-error error_spaces">
@@ -33,72 +33,95 @@
             {% endif %}
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
-        <div class="controls">
+    <div class="form-group">
+        <div class="col-sm-3 prof-left">
+            <label class="control-label">{{ form.email.label }}:</label>
+        </div>
+        <div class="col-sm-5 col-xs-6">
+
             {{ form.email }}
-            <label class="checkbox inline e-checkbox">
-                {{ form.show_email }} Show
-            </label>            
-            <span class="help-inline e-color-grey">(Required)</span>
             {% if form.email.errors %}
             <div class="alert alert-error error_spaces">
                 {{ form.email.errors|first }}
             </div>
             {% endif %}
         </div>
+        <div class="col-sm-3 col-xs-6 checkbox">
+            <label class="inline">{{ form.show_email }} Show</label>
+        </div>
     </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.location.auto_id }}"><b>{{ form.location.label }}</b></label>
-        <div class="controls">
+    <div class="form-group">
+        <div class="col-sm-3 prof-left">
+            <label class="control-label">{{ form.location.label }}:</label>
+        </div>
+        <div class="col-sm-5 col-xs-5">
             {{ form.location }}
-            {{ form.country }}
-            <label class="checkbox inline e-checkbox">
-                {{ form.show_location }} Show
-            </label>            
             {% if form.location.errors %}
             <div class="alert alert-error error_spaces">
                 {{ form.location.errors|first }}
             </div>
             {% endif %}
         </div>
+        <div class="col-sm-3 col-xs-4">
+            {{ form.country }}
+        </div>
+        <div class="col-sm-1 col-xs-3 checkbox">
+            <label class="inline">{{ form.show_location }} Show</label>
+        </div>
     </div>
-    <div class="control-group">
-        <label class="control-label"><b>Birthday</b></label>
-        <div class="controls">
-            {{ form.b_month }}
-            {{ form.b_day }}
-            {{ form.b_year }}
-            <label class="checkbox inline e-checkbox">
-                {{ form.show_birthday }} Show
-            </label>   
-            <span class="help-inline e-color-grey">
-                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)</span>          
+
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">
+            <label class="control-label">Birthday:</label>
+        </div>
+        <div class="col-xs-6">
+            <div class="form-inline">
+                {{ form.b_month }}
+                {{ form.b_day }}
+                {{ form.b_year }}
+            </div>
             {% if form.b_year.errors %}
             <div class="alert alert-error error_spaces">
                 {{ form.b_year.errors|first }}
             </div>
             {% endif %}
         </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
-        <div class="controls">
-            {% for radio in form.gender %}
-            <div class="radio inline">
-                {{ radio }}
+        <div class="col-xs-2">
+            <div class="e-year-label e-color-grey">
+                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)
             </div>
-            {% endfor %}
-            <label class="checkbox inline e-checkbox">
-                {{ form.show_gender }} Show
-            </label>   
+        </div>
+        <div class="col-xs-1 checkbox">
+            <label> {{ form.show_birthday }} Show</label>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label" for="{{ form.description.auto_id }}">
-            <b>{{ form.description.label }}</b>
-        </label>
-        <div class="controls">
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">
+            <label class="control-label">{{ form.gender.label }}:</label>
+        </div>
+        <div class="col-xs-6">
+            {% for radio in form.gender %}
+            <label class="radio-inline">
+                {{ radio }}
+            </label>
+            {% endfor %}
+            {% if form.gender.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.gender.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-xs-3 checkbox">
+            <label class="inline e-checkbox">
+                {{ form.show_gender }} Show
+            </label>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-xs-3 prof-left">
+            <label class="control-label">{{ form.description.label }}:</label>
+        </div>
+        <div class="col-xs-6">
             {{ form.description }}
             {% if form.description.errors %}
             <div class="alert alert-error error_spaces">
@@ -106,9 +129,11 @@
             </div>
             {% endif %}
         </div>
-    </div>    
-    <div class="form-actions">
-        <button type="submit" class="btn btn-primary">Save Changes</button>
-        <a class="aux-link" href="{% url "profile" %}">Cancel</a>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a class="aux-link" href="{% url "profile" %}">Cancel</a>
+        </div>
     </div>    
 </fieldset>
