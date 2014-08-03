@@ -3,20 +3,26 @@
 {% block profile_content %}
 <div id="profile_content">
     <div class="row">
-        <div class="col-xs-3 prof-left">Username:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Username</label>
+        </div>
         <div class="col-xs-9">
             <div class="e-username">{{userprof.user.username}}</div>
             <span class="e-color-grey" style="margin-left: 20px">(Cannot be changed)</span>
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-3 prof-left">Full Name:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Full Name</label>
+        </div>
         <div class="col-xs-9">
             {{userprof.user.first_name}} {{userprof.user.last_name}}
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-3 prof-left">Email:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Email</label>
+        </div>
         <div class="col-xs-6">
             <a href="mailto:{{userprof.user.email}}">{{userprof.user.email}}</a>
         </div>
@@ -29,7 +35,9 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-3 prof-left">Location:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Location</label>
+        </div>
         <div class="col-xs-6">
             {{userprof.location}}&nbsp;
         </div>
@@ -42,7 +50,9 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-3 prof-left">Birthday:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Birthday</label>
+        </div>
         <div class="col-xs-6">
             {% if userprof.b_month %}
                 {{userprof.get_b_month_display}}
@@ -61,7 +71,9 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-xs-3 prof-left">Gender:</div>
+        <div class="col-xs-3 prof-left">
+            <label>Gender</label>
+        </div>
         <div class="col-xs-6">
             {{userprof.get_gender_display}}
         </div>
@@ -74,7 +86,9 @@
         </div>
     </div>
     <div class="row" style="margin-bottom: 20px;">
-        <div class="col-sm-3 prof-left">About Yourself:</div>
+        <div class="col-sm-3 prof-left">
+            <label>About Yourself</label>
+        </div>
         <div class="col-sm-9">{{userprof.description}}</div>
     </div>
     <div class="row">

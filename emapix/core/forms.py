@@ -14,7 +14,7 @@ def text_widget():
     return forms.TextInput(attrs={"class": "form-control"})
 
 def password_widget():
-    return forms.PasswordInput(attrs={"class": "input-large"})
+    return forms.PasswordInput(attrs={"class": "form-control"})
 
 def hidden_field():
     return forms.CharField(widget=forms.HiddenInput())

@@ -371,6 +371,7 @@ a img {
 }
 #comments_container {
     text-align: right;
+    margin-top: 10px;
 }
 #comment_status {
     display: inline;
@@ -436,11 +437,17 @@ a img {
     select[name=b_year] {
         float: left;
         margin-right: 5px;
-        width: 80px;
     }
     select[name=b_month] {
         width: 100px;
     }
+    select[name=b_day] {
+        width: 70px;
+    }
+    select[name=b_year] {
+        width: 80px;
+    }
+
 
 }
 
