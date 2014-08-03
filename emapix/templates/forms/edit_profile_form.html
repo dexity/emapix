@@ -8,10 +8,10 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-xs-3 prof-left">
+        <div class="col-sm-3 prof-left">
             <label class="control-label">{{ form.first_name.label }}:</label>
         </div>
-        <div class="col-sm-5 col-xs-9">
+        <div class="col-sm-5 col-xs-12">
             {{ form.first_name }}
             {% if form.first_name.errors %}
             <div class="alert alert-error error_spaces">
@@ -21,10 +21,10 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-xs-3 prof-left">
+        <div class="col-sm-3 prof-left">
             <label class="control-label">{{ form.last_name.label }}:</label>
         </div>
-        <div class="col-sm-5 col-xs-9">
+        <div class="col-sm-5 col-xs-12">
             {{ form.last_name }}
             {% if form.last_name.errors %}
             <div class="alert alert-error error_spaces">
@@ -38,7 +38,6 @@
             <label class="control-label">{{ form.email.label }}:</label>
         </div>
         <div class="col-sm-5 col-xs-6">
-
             {{ form.email }}
             {% if form.email.errors %}
             <div class="alert alert-error error_spaces">
@@ -71,14 +70,17 @@
     </div>
 
     <div class="form-group">
-        <div class="col-xs-3 prof-left">
+        <div class="col-sm-3 prof-left">
             <label class="control-label">Birthday:</label>
         </div>
-        <div class="col-xs-6">
+        <div class="col-sm-6 col-xs-9">
             <div class="form-inline">
                 {{ form.b_month }}
                 {{ form.b_day }}
                 {{ form.b_year }}
+            </div>
+            <div class="e-color-grey">
+                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)
             </div>
             {% if form.b_year.errors %}
             <div class="alert alert-error error_spaces">
@@ -86,20 +88,23 @@
             </div>
             {% endif %}
         </div>
-        <div class="col-xs-2">
-            <div class="e-year-label e-color-grey">
-                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)
-            </div>
-        </div>
-        <div class="col-xs-1 checkbox">
+        <div class="col-sm-1 col-xs-3 checkbox">
             <label> {{ form.show_birthday }} Show</label>
         </div>
+{#        <div class="col-sm-2 col-xs-offset-1 col-xs-3">#}
+{#            <div class="e-year-label e-color-grey">#}
+{#                (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)#}
+{#            </div>#}
+{#        </div>#}
+{#        <div class="col-sm-1 col-xs-6 checkbox">#}
+{#            <label> {{ form.show_birthday }} Show</label>#}
+{#        </div>#}
     </div>
     <div class="form-group">
-        <div class="col-xs-3 prof-left">
+        <div class="col-sm-3 prof-left">
             <label class="control-label">{{ form.gender.label }}:</label>
         </div>
-        <div class="col-xs-6">
+        <div class="col-sm-6 col-xs-9">
             {% for radio in form.gender %}
             <label class="radio-inline">
                 {{ radio }}
@@ -118,10 +123,10 @@
         </div>
     </div>
     <div class="form-group">
-        <div class="col-xs-3 prof-left">
+        <div class="col-sm-3 prof-left">
             <label class="control-label">{{ form.description.label }}:</label>
         </div>
-        <div class="col-xs-6">
+        <div class="col-sm-6">
             {{ form.description }}
             {% if form.description.errors %}
             <div class="alert alert-error error_spaces">

@@ -431,6 +431,17 @@ a img {
     .profile-photo img {
         margin-bottom: 0px;
     }
+    select[name=b_month],
+    select[name=b_day],
+    select[name=b_year] {
+        float: left;
+        margin-right: 5px;
+        width: 80px;
+    }
+    select[name=b_month] {
+        width: 100px;
+    }
+
 }
 
 /* Tablet */
