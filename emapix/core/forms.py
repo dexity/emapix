@@ -201,15 +201,9 @@ class RequestForm(forms.Form):
                                   error_messages={"min_length": "Should be at least 6 characters",
                                                   "max_length": "Should be less than 140 characters",
                                                   "required": "Please add the description"},
-                                  widget    = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ..."}))
-    
-    #def clean(self):
-    #    cleaned_data = super(forms.Form, self).clean()
-    #    #lat, lon
-    #
-    #    return cleaned_data
+                                  widget=forms.Textarea(
+                                      attrs={"rows": 3, "class": "form-control", "placeholder": "I want to see ..."}))
 
-    
 
 class UploadFileForm(forms.Form):
     file  = forms.FileField()

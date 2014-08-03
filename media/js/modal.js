@@ -21,7 +21,9 @@ var MODAL = (function(options){
     },
     dom = {
         modal:  function(header) {
-            var s   = '<div class="modal hide fade">' +
+            var s   = '<div class="modal fade">' +
+                '   <div class="modal-dialog">' +
+                '   <div class="modal-content">' +
                 '   <div class="modal-header">' +
                 '       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
                 '       <h4>' + params.header + '</h4>' +
@@ -31,8 +33,8 @@ var MODAL = (function(options){
                 '       <div class="modal_status"></div>' +
                 '       <button class="btn btn-primary submit_form">' + params.btn_label + '</button>' +
                 '       <a href="#" data-dismiss="modal">Cancel</a>' +
-                '   </div>'+
-                '</div>';
+                '   </div></div>'+
+                '</div><div>';
                 
             return s;
         },
