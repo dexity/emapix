@@ -401,6 +401,9 @@ a img {
 .aux-link {
     margin-left: 15px;
 }
+.help-inline {
+    margin-top: 7px;
+}
 
 .show-item,
 .hide-item {
@@ -447,7 +450,9 @@ a img {
     select[name=b_year] {
         width: 80px;
     }
-
+    .help-inline {
+        margin-top: 0px;
+    }
 
 }
 
