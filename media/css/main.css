@@ -255,7 +255,6 @@ a img {
 .e-modal-form {
     margin-bottom: 0px;
 }
-
 .section-title {
     font-size: 17px;
 }
@@ -288,10 +287,13 @@ a img {
 .user-info {
     height:60px;
     width:185px;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
+    padding-right: 0px;
 }
 .user-info img {
     float:left;
+    width: 60px;
+    height: 60px;
 }
 .user-info .user-details{
     float:left;
