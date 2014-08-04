@@ -123,9 +123,10 @@ def proc_image(dim, dbimg, file_base, limg, format):
             
         fd.seek(0)
         filename    = storage_filename(file_base, dbimg.size_type, format)
+        upload_file_avail = storage.upload_file(fd, filename, IMAGE_FORMATS[format][0])
         
         (dbimg.width, dbimg.height)   = img.size
-        dbimg.is_avail = storage.upload_file(fd, filename, IMAGE_FORMATS[format][0])
+        dbimg.is_avail = upload_file_avail
         dbimg.url      = storage.key2url(filename)
         dbimg.size     = size
         dbimg.format   = format

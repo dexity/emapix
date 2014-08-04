@@ -338,17 +338,13 @@ a img {
 }
 
 #submit_container .modal {
-    width: 800px;
-    position: fixed;
     margin: 0px;
 }
 #submit_container .modal.fade {
     top: -25%;
-    left: 40px;
 }
 #submit_container .modal.fade.in {
     top: 0px;
-    left: 40px;
 }
 
 .modal_status {

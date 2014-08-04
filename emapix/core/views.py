@@ -500,7 +500,7 @@ def edit_request_ajax(request, res):
     
     # Dynamically set new widget
     form    = RequestForm({"description": req.description})
-    widget  = forms.Textarea(attrs={"rows": 3, "placeholder": "I want to see ...", "style": "width: 400px;"})
+    widget  = forms.Textarea(attrs={"rows": 2, "placeholder": "I want to see ...", "class": "form-control"})
     del widget.attrs["cols"]
     form.fields["description"].widget = widget
     
@@ -1164,25 +1164,26 @@ def submit_select(request, res):
             # Note: Error messages are not really used here bacause of weird error handling in
             #       jQueryFileUpload widget
             
-            format      = IMAGE_TYPES.get(fd.content_type, "err")
-            filename    = storage_filename(res, "preview", format)
-            img         = ImageFile(fd)     # convert to image
+            format = IMAGE_TYPES.get(fd.content_type, "err")
+            filename = storage_filename(res, "preview", format)
+            img = ImageFile(fd)     # convert to image
+            upload_file_avail = storage.upload_file(fd, filename)
 
             # DB handling
-            im  = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
-            im.name     = filename
-            im.height   = img.height
-            im.width    = img.width
-            im.size     = fd.size
-            im.format   = format
-            im.is_avail = storage.upload_file(fd, filename)
-            im.url      = storage.key2url(filename)
+            im = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+            im.name = filename
+            im.height = img.height
+            im.width = img.width
+            im.size = fd.size
+            im.format = format
+            im.is_avail = upload_file_avail
+            im.url = storage.key2url(filename)
             im.save()
             
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": storage.key2url(filename)}], mimetype)
+            return http_response([{"success": True, "url": storage.key2url(filename, im.updated_time)}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
@@ -1192,12 +1193,12 @@ def submit_select(request, res):
 
     # Display form
     c   = {
-        "form":     UploadFileForm(),
+        "form": UploadFileForm(),
         "resource": res
     }
     c.update(csrf(request))
     resp    = {
-        "data":     render_to_string("modals/submit_select.html", c)
+        "data": render_to_string("modals/submit_select.html", c)
     }
     return http_response_json(resp)    
     
@@ -1271,10 +1272,12 @@ def handle_profile_crop_file(user, image, (x, y, w, h)):
 def handle_crop_file(imc, filename, image, (x, y, w, h)):
     "Handles uploading crop file and manages db"
     try:
+        (im_avail, im_size) = crop_s3_image(image.name, filename, (x, y, w, h))
         imc.name     = filename
         imc.height   = h
         imc.width    = w
-        (imc.is_avail, imc.size)    = crop_s3_image(image.name, filename, (x, y, w, h))
+        imc.is_avail = im_avail
+        imc.size     = im_size
         imc.url      = storage.key2url(filename)
         imc.format   = image.format
         imc.save()
@@ -1355,13 +1358,14 @@ def profile_photo_select(request):
             format      = IMAGE_TYPES.get(fd.content_type, "err")
             filename    = storage_filename(user.username, "preview", format)
             img         = ImageFile(fd)     # convert to image
+            upload_file_avail = storage.upload_file(fd, filename)
             
             # DB handling
             im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
             im.name     = filename
             im.height   = img.height
             im.width    = img.width
-            im.is_avail = storage.upload_file(fd, filename)
+            im.is_avail = upload_file_avail
             im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
@@ -1370,7 +1374,7 @@ def profile_photo_select(request):
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": storage.key2url(filename)}], mimetype)
+            return http_response([{"success": True, "url": storage.key2url(filename, im.updated_time)}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
