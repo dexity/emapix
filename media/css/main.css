@@ -210,8 +210,8 @@ a img {
 .e-button-spinner {
     margin: 5px 10px;
 }
-.e-photo-row {
-    margin-bottom: 10px;
+.e-photo-row .e-photo-cell {
+    padding-bottom: 10px;
 }
 .e-photo-row img {
     margin-bottom: 3px;
@@ -412,6 +412,11 @@ a img {
 .hide-item {
     color: #bd362f;
 }
+.img-responsive {
+    display: block;
+    width: 100%;
+    height: auto;
+}
 
 /* Mobile */
 @media (max-width: 480px){
@@ -449,7 +454,11 @@ a img {
     .help-inline {
         margin-top: 0px;
     }
-
+    .img-responsive-mobile {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
 }
 
 /* Tablet */

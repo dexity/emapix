@@ -17,7 +17,8 @@
     </div>
     <div class="col-md-6 col-xs-12 pull-left">
         {% if pic_url %}
-        <img src="{{pic_url}}" />
+        <br class="visible-xs">
+        <img src="{{pic_url}}" class="img-responsive-mobile"/>
         {% else %}
         <button class="btn btn-success pull-right {% if not is_open %}disabled" disabled="disabled{% endif %}" id="submit_photo">
             <b>Submit Photo</b>

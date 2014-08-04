@@ -4,7 +4,7 @@ import threading
 import Queue
 
 from emapix.utils import cloud_storage as storage
-from emapix.utils.utils import storage_filename
+from emapix.utils.utils import storage_filename, timestamp
 from emapix.utils.const import IMAGE_FORMATS
 import logging
 
@@ -124,10 +124,11 @@ def proc_image(dim, dbimg, file_base, limg, format):
         fd.seek(0)
         filename    = storage_filename(file_base, dbimg.size_type, format)
         upload_file_avail = storage.upload_file(fd, filename, IMAGE_FORMATS[format][0])
+        image_url = storage.key2url(filename, timestamp())
         
         (dbimg.width, dbimg.height)   = img.size
         dbimg.is_avail = upload_file_avail
-        dbimg.url      = storage.key2url(filename)
+        dbimg.url      = image_url
         dbimg.size     = size
         dbimg.format   = format
         dbimg.save()

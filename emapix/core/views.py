@@ -17,9 +17,9 @@ from django.core.files.images import ImageFile
 from constance import config
 
 from emapix.utils.const import *
-from emapix.utils.utils import sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json, \
-http_response_json, forbidden_json, storage_filename, paginated_items, is_you, bad_form_json, server_error_json, accept_json, \
-bad_request, bad_form, http_response
+from emapix.utils.utils import (sha1, random16, timestamp, ts2h, ts2utc, ts2hd, bad_request_json,
+    http_response_json, forbidden_json, storage_filename, paginated_items, is_you, bad_form_json,
+    server_error_json, accept_json, bad_request, bad_form, http_response)
 
 from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists
 from emapix.utils.format import *
@@ -1168,6 +1168,7 @@ def submit_select(request, res):
             filename = storage_filename(res, "preview", format)
             img = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
+            image_url = storage.key2url(filename, timestamp())
 
             # DB handling
             im = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
@@ -1177,13 +1178,13 @@ def submit_select(request, res):
             im.size = fd.size
             im.format = format
             im.is_avail = upload_file_avail
-            im.url = storage.key2url(filename)
+            im.url = image_url
             im.save()
             
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": storage.key2url(filename, im.updated_time)}], mimetype)
+            return http_response([{"success": True, "url": image_url}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
@@ -1273,12 +1274,13 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
     "Handles uploading crop file and manages db"
     try:
         (im_avail, im_size) = crop_s3_image(image.name, filename, (x, y, w, h))
+        image_url = storage.key2url(filename, timestamp())
         imc.name     = filename
         imc.height   = h
         imc.width    = w
         imc.is_avail = im_avail
         imc.size     = im_size
-        imc.url      = storage.key2url(filename)
+        imc.url      = image_url
         imc.format   = image.format
         imc.save()
     except Exception, e:
@@ -1359,6 +1361,7 @@ def profile_photo_select(request):
             filename    = storage_filename(user.username, "preview", format)
             img         = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
+            image_url = storage.key2url(filename, timestamp())
             
             # DB handling
             im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
@@ -1366,7 +1369,7 @@ def profile_photo_select(request):
             im.height   = img.height
             im.width    = img.width
             im.is_avail = upload_file_avail
-            im.url      = storage.key2url(filename)
+            im.url      = image_url
             im.size     = fd.size
             im.format   = format
             im.save()
@@ -1374,7 +1377,7 @@ def profile_photo_select(request):
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": storage.key2url(filename, im.updated_time)}], mimetype)
+            return http_response([{"success": True, "url": image_url}], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
