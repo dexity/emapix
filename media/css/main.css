@@ -385,9 +385,9 @@ a img {
 }
 
 .delete_photo {
-    position: relative;
-    right:  5px;
-    top:    -140px;
+    position: absolute;
+    right: 25px;
+    top: 5px;
 }
 
 #tab_photos .pagination {
