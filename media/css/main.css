@@ -418,6 +418,14 @@ a img {
     height: auto;
 }
 
+#profile_settings {
+    color: #428bca;
+    background-color: #fff;
+    border: 1px solid #428bca;
+    margin-bottom: 5px;
+    padding: 6px 12px;
+}
+
 /* Mobile */
 @media (max-width: 480px){
 
@@ -446,10 +454,10 @@ a img {
         width: 100px;
     }
     select[name=b_day] {
-        width: 70px;
+        width: 68px;
     }
     select[name=b_year] {
-        width: 80px;
+        width: 75px;
     }
     .help-inline {
         margin-top: 0px;
@@ -466,5 +474,9 @@ a img {
 
     .prof-left {
         text-align: left;
+    }
+    #remove_photo {
+        margin-top: 50px;
+        display: block;
     }
 }
