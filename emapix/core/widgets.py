@@ -10,7 +10,7 @@ class ReCaptcha(forms.widgets.Widget):
     recaptcha_response_name = 'recaptcha_response_field'
 
     def render(self, name, value, attrs=None):
-        s   = '<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />'
+        s   = '<input type="text" id="recaptcha_response_field" name="recaptcha_response_field" class="form-control"/>'
         s   += u'%s' % captcha.displayhtml(settings.RECAPTCHA_PUBLIC_KEY)
         return mark_safe(s)
 

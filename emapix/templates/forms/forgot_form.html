@@ -1,20 +1,23 @@
 {% csrf_token %}
-<fieldset>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
-    <div class="controls">
-	{{ form.email }}
-	{% if form.non_field_errors %}
-	<div class="alert alert-error error_spaces">
-	    {{ form.non_field_errors|first }}
-	</div>
-	{% endif %}            
+<br>
+<div class="form-group">
+    <div class="col-xs-3 prof-left">
+        <label class="control-label">{{ form.email.label }}</label>
     </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-	<button type="submit" class="btn btn-primary">Send Password</button>
-	<a href="/" class="aux-link">I remember now</a>
+    <div class="col-sm-5 col-xs-12">
+        {{ form.email }}
+        {% if form.non_field_errors %}
+        <div class="alert alert-error error_spaces">
+            {{ form.non_field_errors|first }}
+        </div>
+        {% endif %}
     </div>
-  </div>
-</fieldset>
+</div>
+<br>
+<div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-primary">Send Password</button>
+        <a href="{% url "home" %}" class="aux-link">I remember now</a>
+    </div>
+</div>
+
