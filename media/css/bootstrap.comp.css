@@ -75,6 +75,6 @@ hr {
 /* Mobile */
 @media (max-width: 480px){
     .nav > li > a {
-        padding: 10px 10px;
+        padding: 10px 5px;
     }
 }
