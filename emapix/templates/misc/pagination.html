@@ -1,5 +1,6 @@
 {% if paginator and paginator.num_pages > 1 %}
 {% load i18n %}
+<div class="clearfix"></div>
 <ul class="pagination">
 {% if items.has_previous %}
     <li><a href="?page={{ items.previous_page_number }}" class="prev">&larr; {% trans "Previous" %}</a></li>

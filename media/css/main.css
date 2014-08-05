@@ -398,6 +398,9 @@ a img {
     top: 5px;
 }
 
+#tab_photos {
+    margin-top: 10px;
+}
 #tab_photos .pagination {
     margin-left: 20px;
 }
