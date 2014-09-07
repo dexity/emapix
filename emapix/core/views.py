@@ -3,6 +3,8 @@
 
 import time
 
+from google.appengine.api import taskqueue
+
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest  # remove
 from django.shortcuts import render
 from django.template.loader import render_to_string
@@ -1303,33 +1305,23 @@ def submit_create(request, res):
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
-        try:
-            file_base   = req.resource
-            fmt     = imc.format
-            # Populate image db records
-            params  = ((460, "large"), (200, "medium"), (50, "small"))
-            
-            img = load_s3image(file_base, fmt)  # Temp
-            
-            # Sequential implementation
-            for param in params:
-                (size, size_type)   = param
-                im  = WImage.get_or_create_image_by_request(user, req, "request", size_type)
-                im.name = storage_filename(file_base, size_type, fmt)
-                im.save()
-                proc_image(size, im, file_base, img.copy(), fmt)
-            return to_ok()
-        except Exception, e:
-            logging.error("Error uploading request (%s) photo: %s" % (res, e))
-            return bad_request_json({"error": str(e)})
-    
+        params  = ((460, "large"), (200, "medium"), (50, "small"))
+        q = taskqueue.Queue('images')
+        for param in params:
+            (size, size_type)   = param
+            q.add(taskqueue.Task(
+                url=reverse('process_image_task', args=(res,)),
+                params=dict(size=size, size_type=size_type,
+                            username=user.username, format=imc.format)))
+        return to_ok()
+
     c   = {
-        "resource":     res,
-        "img_src":      imc.url
+        "resource": res,
+        "img_src": imc.url
     }
     c.update(csrf(request))
     resp    = {
-        "data":     render_to_string("modals/submit_create.html", c),
+        "data": render_to_string("modals/submit_create.html", c),
         "redirect": request.GET.get("redirect", None) == "true"
     }
     return http_response_json(resp)

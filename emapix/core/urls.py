@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 
 from emapix.utils.const import USERNAME_REGEX, REQ_REGEX, LOC_REGEX
+from emapix.core import tasks
 uregex  = USERNAME_REGEX.lstrip("^").rstrip("$")
 
 urlpatterns = patterns("emapix.core.views",
@@ -66,8 +67,9 @@ urlpatterns = patterns("emapix.core.views",
     url(r"^comment/add/json$", "add_comment_json", name="add_comment"),
     url(r"^comment/(\d+)/remove/json$", "remove_comment_json", name="remove_comment"),    # XXX: Fix?
     url(r"^photo/(\d+)/remove/json$", "remove_photo_json", name="remove_photo"), # XXX: Fix
-    
+    # Status
     url(r"^status$", "server_status"),
+
 
     # Layouts
     url(r"^help$", "help", name="help"),
@@ -81,4 +83,10 @@ urlpatterns = patterns("emapix.core.views",
     #url(r"^developer$", "developer"),
     #url(r"^privacy$", "privacy"),
     #url(r"^terms$", "terms"),
+)
+
+# Queue Tasks
+urlpatterns += patterns('expedia.core.tasks',
+    url(r"^tasks/request/%s/photo/crop$" % REQ_REGEX, tasks.crop_image_task, name="crop_image_task"),
+    url(r"^tasks/request/%s/photo/process$" % REQ_REGEX, tasks.process_image_task, name="process_image_task"),
 )

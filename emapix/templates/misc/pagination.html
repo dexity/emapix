@@ -3,9 +3,9 @@
 <div class="clearfix"></div>
 <ul class="pagination">
 {% if items.has_previous %}
-    <li><a href="?page={{ items.previous_page_number }}" class="prev">&larr; {% trans "Previous" %}</a></li>
+    <li><a href="?page={{ items.previous_page_number }}" class="prev">{% trans "Previous" %}</a></li>
 {% else %}
-    <li class="disabled prev"><a>&larr; {% trans "Previous" %}</a></li>
+    <li class="disabled prev"><a>{% trans "Previous" %}</a></li>
 {% endif %}
 {% for page in paginator.page_range %}
     {% if page %}
@@ -19,9 +19,9 @@
     {% endif %}
 {% endfor %}
 {% if items.has_next %}
-    <li><a href="?page={{ items.next_page_number }}" class="next">{% trans "Next" %} &rarr;</a></li>
+    <li><a href="?page={{ items.next_page_number }}" class="next">{% trans "Next" %}</a></li>
 {% else %}
-    <li class="disabled next"><a>{% trans "Next" %} &rarr;</a></li>
+    <li class="disabled next"><a>{% trans "Next" %}</a></li>
 {% endif %}
 </ul>
 {% endif %}
