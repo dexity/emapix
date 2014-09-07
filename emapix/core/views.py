@@ -1167,13 +1167,13 @@ def submit_select(request, res):
             #       jQueryFileUpload widget
             
             format = IMAGE_TYPES.get(fd.content_type, "err")
-            filename = storage_filename(res, "preview", format)
+            filename = storage_filename(res, "crop", format)
             img = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
             image_url = storage.key2url(filename, timestamp())
 
             # DB handling
-            im = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
+            im = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
             im.name = filename
             im.height = img.height
             im.width = img.width
@@ -1185,7 +1185,9 @@ def submit_select(request, res):
             
             # Send email notification?
             
-            # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+            # Note:
+            #   Do I need to upload the file in chunks? Probably not if file is less than 5Mb
+            #   Go directly to creating image by passing the crop stage
             return http_response([{"success": True, "url": image_url}], mimetype)
         
         except User.DoesNotExist:
@@ -1206,6 +1208,7 @@ def submit_select(request, res):
     return http_response_json(resp)    
     
 
+# Note: Currently not used
 @csrf_protect
 def submit_crop(request, res):
     "Displays crop form or crops uploaded image"
@@ -1234,13 +1237,13 @@ def submit_crop(request, res):
         
         return handle_request_crop_file(req, user, im, (x, y, w, h))
 
-    if im.width <= 460 and im.height <= 460:
-        # No need to crop - upload directly
-        result  = handle_request_crop_file(req, user, im, (0, 0, im.width, im.height))
-        if isinstance(result, HttpResponseBadRequest):
-            return result
-        
-        return HttpResponseRedirect(reverse("submit_create", args=(res,)) + "?redirect=true")
+    #if im.width <= 460 and im.height <= 460:
+    # No need to crop - upload directly
+    result  = handle_request_crop_file(req, user, im, (0, 0, im.width, im.height))
+    if isinstance(result, HttpResponseBadRequest):
+        return result
+
+    return HttpResponseRedirect(reverse("submit_create", args=(res,)) + "?redirect=true")
 
     c   = {
         "crop_form":    CropForm(),
@@ -1327,7 +1330,6 @@ def submit_create(request, res):
     return http_response_json(resp)
 
 
-# XXX: Refactor profile_photo_select() and submit_select()
 @csrf_protect
 def profile_photo_select(request):
     if not request.user.is_authenticated():
@@ -1388,7 +1390,6 @@ def profile_photo_select(request):
     return http_response_json(resp)    
 
 
-# XXX: Refactor profile_photo_crop() and submit_crop()
 @csrf_protect
 def profile_photo_crop(request):
     if not request.user.is_authenticated():
@@ -1434,7 +1435,7 @@ def profile_photo_crop(request):
     }
     return http_response_json(resp)   
 
-# XXX: Refactor profile_photo_create() and submit_create()
+
 @csrf_protect
 def profile_photo_create(request):
     if not request.user.is_authenticated():
