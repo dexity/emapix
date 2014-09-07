@@ -1379,11 +1379,11 @@ def profile_photo_select(request):
 
     # Display form
     c   = {
-        "form":     UploadFileForm()
+        "form": UploadFileForm()
     }
     c.update(csrf(request))
     resp    = {
-        "data":     render_to_string("modals/submit_select.html", c)
+        "data": render_to_string("modals/submit_select.html", c)
     }
     return http_response_json(resp)    
 
@@ -1423,14 +1423,14 @@ def profile_photo_crop(request):
         return HttpResponseRedirect(reverse("profile_photo_create") + "?redirect=true")
     
     c   = {
-        "crop_form":    CropForm(),
-        "img_src":      im.url,
-        "img_width":    im.width,
-        "img_height":   im.height
+        "crop_form": CropForm(),
+        "img_src": im.url,
+        "img_width": im.width,
+        "img_height": im.height
     }
     c.update(csrf(request))
     resp    = {
-        "data":     render_to_string("modals/submit_crop.html", c)
+        "data": render_to_string("modals/submit_crop.html", c)
     }
     return http_response_json(resp)   
 
@@ -1446,27 +1446,15 @@ def profile_photo_create(request):
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
-        
-        try:
-            file_base   = user.username
-            fmt     = imc.format
-            # Populate image db records
-            params  = ((140, "medium"), (50, "small"), (32, "tiny"))
-            db_imgs = []
-            for param in params:
-                (size, size_type)   = param
-                # get_or_create_profile_image(cls, user, photo_type, size_type=None, marked_delete=False, save=False):
-                im  = WImage.get_or_create_profile_image(user, "profile", size_type)
-                im.name = storage_filename(file_base, size_type, fmt)
-                im.save()
-                db_imgs.append((size, im))
-            
-            proc_images(file_base, db_imgs, fmt)
-            
-            return to_ok()
-        except Exception, e:
-            logging.error("Error uploading profile photo: %s" % e)
-            return bad_request_json({"error": str(e)})
+        params  = ((140, "medium"), (50, "small"), (32, "tiny"))
+        q = taskqueue.Queue('images')
+        for param in params:
+            (size, size_type)   = param
+            q.add(taskqueue.Task(
+                url=reverse('process_profile_image_task'),
+                params=dict(size=size, size_type=size_type,
+                            username=user.username, format=imc.format)))
+        return to_ok()
         
     c   = {
         "img_src": imc.url

@@ -89,4 +89,5 @@ urlpatterns = patterns("emapix.core.views",
 urlpatterns += patterns('expedia.core.tasks',
     url(r"^tasks/request/%s/photo/crop$" % REQ_REGEX, tasks.crop_image_task, name="crop_image_task"),
     url(r"^tasks/request/%s/photo/process$" % REQ_REGEX, tasks.process_image_task, name="process_image_task"),
+    url(r"^tasks/profile/photo/process$", tasks.process_profile_image_task, name="process_profile_image_task"),
 )
