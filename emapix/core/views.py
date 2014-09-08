@@ -1167,13 +1167,13 @@ def submit_select(request, res):
             #       jQueryFileUpload widget
             
             format = IMAGE_TYPES.get(fd.content_type, "err")
-            filename = storage_filename(res, "crop", format)
+            filename = storage_filename(res, "preview", format)
             img = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
             image_url = storage.key2url(filename, timestamp())
 
             # DB handling
-            im = WImage.get_or_create_image_by_request(user, req, "crop", marked_delete=True)
+            im = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
             im.name = filename
             im.height = img.height
             im.width = img.width
@@ -1221,43 +1221,14 @@ def submit_crop(request, res):
     im  = WImage.get_image_by_request(req, "preview")
     if not im:
         return bad_request_json({"error": "Photo request doesn't exist"})
-    
-    if request.method == "POST":
-        # Crop image
-        crop_form   = CropForm(request.POST)
-        if not crop_form.is_valid():
-            return bad_form_json(crop_form)
-        
-        x   = int(crop_form.cleaned_data["x"])
-        y   = int(crop_form.cleaned_data["y"])
-        h   = int(crop_form.cleaned_data["h"])
-        w   = int(crop_form.cleaned_data["w"])
-        #if not (x and y and h and w):
-        #    return HttpResponseRedirect("/submit2") # Error
-        
-        return handle_request_crop_file(req, user, im, (x, y, w, h))
 
-    #if im.width <= 460 and im.height <= 460:
     # No need to crop - upload directly
+    # TODO: Remove crop image creation
     result  = handle_request_crop_file(req, user, im, (0, 0, im.width, im.height))
     if isinstance(result, HttpResponseBadRequest):
         return result
 
     return HttpResponseRedirect(reverse("submit_create", args=(res,)) + "?redirect=true")
-
-    c   = {
-        "crop_form":    CropForm(),
-        "resource":     res,
-        "img_src":      im.url,
-        "img_width":    im.width,
-        "img_height":   im.height
-    }
-    c.update(csrf(request))
-    
-    resp    = {
-        "data":     render_to_string("modals/submit_crop.html", c)
-    }
-    return http_response_json(resp)
 
 
 def handle_request_crop_file(req, user, image, (x, y, w, h)):
@@ -1308,7 +1279,7 @@ def submit_create(request, res):
         return bad_request_json({"error": "Photo request doesn't exist"})
     
     if request.method == "POST":
-        params  = ((460, "large"), (200, "medium"), (50, "small"))
+        params  = ((555, "large"), (200, "medium"), (50, "small"))
         q = taskqueue.Queue('images')
         for param in params:
             (size, size_type)   = param

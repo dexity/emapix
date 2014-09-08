@@ -49,40 +49,6 @@ def load_s3image(file_base, format):
     return Image.open(fd)
 
 
-def proc_images(file_base, db_imgs, format):
-    "Processes images in parallel"
-    if not format in IMAGE_FORMATS.keys():
-        raise Exception("Image format is not supported")  # Wrong format
-    img = load_s3image(file_base, format)
-    
-    queue   = Queue.Queue()
-    # Populate hungry threads
-    for item in db_imgs:
-        tm  = ImageThread(queue, file_base, img, format)
-        tm.setDaemon(True)
-        tm.start()
-    
-    for item in db_imgs:
-        queue.put(item)
-        
-    queue.join()
-
-
-class ImageThread(threading.Thread):
-    
-    def __init__(self, queue, file_base, img, format):  # lock, 
-        threading.Thread.__init__(self)
-        self._queue     = queue
-        self._file_base = file_base
-        self._format    = format
-        self._img       = img.copy()
-    
-    def run(self):
-        (dim, dbimg)    = self._queue.get()
-        proc_image(dim, dbimg, self._file_base, self._img, self._format)
-        self._queue.task_done()
-
-
 def crop_image(img, size):
     "Crops image"
     return img.crop((0, 0, size[0], size[1]))
@@ -92,26 +58,65 @@ def resize_image(img, size):
     "Resizes image"
     return img.resize(size)
 
-# XXX: Specific for threads. Need a more general implementation
-def proc_image(dim, dbimg, file_base, limg, format):
+
+def dim4crop(dim, iw, ih, size_type=None):
+    """Returns (width, height) dimensions tuple for crop."""
+    if size_type == 'large':
+        # No crop for large size type
+        return
+
+    # Process image for medium and small size types
+    if (dim > iw) and (dim < ih):  # tall image
+        return iw, dim
+    if (dim < iw) and (dim > ih):  # wide image
+        return dim, ih
+    if (dim < iw) and (dim < ih):  # large image
+        if iw > ih:
+            return ih, ih
+        if iw < ih:
+            return iw, iw
+
+
+def dim4resize(dim, iw, ih, size_type=None):
+    """Returns (width, height) dimensions tuple for resize."""
+    if size_type != 'large':  # Large image of medium and small size type
+        if dim < iw and dim < ih:
+            return dim, dim
+        return
+
+    nw = (iw * dim) / ih
+    nh = (ih * dim) / iw
+
+    # Process image for large. Keep proportion
+    if (dim > iw) and (dim < ih):  # tall image
+        return nw, dim
+    if (dim < iw) and (dim > ih):  # wide image
+        return dim, nh
+    if (dim < iw) and (dim < ih):  # large image
+        if iw > ih:
+            return dim, nh
+        elif iw < ih:
+            return nw, dim
+
+
+def proc_image(dim, dbimg, file_base, limg, format, size_type=None):
     "Processes image based on dimension and image size"
     # limg - loaded image
-    img     = limg
-    fmt     = IMAGE_FORMATS[format][1]    # "JPEG", "PNG"
-    (iw, ih)    = img.size
-    
-    # For small image (dim > iw and dim > ih) no image processing is needed
-    # Process image
-    if dim > iw and dim < ih:       # tall image
-        img = crop_image(img, (iw, dim))
-    elif dim < iw and dim > ih:     # wide image
-        img = crop_image(img, (dim, ih))
-    elif dim < iw and dim < ih:     # large image
-        if iw > ih:
-            img = crop_image(img, (ih, ih))
-        elif iw < ih:
-            img = crop_image(img, (iw, iw))
-        img = resize_image(img, (dim, dim))
+    img = limg
+    fmt = IMAGE_FORMATS[format][1]    # "JPEG", "PNG"
+    (iw, ih) = img.size
+
+    print dim, dbimg, file_base, limg, format, size_type
+
+    # Crop image
+    dims = dim4crop(dim, iw, ih, size_type)
+    if dims is not None:
+        img = crop_image(img, dims)
+
+    # Resize image
+    dims = dim4resize(dim, iw, ih, size_type)
+    if dims is not None:
+        img = resize_image(img, dims)
         
     try:
         # Upload to S3
@@ -135,4 +140,39 @@ def proc_image(dim, dbimg, file_base, limg, format):
     except Exception, e:
         logging.error("proc_image: %s %s" % (filename, str(e)))
 
-    
+
+# Legacy way to process images in parallel
+def proc_images(file_base, db_imgs, format):
+    "Processes images in parallel"
+    if not format in IMAGE_FORMATS.keys():
+        raise Exception("Image format is not supported")  # Wrong format
+    img = load_s3image(file_base, format)
+
+    queue   = Queue.Queue()
+    # Populate hungry threads
+    for item in db_imgs:
+        tm  = ImageThread(queue, file_base, img, format)
+        tm.setDaemon(True)
+        tm.start()
+
+    for item in db_imgs:
+        queue.put(item)
+
+    queue.join()
+
+
+class ImageThread(threading.Thread):
+
+    def __init__(self, queue, file_base, img, format):  # lock,
+        threading.Thread.__init__(self)
+        self._queue     = queue
+        self._file_base = file_base
+        self._format    = format
+        self._img       = img.copy()
+
+    def run(self):
+        (dim, dbimg)    = self._queue.get()
+        proc_image(dim, dbimg, self._file_base, self._img, self._format)
+        self._queue.task_done()
+
+

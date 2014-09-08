@@ -235,10 +235,6 @@ a img {
 .e-margin-bottom-20 {
     margin-bottom: 20px;
 }
-.e-photo-large {
-    width: 460px;
-    height: 460px;
-}
 
 .e-username {
     font-size: 15px;
@@ -435,6 +431,10 @@ a img {
     border: 1px solid #428bca;
     margin-bottom: 5px;
     padding: 6px 12px;
+}
+
+.img-responsive-mobile {
+    max-height: 460px;
 }
 
 /* Mobile */

@@ -34,7 +34,7 @@ def process_image_task(request, res, *args, **kwargs):
     im  = WImage.get_or_create_image_by_request(user, req, 'request', size_type)
     im.name = storage_filename(file_base, size_type, fmt)
     im.save()
-    proc_image(size, im, file_base, img.copy(), fmt)
+    proc_image(size, im, file_base, img.copy(), fmt, size_type=size_type)
     return http.HttpResponse()
 
 
