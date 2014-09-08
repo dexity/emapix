@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load multifor %}
+{% load multifor emapix_tags %}
 
 {% block content %}
 
@@ -8,14 +8,9 @@
 {% for item in items; image in images %}
 {% with item.request as req %}
 
-{#    {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"4" %}#}
-{#</div>#}
-{#<div class="row e-photo-row">#}
-{#    {% endif %}#}
-
     <div class="col-md-2 col-sm-3 col-xs-4 e-photo-cell">
         <a href="{% url "request" req.resource %}" title="{{req.description|slice:":40"}}{% if req.description|length > 40 %}...{% endif %}">
-            <img src="{{image.url}}" class="img-responsive"/>
+            <img src="{% image_serving_url image %}" class="img-responsive"/>
         </a>
         {# {% if req.location.city %} #}
         {#    <a href="/requests/{{req.location.city}}" class="label label-success">{{req.location.city}}</a> #}
