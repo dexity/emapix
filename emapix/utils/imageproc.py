@@ -129,16 +129,22 @@ def proc_image(dim, dbimg, file_base, limg, format, size_type=None):
         fd.seek(0)
         filename    = storage_filename(file_base, dbimg.size_type, format)
         upload_file_avail = storage.upload_file(fd, filename, IMAGE_FORMATS[format][0])
-        image_url = storage.key2url(filename, timestamp())
         
         (dbimg.width, dbimg.height)   = img.size
         dbimg.is_avail = upload_file_avail
-        dbimg.url      = image_url
+        dbimg.url      = storage.key2url(filename)
         dbimg.size     = size
         dbimg.format   = format
         dbimg.save()
     except Exception, e:
         logging.error("proc_image: %s %s" % (filename, str(e)))
+
+
+def image_serving_url(img):
+    """Returns url from image object."""
+    if not img:
+        return ''
+    return storage.key2url(img.name, 0, img.updated_time)
 
 
 # Legacy way to process images in parallel

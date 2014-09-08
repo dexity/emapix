@@ -37,13 +37,15 @@ def download_file(fd, filename):
     return None
 
 
-def key2url(filename, timestamp=None):
+def key2url(filename, max_serving_size=None, timestamp=None):
     """Returns url for the Cloud Storage."""
     blob_key = blobstore.create_gs_key('/gs' + file2path(filename))
     try:
         url = images.get_serving_url(blob_key)
-        if url and timestamp is not None:
-            url += "?t={}".format(timestamp)    # Update cache
+        if url and max_serving_size is not None:
+            url += "=s{}".format(max_serving_size)
+        if url and timestamp:
+            url += "?t={}".format(timestamp)  # Updates image cache
         return url
     except images.ObjectNotFoundError:
         pass

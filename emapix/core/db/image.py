@@ -1,5 +1,6 @@
 from emapix.core.models import *
 from emapix.core.db.photo import WPhoto
+from emapix.utils.imageproc import image_serving_url
 
 class WImage(object):
     
@@ -65,8 +66,8 @@ class WImage(object):
     def get_profile_image_meta(cls, user, size_type="medium", default_url="/media/img/medium.png"):
         "Returns user photo url"
         im  = cls.get_profile_image(user, "profile", size_type)
-        if im and im.url:
-            return (im.url, True)
+        if im:
+            return (image_serving_url(im), True)
         return (default_url, False)
     
     

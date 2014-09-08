@@ -26,7 +26,7 @@ from emapix.utils.utils import (sha1, random16, timestamp, ts2h, ts2utc, ts2hd, 
 from emapix.core.validators import validate_user_request, validate_user_comment, OtherEmailExists
 from emapix.utils.format import *
 from emapix.utils.imageproc import crop_s3_image, proc_images
-from emapix.utils.imageproc import load_s3image, proc_image   # Temp
+from emapix.utils.imageproc import load_s3image, proc_image, image_serving_url   # Temp
 from emapix.core.forms import *
 from emapix.utils.google_geocoding import latlon2addr
 from emapix.core.emails import send_activation_email, send_forgot_email, send_newpass_confirm_email
@@ -436,8 +436,9 @@ def request_info(request, res):
         return bad_request_json({"error": str(e)})
 
     c   = {
-        "req":  req,
-        "img":  img
+        "req": req,
+        "img": img,
+        "pic_url": image_serving_url(img)
     }
     c.update(csrf(request))
     data    = {
@@ -470,8 +471,8 @@ def get_request(request, res):
             c["photo"]      = photo
             c["pic_hdate"]  = ts2hd(photo.updated_time)
             c["pic_utcdate"]    = ts2utc(photo.updated_time)
-            if isinstance(img, Image): #and img.is_avail:
-                c["pic_url"]    = img.url
+            if isinstance(img, Image):  # and img.is_avail:
+                c["pic_url"]    = image_serving_url(img)
     
     except Request.DoesNotExist:
         return render(request, "misc/error_view.html", {"error": "Request does not exist"})
@@ -1170,7 +1171,6 @@ def submit_select(request, res):
             filename = storage_filename(res, "preview", format)
             img = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
-            image_url = storage.key2url(filename, timestamp())
 
             # DB handling
             im = WImage.get_or_create_image_by_request(user, req, "preview", marked_delete=True)
@@ -1180,7 +1180,7 @@ def submit_select(request, res):
             im.size = fd.size
             im.format = format
             im.is_avail = upload_file_avail
-            im.url = image_url
+            im.url = storage.key2url(filename)
             im.save()
             
             # Send email notification?
@@ -1188,7 +1188,7 @@ def submit_select(request, res):
             # Note:
             #   Do I need to upload the file in chunks? Probably not if file is less than 5Mb
             #   Go directly to creating image by passing the crop stage
-            return http_response([{"success": True, "url": image_url}], mimetype)
+            return http_response([dict(success=True, url=image_serving_url(im))], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
@@ -1250,13 +1250,12 @@ def handle_crop_file(imc, filename, image, (x, y, w, h)):
     "Handles uploading crop file and manages db"
     try:
         (im_avail, im_size) = crop_s3_image(image.name, filename, (x, y, w, h))
-        image_url = storage.key2url(filename, timestamp())
         imc.name     = filename
         imc.height   = h
         imc.width    = w
         imc.is_avail = im_avail
         imc.size     = im_size
-        imc.url      = image_url
+        imc.url      = storage.key2url(filename)
         imc.format   = image.format
         imc.save()
     except Exception, e:
@@ -1291,7 +1290,7 @@ def submit_create(request, res):
 
     c   = {
         "resource": res,
-        "img_src": imc.url
+        "img_src": image_serving_url(imc)
     }
     c.update(csrf(request))
     resp    = {
@@ -1326,7 +1325,6 @@ def profile_photo_select(request):
             filename    = storage_filename(user.username, "preview", format)
             img         = ImageFile(fd)     # convert to image
             upload_file_avail = storage.upload_file(fd, filename)
-            image_url = storage.key2url(filename, timestamp())
             
             # DB handling
             im  = WImage.get_or_create_profile_image(user, "preview", marked_delete=True)
@@ -1334,7 +1332,7 @@ def profile_photo_select(request):
             im.height   = img.height
             im.width    = img.width
             im.is_avail = upload_file_avail
-            im.url      = image_url
+            im.url      = storage.key2url(filename)
             im.size     = fd.size
             im.format   = format
             im.save()
@@ -1342,7 +1340,7 @@ def profile_photo_select(request):
             # Send email notification?
             
             # Do I need to upload the file in chunks? Probably not if file is less than 5Mb
-            return http_response([{"success": True, "url": image_url}], mimetype)
+            return http_response([dict(success=True, url=image_serving_url(im))], mimetype)
         
         except User.DoesNotExist:
             return bad_request({"error": "User does not exist"}, mimetype)
@@ -1396,7 +1394,7 @@ def profile_photo_crop(request):
     
     c   = {
         "crop_form": CropForm(),
-        "img_src": im.url,
+        "img_src": image_serving_url(im),
         "img_width": im.width,
         "img_height": im.height
     }
@@ -1429,7 +1427,7 @@ def profile_photo_create(request):
         return to_ok()
         
     c   = {
-        "img_src": imc.url
+        "img_src": image_serving_url(imc)
     }
     c.update(csrf(request))
     resp    = {

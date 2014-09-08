@@ -16,15 +16,17 @@ IMAGE_CONTENT_TYPES = [
 ]
 
 IMAGE_TYPES = {
-    "image/jpeg":   "jpg",
-    "image/png":    "png"
+    "image/jpeg": "jpg",
+    "image/png": "png"
 }
 
 IMAGE_FORMATS   = {
-    "jpg":  ("image/jpeg", "JPEG"),
-    "png":  ("image/png", "PNG")
+    "jpg": ("image/jpeg", "JPEG"),
+    "png": ("image/png", "PNG")
 }
 
+# See: https://developers.google.com/appengine/docs/python/images/functions
+MAX_SERVING_SIZE=600
 
     
 GENDER_CHOICES = (
