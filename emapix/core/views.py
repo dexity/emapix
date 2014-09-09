@@ -1045,7 +1045,7 @@ def get_user_photos_json(request, username):
                 "city":     phreq.request.location.city,
                 "country":  phreq.request.location.country
             },
-            "image_url":    image.url
+            "image_url": image_serving_url(image)
         }
         if is_you(request, userprof2.user):
             photo["remove_url"] = reverse("remove_photo", args=(phreq.photo.id,))

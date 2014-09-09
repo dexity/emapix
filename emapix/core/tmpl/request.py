@@ -3,6 +3,7 @@
 
 from emapix.core.db.image import WImage
 from emapix.utils.utils import *
+from emapix.utils.imageproc import image_serving_url
 
 class HumanTime(object):
     def __init__(self, ht, utc):
@@ -31,7 +32,7 @@ class TmplRequest(object):
             image   = WImage.get_image_by_request(req, size_type="small")
             thumb_url   = "/media/img/small.png"
             if image:
-                thumb_url = image.url
+                thumb_url = image_serving_url(image)
             sd  = int(req.submitted_date)
             htime   = HumanTime(ts2h(sd, ct), ts2utc(sd))
             

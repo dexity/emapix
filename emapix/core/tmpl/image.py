@@ -1,5 +1,6 @@
 
 from emapix.core.db.image import WImage
+from emapix.utils.imageproc import image_serving_url
 
 # Not tested
 class Image(object):
@@ -16,9 +17,9 @@ class TmplImage(object):
         for phreq in paged_phreqs:
             image   = WImage.get_image_by_photo(phreq.photo, size_type=size_type)
             kwargs  = {
-                "resource":     phreq.request.resource,
-                "description":  phreq.request.description,
-                "image_url":    image.url   # XXX: image can be None
+                "resource": phreq.request.resource,
+                "description": phreq.request.description,
+                "image_url": image_serving_url(image)
             }
             images.append(Image(**kwargs))
         return images
