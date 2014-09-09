@@ -434,6 +434,8 @@ a img {
 }
 
 .img-responsive-mobile {
+    display: block;
+    width: 100%;
     max-height: 460px;
 }
 
@@ -474,8 +476,6 @@ a img {
         margin-top: 0px;
     }
     .img-responsive-mobile {
-        display: block;
-        width: 100%;
         height: auto;
     }
 }
@@ -487,8 +487,6 @@ a img {
         text-align: left;
     }
     .img-responsive-mobile {
-        display: block;
-        width: 100%;
         height: auto;
     }
 }
