@@ -1,2 +1,5 @@
-/nbproject/
-emapix.komodoproject
+*.pyc
+.idea
+libs
+static
+emapix/local_*

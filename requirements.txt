@@ -1,0 +1,10 @@
+# django==1.5
+boto
+South == 0.7.6
+django - constance
+django - picklefield
+recaptcha - client
+MySQL - python == 1.2.3
+GoogleAppEngineCloudStorageClient
+PIL == 1.1.7
+sendgrid

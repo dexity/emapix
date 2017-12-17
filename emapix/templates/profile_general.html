@@ -1,26 +1,33 @@
 {% extends "profile_base.html" %}
 
 {% block profile_content %}
+{% include "includes/profile_header.html" with profile_title="Profile" %}
 <div id="profile_content">
     <div class="row">
-        <div class="span2 prof-left">Username</div>
-        <div class="span6 prof-right">
+        <div class="col-xs-3 prof-left">
+            <label>Username</label>
+        </div>
+        <div class="col-xs-9">
             <div class="e-username">{{userprof.user.username}}</div>
             <span class="e-color-grey" style="margin-left: 20px">(Cannot be changed)</span>
         </div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">Full Name</div>
-        <div class="span6">
+        <div class="col-xs-3 prof-left">
+            <label>Full Name</label>
+        </div>
+        <div class="col-xs-9">
             {{userprof.user.first_name}} {{userprof.user.last_name}}
         </div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">Email</div>
-        <div class="span3">
+        <div class="col-xs-3 prof-left">
+            <label>Email</label>
+        </div>
+        <div class="col-xs-6">
             <a href="mailto:{{userprof.user.email}}">{{userprof.user.email}}</a>
         </div>
-        <div class="span3">            
+        <div class="col-xs-3">
             {% if userprof.show_email %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -29,11 +36,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">Location</div>
-        <div class="span3">
+        <div class="col-xs-3 prof-left">
+            <label>Location</label>
+        </div>
+        <div class="col-xs-6">
             {{userprof.location}}&nbsp;
         </div>
-        <div class="span3">            
+        <div class="col-xs-3">
             {% if userprof.show_location %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -42,8 +51,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">Birthday</div>
-        <div class="span3">
+        <div class="col-xs-3 prof-left">
+            <label>Birthday</label>
+        </div>
+        <div class="col-xs-6">
             {% if userprof.b_month %}
                 {{userprof.get_b_month_display}}
             {% endif %}
@@ -52,7 +63,7 @@
             {% endif %}
             {{userprof.b_year}}
         </div>
-        <div class="span3">
+        <div class="col-xs-3">
             {% if userprof.show_birthday %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -61,11 +72,13 @@
         </div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">Gender</div>
-        <div class="span3">
+        <div class="col-xs-3 prof-left">
+            <label>Gender</label>
+        </div>
+        <div class="col-xs-6">
             {{userprof.get_gender_display}}
         </div>
-        <div class="span3">            
+        <div class="col-xs-3">
             {% if userprof.show_gender %}
             {% include "misc/show_item.html" %}
             {% else %}
@@ -74,13 +87,15 @@
         </div>
     </div>
     <div class="row" style="margin-bottom: 20px;">
-        <div class="span2 prof-left">About Yourself</div>
-        <div class="span6">{{userprof.description}}</div>
+        <div class="col-sm-3 prof-left">
+            <label>About Yourself</label>
+        </div>
+        <div class="col-sm-9">{{userprof.description}}</div>
     </div>
     <div class="row">
-        <div class="span2 prof-left">&nbsp;</div>
-        <div class="span6">
-            <a href="/profile/edit" class="btn btn-primary">Edit Profile</a>
+        <div class="col-sm-3 prof-left">&nbsp;</div>
+        <div class="col-sm-9">
+            <a href="{% url "edit_profile" %}" class="btn btn-primary">Edit Profile</a>
         </div>
     </div>
 </div>

@@ -1,30 +1,30 @@
 {% extends "base.html" %}
 
 {% block header %}
-<script type="text/javascript"
-    src="http://maps.googleapis.com/maps/api/js?key={{map_key}}&sensor=false">
-</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+{#<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key={{map_key}}&sensor=false"></script>#}
 <script type="text/javascript" src="/media/js/modal.js"></script>
 <script type="text/javascript" src="/media/js/emapix_map.js"></script>
-
 {% endblock header %}
 
 {% block content %}
 
-<style type="text/css">
-  #map_canvas { width:620px; height:400px; }
-</style>
-
-<div class="pull-left"><h3>Make Request</h3></div>
-<div class="e-alert-head pull-left">Long click on the map and submit request</div>
-<div class="clear_both"></div>
-<label class="checkbox">
-    <input type="checkbox" id="show_requests"> Show my requests
-</label>
 <div class="row">
-    <div class="span8">
-        <div id="map_canvas"></div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-sm-4"><h4>Make Request</h4></div>
+            <div class="col-sm-8">
+                <div class="e-alert-head">Long click on the map and submit request</div>
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" id="show_requests"> Show my requests
+            </label>
+        </div>
+        <div id="map_canvas" class="map-make-request"></div>
     </div>
+    <div class="col-md-4"></div>
 </div>
 
 <div id="modal_container"></div>

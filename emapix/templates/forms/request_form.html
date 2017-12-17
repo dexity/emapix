@@ -1,14 +1,14 @@
 
-<div style="margin-bottom: -10px;">
-    <div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
-    <form method="post" id="request_form">
-        {% csrf_token %}
-        {{ form.lat }}
-        {{ form.lon }}
-        {{ form.description }}<br/>
+
+<div style="margin-bottom: 10px;"><b>Location:</b> {{lat}}; {{lon}}</div>
+<form method="post" id="request_form">
+    {% csrf_token %}
+    {{ form.lat }}
+    {{ form.lon }}
+    <div class="form-group">
+        {{ form.description }}
         <div id="error_{{form.description.name}}"></div>
-        <button class="btn btn-primary" id="send_request" style="margin-top: 10px;" >Submit Request</button>
-        
-    </form>
-</div>
+    </div>
+    <button class="btn btn-primary" id="send_request" style="margin-top: 10px;" >Submit Request</button>
+</form>
 

@@ -3,29 +3,21 @@
 
 {% block content %}
 
-<h3>Users</h3>
-<div class="e-margin-bottom-10"></div>
-<table>
-    <tbody>
-	<tr>
+<h4>Users</h4>
+<div class="row">
 	{% for item in items; photo_url in photo_urls %}
-        {% if forloop.counter0 != 0 and forloop.counter0|divisibleby:"5" %}
-        </tr>
-        <tr>
-        {% endif %}
-        <td class="user-info">
-            <img src="{{photo_url}}" height="60" width="60" alt=""/>
+        <div class="col-md-2 col-sm-4 col-xs-6 user-info">
+            <img src="{{photo_url}}" alt=""/>
             <div class="user-details">
-                <a href="/user/{{item.user.username}}"><b>{{item.user.username}}</b></a><br />
+                <a href="{% url "user" item.user.username %}"><b>{{item.user.username}}</b></a><br />
                 Requests <b>{{item.num_requests}}</b><br />
                 Photos <b>{{item.num_photos}}</b><br />
             </div>
-        </td>	    
+        </div>
 	{% endfor %}
-	</tr>
-    </tbody>
-</table>
-<div class="clear_both"></div>
+</div>
+
+<div class="clearfix"></div>
 {% include "misc/pagination.html" %}
 
 {% endblock %}

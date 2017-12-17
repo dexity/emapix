@@ -1,18 +1,19 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<div class="pull-left"><h3>Resend Activation</h3></div>
-<div class="e-alert-head pull-left">If you haven't received the activation link for some reason,
-please try again.</div>
-<div class="clear_both"></div>
-<div class="span10">
-
-<form class="form-horizontal" action="/verify/resend" method="post" >
-{% include "forms/resend_form.html" %}
-</form>
+<div class="row">
+    <div class="col-sm-4"><h4>Resend Activation</h4></div>
+    <div class="col-sm-8">
+        <div class="e-alert-head">If you haven't received the activation link for some reason, please try again.</div>
+    </div>
 </div>
-
+<div class="row">
+    <div class="col-md-10">
+        <form class="form-horizontal" action="{% url "verify_resend" %}" method="post" >
+        {% include "forms/resend_form.html" %}
+        </form>
+    </div>
+</div>
 {% endblock %}
 
 {% block footer %}

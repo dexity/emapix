@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block modal_body %}
-    <img src="{{img_src}}" id="cropbox" />
+    <img src="{{img_src}}" id="cropbox" class="img-responsive"/>
     <form id="cropper_form">
         {% csrf_token %}
         {{ crop_form }}

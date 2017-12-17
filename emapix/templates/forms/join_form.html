@@ -1,83 +1,120 @@
 
 {% csrf_token %}
-<fieldset>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.username.auto_id }}"><b>{{ form.username.label }}</b></label>
-    <div class="controls">
+<br>
+<div class="form-group">
+    <div class="col-xs-3 prof-left">
+        <label class="control-label">{{ form.username.label }}</label>
+    </div>
+    <div class="col-sm-5 col-xs-12">
         {{ form.username }}
-        <span class="help-inline e-color-grey">(Required)</span>
-        <span class="help-block">Username can only contain letters A-Z or numbers 0-9</span>
+        <span class="e-help-block">Username can only contain letters and numbers</span>
         {% if form.username.errors %}
         <div class="alert alert-error error_spaces">
             {{ form.username.errors|first }}
         </div>
         {% endif %}
     </div>
-  </div>
-  
-  <div class="control-group">
-    <label class="control-label" for="{{ form.email.auto_id }}"><b>{{ form.email.label }}</b></label>
-    <div class="controls">
-        {{ form.email }}
+    <div class="col-sm-4 col-xs-12 e-inline-text">
         <span class="help-inline e-color-grey">(Required)</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-xs-3 prof-left">
+        <label class="control-label">{{ form.email.label }}</label>
+    </div>
+    <div class="col-sm-5 col-xs-12">
+        {{ form.email }}
         {% if form.email.errors %}
         <div class="alert alert-error error_spaces">
             {{ form.email.errors|first }}
         </div>
         {% endif %}
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.password.auto_id }}"><b>{{ form.password.label }}</b></label>
-    <div class="controls">
-        {{ form.password }}
+    <div class="col-sm-4 col-xs-12 e-inline-text">
         <span class="help-inline e-color-grey">(Required)</span>
-        <span class="help-block">Password should be from 6 to 30 characters</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-xs-3 prof-left">
+        <label class="control-label">{{ form.password.label }}</label>
+    </div>
+    <div class="col-sm-5 col-xs-12">
+        {{ form.password }}
+        <span class="e-help-block">Password should be from 6 to 30 characters</span>
         {% if form.password.errors %}
         <div class="alert alert-error error_spaces">
             {{ form.password.errors|first }}
         </div>
         {% endif %}
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.location.auto_id }}"><b>{{ form.location.label }}</b></label>
-    <div class="controls">
+    <div class="col-sm-4 col-xs-12 e-inline-text">
+        <span class="help-inline e-color-grey">(Required)</span>
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-3 prof-left">
+        <label class="control-label">{{ form.location.label }}</label>
+    </div>
+    <div class="col-sm-5 col-xs-7">
         {{ form.location }}
-        {{ form.country }}
         {% if form.location.errors %}
         <div class="alert alert-error error_spaces">
             {{ form.location.errors|first }}
         </div>
         {% endif %}
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label"><b>Birthday</b></label>
-    <div class="controls">
-        {{ form.b_month }}
-        {{ form.b_day }}
-        {{ form.b_year }}
-        <span class="help-inline e-color-grey">
-            (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)</span>          
+    <div class="col-sm-3 col-xs-5">
+        {{ form.country }}
+    </div>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-3 prof-left">
+        <label class="control-label">Birthday</label>
+    </div>
+    <div class="col-sm-5 col-xs-9">
+        <div class="form-inline">
+            {{ form.b_month }}
+            {{ form.b_day }}
+            {{ form.b_year }}
+        </div>
         {% if form.b_year.errors %}
         <div class="alert alert-error error_spaces">
             {{ form.b_year.errors|first }}
         </div>
         {% endif %}
     </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="{{ form.gender.auto_id }}"><b>{{ form.gender.label }}</b></label>
-    <div class="controls">
-        {% for radio in form.gender %}
-        <div class="radio inline">
-            {{ radio }}
+    <div class="col-sm-4 col-xs-12 e-inline-text">
+        <div class="e-color-grey">
+            (<abbr title="Used to verify age and hidden by default">Year Required</abbr>)
         </div>
-        {% endfor %}
     </div>
-  </div>
-  <div class="form-actions">
-    <button type="submit" class="btn btn-primary">Join Emapix</button>
-  </div>      
-</fieldset>
+</div>
+
+<div class="form-group">
+    <div class="col-sm-3 prof-left">
+        <label class="control-label">{{ form.gender.label }}</label>
+    </div>
+    <div class="col-sm-6 col-xs-12">
+        {% for radio in form.gender %}
+            <label class="radio-inline">
+            {{ radio.tag }}
+            {{ radio.choice_label }}
+            </label>
+        {% endfor %}
+        {% if form.gender.errors %}
+        <div class="alert alert-error error_spaces">
+            {{ form.gender.errors|first }}
+        </div>
+        {% endif %}
+    </div>
+</div>
+<br>
+<div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-primary">Join Emapix</button>
+    </div>
+</div>

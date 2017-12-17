@@ -1,13 +1,13 @@
 
 <div style="margin-bottom: -10px;">
     {% if img %}
-    <img src="{{img.url}}" style="margin-bottom: 5px; width: 150px"/>
+    <img src="{{pic_url}}" style="margin-bottom: 5px; width: 150px"/>
     {% endif %}
     <div style="margin-bottom: 10px; width: 300px"><i>{{ req.description }}</i></div>
     {% include "misc/address.html" %}
     <br />
     <div style="margin-top: 10px;">
-        <a href="/request/{{ req.resource }}" class="pull-left" target="_blank" title="Open in a separate tab">Request Details</a>
+        <a href="{% url "request" req.resource %}" class="pull-left" target="_blank" title="Open in a separate tab">Request Details</a>
         {% csrf_token %}
         <a href="#" class="red pull-right" id="remove_request" title="Remove Request">Remove</a>
     <div>

@@ -1,14 +1,18 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="pull-left"><h3>Join Emapix</h3></div>
-<div class="e-alert-head alert-success pull-left">It's <b>easy</b> and <b>free</b>.</div>
-<div class="clear_both"></div>
-
-<div class="span10">
-<form class="form-horizontal" action="/join" method="post" >
-{% include "forms/join_form.html" %}
-</form>
+<div class="row">
+    <div class="col-sm-3"><h4>Join Emapix</h4></div>
+    <div class="col-sm-9">
+        <div class="e-alert-head">It's <b>easy</b> and <b>free</b>.</div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10">
+        <form class="form-horizontal" action="{% url "join" %}" method="post" >
+        {% include "forms/join_form.html" %}
+        </form>
+    </div>
 </div>
 {% endblock %}
 

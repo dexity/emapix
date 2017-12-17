@@ -3,22 +3,23 @@ from django.db.models import IntegerField, CharField, BooleanField
 
 # XXX: Leave for now but needs big refactoring
 
+
 class PhotoRequest(models.Model):
-    lat     = IntegerField(default=0)
-    lon     = IntegerField(default=0)
-    submitted_date  = CharField(max_length=16)  # timestamp
-    resource    = CharField(max_length=16)
-    photo_exists    = BooleanField(default=False)
-    
+    lat = IntegerField(default=0)
+    lon = IntegerField(default=0)
+    submitted_date = CharField(max_length=16)  # timestamp
+    resource = CharField(max_length=16)
+    photo_exists = BooleanField(default=False)
+
     def __unicode__(self):
-        return "(%s, %s)" % (self.lat, self.lon)    
+        return '(%s, %s)' % (self.lat, self.lon)
 
 
-#class Request(models.Model):
+# class Request(models.Model):
 #    pass
 #
 #
-#class Photo(models.Model):
+# class Photo(models.Model):
 #    user
 #    name
 #    picture     # The thumbnail-sized source of the photo
@@ -26,21 +27,20 @@ class PhotoRequest(models.Model):
 #    request
 #    height
 #    width
-#    images      
+#    images
 #    location
 #    created_time
 #    updated_time
 #
 #
-#class PhotoRequest(models.Model):
+# class PhotoRequest(models.Model):
 #    pass
 #
 #
-#class Comment(models.Model):
+# class Comment(models.Model):
 #    photo   = ""
 #    pass
 #
 #
-#class User(models.Model):
+# class User(models.Model):
 #    pass
-

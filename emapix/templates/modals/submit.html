@@ -1,20 +1,25 @@
 
 {% block modal_top %}{% endblock %}
 
-<div id="submit_modal" class="submit_modal modal hide fade">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Submit Photo</h3>
-    </div>
-    <div class="modal-body" id="submit_body">
-        {% block modal_body %}{% endblock %}
-    </div>
-    <div class="modal-footer">
-        {% block modal_footer %}
-        <div class="modal_status"></div>
-        <div class="btn btn-primary">Select File</div>
-        <a href="#" data-dismiss="modal">Close</a>
-        {% endblock %}
+<div id="submit_modal" class="submit_modal modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4>Submit Photo</h4>
+            </div>
+            <div class="modal-body" id="submit_body">
+                {% block modal_body %}{% endblock %}
+                <div class="clearfix"></div>
+            </div>
+            <div class="modal-footer">
+                {% block modal_footer %}
+                <div class="modal_status"></div>
+                <div class="btn btn-primary">Select File</div>
+                <a href="#" data-dismiss="modal">Close</a>
+                {% endblock %}
+            </div>
+        </div>
     </div>
 </div>
 

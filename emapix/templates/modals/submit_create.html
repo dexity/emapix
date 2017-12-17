@@ -1,7 +1,7 @@
 {% extends "modals/submit.html" %}
 
 {% block modal_body %}
-    <img src="{{img_src}}" />
+    <img src="{{img_src}}" class="img-responsive"/>
     <form id="create_form">
         {% csrf_token %}
     </form>

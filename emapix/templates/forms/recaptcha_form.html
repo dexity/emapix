@@ -1,38 +1,52 @@
 {% csrf_token %}
 <div id="recaptcha_widget" style="display:none">
-    Enter <b>both words</b> below, <b>separated by a space</b>.<br />
-    Can't read the words below?
-    <div style="display: inline;"><a href="javascript:Recaptcha.reload()">Try different captcha</a></div> or 
-    <div class="recaptcha_only_if_audio" style="display: inline;"><a href="javascript:Recaptcha.switch_type('image')">an image captcha</a></div>
-    <div class="recaptcha_only_if_image" style="display: inline;"><a href="javascript:Recaptcha.switch_type('audio')">an audio captcha</a></div><br />
-    <br />
-    
-    <div id="recaptcha_image"></div>
-    <div class="e-margin-top-10"></div>
-    <div class="control-group">
-        <span class="control-label recaptcha_only_if_image"><b>Text in the box</b></span>
-        <span class="control-label recaptcha_only_if_audio"><b>Text you hear</b></span>
-        <div class="controls">
-            {{form.recaptcha}}
-            <span class="help-inline e-color-grey">
-                <abbr title="This is a standard security test that we use to prevent spammers from creating fake accounts and spamming users.">What's this?</abbr>
-            </span>
-        {% if form.recaptcha.errors %}
-        <div class="alert alert-error error_spaces">
-            {{ form.recaptcha.errors|first }}
-        </div>
-        {% endif %}
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            Enter <b>both words</b> below, <b>separated by a space</b>.<br />
+            Can't read the words below?
+            <div style="display: inline;"><a href="javascript:Recaptcha.reload()">Try different captcha</a></div> or
+            <div class="recaptcha_only_if_audio inline">
+                <a href="javascript:Recaptcha.switch_type('image')">an image captcha</a>
+            </div>
+            <div class="recaptcha_only_if_image inline">
+                <a href="javascript:Recaptcha.switch_type('audio')">an audio captcha</a>
+            </div>
+            <br><br>
+            <div id="recaptcha_image"></div>
         </div>
     </div>
-    <div class="control-group">
-        <label class="control-label"></label>
-        <div class="controls e-check-terms">
+    <br>
+    <div class="form-group">
+        <div class="col-sm-3 prof-left">
+            <label class="control-label recaptcha_only_if_image"><b>Text in the box</b></label>
+            <label class="control-label recaptcha_only_if_audio"><b>Text you hear</b></label>
+        </div>
+        <div class="col-sm-5 col-xs-12">
+            {{form.recaptcha}}
+            {% if form.recaptcha.errors %}
+            <div class="alert alert-error error_spaces">
+                {{ form.recaptcha.errors|first }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="col-sm-4 col-xs-12 e-inline-text">
+            <span class="e-color-grey">
+                <abbr title="This is a standard security test that we use to prevent spammers from creating fake accounts and spamming users.">What's this?</abbr>
+            </span>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9 e-check-terms">
             By clicking "Create Account", you are indicating that you have <br />
             read and agree to the <a href="/terms">Terms of Service</a> and
             <a href="/privacy">Privacy Policy</a>
         </div>
     </div>
 </div>
-<div class="form-actions">
-    <input type="submit" class="btn btn-primary" value="Create Account" />
+<br>
+<div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+        <button type="submit" class="btn btn-primary">Create Account</button>
+    </div>
 </div>

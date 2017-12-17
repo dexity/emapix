@@ -10,14 +10,15 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'UserProfile.num_comments'
         db.add_column('core_userprofile', 'num_comments',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      self.gf('django.db.models.fields.IntegerField')(
+                          default=0),
                       keep_default=False)
 
         # Adding field 'Request.num_comments'
         db.add_column('core_request', 'num_comments',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      self.gf('django.db.models.fields.IntegerField')(
+                          default=0),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'UserProfile.num_comments'
@@ -25,7 +26,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'Request.num_comments'
         db.delete_column('core_request', 'num_comments')
-
 
     models = {
         'auth.group': {

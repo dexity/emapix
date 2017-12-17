@@ -2,15 +2,20 @@
 
 {% block content %}
 
-<div class="pull-left"><h3>Forgot Password</h3></div>
-<div class="e-alert-head pull-left">Don't worry. Please provide 
-your email and we will send you a new password. 
-You can change it later.</div>
-<div class="clear_both"></div>
-<div class="span10">
-<form class="form-horizontal" action="/forgot" method="post" >
-{% include "forms/forgot_form.html" %}
-</form>
+<div class="row">
+    <div class="col-sm-3"><h4>Forgot Password</h4></div>
+    <div class="col-sm-9">
+        <div class="e-alert-head">
+            Don't worry. Please provide your email and we will send you a new password. You can change it later.
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-10">
+        <form class="form-horizontal" action="{% url "forgot_password" %}" method="post" >
+        {% include "forms/forgot_form.html" %}
+        </form>
+    </div>
 </div>
 
 {% endblock %}

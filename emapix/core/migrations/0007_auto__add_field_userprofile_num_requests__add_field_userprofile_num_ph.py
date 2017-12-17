@@ -10,14 +10,15 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'UserProfile.num_requests'
         db.add_column('core_userprofile', 'num_requests',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      self.gf('django.db.models.fields.IntegerField')(
+                          default=0),
                       keep_default=False)
 
         # Adding field 'UserProfile.num_photos'
         db.add_column('core_userprofile', 'num_photos',
-                      self.gf('django.db.models.fields.IntegerField')(default=0),
+                      self.gf('django.db.models.fields.IntegerField')(
+                          default=0),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'UserProfile.num_requests'
@@ -25,7 +26,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'UserProfile.num_photos'
         db.delete_column('core_userprofile', 'num_photos')
-
 
     models = {
         'auth.group': {

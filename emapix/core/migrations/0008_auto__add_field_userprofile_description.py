@@ -10,14 +10,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'UserProfile.description'
         db.add_column('core_userprofile', 'description',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=1000),
+                      self.gf('django.db.models.fields.CharField')(
+                          default='', max_length=1000),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'UserProfile.description'
         db.delete_column('core_userprofile', 'description')
-
 
     models = {
         'auth.group': {

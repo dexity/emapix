@@ -11,20 +11,38 @@
   overflow-y: none;    
 }*/
 
-@media (max-width: 979px) {
-  body {
-    margin-right: 20px;
-    margin-left: 20px;
-  }
+body {
+    margin-right: -10px;
+    margin-left: -10px;
 }
 hr {
     margin-top: 10px;
 }
-.form-horizontal .control-group {
+.alert-error {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+}
+.alert-error hr {
+  border-top-color: #e4b9c0;
+}
+.alert-error .alert-link {
+  color: #843534;
+}
+
+.form-group {
     margin-bottom: 5px;
 }
-.form-horizontal .help-block {
-    margin-top: 3px;
+.modal-header {
+    padding-top: 5px;
+    padding-bottom: 0px;
+}
+.modal-header .close {
+    margin-top: 5px;
+}
+.modal-footer {
+    padding-top: 10px;
+    padding-bottom: 10px;
 }
 .modal-footer .btn {
     float: none;
@@ -42,5 +60,21 @@ hr {
 .alert {
     padding: 4px 35px 4px 14px;
 }
+.nav-pills li a {
+    padding: 6px 12px;
+    margin-top: 4px;
+}
 
+/*
+.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6,
+.col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
+    padding-right: 0px;
+}
+*/
 
+/* Mobile */
+@media (max-width: 480px){
+    .nav > li > a {
+        padding: 10px 5px;
+    }
+}

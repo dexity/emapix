@@ -10,14 +10,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Request.status'
         db.add_column('core_request', 'status',
-                      self.gf('django.db.models.fields.CharField')(default='o', max_length=1),
+                      self.gf('django.db.models.fields.CharField')(
+                          default='o', max_length=1),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'Request.status'
         db.delete_column('core_request', 'status')
-
 
     models = {
         'auth.group': {

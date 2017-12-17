@@ -1,4 +1,4 @@
-<form action="/request/{{req.resource}}/edit" method="post" id="edit_form" class="e-modal-form">
+<form action="{% url "edit_request" req.resource %}" method="post" id="edit_form" class="e-modal-form">
 {% csrf_token %}
 {{form.description}}
 <div id="error_{{form.description.name}}"></div>

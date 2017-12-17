@@ -11,15 +11,19 @@ class Migration(SchemaMigration):
         # Adding model 'UserProfile'
         db.create_table('core_userprofile', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.OneToOneField')(to=orm['auth.User'], unique=True)),
+            ('user', self.gf('django.db.models.fields.related.OneToOneField')(
+                to=orm['auth.User'], unique=True)),
             ('location', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('country_alpha2', self.gf('django.db.models.fields.CharField')(max_length=2)),
+            ('country_alpha2', self.gf(
+                'django.db.models.fields.CharField')(max_length=2)),
             ('b_day', self.gf('django.db.models.fields.SmallIntegerField')(null=True)),
             ('b_month', self.gf('django.db.models.fields.CharField')(max_length=12)),
             ('b_year', self.gf('django.db.models.fields.SmallIntegerField')()),
             ('gender', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('activ_token', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
-            ('forgot_token', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
+            ('activ_token', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
+            ('forgot_token', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
             ('req_limit', self.gf('django.db.models.fields.IntegerField')(default=10)),
         ))
         db.send_create_signal('core', ['UserProfile'])
@@ -27,7 +31,8 @@ class Migration(SchemaMigration):
         # Adding model 'UserStatus'
         db.create_table('core_userstatus', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.UserProfile'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.UserProfile'])),
             ('status', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('updated_date', self.gf('django.db.models.fields.CharField')(max_length=16)),
         ))
@@ -36,19 +41,23 @@ class Migration(SchemaMigration):
         # Adding model 'Photo'
         db.create_table('core_photo', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=64)),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['auth.User'])),
+            ('title', self.gf('django.db.models.fields.CharField')(
+                default='', max_length=64)),
             ('created_time', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('updated_time', self.gf('django.db.models.fields.CharField')(max_length=16)),
             ('type', self.gf('django.db.models.fields.CharField')(max_length=16)),
-            ('marked_delete', self.gf('django.db.models.fields.BooleanField')(default=False)),
+            ('marked_delete', self.gf(
+                'django.db.models.fields.BooleanField')(default=False)),
         ))
         db.send_create_signal('core', ['Photo'])
 
         # Adding model 'Image'
         db.create_table('core_image', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Photo'])),
+            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Photo'])),
             ('height', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('width', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('url', self.gf('django.db.models.fields.CharField')(max_length=64)),
@@ -63,46 +72,59 @@ class Migration(SchemaMigration):
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('lat', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('lon', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('street', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
-            ('city', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
-            ('country', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
-            ('zipcode', self.gf('django.db.models.fields.CharField')(max_length=16, null=True)),
+            ('street', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
+            ('city', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
+            ('country', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
+            ('zipcode', self.gf('django.db.models.fields.CharField')(
+                max_length=16, null=True)),
             ('res_lat', self.gf('django.db.models.fields.IntegerField')(default=0)),
             ('res_lon', self.gf('django.db.models.fields.IntegerField')(default=0)),
-            ('res_type', self.gf('django.db.models.fields.CharField')(max_length=64, null=True)),
+            ('res_type', self.gf('django.db.models.fields.CharField')(
+                max_length=64, null=True)),
         ))
         db.send_create_signal('core', ['Location'])
 
         # Adding model 'Request'
         db.create_table('core_request', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('location', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Location'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['auth.User'])),
+            ('location', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Location'])),
             ('description', self.gf('django.db.models.fields.CharField')(max_length=140)),
             ('resource', self.gf('django.db.models.fields.CharField')(max_length=16)),
-            ('submitted_date', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('submitted_date', self.gf(
+                'django.db.models.fields.CharField')(max_length=16)),
         ))
         db.send_create_signal('core', ['Request'])
 
         # Adding model 'PhotoRequest'
         db.create_table('core_photorequest', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Photo'])),
-            ('request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Request'])),
+            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Photo'])),
+            ('request', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Request'])),
         ))
         db.send_create_signal('core', ['PhotoRequest'])
 
         # Adding model 'RequestStatus'
         db.create_table('core_requeststatus', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Request'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
+            ('request', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Request'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['auth.User'], null=True)),
             ('status', self.gf('django.db.models.fields.CharField')(max_length=1)),
-            ('comment', self.gf('django.db.models.fields.CharField')(max_length=140, null=True)),
-            ('submitted_date', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('comment', self.gf('django.db.models.fields.CharField')(
+                max_length=140, null=True)),
+            ('submitted_date', self.gf(
+                'django.db.models.fields.CharField')(max_length=16)),
         ))
         db.send_create_signal('core', ['RequestStatus'])
-
 
     def backwards(self, orm):
         # Deleting model 'UserProfile'
@@ -128,7 +150,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'RequestStatus'
         db.delete_table('core_requeststatus')
-
 
     models = {
         'auth.group': {

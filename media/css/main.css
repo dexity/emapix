@@ -1,7 +1,6 @@
 
 #logo {
     float: left!important;
-    margin-right: 10px;
     margin-top: -6px;
 }
 
@@ -10,15 +9,16 @@ a img {
     border: 0px;
 }
 
-.clear_both {
-    clear: both;
+.icon {
+    margin-top: 5px;
 }
-.div_inline {
-    display: inline;
+.icon img {
+    height: 60px;
 }
-/*.red {
-    color: #b94a48;
-}*/
+
+.inline {
+    display: inline !important;
+}
 
 /* Navigation */
 .e-nav-user {
@@ -39,15 +39,9 @@ a img {
 }
 
 /* Request */
-#e-requests-list {
-	margin-left: -20px;
-}
 .e-request-item {
     border-bottom: 1px dotted #ccdcef;
-    padding:5px 10px 5px 0px;	
-}
-.e-request-item:after {
-    clear: both;
+    padding: 5px 0px;
 }
 .e-request-item a > img {
     float:left;
@@ -63,8 +57,8 @@ a img {
 }
 .e-request-description {
     font-size: 17px;
-    height: 25px;
-    padding-top: 5px;
+    margin-bottom: 5px;
+
 }
 .e-request-time {
     color: #999;
@@ -87,22 +81,31 @@ a img {
        -moz-border-radius: 4px;
             border-radius: 4px;	    
 }
+.e-request-status {
+    margin-top: 15px;
+}
 .e-status-open {
-    background-color: #6CC644;
+    color: #6CC644;
+    border: 1px solid #6CC644;
 }
 .e-status-closed {
     background-color: #BD2C00;
 }
 
+.map-request,
+.map-make-request {
+    height:460px;
+    margin-bottom: 10px;
+}
 
 /* Misc */
 #join {
     margin-bottom: 10px;
+    margin-top: 10px;
 }
 .footer {
     padding: 17px 20px 18px;
     margin-top: 18px;
-    margin-bottom: 2px;
     background-color: #f5f5f5;
     border-top: 1px solid #e5e5e5;
     *zoom: 1;	
@@ -143,7 +146,7 @@ a img {
 .e-alert,
 .e-alert-head {
     padding: 4px 35px 4px 14px;
-    margin-bottom: 18px;
+    /*margin-bottom: 18px;*/
     color: #468847;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     background-color: #dff0d8;
@@ -157,7 +160,8 @@ a img {
 }
 
 .e-alert-head {
-    margin-left: 20px;
+    float: left;
+    margin-top: 7px;
 }
 .e-alert-inline {
     width: 250px;
@@ -208,8 +212,8 @@ a img {
 .e-button-spinner {
     margin: 5px 10px;
 }
-.e-photo-row {
-    margin-bottom: 10px;
+.e-photo-row .e-photo-cell {
+    padding-bottom: 10px;
 }
 .e-photo-row img {
     margin-bottom: 3px;
@@ -232,10 +236,6 @@ a img {
 .e-margin-bottom-20 {
     margin-bottom: 20px;
 }
-.e-photo-large {
-    width: 460px;
-    height: 460px;
-}
 
 .e-username {
     font-size: 15px;
@@ -253,7 +253,6 @@ a img {
 .e-modal-form {
     margin-bottom: 0px;
 }
-
 .section-title {
     font-size: 17px;
 }
@@ -267,12 +266,20 @@ a img {
 .e-text-small {
     font-size: 11px;
 }
-.e-checkbox {
-    margin-top: -5px;
-}
+
 .e-users-stat {
     float:left;
     margin-left: 5px;
+}
+
+.e-inline-text {
+    margin-top: 7px;
+}
+.e-help-block {
+    margin-top: 2px;
+    margin-bottom: 5px;
+    display: block;
+    color: #737373;
 }
 
 .address_label {
@@ -283,10 +290,13 @@ a img {
 .user-info {
     height:60px;
     width:185px;
-    padding-bottom: 15px;
+    margin-bottom: 15px;
+    padding-right: 0px;
 }
 .user-info img {
     float:left;
+    width: 60px;
+    height: 60px;
 }
 .user-info .user-details{
     float:left;
@@ -296,23 +306,22 @@ a img {
 
 .prof-left {
     text-align: right;
-    font-weight: bold;
 }
-.prof-right {
-    
+
+.profile-photo {
+    margin-top: 10px;
+}
+.profile-photo img {
+    margin-bottom: 10px;
+}
+.profile_location {
+    float: right;
+    padding-top: 20px;
 }
 
 #profile_content .row {
     margin-bottom: 5px;
 }
-#edit_profile .control-label {
-    font-weight: bold;
-}
-/*
-#edit_profile .control-group {
-    margin-bottom: 10px;
-}
-*/
 #edit_profile {
     margin-top: -5px;
 }
@@ -334,17 +343,13 @@ a img {
 }
 
 #submit_container .modal {
-    width: 800px;
-    position: fixed;
     margin: 0px;
 }
 #submit_container .modal.fade {
     top: -25%;
-    left: 40px;
 }
 #submit_container .modal.fade.in {
     top: 0px;
-    left: 40px;
 }
 
 .modal_status {
@@ -367,6 +372,7 @@ a img {
 }
 #comments_container {
     text-align: right;
+    margin-top: 10px;
 }
 #comment_status {
     display: inline;
@@ -384,17 +390,23 @@ a img {
 }
 
 .delete_photo {
-    position: relative;
-    right:  5px;
-    top:    -140px;
+    position: absolute;
+    right: 25px;
+    top: 5px;
 }
 
+#tab_photos {
+    margin-top: 10px;
+}
 #tab_photos .pagination {
     margin-left: 20px;
 }
 
 .aux-link {
     margin-left: 15px;
+}
+.help-inline {
+    margin-top: 7px;
 }
 
 .show-item,
@@ -407,4 +419,78 @@ a img {
 }
 .hide-item {
     color: #bd362f;
+}
+.img-responsive {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+#profile_settings {
+    color: #428bca;
+    background-color: #fff;
+    border: 1px solid #428bca;
+    margin-bottom: 5px;
+    padding: 6px 12px;
+}
+
+.img-responsive-mobile {
+    display: block;
+    width: auto;
+    max-height: 460px;
+}
+
+/* Mobile */
+@media (max-width: 480px){
+
+    .map-request {
+        height:200px;
+        margin-bottom: 0px;
+    }
+    .e-request-status {
+        margin-top: 0px;
+    }
+    #submit_photo {
+        margin-top: 10px;
+    }
+    .map-make-request {
+        height:300px;
+    }
+    .profile-photo img {
+        margin-bottom: 0px;
+    }
+    select[name=b_month],
+    select[name=b_day],
+    select[name=b_year] {
+        float: left;
+        margin-right: 5px;
+    }
+    select[name=b_month] {
+        width: 100px;
+    }
+    select[name=b_day] {
+        width: 68px;
+    }
+    select[name=b_year] {
+        width: 75px;
+    }
+    .help-inline {
+        margin-top: 0px;
+    }
+    .img-responsive-mobile {
+        width: 100%;
+        height: auto;
+    }
+}
+
+/* Tablet */
+@media (max-width: 768px){
+
+    .prof-left {
+        text-align: left;
+    }
+    .img-responsive-mobile {
+        width: 100%;
+        height: auto;
+    }
 }

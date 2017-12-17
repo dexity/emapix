@@ -11,21 +11,26 @@ class Migration(SchemaMigration):
         # Adding model 'Comment'
         db.create_table('core_comment', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Request'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
-            ('text', self.gf('django.db.models.fields.CharField')(default='', max_length=3072)),
-            ('submitted_date', self.gf('django.db.models.fields.CharField')(max_length=16)),
+            ('request', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Request'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['auth.User'])),
+            ('text', self.gf('django.db.models.fields.CharField')(
+                default='', max_length=3072)),
+            ('submitted_date', self.gf(
+                'django.db.models.fields.CharField')(max_length=16)),
         ))
         db.send_create_signal('core', ['Comment'])
 
         # Adding model 'RequestComment'
         db.create_table('core_requestcomment', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Request'])),
-            ('comment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Comment'])),
+            ('request', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Request'])),
+            ('comment', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Comment'])),
         ))
         db.send_create_signal('core', ['RequestComment'])
-
 
     def backwards(self, orm):
         # Deleting model 'Comment'
@@ -33,7 +38,6 @@ class Migration(SchemaMigration):
 
         # Deleting model 'RequestComment'
         db.delete_table('core_requestcomment')
-
 
     models = {
         'auth.group': {
