@@ -3,16 +3,17 @@ from emapix.utils import handle_uploaded_file, file_exists
 from emapix.utils.utils import timestamp
 from emapix.utils.format import *
 from emapix.utils.const import OK, FAIL
-from emapix.api.models import PhotoRequest 
+from emapix.api.models import PhotoRequest
 
 import logging
 
+
 def add(request):
-    "Adds record to the photo request"
-    p   = request.REQUEST
+    """Adds record to the photo request."""
+    p = request.REQUEST
     try:
-        pr  = PhotoRequest(lat=p["lat"], lon=p["lon"], submitted_date=timestamp(), 
-                           resource=p["resource"])
+        pr = PhotoRequest(lat=p['lat'], lon=p['lon'], submitted_date=timestamp(),
+                          resource=p['resource'])
         pr.save()
         return to_status(OK, to_photo(pr))
     except Exception, e:
@@ -21,9 +22,9 @@ def add(request):
 
 
 def remove(request, reqid):
-    "Removes record from the photo request"
+    """Removes record from the photo request."""
     try:
-        pr  = PhotoRequest.objects.get(id=reqid)
+        pr = PhotoRequest.objects.get(id=reqid)
         pr.delete()
         return to_status(OK)
     except Exception, e:
@@ -32,15 +33,15 @@ def remove(request, reqid):
 
 
 def _update_photo_request(pr):
-    "Checks if file actually exists and updates"
+    """Checks if file actually exists and updates."""
     # not used
     if file_exists(pr.resource):
         pr.photo_exists = True
         pr.save()
-    
-    
+
+
 def _update_list_photo_request(prs):
-    "Checks S3 data set with "
+    """Checks S3 data set with."""
     # not used
     pass
 
@@ -48,7 +49,7 @@ def _update_list_photo_request(prs):
 # cache file check
 def get(request, reqid):
     try:
-        pr  = PhotoRequest.objects.get(id=reqid)
+        pr = PhotoRequest.objects.get(id=reqid)
         #_update_photo_request(pr)   # hide
         return to_status(OK, to_photo(pr))
     except Exception, e:
@@ -59,9 +60,9 @@ def get(request, reqid):
 # cache file check
 def get_all(request):
     try:
-        prs  = PhotoRequest.objects.all()
+        prs = PhotoRequest.objects.all()
         #_update_list_photo_request(prs)
-        l   = []
+        l = []
         for p in prs:
             l.append(to_photo(p))
         return to_status(OK, l)
@@ -71,10 +72,10 @@ def get_all(request):
 
 
 def update(request, reqid):
-    p   = request.REQUEST
+    p = request.REQUEST
     try:
-        pr  = PhotoRequest.objects.get(id=reqid)
-        pr.resource = p["resource"]
+        pr = PhotoRequest.objects.get(id=reqid)
+        pr.resource = p['resource']
         pr.save()
         return to_status(OK, to_photo(pr))
     except Exception, e:
@@ -83,16 +84,14 @@ def update(request, reqid):
 
 
 def upload(request):
-    "Uploads file to S3"  
+    """Uploads file to S3."""
     logging.debug(request.FILES.keys())
     if request.method == 'POST':
         # XXX: Check status of uploaded file
-        handle_uploaded_file(request.FILES['uploaded'], request.REQUEST.get("resource", None))
+        handle_uploaded_file(
+            request.FILES['uploaded'], request.REQUEST.get('resource', None))
         return to_status(OK)
-        #return HttpResponseRedirect('/')           
-    
+        # return HttpResponseRedirect('/')
+
     # XXX: Change default response
     return to_status(OK)
-    
-
-

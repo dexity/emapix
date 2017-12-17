@@ -5,11 +5,12 @@ from emapix.settings import BUCKET_NAME
 import logging
 import cloudstorage as gcs
 
+
 def upload_file(fd, filename=None, content_type=None):
     if filename is None:
-        filename    = fd.name
+        filename = fd.name
     if content_type is None:
-        content_type   = fd.content_type
+        content_type = fd.content_type
 
     try:
         filepath = file2path(filename)
@@ -19,7 +20,7 @@ def upload_file(fd, filename=None, content_type=None):
         fd.close()
         return True
     except Exception, e:
-        logging.error("upload_file: %s %s" % (filename, str(e)))
+        logging.error('upload_file: %s %s' % (filename, str(e)))
     return False    # Not uploaded
 
 
@@ -33,7 +34,7 @@ def download_file(fd, filename):
         fd.seek(0)
         return stat.content_type
     except Exception, e:
-        logging.error("download_file: %s %s" % (filename, str(e)))
+        logging.error('download_file: %s %s' % (filename, str(e)))
     return None
 
 
@@ -43,9 +44,9 @@ def key2url(filename, max_serving_size=None, timestamp=None):
     try:
         url = images.get_serving_url(blob_key)
         if url and max_serving_size is not None:
-            url += "=s{}".format(max_serving_size)
+            url += '=s{}'.format(max_serving_size)
         if url and timestamp:
-            url += "?t={}".format(timestamp)  # Updates image cache
+            url += '?t={}'.format(timestamp)  # Updates image cache
         return url
     except images.ObjectNotFoundError:
         pass

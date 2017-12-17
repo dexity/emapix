@@ -6,18 +6,17 @@ import logging
 
 
 def auth(request):
-    "Custom authentication context processor"
+    """Custom authentication context processor."""
     aparams = cp.auth(request)
-    user    = aparams["user"]
+    user = aparams['user']
     if isinstance(user, AnonymousUser):
-        userprof    = ""    # Empty UserProfile?
+        userprof = ''    # Empty UserProfile?
     else:
         try:
-            userprof  = UserProfile.objects.get(user=user)
+            userprof = UserProfile.objects.get(user=user)
         except UserProfile.DoesNotExist:
-            logging.error("User profile does not exist")
-            userprof    = ""
-    
-    aparams["userprof"] = userprof  # Update dictionary
+            logging.error('User profile does not exist')
+            userprof = ''
+
+    aparams['userprof'] = userprof  # Update dictionary
     return aparams
-    

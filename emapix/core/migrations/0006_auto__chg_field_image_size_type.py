@@ -10,12 +10,14 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
 
         # Changing field 'Image.size_type'
-        db.alter_column('core_image', 'size_type', self.gf('django.db.models.fields.CharField')(max_length=16, null=True))
+        db.alter_column('core_image', 'size_type', self.gf(
+            'django.db.models.fields.CharField')(max_length=16, null=True))
 
     def backwards(self, orm):
 
         # Changing field 'Image.size_type'
-        db.alter_column('core_image', 'size_type', self.gf('django.db.models.fields.CharField')(default=None, max_length=16))
+        db.alter_column('core_image', 'size_type', self.gf(
+            'django.db.models.fields.CharField')(default=None, max_length=16))
 
     models = {
         'auth.group': {

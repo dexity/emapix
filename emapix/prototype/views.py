@@ -11,8 +11,8 @@ import logging
 def index(request):
     c = {}
     c.update(csrf(request))
-    
-    if request.method == 'POST':     
+
+    if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         logging.debug(str(form))
         if form.is_valid():
@@ -20,6 +20,5 @@ def index(request):
             return HttpResponseRedirect('/')
     else:
         form = UploadFileForm()
-    c["form"]   = form
+    c['form'] = form
     return render_to_response('upload.html', c)
-

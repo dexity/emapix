@@ -23,7 +23,8 @@ def process_image_task(request, res, *args, **kwargs):
     """Processes request image in queue task."""
     data = request.POST
     req = shortcuts.get_object_or_404(emapix_models.Request, resource=res)
-    user = shortcuts.get_object_or_404(auth_models.User, username=data['username'])
+    user = shortcuts.get_object_or_404(
+        auth_models.User, username=data['username'])
     file_base = res
     fmt = data['format']
     size = int(data['size'])
@@ -31,7 +32,7 @@ def process_image_task(request, res, *args, **kwargs):
 
     img = load_s3image(file_base, fmt)  # Temp image
 
-    im  = WImage.get_or_create_image_by_request(user, req, 'request', size_type)
+    im = WImage.get_or_create_image_by_request(user, req, 'request', size_type)
     im.name = storage_filename(file_base, size_type, fmt)
     im.save()
     proc_image(size, im, file_base, img.copy(), fmt, size_type=size_type)
@@ -43,7 +44,8 @@ def process_image_task(request, res, *args, **kwargs):
 def process_profile_image_task(request, *args, **kwargs):
     """Processes profile image in queue task."""
     data = request.POST
-    user = shortcuts.get_object_or_404(auth_models.User, username=data['username'])
+    user = shortcuts.get_object_or_404(
+        auth_models.User, username=data['username'])
     file_base = user.username
     fmt = data['format']
     size = int(data['size'])
@@ -51,7 +53,7 @@ def process_profile_image_task(request, *args, **kwargs):
 
     img = load_s3image(file_base, fmt)  # Temp image
 
-    im  = WImage.get_or_create_profile_image(user, 'profile', size_type)
+    im = WImage.get_or_create_profile_image(user, 'profile', size_type)
     im.name = storage_filename(file_base, size_type, fmt)
     im.save()
     proc_image(size, im, file_base, img.copy(), fmt)

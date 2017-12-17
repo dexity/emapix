@@ -11,16 +11,16 @@ class Migration(SchemaMigration):
         # Adding model 'ProfilePhoto'
         db.create_table('core_profilephoto', (
             ('id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['core.Photo'])),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
+            ('photo', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['core.Photo'])),
+            ('user', self.gf('django.db.models.fields.related.ForeignKey')(
+                to=orm['auth.User'])),
         ))
         db.send_create_signal('core', ['ProfilePhoto'])
-
 
     def backwards(self, orm):
         # Deleting model 'ProfilePhoto'
         db.delete_table('core_profilephoto')
-
 
     models = {
         'auth.group': {

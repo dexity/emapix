@@ -5,36 +5,36 @@ api_version: 1
 threadsafe: true
 
 handlers:
-- url: /media
-  static_dir: media
+- url: / media
+    static_dir: media
 
-- url: /static
-  static_dir: static
-  expiration: 0
+- url: / static
+    static_dir: static
+    expiration: 0
 
 #- url: /remoteapi.*
 #  script: google.appengine.ext.remote_api.handler.application
 #  login: admin
 
-- url: /tasks/.*
-  script: emapix.wsgi.application
-  login: admin
+- url: / tasks / .*
+    script: emapix.wsgi.application
+    login: admin
 
 - url: .*
-  script: emapix.wsgi.application
+    script: emapix.wsgi.application
 
 libraries:
 - name: django
-  version: 1.5
+    version: 1.5
 
 - name: MySQLdb
-  version: latest
+    version: latest
 
 - name: ssl
-  version: latest
+    version: latest
 
 - name: PIL
-  version: latest
+    version: latest
 
 builtins:
 - django_wsgi: on
@@ -43,12 +43,12 @@ builtins:
 skip_files:
 - ^\.git
 - ^\.idea
-- ^(.*/)?.*~$
-- ^(.*/)?.*\.py[co]$
-- ^libs/Django.*
-- ^libs/django
-- ^libs/MySQL
-- ^libs/_mysql
-- ^libs/PyYAML*
-- ^libs/yaml
-- ^libs/PIL*
+- ^ (.* / )?.*~$
+- ^ (.* / )?.*\.py[co]$
+- ^ libs / Django.*
+- ^ libs / django
+- ^ libs / MySQL
+- ^ libs / _mysql
+- ^ libs / PyYAML*
+- ^ libs / yaml
+- ^ libs / PIL*

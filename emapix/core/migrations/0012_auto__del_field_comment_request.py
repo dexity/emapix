@@ -11,13 +11,12 @@ class Migration(SchemaMigration):
         # Deleting field 'Comment.request'
         db.delete_column('core_comment', 'request_id')
 
-
     def backwards(self, orm):
         # Adding field 'Comment.request'
         db.add_column('core_comment', 'request',
-                      self.gf('django.db.models.fields.related.ForeignKey')(default=None, to=orm['core.Request']),
+                      self.gf('django.db.models.fields.related.ForeignKey')(
+                          default=None, to=orm['core.Request']),
                       keep_default=False)
-
 
     models = {
         'auth.group': {

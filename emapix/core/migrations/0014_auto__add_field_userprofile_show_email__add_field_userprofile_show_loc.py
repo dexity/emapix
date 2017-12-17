@@ -10,24 +10,27 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'UserProfile.show_email'
         db.add_column('core_userprofile', 'show_email',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      self.gf('django.db.models.fields.BooleanField')(
+                          default=False),
                       keep_default=False)
 
         # Adding field 'UserProfile.show_location'
         db.add_column('core_userprofile', 'show_location',
-                      self.gf('django.db.models.fields.BooleanField')(default=True),
+                      self.gf('django.db.models.fields.BooleanField')(
+                          default=True),
                       keep_default=False)
 
         # Adding field 'UserProfile.show_birthday'
         db.add_column('core_userprofile', 'show_birthday',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      self.gf('django.db.models.fields.BooleanField')(
+                          default=False),
                       keep_default=False)
 
         # Adding field 'UserProfile.show_gender'
         db.add_column('core_userprofile', 'show_gender',
-                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      self.gf('django.db.models.fields.BooleanField')(
+                          default=False),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'UserProfile.show_email'
@@ -41,7 +44,6 @@ class Migration(SchemaMigration):
 
         # Deleting field 'UserProfile.show_gender'
         db.delete_column('core_userprofile', 'show_gender')
-
 
     models = {
         'auth.group': {

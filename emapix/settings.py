@@ -122,7 +122,7 @@ LOGGING = {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
         }
-     },
+    },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',

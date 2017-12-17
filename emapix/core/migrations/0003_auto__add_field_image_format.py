@@ -10,14 +10,13 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Image.format'
         db.add_column('core_image', 'format',
-                      self.gf('django.db.models.fields.CharField')(default='', max_length=8),
+                      self.gf('django.db.models.fields.CharField')(
+                          default='', max_length=8),
                       keep_default=False)
-
 
     def backwards(self, orm):
         # Deleting field 'Image.format'
         db.delete_column('core_image', 'format')
-
 
     models = {
         'auth.group': {
